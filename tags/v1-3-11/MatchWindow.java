@@ -1,0 +1,193 @@
+//-------------------------------------------------------------------------
+//  
+//  MatchWindow.java - 
+//  
+//  Copyright (C) 2002, Keith Godfrey
+//  
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//  
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//  
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//  
+//  Build date:  16Apr2003
+//  Copyright (C) 2002, Keith Godfrey
+//  keithgodfrey@users.sourceforge.net
+//  907.223.2039
+//  
+//  OmegaT comes with ABSOLUTELY NO WARRANTY
+//  This is free software, and you are welcome to redistribute it
+//  under certain conditions; see 'gpl.txt' for details
+//
+//-------------------------------------------------------------------------
+
+import java.util.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.text.*;
+//import javax.swing.filechooser.*;
+import java.io.*;
+import java.lang.*;
+import java.text.ParseException;
+
+// creates a dialog where project properties are entered and/or modified
+class MatchWindow extends JFrame
+{
+	public MatchWindow()
+	{
+		// SIB - find available screen real-estate and adjust size
+		//	accordingly
+		// KBG - don't be obnoxious and take too much of screen 
+		//	(1200x1000 total area should be more than adequate)
+		// KBG - in case center is offset (i.e. if taskbar on top of screen)
+		//	then offset windows (14apr04)
+		GraphicsEnvironment env = 
+				GraphicsEnvironment.getLocalGraphicsEnvironment();
+		Rectangle scrSize = env.getMaximumWindowBounds();
+		Point center = env.getCenterPoint();
+		int origX = scrSize.width/2 - center.x;
+		int origY = scrSize.height/2 - center.y;
+		int pos = (int) (scrSize.width * 0.67);
+		int wid = (int) (scrSize.width * 0.33);
+		if (pos > 800)
+			pos = 800;
+		if (wid > 400)
+			wid = 400;
+		if (scrSize.height > 1000)
+			scrSize.height = 1000;
+		setSize(wid, scrSize.height);
+		setLocation(origX+pos, origY);
+
+		Container cont = getContentPane();
+		cont.setLayout(new GridLayout(2, 1, 3, 4));
+
+		m_matchPane = new JTextPane();
+		m_glosPane = new JTextPane();
+		JScrollPane matchScroller = new JScrollPane(m_matchPane);
+		JScrollPane glosScroller = new JScrollPane(m_glosPane);
+
+		cont.add(matchScroller);
+		cont.add(glosScroller);
+
+		m_matchPane.setEditable(false);
+		m_glosPane.setEditable(false);
+
+		addWindowListener(new WindowAdapter()
+		{
+			public void windowClosing(WindowEvent e)
+			{
+				hide();
+			}
+		});
+	}
+
+	// copy match and glos buffers to display
+	public void updateGlossaryText()
+	{
+		m_glosPane.setText(m_glosDisplay);
+		m_glosDisplay = "";
+	}
+
+	public void updateMatchText()
+	{
+		m_matchPane.setText(m_matchDisplay);
+
+		if (m_hiliteStart >= 0)
+		{
+			m_matchPane.select(m_hiliteStart, m_hiliteEnd);
+			MutableAttributeSet mattr = null;
+			mattr = new SimpleAttributeSet();
+			StyleConstants.setBold(mattr, true);
+			m_matchPane.setCharacterAttributes(mattr, false);
+
+			m_matchPane.setCaretPosition(m_hiliteStart);
+		}
+
+		m_matchDisplay = "";
+		m_matchCount = 0;
+	}
+
+	public void reset()
+	{
+		m_matchDisplay = "";
+		m_glosDisplay = "";
+		m_matchCount = 0;
+		m_matchPane.setText("");
+		m_glosPane.setText("");
+	}
+
+	public void setFont(Font f)
+	{
+		m_matchPane.setFont(f);
+		m_glosPane.setFont(f);
+	}
+
+	public void addGlosTerm(String src, String loc, String comments)
+	{
+		String glos = "'" + src + "'  =  '" + loc + "'\n";
+		if (comments.length() > 0)
+			glos += comments + "\n\n";
+		else
+			glos += "\n";
+		m_glosDisplay += glos;
+	}
+
+	// returns offset in display of the start of this term
+	public int addMatchTerm(String src, String loc, int score, String proj)
+	{
+		String entry = ++m_matchCount + ")  " + src + "\n" + loc + "\n< " +
+					score + "% " + proj + " >\n\n";
+		int size = m_matchDisplay.length();
+		m_matchDisplay += entry;
+		return size;
+	}
+
+	public void hiliteRange(int start, int end)
+	{
+		int len = m_matchDisplay.length();
+		if ((start < 0) || (start > len))
+		{
+			m_hiliteStart = -1;
+			m_hiliteEnd = -1;
+			return;
+		}
+
+		if (end < 0)
+			end = len;
+
+		m_hiliteStart = start;
+		m_hiliteEnd = end;
+	}
+
+	protected String		m_matchDisplay = "";
+	protected String		m_glosDisplay = "";
+	protected JTextPane		m_matchPane;
+	protected JTextPane		m_glosPane;
+	protected int			m_matchCount = 0;
+	protected int			m_hiliteStart = -1;
+	protected int			m_hiliteEnd = -1;
+
+//////////////////////////////////////////////////////////
+
+	public static void main(String[] s)
+	{
+		MatchWindow mw = new MatchWindow();
+		mw.addGlosTerm("OmegaT", "Marc Prior", "");
+		mw.addGlosTerm("Trados", "Evil corporate tool", "not truly evil, " +
+				"but a tool from a very greedy company");
+		mw.addMatchTerm("For whom the bell tolls", "Whence the bell tolls",
+				65, "unknown");
+		mw.updateGlossaryText();
+		mw.updateMatchText();
+		mw.show();
+	}
+}
