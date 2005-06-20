@@ -27,6 +27,8 @@ import javax.swing.UIManager;
 import org.omegat.core.threads.CommandThread;
 
 import org.omegat.gui.TransFrame;
+import org.omegat.gui.TransFrameInterface;
+import org.omegat.gui.main.MainWindow;
 import org.omegat.util.PreferenceManager;
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
@@ -59,18 +61,14 @@ public class Main
 			StaticUtils.log(OStrings.getString("MAIN_ERROR_CANT_INIT_OSLF"));
 		}
 
-        // since TransFrame now requires preferences for initialization,
-        //	handle pref initialization here (17may04)
-        new PreferenceManager();
-        TransFrame mainframe = new TransFrame();
-
+        TransFrameInterface mainwindow = new MainWindow();
         // bugfix - Serious threading issue, preventing OmegaT from showing up...
         //          http://sourceforge.net/support/tracker.php?aid=1216514
         // we start command thread here...
-        CommandThread.core = new CommandThread(mainframe, mainframe.getProjectFrame());
+        CommandThread.core = new CommandThread(mainwindow);
         CommandThread.core.start();
-
-        mainframe.setVisible(true);
+        
+        mainwindow.setVisible(true);
 	}
 }
 

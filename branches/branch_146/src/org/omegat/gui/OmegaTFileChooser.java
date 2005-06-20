@@ -57,15 +57,17 @@ public class OmegaTFileChooser extends JFileChooser
     }
     
     /** OmegaT project icon */
-    private static ImageIcon omegatIcon = new ImageIcon("images" + File.separator + "OmegaT_small.gif");	// NOI18N
+    private static ImageIcon omegatIcon = null;
 
     /** Redefines the icon for OmegaT projects. */
     public Icon getIcon(File f)
     {
-		if (OpenProjectFileChooser.isProjectDir(f))
-			return omegatIcon;
+        if( omegatIcon==null )
+            omegatIcon = new ImageIcon("images" + File.separator + "OmegaT_small.gif");	// NOI18N
+		if( omegatIcon!=null && OpenProjectFileChooser.isProjectDir(f) )
+            return omegatIcon;
 		else	
-			return null;
+			return super.getIcon(f);
     }
 
     /** Redefines the file type for OmegaT projects. */

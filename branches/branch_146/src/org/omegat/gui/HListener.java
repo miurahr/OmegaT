@@ -32,7 +32,7 @@ import org.omegat.gui.messages.MessageRelay;
  */
 class HListener implements HyperlinkListener
 {
-	public HListener(TransFrame t, boolean grabFocus)
+	public HListener(TransFrameInterface t, boolean grabFocus)
 	{
 		m_transFrame = t;
 		m_grabFocus = grabFocus;
@@ -54,6 +54,6 @@ class HListener implements HyperlinkListener
 		}
 	}
 
-	private TransFrame	m_transFrame;
+	private TransFrameInterface	m_transFrame;
 	private boolean	m_grabFocus;
 }

@@ -23,6 +23,7 @@ package org.omegat.core.threads;
 
 import org.omegat.gui.TransFrame;
 import org.omegat.gui.SearchWindow;
+import org.omegat.gui.TransFrameInterface;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.OStrings;
 import org.omegat.util.OConsts;
@@ -44,7 +45,7 @@ import org.omegat.filters2.master.FilterMaster;
  */
 public class SearchThread extends Thread
 {
-	public SearchThread(TransFrame par, String startText)
+	public SearchThread(TransFrameInterface par, String startText)
 	{
 		m_window = new SearchWindow(par, this, startText);
 		m_stop = false;

@@ -21,9 +21,9 @@
 
 package org.omegat.gui.messages;
 
-import org.omegat.gui.TransFrame;
+import javax.swing.SwingUtilities;
 
-import javax.swing.*;
+import org.omegat.gui.TransFrameInterface;
 
 /**
  * Methods to send messages to UI objects
@@ -35,38 +35,38 @@ import javax.swing.*;
 public class MessageRelay
 {
 
-    public static void uiMessageDisplayEntry(TransFrame tf)
+    public static void uiMessageDisplayEntry(TransFrameInterface tf)
 	{
 		MMx msg = new MMx(tf, 5);
 		SwingUtilities.invokeLater(msg);
 	}
 
-	public static void uiMessageFuzzyInfo(TransFrame tf)
+	public static void uiMessageFuzzyInfo(TransFrameInterface tf)
 	{
 		MMx msg = new MMx(tf, 10);
 		SwingUtilities.invokeLater(msg);
 	}
 
-	public static void uiMessageDoGotoEntry(TransFrame tf, String str)
+	public static void uiMessageDoGotoEntry(TransFrameInterface tf, String str)
 	{
 		MMx msg = new MMx(tf, 6, str);
 		SwingUtilities.invokeLater(msg);
 	}
 
-	public static void uiMessageSetMessageText(TransFrame tf, String str)
+	public static void uiMessageSetMessageText(TransFrameInterface tf, String str)
 	{
 		MMx msg = new MMx(tf, 7, str);
 		SwingUtilities.invokeLater(msg);
 	}
 
-    public static void uiMessageDisplayError(TransFrame tf, 
+    public static void uiMessageDisplayError(TransFrameInterface tf, 
 					String str, Throwable e)
 	{
 		MMx msg = new MMx(tf, str, e);
 		SwingUtilities.invokeLater(msg);
 	}
 
-	public static void uiMessageUnloadProject(TransFrame tf) 
+	public static void uiMessageUnloadProject(TransFrameInterface tf) 
 	{
 		MMx msg = new MMx(tf, 11);
 		SwingUtilities.invokeLater(msg);

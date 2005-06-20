@@ -85,7 +85,7 @@ import org.openide.awt.Mnemonics;
  *
  * @author Keith Godfrey
  */
-public class TransFrame extends JFrame implements ActionListener
+public class TransFrame extends JFrame implements ActionListener, TransFrameInterface
 {
 	// Initialization and display code
 	public TransFrame()
@@ -1906,7 +1906,7 @@ public class TransFrame extends JFrame implements ActionListener
 		}
     }
 
-	public void fatalError(String msg, RuntimeException re)
+	public void fatalError(String msg, Throwable re)
 	{
 		StaticUtils.log(msg);
 		if (re != null)

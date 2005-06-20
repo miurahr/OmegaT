@@ -42,7 +42,7 @@ import org.omegat.filters2.TranslationException;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.gui.ProjectFrame;
 import org.omegat.gui.ProjectProperties;
-import org.omegat.gui.TransFrame;
+import org.omegat.gui.TransFrameInterface;
 import org.omegat.gui.messages.MessageRelay;
 import org.omegat.util.LFileCopy;
 import org.omegat.util.OConsts;
@@ -62,13 +62,13 @@ import org.omegat.util.TMXReader;
 public class CommandThread extends Thread
 {
 	
-    public CommandThread(TransFrame tf, ProjectFrame projectWin)
+    public CommandThread(TransFrameInterface tf)
 	{
 		setName("Command thread"); // NOI18N
         setPriority(MIN_PRIORITY);
         
 		m_transFrame = tf;
-		m_projWin = projectWin;
+		m_projWin = m_transFrame.getProjectFrame();
         
 		m_config = new ProjectProperties();
 		m_strEntryHash = new HashMap(4096);
@@ -222,7 +222,7 @@ public class CommandThread extends Thread
 
 	private void requestLoad(RequestPacket pack)
 	{
-		TransFrame tf = (TransFrame) pack.obj;
+		TransFrameInterface tf = (TransFrameInterface) pack.obj;
 		// load new project
 		try
 		{
@@ -1015,7 +1015,7 @@ public class CommandThread extends Thread
 	public String	sourceRoot()	{ return m_config.getSourceRoot();		}
 	public String	projName()		{ return m_config.getProjectName();	}
 	public int		numEntries()	{ return m_srcTextEntryArray.size(); }
-	public TransFrame getTransFrame()			{ return m_transFrame;	}
+	public TransFrameInterface getTransFrame()			{ return m_transFrame;	}
 
 	public ArrayList	getTransMemory()		{ return m_tmList;		}
 
@@ -1046,7 +1046,7 @@ public class CommandThread extends Thread
 	//	so they can have a bigger picture of what's where
     private ProjectFileData	m_curFile;
 
-	private TransFrame	m_transFrame;
+	private TransFrameInterface	m_transFrame;
 	private ProjectFrame	m_projWin;
 
     private HashMap		m_strEntryHash;	// maps text to strEntry obj

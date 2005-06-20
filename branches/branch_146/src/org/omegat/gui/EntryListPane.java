@@ -22,7 +22,6 @@
 package org.omegat.gui;
 
 import org.omegat.gui.messages.MessageRelay;
-import org.omegat.core.threads.CommandThread;
 import org.omegat.util.OConsts;
 
 import javax.swing.*;
@@ -42,7 +41,7 @@ import org.omegat.util.PreferenceManager;
  */
 class EntryListPane extends JTextPane
 {
-	public EntryListPane(TransFrame trans)
+	public EntryListPane(TransFrameInterface trans)
 	{
 		m_transFrame = trans;
 		m_offsetList = new ArrayList();
@@ -132,5 +131,5 @@ class EntryListPane extends JTextPane
 	private StringBuffer	m_stringBuf;
 	private ArrayList		m_entryList;
 	private ArrayList		m_offsetList;
-	private TransFrame	m_transFrame;
+	private TransFrameInterface	m_transFrame;
 }

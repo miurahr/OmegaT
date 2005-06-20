@@ -57,7 +57,7 @@ import org.openide.awt.Mnemonics;
  */
 public class SearchWindow extends JFrame
 {
-	public SearchWindow(TransFrame par, SearchThread th, String startText)
+	public SearchWindow(TransFrameInterface par, SearchThread th, String startText)
 	{
 		//super(par, false);
 		setSize(650, 700);

@@ -21,7 +21,7 @@
 
 package org.omegat.gui.messages;
 
-import org.omegat.gui.TransFrame;
+import org.omegat.gui.TransFrameInterface;
 
 /**
  * class to pass messages
@@ -33,9 +33,9 @@ class MMx implements Runnable
 	private String	m_msg = "";	// NOI18N
 	private int		m_cmdNum;
 	private Throwable	m_throw;
-	private TransFrame m_tf;
+	private TransFrameInterface m_tf;
 
-	public MMx(TransFrame tf, int cmd)
+	public MMx(TransFrameInterface tf, int cmd)
 	{
 		m_cmdNum = 0;
 		m_tf = tf;
@@ -45,7 +45,7 @@ class MMx implements Runnable
 			m_cmdNum = cmd;
 	}
 
-	public MMx(TransFrame tf, int cmd, String msg)
+	public MMx(TransFrameInterface tf, int cmd, String msg)
 	{
 		m_cmdNum = 0;
 		m_tf = tf;
@@ -58,7 +58,7 @@ class MMx implements Runnable
 		}
 	}
 
-	public MMx(TransFrame tf, String msg, Throwable e)
+	public MMx(TransFrameInterface tf, String msg, Throwable e)
 	{
 		m_cmdNum = 0;
 		m_tf = tf;

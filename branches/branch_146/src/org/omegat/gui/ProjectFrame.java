@@ -32,13 +32,14 @@ import java.util.ArrayList;
 import org.openide.awt.Mnemonics;
 
 /**
- * A frame for project
+ * A frame for project,
+ * showing all the files of the project.
  *
  * @author Keith Godfrey
  */
 public class ProjectFrame extends JFrame
 {
-	public ProjectFrame(TransFrame parent)
+	public ProjectFrame(TransFrameInterface parent)
 	{
 		m_parent = parent;
 
@@ -147,7 +148,7 @@ public class ProjectFrame extends JFrame
 	private int			m_maxEntries;
 	private boolean		m_ready;
 
-	private TransFrame m_parent;
+	private TransFrameInterface m_parent;
 
 }
 

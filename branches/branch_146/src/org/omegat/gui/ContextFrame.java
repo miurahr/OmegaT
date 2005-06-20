@@ -39,9 +39,9 @@ import org.openide.awt.Mnemonics;
  *
  * @author Keith Godfrey
  */
-class ContextFrame extends JFrame
+public class ContextFrame extends JFrame
 {
-	public ContextFrame(TransFrame parent)
+	public ContextFrame(TransFrameInterface parent)
 	{
 		m_parent = parent;
 		m_srcLang = true;
@@ -139,7 +139,7 @@ class ContextFrame extends JFrame
 	private String m_searchResults;
 	private boolean	m_srcLang;
 
-	private TransFrame m_parent;
+	private TransFrameInterface m_parent;
 
 }
 

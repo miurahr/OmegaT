@@ -35,9 +35,10 @@ import org.omegat.util.PreferenceManager;
 import org.omegat.util.ProjectFileReader;
 
 /**
- * Creates a dialog where project properties are entered and/or modified
+ * Creates a dialog where project properties are entered and/or modified.
  *
  * @author Keith Godfrey
+ * @author Maxym Mykhalchuk
  */
 public class ProjectProperties extends JFrame
 {
