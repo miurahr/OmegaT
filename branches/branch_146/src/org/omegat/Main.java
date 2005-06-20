@@ -24,12 +24,10 @@ package org.omegat;
 import java.util.Date;
 import java.util.Locale;
 import javax.swing.UIManager;
-import org.omegat.core.threads.CommandThread;
 
-import org.omegat.gui.TransFrame;
+import org.omegat.core.threads.CommandThread;
 import org.omegat.gui.TransFrameInterface;
 import org.omegat.gui.main.MainWindow;
-import org.omegat.util.PreferenceManager;
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
 

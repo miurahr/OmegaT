@@ -21,7 +21,6 @@
 
 package org.omegat.core.threads;
 
-import org.omegat.gui.TransFrame;
 import org.omegat.gui.SearchWindow;
 import org.omegat.gui.TransFrameInterface;
 import org.omegat.util.StaticUtils;
