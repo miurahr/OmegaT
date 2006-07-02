@@ -81,9 +81,9 @@ public class OStrings
     public static final String TF_CUR_SEGMENT_START =
             "\n"                                                                // NOI18N
             + getString("TF_CUR_SEGMENT_START");
-    public static final String TF_CUR_SEGMENT_END =
-            " "                                                                 // NOI18N
-            + getString("TF_CUR_SEGMENT_END");
+    public static final String TF_CUR_SEGMENT_END = " ";
+            //"\n"                                                                // NOI18N
+            //+ getString("TF_CUR_SEGMENT_END");
     
     // Project frame
     public static final String PF_WINDOW_TITLE	= getString("PF_WINDOW_TITLE");
