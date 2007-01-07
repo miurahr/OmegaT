@@ -135,7 +135,7 @@ Localization contributed by
   Jean-Christophe Helary (French and Japanese)
   Yutaka Kachi (Japanese)
   Elina Lagoudaki (Greek)
-  Martin Lukac (Slovak)
+  Martin Lukáč (Slovak)
   Samuel Murray (Afrikaans)
   Yoshi Nakayama (Japanese)
   David Olveira (Portugese)
@@ -148,7 +148,9 @@ Localization contributed by
   Martin Wunderlich (German)
   Hisashi Yanagida (Japanese)
   Kunihiko Yokota (Japanese)
-  Erhan Yukselci (Turkish)
+  Erhan Yükselci (Turkish)
+  Dragomir Kovacevic (Serbo-Croat)
+  Claudio Nasso (Italian)
 
 Other contributions by
   Sabine Cretella
