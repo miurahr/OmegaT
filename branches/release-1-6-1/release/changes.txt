@@ -2,9 +2,29 @@
  OmegaT 1.6.1 Changes
 ----------------------------------------------------------------------
 
-1.6.1_02 vs. 1.4.5.04
-   67 Enchancements
+1.6.1_03 vs. 1.4.5.04
+   71 Enchancements
   120 Bugfixes
+
+----------------------------------------------------------------------
+1.6.1_03
+Contains new and updated localisations.
+
+ Implemented requests:
+
+  -
+
+ Other enhancements:
+
+  - Italian instant start guide updated
+
+  - Serbo-Croation user manual translation
+
+  - Albanian user manual translation
+
+ Bug fixes:
+
+  -
 
 ----------------------------------------------------------------------
 1.6.1_02
@@ -18,6 +38,8 @@ and two bug fixes
  Other enhancements:
 
   - French localisation updated
+
+  - Japanese localisation updated
 
   - Serbo-Croation UI localisation + instant start guide translation
 
