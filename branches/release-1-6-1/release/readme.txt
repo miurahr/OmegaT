@@ -151,6 +151,7 @@ Localization contributed by
   Erhan Yükselci (Turkish)
   Dragomir Kovacevic (Serbo-Croat)
   Claudio Nasso (Italian)
+  Ahmet Murati (Albanian)
 
 Other contributions by
   Sabine Cretella
