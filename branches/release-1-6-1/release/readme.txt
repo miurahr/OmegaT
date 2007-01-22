@@ -1,5 +1,7 @@
+@@TRANSLATION_NOTICE@@
+
 ==============================================================================
-  OmegaT 1.6.1 update 2, Read Me file
+  OmegaT 1.6.1 update 4, Read Me file
 
   1.  Information about OmegaT
   2.  What is OmegaT?
