@@ -96,11 +96,14 @@ Contribuidores anteriores:
 (ordem alfab�ica)
 
 O c�igo �uma contribui�o de
+  Didier Briel
   Kim Bruning
   Sacha Chua
+  Thomas Huriaux
   Maxym Mykhalchuk (atual coordenador dos desenvolvedores)
   Henry Pijffers (gerente de divulga�o da vers� 1.6)
   Benjamin Siband
+  Martin Wunderlich
 
 Contribui�o para localiza�o de
   Roberto Argus (portugu�-Brasil)

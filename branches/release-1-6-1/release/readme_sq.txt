@@ -1,4 +1,4 @@
-﻿==============================================================================
+==============================================================================
   OmegaT 1.6.1 Skedari Më Lexo
 
   1.  Informata për OmegaT
@@ -109,11 +109,14 @@ Kontrubuesit paraprak përfshijnë:
 (në renditje alfabetike)
 
 Kodi është kontribuar nga
+  Didier Briel
   Kim Bruning
   Sacha Chua
+  Thomas Huriaux
   Maxym Mykhalchuk (udhëheqësi i tanishëm i zhvillimit)
   Henry Pijffers (menagjer plasimi i verzionit 1.6 )
   Benjamin Siband
+  Martin Wunderlich
 
 Localization contributed by
   Roberto Argus (Portugeze-Brazil)

@@ -122,11 +122,14 @@ Avrete cos�un'idea di che cosa accade nel mondo di OmegaT...
 Elenco dei contributi precedenti (in ordine alfabetico)
 
 Contributi sul codice:
+  Didier Briel
   Kim Bruning
   Sacha Chua
+  Thomas Huriaux
   Maxym Mykhalchuk (attuale sviluppatore primario)
   Henry Pijffers
   Benjamin Siband
+  Martin Wunderlich
 
 Contributi per la localizzazione:
   Roberto Argus (Portoghese Brasile)

@@ -111,11 +111,14 @@ Medzi predchádzajúcich prispievateľov patria:
 (v abecednom poradí)
 
 Do kódu prispeli
+  Didier Briel
   Kim Bruning
   Sacha Chua
+  Thomas Huriaux
   Maxym Mykhalchuk (súčasný vedúci vývojár)
   Henry Pijffers (vedúci vydávania verzie 1.6)
   Benjamin Siband
+  Martin Wunderlich
 
 K lokalizácii prispeli
   Roberto Argus (brazílska portugalčina)

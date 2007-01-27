@@ -96,11 +96,14 @@ Među kolege koji su ranije dali svoj doprinos razvoju ubrajaju se:
 (po abecednom redu)
 
 Za razvoj koda
+  Didier Briel
   Kim Bruning
   Sacha Chua
+  Thomas Huriaux
   Maxym Mykhalchuk (sadašnji vođa razvoja)
   Henry Pijffers
   Benjamin Siband
+  Martin Wunderlich
 
 Lokalizaciju su potpomogli
   Roberto Argus (brazilski portugalski)

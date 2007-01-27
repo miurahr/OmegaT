@@ -89,11 +89,14 @@ OmegaT ユーザーインターフェイスや取扱説明ガイド、または�
 これまでに貢献してくれた方々： （ABC 順）
 
 コードに関する貢献者
+  Didier Briel
   Kim Bruning
   Sacha Chua
+  Thomas Huriaux
   Maxym Mykhalchuk（現在の開発担当）
   Henry Pijffers（1.6版　リリース担当）
   Benjamin Siband
+  Martin Wunderlich
 
 多言語化の貢献者
   Roberto Argus（ポルトガル語・ブラジル）

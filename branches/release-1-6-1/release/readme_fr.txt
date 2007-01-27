@@ -97,11 +97,14 @@ Les personnes qui ont contribué incluent :
 (ordre alphabétique)
 
 Contributions au code:
+  Didier Briel
   Kim Bruning
   Sacha Chua
+  Thomas Huriaux
   Maxym Mykhalchuk (actuel responsable du développement)
   Henry Pijffers (responsable de la version 1.6)
   Benjamin Siband
+  Martin Wunderlich
 
 Contributions aux traductions:
   Roberto Argus (portugais-Brésil)
