@@ -2,9 +2,36 @@
  OmegaT 1.6.1 Changes
 ----------------------------------------------------------------------
 
-1.6.1_03 vs. 1.4.5.04
-   71 Enchancements
-  120 Bugfixes
+1.6.2 vs. 1.4.5.04
+   72 Enchancements
+  124 Bugfixes
+
+----------------------------------------------------------------------
+1.6.2
+Contains a new file filter and a number of bug fixes
+
+ Implemented requests:
+
+  - Add direct support for Office 2007 XML
+  http://sourceforge.net/support/tracker.php?aid=1589239
+
+ Other enhancements:
+
+  -
+
+ Bug fixes:
+
+  - 1618742 - Ctrl+Z in search window is hard coded
+  http://sourceforge.net/support/tracker.php?aid=1618742
+
+  - 1612550 - Localization projects glitches
+  http://sourceforge.net/support/tracker.php?aid=1612550
+
+  - 1541277 - OO: Segmenting on inline drawings
+  http://sourceforge.net/support/tracker.php?aid=1541277
+
+  - 1628890 - Sentence break on comments in OOo documents
+  http://sourceforge.net/support/tracker.php?aid=1628890
 
 ----------------------------------------------------------------------
 1.6.1_03
