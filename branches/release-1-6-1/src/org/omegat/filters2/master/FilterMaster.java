@@ -60,7 +60,7 @@ import org.omegat.filters2.text.bundles.ResourceBundleFilter;
 import org.omegat.filters2.text.ini.INIFilter;
 import org.omegat.filters3.xml.docbook.DocBookFilter;
 import org.omegat.filters3.xml.opendoc.OpenDocFilter;
-import org.omegat.filters3.xml.opendoc.OpenDocXMLFilter;
+import org.omegat.filters3.xml.openxml.OpenXMLFilter;
 import org.omegat.filters3.xml.xhtml.XHTMLFilter;
 import org.omegat.util.LFileCopy;
 import org.omegat.util.Language;
@@ -86,8 +86,9 @@ public class FilterMaster
     public static String OT160RC12a_VERSION = "1.6 RC12a";                        // NOI18N
     public static String OT160FINAL_VERSION = "1.6.0";                        // NOI18N
     public static String OT161_VERSION      = "1.6.1";                    // NOI18N
+    public static String OT162_VERSION      = "1.6.2";                    // NOI18N
     /** Currently file filters support version. */
-    public static String CURRENT_VERSION = OT161_VERSION;
+    public static String CURRENT_VERSION = OT162_VERSION;
 
     /** Wrapper around filters storage in an XML file */
     private Filters  filters;
@@ -703,6 +704,7 @@ public class FilterMaster
         res.addFilter(new OneFilter(new INIFilter(), false));
         res.addFilter(new OneFilter(new DocBookFilter(), false));
         res.addFilter(new OneFilter(new OpenDocFilter(), false));
+        res.addFilter(new OneFilter(new OpenXMLFilter(), false));
         return res;
     }
     
