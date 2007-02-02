@@ -1,7 +1,7 @@
 @@TRANSLATION_NOTICE@@
 
 ==============================================================================
-  OmegaT 1.6.1 update 4, Read Me file
+  OmegaT 1.6.2, Read Me file
 
   1.  Information about OmegaT
   2.  What is OmegaT?
@@ -154,6 +154,7 @@ Localization contributed by
   Dragomir Kovacevic (Serbo-Croat)
   Claudio Nasso (Italian)
   Ahmet Murati (Albanian)
+  Sonja Tomaskovic (German)
 
 Other contributions by
   Sabine Cretella
