@@ -1,5 +1,5 @@
 ==============================================================================
-  File Leggimi di OmegaT 1.6.1
+  File Leggimi di OmegaT 1.6.2
 
   1.  Informazioni su OmegaT
   2.  Che cosa �OmegaT?
@@ -169,7 +169,7 @@ Altri contributi:
   e molte, molte altre persone che hanno contribuito.
 
 OmegaT utilizza le seguenti librerie:
-  HTMLParser di Somik Raha, Derrick Oswald e altri (Common Public License).
+  HTMLParser di Somik Raha, Derrick Oswald e altri (LGPL License).
   MRJ Adapter di Steve Roy (LGPL License).
   VLDocking Framework di VLSolutions (CeCILL License).
 

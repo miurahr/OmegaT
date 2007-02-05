@@ -259,6 +259,7 @@ File formats supported:
   - INI files (files with key=value pairs of any encoding)
   - PO files
   - DocBook documentation file format
+  - Microsoft OpenXML files
 
 Core changes:
   - Flexible (Sentence) Segmentation

@@ -3,8 +3,8 @@
 ----------------------------------------------------------------------
 
 1.6.2 vs. 1.4.5.04
-   72 Enchancements
-  124 Bugfixes
+   73 Enchancements
+  125 Bugfixes
 
 ----------------------------------------------------------------------
 1.6.2
@@ -17,7 +17,7 @@ Contains a new file filter and a number of bug fixes
 
  Other enhancements:
 
-  -
+  - German instant start tutorial
 
  Bug fixes:
 
@@ -32,6 +32,17 @@ Contains a new file filter and a number of bug fixes
 
   - 1628890 - Sentence break on comments in OOo documents
   http://sourceforge.net/support/tracker.php?aid=1628890
+
+----------------------------------------------------------------------
+1.6.1_04
+Fixes a licensing issue with the MRJAdapter lib
+
+Version 1.09 of the MRJAdapter library is licensed under the
+Artistic License, which is incompatible with the GPL, the license
+OmegaT uses. The effect of this is that redistribution of OmegaT
+is not allowed. We have fixed this by reverting to version 1.08
+of the MRJAdapter library, licensed under the LGPL, which is
+GPL-compatible.
 
 ----------------------------------------------------------------------
 1.6.1_03

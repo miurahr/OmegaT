@@ -1,5 +1,5 @@
 ==============================================================================
-  OmegaT 1.6.1 datoteka Read Me
+  OmegaT 1.6.2 datoteka Read Me
 
   1.  Obavještenja o OmegaT
   2.  Šta je OmegaT?
@@ -142,7 +142,7 @@ Ostali doprinosi
   i mnogi, mnogi drugi ljudi koji su bili od velike pomoći
 
 OmegaT koristi sljedeće biblioteke:
-  HTML Parser autora Somik Raha, Derrick Oswald-a i drugih (Common Public License).
+  HTML Parser autora Somik Raha, Derrick Oswald-a i drugih (LGPL License).
   MRJ Adapter Steve Roy-a (LGPL License).
   VLDocking Framework od strane VLSolutions (CeCILL License).
 

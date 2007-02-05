@@ -1,5 +1,5 @@
 ==============================================================================
-  OmegaT 1.6.1 súbor Čítaj ma
+  OmegaT 1.6.2 súbor Čítaj ma
 
   1.  Informácie o OmegaT
   2.  Čo je OmegaT?

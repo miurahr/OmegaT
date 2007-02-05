@@ -1,5 +1,5 @@
 ==============================================================================
-  OmegaT 1.6.1 Skedari Më Lexo
+  OmegaT 1.6.2 Skedari Më Lexo
 
   1.  Informata për OmegaT
   2.  Çfarë është OmegaT?

@@ -1,5 +1,5 @@
 ============================================================================== 
-  OmegaT 1.6.1 Arquivo Leiame
+  OmegaT 1.6.2 Arquivo Leiame
 
   1.  Informa�es sobre o OmegaT
   2.  O que �OmegaT?

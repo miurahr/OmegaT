@@ -1,5 +1,5 @@
 ==============================================================================
-  OmegaT 1.6.1 mise à jour 02, Fichier « Lisez-moi »
+  OmegaT 1.6.2, Fichier « Lisez-moi »
 (encodage: UTF-8)
 
   1.  Informations à propos de OmegaT
@@ -146,7 +146,7 @@ OmegaT utilise les librairies suivantes:
   HTMLParser par Somik Raha, Derrick Oswald etc. (Licence LGPL).
   http://sourceforge.net/projects/htmlparser
   
-  MRJ Adapter par Steve Roy (licence artistique).
+  MRJ Adapter par Steve Roy (licence LGPL).
   http://homepage.mac.com/sroy/mrjadapter/
   
   VLDocking Framework 2.0 par VLSolutions (licence CeCILL).
