@@ -33,6 +33,9 @@ Contains a new file filter and a number of bug fixes
   - 1628890 - Sentence break on comments in OOo documents
   http://sourceforge.net/support/tracker.php?aid=1628890
 
+  - 1606595 - Resource bundle filter incomplete
+  http://sourceforge.net/support/tracker.php?aid=1606595
+
 ----------------------------------------------------------------------
 1.6.1_04
 Fixes a licensing issue with the MRJAdapter lib
