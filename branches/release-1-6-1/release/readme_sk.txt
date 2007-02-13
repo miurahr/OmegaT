@@ -1,5 +1,7 @@
+Tento preklad vytvoril Martin Lukáč, copyright© 2007.
+
 ==============================================================================
-  OmegaT 1.6.2 súbor Čítaj ma
+  OmegaT 1.6.2, súbor Čítaj ma
 
   1.  Informácie o OmegaT
   2.  Čo je OmegaT?
@@ -11,19 +13,19 @@
 ==============================================================================
   1.  Informácie o OmegaT
 
-Najaktuálnejšie informácie o OmegaT môžete nájsť na:
+
+Najaktuálnejšie informácie o OmegaT môžete nájsť na
+(v angličtine, slovenčine, holandčine, portugalčine):
       http://www.omegat.org/omegat/omegat.html
 
-Viac informácií môžete získať na nasledujúcich stránkach:
-
-Používateľská podpora, v používateľskej skupine na Yahoo:
+Používateľská podpora, v používateľskej skupine na Yahoo (viacjazyčná), kde sa dajú prehľadávať
+archívy bez prihlasovania:
      http://groups.yahoo.com/group/OmegaT/
-     Kde sú k dispozícii archívy na prehliadanie bez potreby prihlásenia.
 
-Požiadavky na zlepšenia, na stránke SourceForge:
+Požiadavky na zlepšenia (v angličtine), na stránke SourceForge:
      http://sourceforge.net/tracker/?group_id=68187&atid=520350
 
-Hlásenia chýb, na stránke SourceForge:
+Hlásenia chýb (v angličtine), na stránkach SourceForge:
      http://sourceforge.net/tracker/?group_id=68187&atid=520347
 
 ==============================================================================
@@ -49,7 +51,7 @@ Hlavné vlastnosti OmegaT sú
 OmegaT podporuje súbory OpenDocument, súbory Microsoft Office (pomocou
 OpenOffice.org ako filtra pre konverziu, alebo konverziou do HTML),
 súbory OpenOffice.org alebo StarOffice, ako aj (X)HTML, lokalizačné súbory
-Javy alebo obyčajné textové súbory.
+Javy, obyčajné textové súbory a ďalšie.
 
 OmegaT automaticky spracuje dokonca aj najkomplexnejšie hierarchie zdrojových adresárov,
 pre prístup k všetkým podporovaným súborom, a vytvára cieľový adresár
@@ -94,17 +96,17 @@ Ak chcete prispieť k vývoju OmegaT, spojte sa s vývojármi na:
 
 Ak chcete pomôcť pri preklade používateľského rozhrania OmegaT, používateľskej príručky alebo iných príbuzných dokumentov,
 prečítajte si:
-      http://www.omegat.org/omegat/translation-info.html
+      http://www.omegat.org/omegat/omegat_en/translation-info.html
 
 A prihláste sa do konferencie pre prekladateľov:
       http://lists.sourceforge.net/mailman/listinfo/omegat-l10n
 
 Pre akýkoľvek iný príspevok sa najprv prihláste do používateľskej skupiny na:
-      http://groups.yahoo.com/group/OmegaT/
+      http://tech.groups.yahoo.com/group/omegat/
 
 A zistite čo sa deje vo svete OmegaT...
 
-  OmegaT je pôvodne prácou Keitha Godfreyho.
+  OmegaT je pôvodnou prácou Keitha Godfreya.
   Marc Prior je koordinátorom projektu OmegaT.
 
 Medzi predchádzajúcich prispievateľov patria:
@@ -115,8 +117,8 @@ Do kódu prispeli
   Kim Bruning
   Sacha Chua
   Thomas Huriaux
-  Maxym Mykhalchuk (súčasný vedúci vývojár)
-  Henry Pijffers (vedúci vydávania verzie 1.6)
+  Maxym Mykhalchuk (vedúci vývojár)
+  Henry Pijffers (vedúci vydávania)
   Benjamin Siband
   Martin Wunderlich
 
@@ -146,7 +148,11 @@ K lokalizácii prispeli
   Martin Wunderlich (nemčina)
   Hisashi Yanagida (japončina)
   Kunihiko Yokota (japončina)
-  Erhan Yukselci (turečtina)
+  Erhan Yükselci (turečtina)
+  Dragomir Kovacevic (srbochorvátčina)
+  Claudio Nasso (taliančina)
+  Ahmet Murati (albánčina)
+  Sonja Tomaskovic (nemčina)
 
 Ďalej prispeli
   Sabine Cretella
@@ -156,13 +162,15 @@ K lokalizácii prispeli
   Marc Prior (súčasný vedúci lokalizácie)
   a mnoho, mnoho ďalších veľmi nápomocných ľudí
 
+(Ak si myslíte, že ste významne prispeli k Projektu OmegaT ale svoje meno nevidíte v týchto zoznamoch, pokojne nás môžete kontaktovať.)
+
 OmegaT používa nasledujúce knižnice:
   HTMLParser od Somika Rahu, Derricka Oswalda a iných (licencia LGPL).
   http://sourceforge.net/projects/htmlparser
-  
+
   MRJ Adapter od Steva Roya (licencia LGPL).
   http://homepage.mac.com/sroy/mrjadapter/
-  
+
   VLDocking Framework od VLSolutions (licencia CeCILL).
   http://www.vlsolutions.com/en/products/docking/
 
@@ -202,6 +210,41 @@ ako používateľ Source Forge.
 ==============================================================================
 6.   Podrobnosti o vydaní
 
+5.  Máte s OmegaT problémy ? Potrebujete pomoc ?
+
+Pred ohlásením akejkoľvek chyby sa uistite, že ste dôkladne skontrolovali
+dokumentáciu. To čo vidíte môže byť vlastnosťou OmegaT
+ktorú ste práve objavili. Ak sa pozriete do logu OmegaT a vidíte slová ako
+"Error" ("Chyba"), "Warning" ("Varovanie"), "Exception" ("Výnimka"), alebo "died unexpectedly" ("neočakávané ukončenie") potom ste na stope
+niečomu (log.txt sa nachádza v adresári predvolieb používateľa, jeho
+umiestnenie nájdete v príručke).
+
+Ďalšia vec, ktorú urobíte je overiť si to čo ste našli u ostatných používateľov, aby ste sa uistili,
+že toto už niekedy nebolo hlásené. Môžete si to overiť aj na stránke hlásení chýb na
+SourceForge. Iba keď ste si istí, že ste prvý kto našiel nejakú
+zopakovateľnú sekvenciu udalostí, ktorá spustila niečo čo sa nemalo
+stať, tak by ste mali podať hlásenie o chybe.
+
+Každé dobré hlásenie o chybe potrebuje presne tri veci.
+  - Kroky, ktoré treba zopakovať,
+  - Čo ste čakali, že uvidíte, a
+  - Čo ste videli namiesto toho.
+
+Môžete pridať kópie súborov, časti logu, snímky obrazovky, čokoľvek o čom
+si myslíte, že pomôže vývojárom nájsť a opraviť vašu chybu.
+
+Archívy používateľskej skupiny môžete prehliadať na:
+     http://tech.groups.yahoo.com/group/omegat/
+
+Prehliadať stránku hlásení o chybách a v prípade potreeby pridať nové hlásenie o chybe môžete na:
+     http://sourceforge.net/tracker/?group_id=68187&atid=520347
+
+Aby ste boli informovaní o tom čo sa deje s vaším hlásením o chybe sa môžete zaregistrovať
+ako používateľ Source Forge.
+
+==============================================================================
+6.   Podrobnosti o vydaní
+
 Podrobné informácie o zmenách v tomto
 a všetkých predchádzajúcich vydaniach nájdete v súbore 'changes.txt'.
 
@@ -214,6 +257,7 @@ Podporované formáty súborov:
   - INI súbory (súbory s pármi kľúč=hodnota v akomkoľvek kódovaní)
   - PO súbory
   - Formát dokumentačných súborov DocBook
+  - súbory Microsoft OpenXML
 
 Zmeny v jadre:
   - Flexibilná (vetná) segmentácia
