@@ -179,30 +179,6 @@ Il sera nécessaire de procéder à un enregistrement en tant qu'utilisateur de 
 ==============================================================================
 6.   Détails de la version
 
-5.  Est-ce qu'OmegaT vous pose problème ? Avez-vous besoin d'aide ?
-
-Avant de faire un rapport de bogue, prenez la précaution de bien lire le manuel utilisateur. Ce que vous considérez comme un problème peut en fait être une fonction d'OmegaT. Si les mots suivants se trouvent dans le journal : « Erreur », « Avertissement », ou bien « a été avortée », vous avez probablement trouvé un problème. Le journal est le fichier log.txt situé dans le répertoire des préférences utilisateur (consulter le manuel pour déterminer son l'emplacement).
-
-L'étape suivante est d'avoir votre découverte confirmée par d'autres utilisateurs pour s'assurer qu'un rapport n'a pas déjà été rempli. Vous pouvez aussi consulter la page des bogues sur SourceForge. Une fois que vous êtes sûr d'avoir découvert une séquence reproductible d'événements qui aboutit à un résultat non souhaitable, il est possible de remplir un rapport de bogue.
-
-Un bon rapport de bogue comporte exactement 3 parties.
-  - la séquence à reproduire,
-  - le résultat que vous attendiez et
-  - ce que vous avez vu à la place.
-
-Il est possible d'ajouter des copies de fichiers, des portions du journal, des copies d'écran à votre rapport, tout ce qui vous semble qui aidera les développeurs à résoudre votre problème.
-
-Les archives du groupe utilisateur sont à :
-     http://tech.groups.yahoo.com/group/omegat/
-
-Pour consulter la page des rapports de bogue et pour remplir un nouveau rapport rendez-vous à :
-     http://sourceforge.net/tracker/?group_id=68187&atid=520347
-
-Il sera nécessaire de procéder à un enregistrement en tant qu'utilisateur de SourceForge si vous souhaitez recevoir des informations sur les suites données à votre rapport.
-
-==============================================================================
-6.   Détails de la version
-
 Consultez « changes.txt » pour avoir des informations détaillées sur les modifications incluses dans cette version ainsi que les précédentes.
 
 Formats de fichiers acceptés:

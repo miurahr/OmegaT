@@ -210,41 +210,6 @@ ako používateľ Source Forge.
 ==============================================================================
 6.   Podrobnosti o vydaní
 
-5.  Máte s OmegaT problémy ? Potrebujete pomoc ?
-
-Pred ohlásením akejkoľvek chyby sa uistite, že ste dôkladne skontrolovali
-dokumentáciu. To čo vidíte môže byť vlastnosťou OmegaT
-ktorú ste práve objavili. Ak sa pozriete do logu OmegaT a vidíte slová ako
-"Error" ("Chyba"), "Warning" ("Varovanie"), "Exception" ("Výnimka"), alebo "died unexpectedly" ("neočakávané ukončenie") potom ste na stope
-niečomu (log.txt sa nachádza v adresári predvolieb používateľa, jeho
-umiestnenie nájdete v príručke).
-
-Ďalšia vec, ktorú urobíte je overiť si to čo ste našli u ostatných používateľov, aby ste sa uistili,
-že toto už niekedy nebolo hlásené. Môžete si to overiť aj na stránke hlásení chýb na
-SourceForge. Iba keď ste si istí, že ste prvý kto našiel nejakú
-zopakovateľnú sekvenciu udalostí, ktorá spustila niečo čo sa nemalo
-stať, tak by ste mali podať hlásenie o chybe.
-
-Každé dobré hlásenie o chybe potrebuje presne tri veci.
-  - Kroky, ktoré treba zopakovať,
-  - Čo ste čakali, že uvidíte, a
-  - Čo ste videli namiesto toho.
-
-Môžete pridať kópie súborov, časti logu, snímky obrazovky, čokoľvek o čom
-si myslíte, že pomôže vývojárom nájsť a opraviť vašu chybu.
-
-Archívy používateľskej skupiny môžete prehliadať na:
-     http://tech.groups.yahoo.com/group/omegat/
-
-Prehliadať stránku hlásení o chybách a v prípade potreeby pridať nové hlásenie o chybe môžete na:
-     http://sourceforge.net/tracker/?group_id=68187&atid=520347
-
-Aby ste boli informovaní o tom čo sa deje s vaším hlásením o chybe sa môžete zaregistrovať
-ako používateľ Source Forge.
-
-==============================================================================
-6.   Podrobnosti o vydaní
-
 Podrobné informácie o zmenách v tomto
 a všetkých predchádzajúcich vydaniach nájdete v súbore 'changes.txt'.
 
