@@ -30,7 +30,7 @@ Contains a revised manual, two new localisations (Danish, polish) and bug fixes
   http://sourceforge.net/support/tracker.php?aid=1812183
 
   - <context> should be ignored in XLIFF files  
-  http://sourceforge.net/support/tracker.php?aid=1802000
+  http://sourceforge.net/support/tracker.php?aid=1800677
 
   - Footnotes break segments in OOo 1.x documents  
   http://sourceforge.net/support/tracker.php?aid=1812385
