@@ -203,6 +203,7 @@ Code has been contributed by
   Zoltan Bartko
   Didier Briel (release manager)
   Kim Bruning
+  Alex Buloichik
   Sacha Chua
   Thomas Huriaux
   Maxym Mykhalchuk
