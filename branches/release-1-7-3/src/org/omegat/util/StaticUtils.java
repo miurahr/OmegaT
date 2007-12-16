@@ -4,7 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey, Maxym Mykhalchuk, and Henry Pijffers
-               2007 Didier Briel
+               2007 Didier Briel, Alex Buloichik
                Home page: http://www.omegat.org/omegat/omegat.html
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -45,6 +45,7 @@ import java.util.TreeSet;
  * @author Maxym Mykhalchuk
  * @author Henry Pijffers (henry.pijffers@saxnot.com)
  * @author Didier Briel
+ * @author Alex Buloichik
  */
 public class StaticUtils
 {
@@ -99,7 +100,7 @@ public class StaticUtils
                 if(PatternConsts.OMEGAT_TAG_ONLY.matcher(tag).matches())
                     tagList.add(tag);
                 state = STATE_NORMAL;
-                tag = "";												// NOI18N
+                tag = "";                                                       // NOI18N						// NOI18N
             }
             else if (state == STATE_COLLECT_TAG)
                 tag += c;
@@ -345,9 +346,10 @@ public class StaticUtils
     {
         char c;
         StringBuffer out = new StringBuffer();
-        for (int i=0; i<plaintext.length(); i++)
+        String text = fixChars(plaintext);
+        for (int i=0; i<text.length(); i++)
         {
-            c = plaintext.charAt(i);
+            c = text.charAt(i);
             out.append(makeValidXML(c));
         }
         return out.toString();
@@ -782,4 +784,30 @@ public class StaticUtils
         return MessageFormat.format(str, arguments);
     }
 
+    /**
+     * Replace invalid XML chars by spaces. See supported chars at
+     * http://www.w3.org/TR/2006/REC-xml-20060816/#charsets.
+     * 
+     * @param str input stream
+     * @return result stream
+     */
+    public static String fixChars(String str) {
+        char[] result = new char[str.length()];
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c < 0x20) {
+                if (c != 0x09 && c != 0x0A && c != 0x0D) {
+                    c = ' ';
+                }
+            } else if (c >= 0x20 && c <= 0xD7FF) {
+            } else if (c >= 0xE000 && c <= 0xFFFD) {
+            } else if (c >= 0x10000 && c <= 0x10FFFF) {
+            } else {
+                c = ' ';
+            }
+            result[i] = c;
+        }
+        return new String(result);
+    }
+     
 } // StaticUtils
