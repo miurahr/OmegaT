@@ -6,7 +6,7 @@
 
 
   4 Enhancements
-  4 Bugfixes
+  5 Bugfixes
 
 ----------------------------------------------------------------------
 1.7.3 update 1
@@ -35,6 +35,9 @@
 
   - Mediawiki import - remove invalid chars in filename
   http://sourceforge.net/support/tracker.php?aid=1878113  
+
+  - Relative paths with "similar names" not working
+  http://sourceforge.net/support/tracker.php?aid=1879571   
 
 ----------------------------------------------------------------------
  OmegaT 1.7.3 Changes
