@@ -6,7 +6,7 @@
 
 
   4 Enhancements
-  5 Bugfixes
+  6 Bugfixes
 
 ----------------------------------------------------------------------
 1.7.3 update 1
@@ -38,6 +38,10 @@
 
   - Relative paths with "similar names" not working
   http://sourceforge.net/support/tracker.php?aid=1879571   
+
+  - PO-filter fails to handle plural forms
+  http://sourceforge.net/support/tracker.php?aid=1879892    
+
 
 ----------------------------------------------------------------------
  OmegaT 1.7.3 Changes
