@@ -11,7 +11,7 @@
 ----------------------------------------------------------------------
 1.7.3 update 1
 
-  Enhancements:
+  Implemented requests:
 
   - Exceptions for EN.*: Fig., St., middle name.
   http://sourceforge.net/support/tracker.php?aid=1856354 
