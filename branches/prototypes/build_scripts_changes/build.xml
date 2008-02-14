@@ -32,12 +32,16 @@
   compile: compile project
   run:     run application
   release: build aplication release
+  
+  win:      Release pack for Windows platform
+  webstart: Release pack for WebStart
 
 -->
 <project name="OmegaT" default="release" basedir=".">
     <property name="src.version" value="1.5" />
     <property name="src.encoding" value="ISO-8859-1" />
     <property name="mainclass" value="org.omegat.Main" />
+    <property name="webstart.url" value="http://omegat.sf.net/" />
 
     <!-- Define application version -->
     <property file="src/org/omegat/Version.properties" />
@@ -53,7 +57,6 @@
     <target name="clean" description="Cleans all build results, i.e. directories 'build' and 'dist'">
         <delete dir="build" failonerror="no" />
         <delete dir="dist" failonerror="no" />
-        <delete dir="dist2" failonerror="no" />
         <ant dir="lib-mnemonics" antfile="build.xml" target="clean" />
     </target>
 
@@ -80,12 +83,12 @@
 
     <!-- Pack classes into jar -->
     <target name="jar" depends="compile" description="Pack classes into jar">
-        <mkdir dir="build" />
         <pathconvert property="app.jars.path" refid="app.jars" pathsep=" " dirsep="/">
             <map from="${basedir}/lib-mnemonics/dist/" to="lib/" />
             <map from="${basedir}/" to="" />
         </pathconvert>
-        <jar file="build/OmegaT.jar" basedir="build/classes">
+        <mkdir dir="build/jar" />
+        <jar file="build/jar/OmegaT.jar" basedir="build/classes">
             <manifest>
                 <attribute name="Main-Class" value="${mainclass}" />
                 <attribute name="Class-Path" value="${app.jars.path}" />
@@ -97,23 +100,23 @@
 
     <!-- Prepare application for distribution -->
     <target name="release" depends="clean,jar,dist-src,l10n-pack" description="Prepare application for distribution">
-        <mkdir dir="dist" />
+        <mkdir dir="build/plain" />
 
-        <copy todir="dist">
-            <fileset dir="release" includes="*" excludes="readme.txt win32-specific l10n-project" />
+        <copy todir="build/plain">
+            <fileset dir="release" includes="*" excludes="readme.txt win32-specific l10n-project WebStart-specific" />
         </copy>
-        <copy todir="dist" file="release/readme.txt">
+        <copy todir="build/plain" file="release/readme.txt">
             <!-- Remove TRANSLATION_NOTICE placeholder (from English readme) -->
             <filterset begintoken="@@" endtoken="@@">
                 <filter token="TRANSLATION_NOTICE" value="" />
             </filterset>
         </copy>
-        <mkdir dir="dist/docs" />
-        <copy todir="dist/docs">
+        <mkdir dir="build/plain/docs" />
+        <copy todir="build/plain/docs">
             <!-- copy all files except English legalNotices.html -->
             <fileset dir="docs" excludes="en/legalNotices.html" />
         </copy>
-        <copy todir="dist/docs">
+        <copy todir="build/plain/docs">
             <!-- copy just English legalNotices.html -->
             <fileset dir="docs" includes="en/legalNotices.html" />
             <!-- Remove TRANSLATION_NOTICE placeholder (from English manual) -->
@@ -121,29 +124,30 @@
                 <filter token="TRANSLATION_NOTICE" value="" />
             </filterset>
         </copy>
-        <mkdir dir="dist/images" />
-        <copy todir="dist/images">
+        <mkdir dir="build/plain/images" />
+        <copy todir="build/plain/images">
             <fileset dir="images" />
         </copy>
-        <mkdir dir="dist/lib" />
-        <copy todir="dist/lib">
+        <mkdir dir="build/plain/lib" />
+        <copy todir="build/plain/lib">
             <fileset dir="lib" />
             <fileset dir="lib-mnemonics/dist" />
         </copy>
-        <copy todir="dist">
-            <fileset dir="build" includes="*.jar" />
+        <copy todir="build/plain">
+            <fileset dir="build/jar" includes="*.jar" />
         </copy>
 
-        <zip basedir="dist" destfile="dist2/OmegaT_${distversion}.zip" />
+    	<mkdir dir="dist"/>
+        <zip basedir="build/plain" destfile="dist/OmegaT_${distversion}.zip" />
     </target>
 
 
     <!-- Builds a source pack -->
     <target name="dist-src" description="Build source distribution">
-        <mkdir dir="dist2" />
-        <zip destfile="dist2/OmegaT_${distversion}_Source.zip"
+        <mkdir dir="dist" />
+        <zip destfile="dist/OmegaT_${distversion}_Source.zip"
              basedir="."
-             excludes="**/nbproject/private/** **/build/** **/dist/** .classpath .project" />
+             excludes="**/build/** **/dist/** **/classes/** .classpath .project" />
     </target>
 
     <!-- Build a distribution of localizable files -->
@@ -151,7 +155,7 @@
         <property name="l10n.project.dir" value="release/l10n-project" />
         <property name="l10n.dir" value="build/l10n" />
 
-        <mkdir dir="dist2" />
+        <mkdir dir="dist" />
         <!-- minimal -->
         <property name="l10n.min" value="OmegaT_${distversion}_L10N_Minimal" />
         <property name="l10n.min.dir" value="${l10n.dir}/${l10n.min}" />
@@ -168,7 +172,7 @@
                         value="This translation is the work of [insert your name], copyright© [insert year]." />
             </filterset>
         </copy>
-        <zip destfile="dist2/${l10n.min}.zip" basedir="${l10n.dir}" includes="${l10n.min}/**" />
+        <zip destfile="dist/${l10n.min}.zip" basedir="${l10n.dir}" includes="${l10n.min}/**" />
 
         <!-- full -->
         <property name="l10n.max" value="OmegaT_${distversion}_L10N_Full" />
@@ -194,7 +198,7 @@
                         value="&lt;p&gt;This translation is the work of [insert your name], copyright© [insert year].&lt;/p&gt;" />
             </filterset>
         </copy>
-        <zip destfile="dist2/${l10n.max}.zip" basedir="${l10n.dir}" includes="${l10n.max}/**" />
+        <zip destfile="dist/${l10n.max}.zip" basedir="${l10n.dir}" includes="${l10n.max}/**" />
     </target>
 
 
@@ -216,11 +220,35 @@
         <filter token="VERSION_NUMBER_SUBST" value="${distversion}" />
         <copy todir="dist" file="release/win32-specific/OmegaT.iss" filtering="on" />
 
-        <mkdir dir="dist2" />
+        <mkdir dir="dist" />
         <exec executable="${iscc.exe}">
             <arg file="dist/OmegaT.iss" />
         </exec>
     </target>
+	
+	<!-- Build WebStart pack -->
+	<target name="webstart" depends="clean,jar" description="Build WebStart pack">
+		<mkdir dir="build/webstart"/>
+        <copy todir="build/webstart">
+            <fileset dir="release/WebStart-specific" includes="*.jnlp" />
+            <!-- Replace @@HTTP_BASE@@ placeholder -->
+            <filterset begintoken="@@" endtoken="@@">
+                <filter token="HTTP_BASE" value="${webstart.url}" />
+            </filterset>
+        </copy>
+		<mkdir dir="build/webstart"/>
+		<jar jarfile="build/webstart/hunspell-win.jar" basedir="native" includes="hunspell.dll"/>
+		<jar jarfile="build/webstart/hunspell-lin-i386.jar" basedir="native" includes="libhunspell.so"/>
+		<jar jarfile="build/webstart/hunspell-mac.jar" basedir="native" includes="libhunspell.dylib"/>
+				
+		<mkdir dir="dist"/>
+		<zip destfile="dist/WebStart.zip">
+			<fileset dir="lib" includes="**/*.jar"/>
+			<fileset dir="lib-mnemonics/dist" includes="**/*.jar"/>
+			<fileset dir="build/jar" includes="**/*.jar"/>
+			<fileset dir="build/webstart"/>
+		</zip>
+	</target>
 
     <!-- Build lib-mnemonics.jar -->
     <target name="lib-mnemonics" description="Build lib-mnemonics.jar">
