@@ -41,7 +41,6 @@
     <property name="src.version" value="1.5" />
     <property name="src.encoding" value="ISO-8859-1" />
     <property name="mainclass" value="org.omegat.Main" />
-    <property name="webstart.url" value="http://omegat.sf.net/" />
 
     <!-- Define application version -->
     <property file="src/org/omegat/Version.properties" />
@@ -137,7 +136,7 @@
             <fileset dir="build/jar" includes="*.jar" />
         </copy>
 
-    	<mkdir dir="dist"/>
+        <mkdir dir="dist" />
         <zip basedir="build/plain" destfile="dist/OmegaT_${distversion}.zip" />
     </target>
 
@@ -225,30 +224,39 @@
             <arg file="dist/OmegaT.iss" />
         </exec>
     </target>
-	
-	<!-- Build WebStart pack -->
-	<target name="webstart" depends="clean,jar" description="Build WebStart pack">
-		<mkdir dir="build/webstart"/>
+
+    <!-- Build WebStart pack -->
+    <target name="webstart" depends="clean,jar" description="Build WebStart pack">
+        <property file="build.webstart.properties" />
+
+        <mkdir dir="build/webstart" />
         <copy todir="build/webstart">
             <fileset dir="release/WebStart-specific" includes="*.jnlp" />
             <!-- Replace @@HTTP_BASE@@ placeholder -->
             <filterset begintoken="@@" endtoken="@@">
-                <filter token="HTTP_BASE" value="${webstart.url}" />
+                <filter token="HTTP_BASE" value="${webstart.codebase}" />
             </filterset>
         </copy>
-		<mkdir dir="build/webstart"/>
-		<jar jarfile="build/webstart/hunspell-win.jar" basedir="native" includes="hunspell.dll"/>
-		<jar jarfile="build/webstart/hunspell-lin-i386.jar" basedir="native" includes="libhunspell.so"/>
-		<jar jarfile="build/webstart/hunspell-mac.jar" basedir="native" includes="libhunspell.dylib"/>
-				
-		<mkdir dir="dist"/>
-		<zip destfile="dist/WebStart.zip">
-			<fileset dir="lib" includes="**/*.jar"/>
-			<fileset dir="lib-mnemonics/dist" includes="**/*.jar"/>
-			<fileset dir="build/jar" includes="**/*.jar"/>
-			<fileset dir="build/webstart"/>
-		</zip>
-	</target>
+
+        <copy todir="build/webstart">
+            <fileset dir="lib" includes="**/*.jar" />
+            <fileset dir="lib-mnemonics/dist" includes="**/*.jar" />
+            <fileset dir="build/jar" includes="**/*.jar" />
+        </copy>
+
+        <jar jarfile="build/webstart/hunspell-win.jar" basedir="native" includes="hunspell.dll" />
+        <jar jarfile="build/webstart/hunspell-lin-i386.jar" basedir="native" includes="libhunspell.so" />
+        <jar jarfile="build/webstart/hunspell-mac.jar" basedir="native" includes="libhunspell.dylib" />
+
+        <signjar jar="build/webstart/*.jar"
+                 keystore="${signkey.keystore}"
+                 alias="${signkey.alias}"
+                 storepass="${signkey.storepass}"
+                 keypass="${signkey.keypass}" />
+
+        <mkdir dir="dist" />
+        <zip destfile="dist/WebStart.zip" basedir="build/webstart" />
+    </target>
 
     <!-- Build lib-mnemonics.jar -->
     <target name="lib-mnemonics" description="Build lib-mnemonics.jar">
