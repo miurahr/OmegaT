@@ -28,6 +28,7 @@ package org.omegat.util;
 import java.io.File;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -797,28 +798,22 @@ public class StaticUtils
     public static String downloadFileToString(String urlString) throws IOException {
         URLConnection urlConn = null;
         InputStream in = null;
-        StringBuffer sb = new StringBuffer();
         
         URL url = new URL(urlString);
         urlConn = url.openConnection();
         in = urlConn.getInputStream();
 
-        byte[] byteBuffer = new byte[1024];
-
-        int offset = 0;
-        while ((offset = in.read(byteBuffer)) != -1) {
-            sb.append(new String(byteBuffer));
-        }
-        
-        if (in != null) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            LFileCopy.copy(in, out);
+        } finally {
             try {
                 in.close();
             } catch (IOException ex) {
                 // munch this
             }
         }
-
-        return sb.toString();
+        return new String(out.toByteArray(), "UTF-8"); 
     }
     
     /**
