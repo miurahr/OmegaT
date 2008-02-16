@@ -56,6 +56,7 @@
     <target name="clean" description="Cleans all build results, i.e. directories 'build' and 'dist'">
         <delete dir="build" failonerror="no" />
         <delete dir="dist" failonerror="no" />
+        <delete dir="dist2" failonerror="no" />
         <ant dir="lib-mnemonics" antfile="build.xml" target="clean" />
     </target>
 
@@ -99,23 +100,25 @@
 
     <!-- Prepare application for distribution -->
     <target name="release" depends="clean,jar,dist-src,l10n-pack" description="Prepare application for distribution">
-        <mkdir dir="build/plain" />
+        <mkdir dir="dist" />
 
-        <copy todir="build/plain">
+        <copy todir="dist">
             <fileset dir="release" includes="*" excludes="readme.txt win32-specific l10n-project WebStart-specific" />
+            <fileset dir="." includes="native/**,images/**,lib/**" />
+            <fileset dir="build/jar" includes="*.jar" />
         </copy>
-        <copy todir="build/plain" file="release/readme.txt">
+        <copy todir="dist" file="release/readme.txt">
             <!-- Remove TRANSLATION_NOTICE placeholder (from English readme) -->
             <filterset begintoken="@@" endtoken="@@">
                 <filter token="TRANSLATION_NOTICE" value="" />
             </filterset>
         </copy>
-        <mkdir dir="build/plain/docs" />
-        <copy todir="build/plain/docs">
+        <mkdir dir="dist/docs" />
+        <copy todir="dist/docs">
             <!-- copy all files except English legalNotices.html -->
             <fileset dir="docs" excludes="en/legalNotices.html" />
         </copy>
-        <copy todir="build/plain/docs">
+        <copy todir="dist/docs">
             <!-- copy just English legalNotices.html -->
             <fileset dir="docs" includes="en/legalNotices.html" />
             <!-- Remove TRANSLATION_NOTICE placeholder (from English manual) -->
@@ -123,30 +126,21 @@
                 <filter token="TRANSLATION_NOTICE" value="" />
             </filterset>
         </copy>
-        <mkdir dir="build/plain/images" />
-        <copy todir="build/plain/images">
-            <fileset dir="images" />
-        </copy>
-        <mkdir dir="build/plain/lib" />
-        <copy todir="build/plain/lib">
-            <fileset dir="lib" />
+        <mkdir dir="dist/lib" />
+        <copy todir="dist/lib">
             <fileset dir="lib-mnemonics/dist" />
         </copy>
-        <copy todir="build/plain">
-            <fileset dir="build/jar" includes="*.jar" />
-        </copy>
 
-        <mkdir dir="dist" />
-        <zip basedir="build/plain" destfile="dist/OmegaT_${distversion}.zip" />
+        <mkdir dir="dist2" />
+        <zip basedir="dist" destfile="dist2/OmegaT_${distversion}.zip" />
     </target>
-
 
     <!-- Builds a source pack -->
     <target name="dist-src" description="Build source distribution">
-        <mkdir dir="dist" />
-        <zip destfile="dist/OmegaT_${distversion}_Source.zip"
+        <mkdir dir="dist2" />
+        <zip destfile="dist2/OmegaT_${distversion}_Source.zip"
              basedir="."
-             excludes="**/build/** **/dist/** **/classes/** .classpath .project" />
+             excludes="**/build/** **/dist/** **/dist2/** **/classes/** .classpath .project" />
     </target>
 
     <!-- Build a distribution of localizable files -->
@@ -154,7 +148,7 @@
         <property name="l10n.project.dir" value="release/l10n-project" />
         <property name="l10n.dir" value="build/l10n" />
 
-        <mkdir dir="dist" />
+        <mkdir dir="dist2" />
         <!-- minimal -->
         <property name="l10n.min" value="OmegaT_${distversion}_L10N_Minimal" />
         <property name="l10n.min.dir" value="${l10n.dir}/${l10n.min}" />
@@ -171,7 +165,7 @@
                         value="This translation is the work of [insert your name], copyright© [insert year]." />
             </filterset>
         </copy>
-        <zip destfile="dist/${l10n.min}.zip" basedir="${l10n.dir}" includes="${l10n.min}/**" />
+        <zip destfile="dist2/${l10n.min}.zip" basedir="${l10n.dir}" includes="${l10n.min}/**" />
 
         <!-- full -->
         <property name="l10n.max" value="OmegaT_${distversion}_L10N_Full" />
@@ -197,7 +191,7 @@
                         value="&lt;p&gt;This translation is the work of [insert your name], copyright© [insert year].&lt;/p&gt;" />
             </filterset>
         </copy>
-        <zip destfile="dist/${l10n.max}.zip" basedir="${l10n.dir}" includes="${l10n.max}/**" />
+        <zip destfile="dist2/${l10n.max}.zip" basedir="${l10n.dir}" includes="${l10n.max}/**" />
     </target>
 
 
@@ -214,14 +208,14 @@
 
     <!-- Build Win32 distro -->
     <target name="win" description="Build Win32 distro if on Windows" depends="check-win,release" if="os.windows">
-        <copy todir="dist" file="release/win32-specific/OmegaT.exe" />
+        <copy todir="dist2" file="release/win32-specific/OmegaT.exe" />
 
         <filter token="VERSION_NUMBER_SUBST" value="${distversion}" />
-        <copy todir="dist" file="release/win32-specific/OmegaT.iss" filtering="on" />
+        <copy todir="dist2" file="release/win32-specific/OmegaT.iss" filtering="on" />
 
-        <mkdir dir="dist" />
+        <mkdir dir="dist2" />
         <exec executable="${iscc.exe}">
-            <arg file="dist/OmegaT.iss" />
+            <arg file="dist2/OmegaT.iss" />
         </exec>
     </target>
 
@@ -254,8 +248,8 @@
                  storepass="${signkey.storepass}"
                  keypass="${signkey.keypass}" />
 
-        <mkdir dir="dist" />
-        <zip destfile="dist/WebStart.zip" basedir="build/webstart" />
+        <mkdir dir="dist2" />
+        <zip destfile="dist2/WebStart.zip" basedir="build/webstart" />
     </target>
 
     <!-- Build lib-mnemonics.jar -->
