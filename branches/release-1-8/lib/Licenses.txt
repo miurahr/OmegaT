@@ -6,6 +6,7 @@ Sources are available in OmegaT sources, in the directory lib/sources
 
 jna.jar is distributed under the GNU Lesser General Public License  
 version 2.1 and greater
+Sources are available in OmegaT sources, in the directory lib/sources
 
 MRJAdapter.jar 1.0.8 is distributed under the GNU Lesser General  
 Public License version 2.1 and greater
@@ -18,6 +19,7 @@ http://www.vlsolutions.com
 Hunspell is distributed  under the GNU Lesser General Public License  
 version 2.1 and greater, the GNU Public License version 2.0 and  
 greater or the Mozilla Public License version 1.1
+Sources are available in OmegaT sources, in the directory lib/sources
 
 swing-layout-1.0.2.jar is distributed under the GNU Lesser General  
 Public License version 2.1 and greater
