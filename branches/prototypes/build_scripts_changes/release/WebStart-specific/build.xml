@@ -5,7 +5,6 @@
     <target name="pack" depends="clean" description="Build WebStart pack">
         <property file="webstart.properties" />
 
-
         <mkdir dir="${root}/build/webstart" />
         <copy todir="${root}/build/webstart">
             <fileset dir="." includes="*.jnlp" />
@@ -33,11 +32,11 @@
                  storepass="${signkey.storepass}"
                  keypass="${signkey.keypass}" />
 
+        <mkdir dir="${root}/dist2" />
         <zip destfile="${root}/dist2/OmegaT-WebStart.zip" basedir="${root}/build/webstart" />
     </target>
 
     <target name="clean">
         <delete dir="${root}/build/webstart" failonerror="false" />
     </target>
-
 </project>

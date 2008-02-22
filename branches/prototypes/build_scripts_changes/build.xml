@@ -220,36 +220,8 @@
     </target>
 
     <!-- Build WebStart pack -->
-    <target name="webstart" depends="clean,jar" description="Build WebStart pack">
-        <property file="build.webstart.properties" />
-
-        <mkdir dir="build/webstart" />
-        <copy todir="build/webstart">
-            <fileset dir="release/WebStart-specific" includes="*.jnlp" />
-            <!-- Replace @@HTTP_BASE@@ placeholder -->
-            <filterset begintoken="@@" endtoken="@@">
-                <filter token="HTTP_BASE" value="${webstart.codebase}" />
-            </filterset>
-        </copy>
-
-        <copy todir="build/webstart">
-            <fileset dir="lib" includes="**/*.jar" />
-            <fileset dir="lib-mnemonics/dist" includes="**/*.jar" />
-            <fileset dir="build/jar" includes="**/*.jar" />
-        </copy>
-
-        <jar jarfile="build/webstart/hunspell-win.jar" basedir="native" includes="hunspell.dll" />
-        <jar jarfile="build/webstart/hunspell-lin-i386.jar" basedir="native" includes="libhunspell.so" />
-        <jar jarfile="build/webstart/hunspell-mac.jar" basedir="native" includes="libhunspell.dylib" />
-
-        <signjar jar="build/webstart/*.jar"
-                 keystore="${signkey.keystore}"
-                 alias="${signkey.alias}"
-                 storepass="${signkey.storepass}"
-                 keypass="${signkey.keypass}" />
-
-        <mkdir dir="dist2" />
-        <zip destfile="dist2/WebStart.zip" basedir="build/webstart" />
+    <target name="webstart" description="Build WebStart pack">
+        <ant dir="release/WebStart-specific" antfile="build.xml"/>
     </target>
 
     <!-- Build lib-mnemonics.jar -->
