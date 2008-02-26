@@ -19,6 +19,7 @@ OutputBaseFilename=OmegaT_win_without_JRE_@VERSION_NUMBER_SUBST@
 Source: "docs\*"; DestDir: "{app}\docs"; Flags: recursesubdirs
 Source: "images\*"; DestDir: "{app}\images"; Flags: recursesubdirs
 Source: "lib\*"; DestDir: "{app}\lib"; Flags: recursesubdirs
+Source: "native\*"; DestDir: "{app}\native"; Flags: recursesubdirs
 Source: "OmegaT.bat"; DestDir: "{app}"
 Source: "OmegaT.exe"; DestDir: "{app}"
 Source: "OmegaT.l4J.ini"; DestDir: "{app}"
