@@ -5,7 +5,7 @@
 1.7.3 update 2 vs. 1.7.3 update 1
 
 
-  1 Enhancement
+  2 Enhancements
   1 Bugfixe
 
 ----------------------------------------------------------------------
@@ -15,6 +15,10 @@
 
   - Command line parameters for OmegaT.exe
   http://sourceforge.net/support/tracker.php?aid=1900264  
+
+  Other enhancements:
+
+  - New Arabic localisation (readme, instant start)
 
   Bug fixes:
 
