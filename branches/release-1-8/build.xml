@@ -188,13 +188,26 @@
     <!-- Creates a Windows Installer -->
     <target name="do-win" depends="init,jar,zip">
         <copy todir="dist" file="release/win32-specific/OmegaT.exe"/>
-
+        <copy todir="dist" file="release/win32-specific/OmegaT.l4J.ini"/>
+ 
         <filter token="VERSION_NUMBER_SUBST" value="${distversion}"/>
         <copy todir="dist" file="release/win32-specific/OmegaT.iss" filtering="on"/>
         
         <mkdir dir="dist2"/>
         <exec executable="${iscc.exe}">
             <arg file="dist/OmegaT.iss"/>
+        </exec>     
+    </target>
+
+    <!-- Creates a Windows Installer with JRE-->
+    <target name="do-win-jre" depends="check-jre" if="jre.exists">
+        <copy todir="dist" file="release/win32-specific/OmegaT-JRE.exe"/>
+        <copy todir="dist" file="release/win32-specific/OmegaT-JRE.l4J.ini"/>
+        
+        <filter token="VERSION_NUMBER_SUBST" value="${distversion}"/>
+        <copy todir="dist" file="release/win32-specific/OmegaT-JRE.iss" filtering="on"/>
+        <exec executable="${iscc.exe}">
+            <arg file="dist/OmegaT-JRE.iss"/>
         </exec>
     </target>
 
@@ -207,9 +220,14 @@
         </condition>
     </target>
     
+    <target name="check-jre" depends="check-win" if="os.windows">
+        <available file="jre" type="dir" property="jre.exists" />
+    </target>
+    
     <target name="win" description="Build Win32 distro if on Windows" 
                                         depends="check-win" if="os.windows">
         <ant target="do-win" />
+        <ant target="do-win-jre" />
     </target>
     
     <!-- Builds and copies to dist2 all addons -->
