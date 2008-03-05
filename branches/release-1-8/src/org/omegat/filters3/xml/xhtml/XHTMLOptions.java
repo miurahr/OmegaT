@@ -35,11 +35,12 @@ import java.io.Serializable;
  * XHTML filter have the following options
  * ([+] means default on).
  * Translatable attributes:
- * <ul>[+] href
- * <ul>[+] src
- * <ul>[+] lang
- * <ul>[+] hreflang
- * <ul>[+] value
+ * <ul>
+ * <li>[+] href
+ * <li>[+] src
+ * <li>[+] lang
+ * <li>[+] hreflang
+ * <li>[+] value
  * </ul>
  * @author Didier Briel
  */
