@@ -35,11 +35,13 @@ import java.io.Serializable;
  * XHTML filter have the following options
  * ([+] means default on).
  * Translatable attributes:
- * <ul>[+] href
- * <ul>[+] src
- * <ul>[+] lang
- * <ul>[+] hreflang
+ * <ul>
+ * <li>[+] href
+ * <li>[+] src
+ * <li>[+] lang
+ * <li>[+] hreflang
  * </ul>
+ * Start a new paragraph on breaks (&lt;br&gt;) []
  * @author Didier Briel
  */
 public class XHTMLOptions implements Serializable

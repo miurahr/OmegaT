@@ -32,7 +32,7 @@ import java.io.Serializable;
  * Serializable to allow saving to / reading from configuration file.
  * <p>
  * HTML filter would have the following options
- * ([+] means default on).
+ * ([+] means default on).<br>
  * Add or rewrite encoding declaration in HTML and XHTML files:
  * <ul>
  * <li>[] Always
@@ -41,12 +41,13 @@ import java.io.Serializable;
  * <li>[] Never
  * </ul>
  * Translatable attributes:
- * <ul>[+] href
- * <ul>[+] src
- * <ul>[+] lang
- * <ul>[+] hreflang
+ * <ul>
+ * <li>[+] href
+ * <li>[+] src
+ * <li>[+] lang
+ * <li>[+] hreflang
  * </ul>
- * Start a new paragraph on breaks (<br>: [ ]
+ * Start a new paragraph on breaks (&lt;br&gt;) []
  * @author Maxym Mykhalchuk
  * @author Didier Briel
  */
