@@ -5,7 +5,7 @@
 1.7.3 update 2 vs. 1.7.3 update 1
 
 
-  4 Enhancements
+  3 Enhancements
   1 Bugfixe
 
 ----------------------------------------------------------------------
