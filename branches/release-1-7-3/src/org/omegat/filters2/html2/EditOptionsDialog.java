@@ -185,11 +185,11 @@ public class EditOptionsDialog extends javax.swing.JDialog
         org.openide.awt.Mnemonics.setLocalizedText(neverRB, OStrings.getString("HTML_REWRITE_ENC_NEVER"));
         jPanel1.add(neverRB);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, java.util.ResourceBundle.getBundle("org/omegat/Bundle").getString("HTML_TRANSLATE_ATTRIBUTES"));
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, OStrings.getString("HTML_TRANSLATE_ATTRIBUTES"));
         jPanel1.add(jLabel2);
 
         translateHrefCB.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(translateHrefCB, java.util.ResourceBundle.getBundle("org/omegat/Bundle").getString("HTML_TRANSLATE_HREF"));
+        org.openide.awt.Mnemonics.setLocalizedText(translateHrefCB, OStrings.getString("HTML_TRANSLATE_HREF"));
         translateHrefCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 translateHrefCBradiosActionPerformed(evt);
@@ -199,7 +199,7 @@ public class EditOptionsDialog extends javax.swing.JDialog
         jPanel1.add(translateHrefCB);
 
         translateSrcCB.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(translateSrcCB, java.util.ResourceBundle.getBundle("org/omegat/Bundle").getString("HTML_TRANSLATE_SRC"));
+        org.openide.awt.Mnemonics.setLocalizedText(translateSrcCB, OStrings.getString("HTML_TRANSLATE_SRC"));
         translateSrcCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 translateSrcCBradiosActionPerformed(evt);
@@ -209,7 +209,7 @@ public class EditOptionsDialog extends javax.swing.JDialog
         jPanel1.add(translateSrcCB);
 
         translateLangCB.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(translateLangCB, java.util.ResourceBundle.getBundle("org/omegat/Bundle").getString("HTML_TRANSLATE_LANG"));
+        org.openide.awt.Mnemonics.setLocalizedText(translateLangCB, OStrings.getString("HTML_TRANSLATE_LANG"));
         translateLangCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 translateLangCBradiosActionPerformed(evt);
@@ -219,7 +219,7 @@ public class EditOptionsDialog extends javax.swing.JDialog
         jPanel1.add(translateLangCB);
 
         translateHreflangCB.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(translateHreflangCB, java.util.ResourceBundle.getBundle("org/omegat/Bundle").getString("HTML_TRANSLATE_HREFLANG"));
+        org.openide.awt.Mnemonics.setLocalizedText(translateHreflangCB, OStrings.getString("HTML_TRANSLATE_HREFLANG"));
         translateHreflangCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 translateHreflangCBradiosActionPerformed(evt);
@@ -228,10 +228,10 @@ public class EditOptionsDialog extends javax.swing.JDialog
 
         jPanel1.add(translateHreflangCB);
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, java.util.ResourceBundle.getBundle("org/omegat/Bundle").getString("HTML_PARAGRAPH_ON"));
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, OStrings.getString("HTML_PARAGRAPH_ON"));
         jPanel1.add(jLabel3);
 
-        org.openide.awt.Mnemonics.setLocalizedText(paragraphOnBrCB, java.util.ResourceBundle.getBundle("org/omegat/Bundle").getString("HTML_PARAGRAPH_ON_BR"));
+        org.openide.awt.Mnemonics.setLocalizedText(paragraphOnBrCB, OStrings.getString("HTML_PARAGRAPH_ON_BR"));
         paragraphOnBrCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 paragraphOnBrCBradiosActionPerformed(evt);
