@@ -2621,14 +2621,14 @@ public class MainWindow extends JFrame implements ActionListener, WindowListener
 
         statusPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        org.openide.awt.Mnemonics.setLocalizedText(progressLabel, java.util.ResourceBundle.getBundle("org/omegat/Bundle").getString("MW_PROGRESS_DEFAULT"));
-        progressLabel.setToolTipText(java.util.ResourceBundle.getBundle("org/omegat/Bundle").getString("MW_PROGRESS_TOOLTIP"));
+        org.openide.awt.Mnemonics.setLocalizedText(progressLabel, OStrings.getString("MW_PROGRESS_DEFAULT"));
+        progressLabel.setToolTipText(OStrings.getString("MW_PROGRESS_TOOLTIP"));
         progressLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         progressLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         statusPanel2.add(progressLabel);
 
-        org.openide.awt.Mnemonics.setLocalizedText(lengthLabel, java.util.ResourceBundle.getBundle("org/omegat/Bundle").getString("MW_SEGMENT_LENGTH_DEFAULT"));
-        lengthLabel.setToolTipText(java.util.ResourceBundle.getBundle("org/omegat/Bundle").getString("MW_SEGMENT_LENGTH_TOOLTIP"));
+        org.openide.awt.Mnemonics.setLocalizedText(lengthLabel, OStrings.getString("MW_SEGMENT_LENGTH_DEFAULT"));
+        lengthLabel.setToolTipText(OStrings.getString("MW_SEGMENT_LENGTH_TOOLTIP"));
         lengthLabel.setAlignmentX(1.0F);
         lengthLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         lengthLabel.setFocusable(false);
