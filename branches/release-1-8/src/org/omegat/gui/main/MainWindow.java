@@ -2837,7 +2837,7 @@ public class MainWindow extends JFrame implements ActionListener, WindowListener
 
         viewMenu.add(viewMarkTranslatedSegmentsCheckBoxMenuItem);
 
-        org.openide.awt.Mnemonics.setLocalizedText(viewMarkUntranslatedSegmentsCheckBoxMenuItem, java.util.ResourceBundle.getBundle("org/omegat/Bundle").getString("TF_MENU_DISPLAY_MARK_UNTRANSLATED"));
+        org.openide.awt.Mnemonics.setLocalizedText(viewMarkUntranslatedSegmentsCheckBoxMenuItem, OStrings.getString("TF_MENU_DISPLAY_MARK_UNTRANSLATED"));
         viewMarkUntranslatedSegmentsCheckBoxMenuItem.addActionListener(this);
 
         viewMenu.add(viewMarkUntranslatedSegmentsCheckBoxMenuItem);
