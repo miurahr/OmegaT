@@ -4,7 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
-               2007 Didier Briel, Alex Buloichik 
+               2007-2008 Didier Briel, Alex Buloichik 
                Home page: http://www.omegat.org/omegat/omegat.html
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -52,23 +52,21 @@ public class XHTMLDialect extends DefaultXMLDialect
     }   
 
     private static final Pattern PUBLIC_XHTML = 
-            Pattern.compile("-//W3C//DTD\\s+XHTML\\s+1\\..+//.*");              // NOI18N   
+            Pattern.compile("-//W3C//DTD\\s+XHTML.+");                          // NOI18N
 
-    private static final 
-            String DTD = "/org/omegat/filters3/xml/xhtml/res/xhtml11-flat.dtd"; // NOI18N
+    private static final String DTD = 
+            "/org/omegat/filters3/xml/xhtml/res/xhtml2-flat.dtd";               // NOI18N
     
     /**
-     * Resolves external entites if child filter needs it.
-     * Default implementation returns <code>null</code>.
+     * Resolves external entites if child filter needs it. Default
+     * implementation returns <code>null</code>.
      */
-    public InputSource resolveEntity(String publicId, String systemId)
-    {
-        if (publicId!=null && PUBLIC_XHTML.matcher(publicId).matches())
-        {
-            URL dtdresource = getClass().getResource(DTD);
+    public InputSource resolveEntity(String publicId, String systemId) {
+        if (publicId != null && PUBLIC_XHTML.matcher(publicId).matches()
+                && systemId.endsWith(".dtd")) {
+            URL dtdresource = XHTMLDialect.class.getResource(DTD);
             return new InputSource(dtdresource.toExternalForm());
-        }
-        else
+        } else
             return null;
     }
   
