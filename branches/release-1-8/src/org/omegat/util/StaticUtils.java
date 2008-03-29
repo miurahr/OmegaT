@@ -43,6 +43,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.*;
 
 /**
  * Static functions taken from
@@ -142,7 +143,7 @@ public class StaticUtils
         
         for (i=0; i<Array.getLength(flist); i++)
         {
-            if (flist[i].isDirectory())
+            if (flist[i].isDirectory())           
             {
                 continue;	// recurse into directories later
             }
@@ -152,7 +153,7 @@ public class StaticUtils
         {
             for (i=0; i<Array.getLength(flist); i++)
             {
-                if (flist[i].isDirectory())
+                if ( isProperDirectory(flist[i]) ) // Ignores some directories
                 {
                     // now recurse into subdirectories
                     buildFileList(lst, flist[i], true);
@@ -171,7 +172,7 @@ public class StaticUtils
         File [] flist = rootDir.listFiles();
         for (i=0; i<Array.getLength(flist); i++)
         {
-            if (flist[i].isDirectory())
+            if ( isProperDirectory(flist[i]) ) // Ignores some directories
             {
                 // now recurse into subdirectories
                 lst.add(flist[i].getAbsolutePath());
@@ -322,7 +323,31 @@ public class StaticUtils
                 return false;
         return true;
     }
+   
+    // List of CVS or SVN folders
+    private static final String CVS_SVN_FOLDERS = "(CVS)|(.svn)|(_svn)";        // NOI18N
     
+    private static final Pattern IGNORED_FOLDERS = 
+            Pattern.compile(CVS_SVN_FOLDERS);
+    
+    /**
+     * Tests whether a directory has to be used
+     * @return <code>true</code> or <code>false</code>
+     */
+    private static boolean isProperDirectory(File file)
+    {
+        if ( file.isDirectory() )
+        {
+            Matcher directoryMatch = IGNORED_FOLDERS.matcher(file.getName());
+            if (directoryMatch.matches())
+                return false;
+            else
+                return true;
+        }
+        else
+            return false;
+    }
+            
     /**
      * Converts a single char into valid XML.
      * Output stream must convert stream to UTF-8 when saving to disk.
