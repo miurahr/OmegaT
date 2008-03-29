@@ -206,6 +206,7 @@ Code has been contributed by
   Alex Buloichik
   Sacha Chua
   Thomas Huriaux
+  Fabián Mandelbaum
   Maxym Mykhalchuk
   Henry Pijffers
   Tiago Saboga
@@ -216,7 +217,7 @@ Other contributions by
   Sabine Cretella
   Dmitri Gabinski
   Jean-Christophe Helary
-  Vito Smolej(documentation manager)
+  Vito Smolej (documentation manager)
   Samuel Murray
   Marc Prior (localization manager)
   and many, many more very helpful people
