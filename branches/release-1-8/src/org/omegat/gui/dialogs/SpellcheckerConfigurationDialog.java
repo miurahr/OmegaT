@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2007 Zoltan Bartko
+               2008 Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -32,6 +33,14 @@ import java.util.Collections;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
+import java.awt.event.ActionEvent;     // HP
+import java.awt.event.KeyEvent;        // HP
+import javax.swing.AbstractAction;     // HP
+import javax.swing.Action;             // HP
+import javax.swing.JComponent;         // HP
+import javax.swing.KeyStroke;          // HP
+
 import org.omegat.core.spellchecker.DictionaryManager;
 import org.omegat.util.Language;
 import org.omegat.util.OStrings;
@@ -39,7 +48,8 @@ import org.omegat.util.Preferences;
 
 /**
  *
- * @author  bartkoz
+ * @author bartkoz
+ * @author Didier Briel
  */
 public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
     
@@ -83,6 +93,21 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
      */
     public SpellcheckerConfigurationDialog(Frame parent, Language current) {
         super(parent, true);
+
+        // HP
+        //  Handle escape key to close the window
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
+        Action escapeAction = new AbstractAction()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                dispose();
+            }
+        };
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).
+        put(escape, "ESCAPE");                                                  // NOI18N
+        getRootPane().getActionMap().put("ESCAPE", escapeAction);               // NOI18N
+        // END HP
         
         initComponents();
         this.pack();
@@ -168,6 +193,7 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
         uninstallButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle(OStrings.getString("GUI_SPELLCHECKER_TITLE"));
         org.openide.awt.Mnemonics.setLocalizedText(cancelButton, OStrings.getString("BUTTON_CANCEL"));
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -253,8 +279,8 @@ public class SpellcheckerConfigurationDialog extends javax.swing.JDialog {
                     .add(directoryLabel)
                     .add(detailPanelLayout.createSequentialGroup()
                         .add(detailPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(languageScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, directoryTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE))
+                            .add(languageScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, directoryTextField, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(detailPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                             .add(directoryChooserButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
