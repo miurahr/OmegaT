@@ -1258,6 +1258,7 @@ public class MainWindow extends JFrame implements ActionListener, WindowListener
         OmegaTFileChooser chooser=new OmegaTFileChooser();
         chooser.setMultiSelectionEnabled(true);
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.setDialogTitle(OStrings.getString("TF_FILE_IMPORT_TITLE"));
         
         int result=chooser.showOpenDialog(this);
         if( result==OmegaTFileChooser.APPROVE_OPTION )
