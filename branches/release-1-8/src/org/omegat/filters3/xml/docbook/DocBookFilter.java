@@ -4,8 +4,8 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
-               2008 Fabian Mandelbaum
-               Home page: http://www.omegat.org/omegat/omegat.html
+               2008 Fabian Mandelbaum, Didier Briel
+               Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
  This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,7 @@ import org.omegat.util.OStrings;
  *
  * @author Maxym Mykhalchuk
  * @author Fabian Mandelbaum
+ * @author Didier Briel
  */
 public class DocBookFilter extends XMLFilter
 {
@@ -86,18 +87,18 @@ public class DocBookFilter extends XMLFilter
     {
         return new Instance[] 
         {
-            new Instance("*.xml", "UTF-8", "UTF-8"),                            // NOI18N
-            new Instance("*.dbk", "UTF-8", "UTF-8"),                            // NOI18N
+            new Instance("*.xml", null, null),                            
+            new Instance("*.dbk", null, null),                            
         };
     }
 
     /**
-     * Yes, DocBook may be read in a variety of encodings.
-     * @return <code>true</code>
+     * Either the encoding can be read, or it is UTF-8..
+     * @return <code>false</code>
      */
     public boolean isSourceEncodingVariable()
     {
-        return true;
+        return false;
     }
     
     /**
