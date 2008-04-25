@@ -4,7 +4,7 @@
 1.8.0 update 2 vs. 1.8.0 update 1
 
 
-   1 Enhancement
+   2 Enhancements
    2 Bugfixes
 ----------------------------------------------------------------------
 1.8.0 update 2
