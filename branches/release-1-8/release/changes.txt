@@ -11,6 +11,7 @@
 
   Other enhancements:
   - Spellchecking dialogs now have a title
+  - Catalan localisation updated to 1.8 (UI)
 
   Bug fixes:
   
