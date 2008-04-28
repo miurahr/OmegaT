@@ -115,7 +115,7 @@
 
 
   2 Enhancements
-  1 Bugfix
+  2 Bugfixes
 
 ----------------------------------------------------------------------
 1.7.3 update 3
@@ -132,6 +132,9 @@
 
   - Wrong default encoding in XML (should be UTF-8) 
   http://sourceforge.net/support/tracker.php?aid=1941365   
+
+  - Solaris not detected, and wrong default home directory 
+  http://sourceforge.net/support/tracker.php?aid=1953251   
 
 ----------------------------------------------------------------------
  OmegaT 1.7.3 update 2 Changes
