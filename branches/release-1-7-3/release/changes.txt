@@ -6,7 +6,7 @@
 
 
   2 Enhancements
-  2 Bugfixes
+  3 Bugfixes
 
 ----------------------------------------------------------------------
 1.7.3 update 3
@@ -26,6 +26,9 @@
 
   - Solaris not detected, and wrong default home directory 
   http://sourceforge.net/support/tracker.php?aid=1953251   
+
+  - Error trying to create target document with large OOo file
+  http://sourceforge.net/support/tracker.php?aid=1955635  
 
 ----------------------------------------------------------------------
  OmegaT 1.7.3 update 2 Changes
