@@ -5,7 +5,7 @@
 
 
    2 Enhancements
-   2 Bugfixes
+   3 Bugfixes
 ----------------------------------------------------------------------
 1.8.0 update 2
 
@@ -19,6 +19,7 @@
   http://sourceforge.net/support/tracker.php?aid=1815506
   - Wrong Import file dialog title
   http://sourceforge.net/support/tracker.php?aid=1940081 
+  - Hunspell not working on Linux 64-bit
 
 ----------------------------------------------------------------------
  OmegaT 1.8.0 update 1 Changes
