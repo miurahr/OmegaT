@@ -97,11 +97,9 @@ archive to this folder and unpack it there.
 OmegaT can be launched in a number of ways.
 
 * Windows users: by double-clicking on the file OmegaT-JRE.exe, if you are
-using the version with the JRE included, or on OmegaT.exe otherwise.
-
-* By double-clicking on the file OmegaT.bat. If you can see the file
-OmegaT but not OmegaT.bat in your File Manager (Windows Explorer), change
-the settings so that file extensions are displayed.
+using the version with the JRE included, or on OmegaT.exe otherwise. If you can 
+see the file OmegaT but not OmegaT.bat in your File Manager (Windows Explorer), 
+change the settings so that file extensions are displayed.
 
 * By double-clicking on the file OmegaT.jar. This will work only if the .jar
 file type is associated with Java on your system.
