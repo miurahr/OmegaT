@@ -10,6 +10,7 @@
 1.8.0 update 2
 
   Other enhancements:
+
   - Spellchecking dialogs now have a title
   - Non-breaking spaces are trimmed from translatable text
   - Catalan localisation updated to 1.8 (UI)
@@ -38,6 +39,7 @@
 1.8.0 update 1
 
  Other enhancements:
+
   - Albanian localisation updated to 1.8 (UI, readme)
   - Belarusian localisation updated to 1.8 (UI)
   - New Portuguese (Portugal) localisation (UI)
