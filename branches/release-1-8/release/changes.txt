@@ -142,7 +142,7 @@ localization
 
 
   1 Enhancement
-  1 Bugfixe
+  2 Bugfixes
 
 ----------------------------------------------------------------------
 1.7.3 update 4
@@ -154,7 +154,10 @@ localization
   Bug fixes:
 
   - PO Filter: some escapes not working
-  http://sourceforge.net/support/tracker.php?aid=1964169  
+  http://sourceforge.net/support/tracker.php?aid=1964169
+  
+  - Angle bracket no showing in Editor after segment number in the German 
+localization
 
 ----------------------------------------------------------------------
  OmegaT 1.7.3 update 3 Changes
