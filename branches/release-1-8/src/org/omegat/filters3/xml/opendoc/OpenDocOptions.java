@@ -38,6 +38,7 @@ import java.io.Serializable;
  * <ul>
  * <li>[+] Index entries
  * <li>[] Bookmarks
+ * <li>[+] Bookmark references
  * <li>[+] Notes
  * <li>[+] Comments
  * </ul>
@@ -49,6 +50,7 @@ public class OpenDocOptions implements Serializable
     /** Hold value of properties. */
     private boolean translateIndexes = true;
     private boolean translateBookmarks = false;
+    private boolean translateBookmarkRefs = true;
     private boolean translateNotes = true;
     private boolean translateComments = true;
     
@@ -83,7 +85,23 @@ public class OpenDocOptions implements Serializable
     {
         this.translateBookmarks = translateBookmarks;
     }
-    
+ 
+        /**
+     * Returns whether Bookmark references should be translated.
+     */
+    public boolean getTranslateBookmarkRefs()
+    {
+        return this.translateBookmarkRefs;
+    }
+
+    /**
+     * Sets whether Bookmarks references should be translated.
+     */
+    public void setTranslateBookmarkRefs(boolean translateBookmarkRefs)
+    {
+        this.translateBookmarkRefs = translateBookmarkRefs;
+    }
+  
     /**
      * Returns whether Notes should be translated.
      */
