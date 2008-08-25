@@ -5,7 +5,7 @@
 1.7.3 update 4 vs. 1.7.3 update 3
 
 
-  1 Enhancement
+  2 Enhancements
   3 Bugfixes
 
 ----------------------------------------------------------------------
@@ -14,6 +14,7 @@
   Other enhancements:
 
   - Slovak localisation updated to 1.7.3 (UI, readme, instant start, documentation)
+  - Czech localisation updated to 1.7.3 (UI, readme, instant start, documentation)
 
   Bug fixes:
 
