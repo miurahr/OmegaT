@@ -34,6 +34,8 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.omegat.util.logging.OmegaTFileHandler;
+
 /**
   * A collection of methods to make logging things easier.
   *
@@ -72,6 +74,11 @@ public class Log {
                     LogManager.getLogManager().readConfiguration(in);
                 } finally {
                     in.close();
+                }
+                try {
+                    LOGGER.info("");
+                } catch (Exception ex) {
+                    LOGGER.addHandler(new OmegaTFileHandler());
                 }
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, "Can't open file for logging", ex);
