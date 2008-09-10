@@ -76,7 +76,7 @@ public class Log {
                     in.close();
                 }
                 try {
-                    LOGGER.addHandler(new OmegaTFileHandler());
+                    LOGGER.getParent().addHandler(new OmegaTFileHandler());
                 } catch (Exception ex) {
                 }
             } catch (IOException ex) {
