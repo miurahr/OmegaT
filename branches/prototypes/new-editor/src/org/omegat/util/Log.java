@@ -76,9 +76,8 @@ public class Log {
                     in.close();
                 }
                 try {
-                    LOGGER.info("");
-                } catch (Exception ex) {
                     LOGGER.addHandler(new OmegaTFileHandler());
+                } catch (Exception ex) {
                 }
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, "Can't open file for logging", ex);
