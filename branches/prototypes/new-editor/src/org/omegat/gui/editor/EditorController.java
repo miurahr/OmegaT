@@ -391,9 +391,11 @@ public class EditorController implements IEditor {
         // clicked segment
         int segmentAtLocation = editor.getOmDocument().getSegmentAtLocation(
                 location);
-        commitAndDeactivate();
-        displayedEntryIndex = segmentAtLocation;
-        activateEntry();
+        if (displayedEntryIndex != segmentAtLocation) {
+            commitAndDeactivate();
+            displayedEntryIndex = segmentAtLocation;
+            activateEntry();
+        }
     }
 
     /**
