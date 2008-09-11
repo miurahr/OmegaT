@@ -144,7 +144,7 @@ class OmTextArea extends JEditorPane {
                 processed = true;
             }
         } else if (isKey(e, KeyEvent.VK_ENTER, KeyEvent.SHIFT_MASK)) {
-            // convert key event to straight enter key
+            // convert Shift+Enter event to straight enter key
             KeyEvent ke = new KeyEvent(e.getComponent(), e.getID(),
                     e.getWhen(), 0, KeyEvent.VK_ENTER, '\n');
             super.processKeyEvent(ke);
