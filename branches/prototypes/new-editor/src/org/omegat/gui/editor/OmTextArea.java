@@ -149,6 +149,11 @@ class OmTextArea extends JEditorPane {
                     e.getWhen(), 0, KeyEvent.VK_ENTER, '\n');
             super.processKeyEvent(ke);
             processed = true;
+        } else if (isKey(e, KeyEvent.VK_A, KeyEvent.CTRL_MASK)) {
+            // handling Ctrl+A manually
+            setSelectionStart(controller.getTranslationStart());
+            setSelectionEnd(controller.getTranslationEnd());
+            processed = true;
         }
 
         // leave standard processing if need
