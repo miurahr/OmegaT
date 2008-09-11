@@ -24,6 +24,7 @@
 
 package org.omegat.gui.editor;
 
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -142,6 +143,12 @@ class OmTextArea extends JEditorPane {
                 controller.prevEntry();
                 processed = true;
             }
+        } else if (isKey(e, KeyEvent.VK_ENTER, KeyEvent.SHIFT_MASK)) {
+            // convert key event to straight enter key
+            KeyEvent ke = new KeyEvent(e.getComponent(), e.getID(),
+                    e.getWhen(), 0, KeyEvent.VK_ENTER, '\n');
+            super.processKeyEvent(ke);
+            processed = true;
         }
 
         // leave standard processing if need
