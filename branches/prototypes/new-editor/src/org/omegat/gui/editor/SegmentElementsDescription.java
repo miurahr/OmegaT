@@ -316,6 +316,9 @@ public class SegmentElementsDescription {
     private void addLine(AttributeSet attrs, String partText,
             int offsetFromDocumentBegin, boolean needSpellCheck,
             OmContent.POSITION_TYPE positionType) {
+        if (partText.length()==0) {
+            return;
+        }
         if (!needSpellCheck) {
             // don't need to spell check. just add element
             textElements.add(doc.new OmElementText(last(paragraphElements),
