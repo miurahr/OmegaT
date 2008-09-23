@@ -4,7 +4,7 @@
 1.8.0 update 3 vs. 1.8.0 update 2
 
 
-   4 Enhancements
+   5 Enhancements
    1 Bugfixe
 ----------------------------------------------------------------------
 1.8.0 update 3
@@ -13,6 +13,9 @@
 
   - OpenDoc: Allow to translate or not Bookmark references  
   http://sourceforge.net/support/tracker.php?aid=2018244 
+
+  - Do not take user to first segment on project reload  
+  http://sourceforge.net/support/tracker.php?aid=1906198 
 
   Other enhancements:
 

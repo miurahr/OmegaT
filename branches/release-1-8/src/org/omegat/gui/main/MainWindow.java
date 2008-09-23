@@ -6,7 +6,7 @@
  Copyright (C) 2000-2006 Keith Godfrey, Maxym Mykhalchuk, Henry Pijffers, 
                          Benjamin Siband, and Kim Bruning
                2007 Zoltan Bartko
-               2008 Andrzej Sawula
+               2008 Andrzej Sawula, Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -115,6 +115,7 @@ import org.omegat.util.Token;
  * @author Henry Pijffers (henry.pijffers@saxnot.com)
  * @author Zoltan Bartko - bartkozoltan@bartkozoltan.com
  * @author Andrzej Sawula
+ * @author Didier Briel
  */
 public class MainWindow extends JFrame implements ActionListener, WindowListener, ComponentListener
 {
@@ -1044,6 +1045,13 @@ public class MainWindow extends JFrame implements ActionListener, WindowListener
             }
         };
         SwingUtilities.invokeLater(runlater);
+        // Restore current segment position
+        if (m_previousCurEntryNum > 0)
+        {
+            doGotoEntry(m_previousCurEntryNum); 
+            m_previousCurEntryNum = 0;
+        }       
+
     }
     
     /** Edits project's properties */
@@ -1237,13 +1245,14 @@ public class MainWindow extends JFrame implements ActionListener, WindowListener
         CommandThread.core.messageBoardPost(load);
     }
 
-    /**
+       /**
      * Reloads, i.e. closes and loads the same project.
      */
     public void doReloadProject()
     {
         ProjectProperties config = CommandThread.core.getProjectProperties();
         String projectRoot = config.getProjectRoot();
+        m_previousCurEntryNum = m_curEntryNum + 1; 
         doCloseProject();
         doLoadProject(projectRoot);
     }
@@ -2489,7 +2498,8 @@ public class MainWindow extends JFrame implements ActionListener, WindowListener
     }    
     private String  m_activeProj;
     public int      m_curEntryNum;
-
+    private int     m_previousCurEntryNum;
+    
     private TagValidationFrame  m_tagWin;
     private ProjectFrame	m_projWin;
     public ProjectFrame getProjectFrame()
