@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------
- OmegaT 1.8.0 update 3 Changes
+ OmegaT 1.8.1 Changes
 ----------------------------------------------------------------------
 1.8.1 vs. 1.8.0 update 2
 
@@ -28,8 +28,8 @@
   - Czech localisation updated to 1.8 (UI, readme)
   
   Bug fixes:
-  - Extra space at the beginning of each segment in the German 
-localization
+  - Extra space in each segment in the German localization
+  http://sourceforge.net/support/tracker.php?aid=2169106 
 
 ----------------------------------------------------------------------
  OmegaT 1.8.0 update 2 Changes
