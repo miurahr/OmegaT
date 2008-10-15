@@ -7,7 +7,7 @@
    7 Enhancements
    1 Bugfixe
 ----------------------------------------------------------------------
-1.8.0 update 3
+1.8.1
 
   Implemented requests:
 
