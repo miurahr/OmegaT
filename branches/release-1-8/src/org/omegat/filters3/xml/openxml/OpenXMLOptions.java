@@ -42,7 +42,7 @@ import java.io.Serializable;
  * <li>[+] Endnotes (Words)
  * <li>[+] Header (Words)
  * <li>[+] Footer (Words)
- * <li>[+] Slide comments (Words)
+ * <li>[+] Slide comments (PowerPoint)
  * </ul>
  * @author Didier Briel
  */
