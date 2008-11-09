@@ -72,6 +72,8 @@ public class OpenXMLDialect extends DefaultXMLDialect
         {
             // Excel
             "authors",                                                          // NOI18N
+            // PowerPoint
+            "p:attrName",                                                       // NOI18N
         });        
     }
 }
