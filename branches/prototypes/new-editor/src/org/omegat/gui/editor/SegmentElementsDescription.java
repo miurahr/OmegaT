@@ -24,12 +24,14 @@
 
 package org.omegat.gui.editor;
 
+import java.awt.font.TextAttribute;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
@@ -209,8 +211,7 @@ public class SegmentElementsDescription {
 
     List<OmDocument.OmElementParagraph> paragraphElements = new ArrayList<OmDocument.OmElementParagraph>(
             32);
-    List<OmDocument.OmElementText> textElements = new ArrayList<OmDocument.OmElementText>(
-            64);
+    List<Element> textElements = new ArrayList<Element>(64);
 
     /**
      * Create SegmentElement's child elements by segment description.
@@ -228,27 +229,33 @@ public class SegmentElementsDescription {
     Element[] createElementsForSegment(OmDocument doc,
             OmElementSegment segElement, String text,
             int offsetFromDocumentBegin) {
-        paragraphElements.add(doc.new OmElementParagraph(segElement, null));
+        SimpleAttributeSet a = new SimpleAttributeSet();// TODO
+        a.addAttribute(TextAttribute.RUN_DIRECTION,
+                TextAttribute.RUN_DIRECTION_LTR);
+
+        paragraphElements.add(doc.new OmElementParagraph(segElement, a));
 
         // add sources
         addLines(segElement, ATTR_SOURCE, text.substring(0,
                 translationBeginTagStart), offsetFromDocumentBegin, false,
                 OmContent.POSITION_TYPE.BEFORE_EDITABLE);
         // add <segment 0000>
-        addLines(segElement, ATTR_SEGMENT_MARK, text.substring(
+        addSegmentMark(segElement, ATTR_SEGMENT_MARK, text.substring(
                 translationBeginTagStart, translationBeginTagEnd),
                 offsetFromDocumentBegin + translationBeginTagStart, false,
                 OmContent.POSITION_TYPE.BEFORE_EDITABLE);
+
         // add translation
         addLines(segElement, translationAttrs, text.substring(
                 translationBeginTagEnd, translationEndTagStart),
                 offsetFromDocumentBegin + translationBeginTagEnd,
                 needToCheckSpelling, OmContent.POSITION_TYPE.INSIDE_EDITABLE);
         // add <end segment>
-        addLines(segElement, ATTR_SEGMENT_MARK, text.substring(
+        addSegmentMark(segElement, ATTR_SEGMENT_MARK, text.substring(
                 translationEndTagStart, translationEndTagEnd),
                 offsetFromDocumentBegin + translationEndTagStart, false,
                 OmContent.POSITION_TYPE.AFTER_EDITABLE);
+
         // add <new lines segments separator>
         addLines(segElement, null, text.substring(translationEndTagEnd),
                 offsetFromDocumentBegin + translationEndTagEnd, false,
@@ -256,6 +263,14 @@ public class SegmentElementsDescription {
 
         paragraphElements.remove(paragraphElements.size() - 1);
         return paragraphElements.toArray(new Element[paragraphElements.size()]);
+    }
+
+    private void addSegmentMark(OmDocument.OmElementSegment section,
+            AttributeSet attrs, String partText, int offsetFromDocumentBegin,
+            boolean needSpellCheck, OmContent.POSITION_TYPE positionType) {
+        textElements.add(doc.new OmElementSegmentMark(last(paragraphElements),
+                attrs, offsetFromDocumentBegin, offsetFromDocumentBegin
+                        + partText.length(), positionType));
     }
 
     /**
@@ -292,7 +307,10 @@ public class SegmentElementsDescription {
                     textElements.toArray(new Element[textElements.size()]));
             textElements.clear();
 
-            paragraphElements.add(doc.new OmElementParagraph(section, null));
+            SimpleAttributeSet a = new SimpleAttributeSet();// TODO
+            a.addAttribute(TextAttribute.RUN_DIRECTION,
+                    TextAttribute.RUN_DIRECTION_LTR);
+            paragraphElements.add(doc.new OmElementParagraph(section, a));
             prevPos = pos + 1;
         }
         addLine(attrs, partText.substring(prevPos), offsetFromDocumentBegin
@@ -316,7 +334,7 @@ public class SegmentElementsDescription {
     private void addLine(AttributeSet attrs, String partText,
             int offsetFromDocumentBegin, boolean needSpellCheck,
             OmContent.POSITION_TYPE positionType) {
-        if (partText.length()==0) {
+        if (partText.length() == 0) {
             return;
         }
         if (!needSpellCheck) {

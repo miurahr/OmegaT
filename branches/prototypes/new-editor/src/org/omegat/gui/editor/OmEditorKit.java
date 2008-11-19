@@ -68,6 +68,8 @@ class OmEditorKit extends DefaultEditorKit {
                     return new ParagraphView(elem);
                 } else if (kind.equals("segment")) {
                     return new BoxView(elem, View.Y_AXIS);
+                } else if (kind.equals("segmentmark")) {
+                    return new SegmentMarkView(elem);
                 }
             }
             return null;

@@ -26,17 +26,18 @@ package org.omegat.gui.editor;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.awt.font.TextAttribute;
 import java.util.Enumeration;
 
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.BoxView;
+import javax.swing.text.CompositeView;
 import javax.swing.text.EditorKit;
 import javax.swing.text.Element;
 import javax.swing.text.Position;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -44,6 +45,7 @@ import javax.swing.text.StyledDocument;
 import javax.swing.text.View;
 
 import org.omegat.core.data.SourceTextEntry;
+import org.omegat.util.gui.ExtendedLabelView;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
@@ -60,7 +62,7 @@ import org.omegat.util.gui.UIThreadsUtil;
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-class OmDocument extends AbstractDocument implements StyledDocument {
+public class OmDocument extends AbstractDocument implements StyledDocument {
 
     /** Editor controller. */
     protected final EditorController controller;
@@ -120,6 +122,8 @@ class OmDocument extends AbstractDocument implements StyledDocument {
                 segments[i].replace(0, 0, paragraphs);
             }
             root.replace(0, 0, segments);
+
+            omFixBidi();
 
             return segments;
         } finally {
@@ -227,11 +231,33 @@ class OmDocument extends AbstractDocument implements StyledDocument {
         View mainDocView = controller.editor.getUI().getRootView(
                 controller.editor).getView(0);
         View segmentView = mainDocView.getView(segmentIndex);
-        View[] nv = new View[seg.getElementCount()];
-        for (int i = 0; i < nv.length; i++) {
-            nv[i] = kit.getViewFactory().create(seg.getElement(i));
-        }
-        segmentView.replace(0, segmentView.getViewCount(), nv);
+        // View[] nv = new View[seg.getElementCount()];
+        // for (int i = 0; i < nv.length; i++) {
+        // nv[i] = kit.getViewFactory().create(seg.getElement(i));
+        //            
+        // // View[] cv=new View[seg.getElement(i).getElementCount()];
+        // // for(int j=0;j<cv.length;j++) {
+        // //
+        // cv[j]=kit.getViewFactory().create(seg.getElement(i).getElement(j));
+        // // }
+        // // nv[i].replace(0, 0, cv);
+        // }
+        // segmentView.replace(0, segmentView.getViewCount(), nv);
+
+        // remove old children
+        segmentView.removeAll();
+        // required to call 'loadChildren'
+//        ((BoxView) segmentView).layoutChanged(View.X_AXIS);
+//        ((BoxView) segmentView).layoutChanged(View.Y_AXIS);
+        segmentView.setParent(mainDocView);
+        
+        
+//        View[] nv = new View[seg.getElementCount()];
+//        for (int i = 0; i < nv.length; i++) {
+//            nv[i] = kit.getViewFactory().create(seg.getElement(i));
+//        }
+//        segmentView.replace(0, segmentView.getViewCount(), nv);
+
     }
 
     /**
@@ -289,16 +315,51 @@ class OmDocument extends AbstractDocument implements StyledDocument {
         UIThreadsUtil.mustBeSwingThread();
 
         super.insertUpdate(chng, attr);
+        // if( getProperty("i18n").equals( Boolean.TRUE ) )
+        // omUpdateBidi( chng );
         try {
             int segmentIndex = root.getElementIndex(chng.getOffset());
 
+            dump();
             // we have to rebuild segment each time, because we need to check
             // spelling, and possible rebuild paragraphs
             rebuildElementsForSegment(chng, segmentIndex);
+            dump();
         } catch (BadLocationException ex) {
             throw new RuntimeException(ex);
         }
     }
+
+    /**
+     * Fix bidi values for full document.
+     */
+    protected void omFixBidi() {
+        if (true) return;//TODO debug
+        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
+
+        // initialize bidi elements
+        BranchElement bidiRoot = (BranchElement) getBidiRootElement();
+        LeafElement[] segsBidi = new LeafElement[root.getElementCount()];
+        for (int i = 0; i < segsBidi.length; i++) {
+            Element seg = root.getElement(i);
+            segsBidi[i] = new LeafElement(bidiRoot, new SimpleAttributeSet(),
+                    seg.getStartOffset(), seg.getEndOffset());
+            segsBidi[i].addAttribute(StyleConstants.BidiLevel, 2);
+        }
+        bidiRoot.replace(0, bidiRoot.getElementCount(), segsBidi);
+        dump();
+        System.out.println("yyyyyyyyyyyyyyyyyy");
+    }
+
+//    protected void setDirection(Boolean dir) {
+//        getDocumentProperties().put(TextAttribute.RUN_DIRECTION, dir);
+//        writeLock();
+//        try {
+//            omFixBidi();
+//        } finally {
+//            writeUnlock();
+//        }
+//    }
 
     /**
      * Rebuild elements fro specified segment after user's change.
@@ -311,7 +372,7 @@ class OmDocument extends AbstractDocument implements StyledDocument {
      */
     private void rebuildElementsForSegment(DefaultDocumentEvent chng,
             int segmentIndex) throws BadLocationException {
-        try {
+        try {System.out.println("rebuild");
             writeLock();
 
             OmElementSegment segElement;
@@ -334,10 +395,20 @@ class OmDocument extends AbstractDocument implements StyledDocument {
             Element[] added = desc.createElementsForSegment(this, segElement,
                     fullSegmentText, offsetFromDocumentBegin);
 
+            // fix bidi for segment
+            BranchElement bidiRoot = (BranchElement) getBidiRootElement();
+            LeafElement segBidi = new LeafElement(bidiRoot,
+                    new SimpleAttributeSet(), segElement.getStartOffset(),
+                    segElement.getEndOffset());
+            segBidi.addAttribute(StyleConstants.BidiLevel, 0);
+            bidiRoot.replace(segmentIndex, 1, new Element[] { segBidi });
+
+            // set elements to document
             replaceSegmentElements(segmentIndex,
                     (OmEditorKit) controller.editor.getEditorKit(), added);
 
             segElement.replace(0, segElement.getElementCount(), added);
+
         } finally {
             writeUnlock();
         }
@@ -566,6 +637,18 @@ class OmDocument extends AbstractDocument implements StyledDocument {
                     OmContent.POSITION_TYPE.AFTER_EDITABLE);
         }
 
+        @Override
+        public void addAttribute(Object name, Object value) {
+            // TODO debug
+            super.addAttribute(name, value);
+        }
+
+        @Override
+        public void addAttributes(AttributeSet attr) {
+            // TODO debug
+            super.addAttributes(attr);
+        }
+
         public String getName() {
             return "text";
         }
@@ -604,6 +687,114 @@ class OmDocument extends AbstractDocument implements StyledDocument {
     }
 
     /**
+     * Implement own TextElement. We can't use standard LeafElement, because we
+     * want to create "before/inside/after" positions.
+     */
+    public class OmElementSegmentMark extends AbstractElement {
+        protected final Position p0, p1;
+
+        public OmElementSegmentMark(Element parent, AttributeSet a, int offs0,
+                int offs1, OmContent.POSITION_TYPE positionType) {
+            super(parent, a);
+            p0 = getData().createPosition(offs0, positionType);
+            p1 = getData().createPosition(offs1, positionType);
+        }
+
+        public OmElementSegmentMark(Element parent, AttributeSet a, int offs) {
+            super(parent, a);
+            p0 = getData().createPosition(offs,
+                    OmContent.POSITION_TYPE.BEFORE_EDITABLE);
+            p1 = getData().createPosition(offs,
+                    OmContent.POSITION_TYPE.AFTER_EDITABLE);
+        }
+
+        @Override
+        public void addAttribute(Object name, Object value) {
+            // TODO debug
+            super.addAttribute(name, value);
+        }
+
+        @Override
+        public void addAttributes(AttributeSet attr) {
+            // TODO debug
+            super.addAttributes(attr);
+        }
+
+        public String getName() {
+            return "segmentmark";
+        }
+
+        public int getStartOffset() {
+            return p0.getOffset();
+        }
+
+        public int getEndOffset() {
+            return p1.getOffset();
+        }
+
+        public int getElementIndex(int pos) {
+            return -1;
+        }
+
+        public Element getElement(int index) {
+            return null;
+        }
+
+        public int getElementCount() {
+            return 0;
+        }
+
+        public boolean isLeaf() {
+            return true;
+        }
+
+        public boolean getAllowsChildren() {
+            return false;
+        }
+
+        public Enumeration<?> children() {
+            return null;
+        }
+    }
+
+    protected void dump() {
+        if (true)
+            return;
+        System.out.println("=======================================");
+        for (Element el : getRootElements()) {
+            dump(el, 0);
+        }
+        System.out.println("===== view: =======");
+        dump(controller.editor.getUI().getRootView(controller.editor)
+                .getView(0), 0);
+    }
+
+    protected static void dump(View v, int indentAmount) {
+        if (v == null)
+            return;
+
+        indent(indentAmount);
+        System.out.println("Class: " + v.getClass().getCanonicalName() + " "
+                + v);
+        if (v instanceof BoxView) {
+            BoxView bv = (BoxView) v;
+            indent(indentAmount);
+            System.out
+                    .println("   w:" + bv.getWidth() + " h:" + bv.getHeight());
+        }
+        if (v instanceof ExtendedLabelView) {
+            ExtendedLabelView elv = (ExtendedLabelView) v;
+            dump(elv.getElement(), indentAmount + 2);
+        }
+        if (v instanceof CompositeView) {
+            CompositeView cv = (CompositeView) v;
+            for (int i = 0; i < cv.getViewCount(); i++) {
+                dump(cv.getView(i), indentAmount + 2);
+            }
+        }
+    }
+
+    /**
      * Method for debugging purpose only. It shows element better than standard
      * Element.dump method.
      * 
@@ -611,40 +802,39 @@ class OmDocument extends AbstractDocument implements StyledDocument {
      *            element
      * @param indentAmount
      */
-    protected static void dump(AbstractElement el, int indentAmount) {
-        PrintWriter out;
-        try {
-            out = new PrintWriter(
-                    new OutputStreamWriter(System.out, "JavaEsc"), true);
-        } catch (UnsupportedEncodingException e) {
-            out = new PrintWriter(System.out, true);
-        }
-        indent(out, indentAmount);
+    public static void dump(Element ell, int indentAmount) {
+        AbstractElement el = (AbstractElement) ell;
+        indent(indentAmount);
         if (el.getName() == null) {
-            out.print("<??");
+            System.out.print("<??");
         } else {
-            out.print("<" + el.getName());
+            System.out.print("<" + el.getName());
         }
         if (el.getAttributeCount() > 0) {
-            out.println("");
+            System.out.println();
             // dump the attributes
             Enumeration<?> names = el.getAttributeNames();
             while (names.hasMoreElements()) {
                 Object name = names.nextElement();
-                indent(out, indentAmount + 1);
-                out.println(name + "=" + el.getAttribute(name));
+                indent(indentAmount + 1);
+                System.out.println(name + "=" + el.getAttribute(name));
             }
-            indent(out, indentAmount);
+            indent(indentAmount);
         }
-        out.print(">");
+        System.out.print(">");
 
         if (el.isLeaf()) {
-            indent(out, indentAmount + 1);
+            indent(indentAmount + 1);
 
-            Position p0 = ((OmElementText) el).p0;
-            Position p1 = ((OmElementText) el).p1;
+            if (el instanceof OmElementText) {
+                Position p0 = ((OmElementText) el).p0;
+                Position p1 = ((OmElementText) el).p1;
 
-            out.print("[" + p0 + "," + p1 + "]");
+                System.out.print("[" + p0 + "," + p1 + "]");
+            } else {
+                System.out.print("[" + el.getStartOffset() + ","
+                        + el.getEndOffset() + "]");
+            }
             Content c = ((OmDocument) el.getDocument()).getContent();
             try {
                 String contentStr = c.getString(el.getStartOffset(), el
@@ -654,13 +844,13 @@ class OmDocument extends AbstractDocument implements StyledDocument {
                     contentStr = contentStr.substring(0, 40) + "...";
                 }
                 contentStr = contentStr.replace("\n", "'\\n'");
-                out.println("[" + contentStr + "]");
-            } catch (BadLocationException e) {
-                ;
+                System.out.println("[" + contentStr + "]");
+            } catch (Exception e) {
+                System.out.println("<unk>");
             }
 
         } else {
-            out.println();
+            System.out.println();
             int n = el.getElementCount();
             for (int i = 0; i < n; i++) {
                 AbstractElement e = (AbstractElement) el.getElement(i);
@@ -669,9 +859,9 @@ class OmDocument extends AbstractDocument implements StyledDocument {
         }
     }
 
-    private static final void indent(PrintWriter out, int n) {
+    private static final void indent(int n) {
         for (int i = 0; i < n; i++) {
-            out.print("  ");
+            System.out.print("  ");
         }
     }
 }
