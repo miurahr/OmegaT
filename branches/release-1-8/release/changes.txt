@@ -14,7 +14,8 @@
 
   Other enhancements:
  
-  - Japanese localisation update to 1.8 (UI) 
+  - Japanese localisation updated to 1.8 (UI) 
+  - Slovenian localisation updated to 1.8 (UI) 
 
 ----------------------------------------------------------------------
  OmegaT 1.8.1 Changes
