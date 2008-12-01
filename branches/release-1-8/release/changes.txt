@@ -3,19 +3,27 @@
 ----------------------------------------------------------------------
 1.8.1 update 1 vs. 1.8.1
 
-   2 Enhancements
-   2 Bugfixes
+   3 Enhancements
+   3 Bugfixes
 ----------------------------------------------------------------------
 1.8.1 update 1
 
-  Bug fixes:
-  - PowerPoint: Non translatable text (<p:attrName>) was visible in the editor
-  - Various corrections in the manual
+  Implemented requests:
+
+  - PO: transform \t to tabs and back
+  http://sourceforge.net/support/tracker.php?aid=2120936
 
   Other enhancements:
  
   - Japanese localisation updated to 1.8 (UI) 
   - Slovenian localisation updated to 1.8 (UI) 
+
+  Bug fixes:
+
+  - PowerPoint: Non translatable text (<p:attrName>) was visible in the editor
+  - Various corrections in the manual
+  - PO Filter: \ is doubled for \t
+  http://sourceforge.net/support/tracker.php?aid=2149518
 
 ----------------------------------------------------------------------
  OmegaT 1.8.1 Changes
