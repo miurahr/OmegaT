@@ -121,6 +121,8 @@ public class EditorController implements IEditor {
         editor = new OmTextArea(this);
 
         pane = new DockableScrollPane("EDITOR", " ", editor, false);
+        pane.setComponentOrientation(ComponentOrientation.getOrientation(Locale
+                .getDefault()));
         pane
                 .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         pane.setMinimumSize(new Dimension(100, 100));
@@ -238,6 +240,7 @@ public class EditorController implements IEditor {
             data = editor;
             break;
         }
+
         pane.setName(title);
         if (pane.getViewport().getView() != data) {
             pane.setViewportView(data);
@@ -294,8 +297,10 @@ public class EditorController implements IEditor {
                     segmentNumberOffset + i, false);
         }
 
+        String sourceLang=Core.getProject().getProjectProperties().getSourceLanguage().getLanguageCode();
+        String targetLang=Core.getProject().getProjectProperties().getTargetLanguage().getLanguageCode();
         try {
-            m_docSegList = doc.initialize(text, descriptions);
+            m_docSegList = doc.initialize(text, descriptions,sourceLang,targetLang);
         } catch (BadLocationException ex) {
             LOGGER.log(Level.SEVERE, "Error initialize document", ex);
         }
@@ -854,7 +859,9 @@ public class EditorController implements IEditor {
                     + OConsts.HELP_DIR + File.separator + language
                     + File.separator + OConsts.HELP_INSTANT_START;
             introPane = new JTextPane();
-            introPane.setComponentOrientation(ComponentOrientation.getOrientation(new Locale(language)));
+            introPane
+                    .setComponentOrientation(EditorUtils.isRTL(language) ? ComponentOrientation.RIGHT_TO_LEFT
+                            : ComponentOrientation.LEFT_TO_RIGHT);
             introPane.setEditable(false);
             introPane.setPage("file:///" + filepath);
         } catch (IOException e) {

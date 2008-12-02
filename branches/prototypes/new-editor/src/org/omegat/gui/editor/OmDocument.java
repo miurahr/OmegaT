@@ -26,7 +26,6 @@ package org.omegat.gui.editor;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.font.TextAttribute;
 import java.util.Enumeration;
 
 import javax.swing.text.AbstractDocument;
@@ -63,12 +62,23 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class OmDocument extends AbstractDocument implements StyledDocument {
+    enum ORIENTATION {
+        /** Both segments is left aligned. */
+        LTR,
+        /** Both segments is right aligned. */
+        RTL,
+        /** Segments have different alignment, depends of language alignment. */
+        DIFFER
+    };
 
     /** Editor controller. */
     protected final EditorController controller;
 
     /** Root element for full document. */
     private OmElementMain root;
+
+    private boolean sourceLangIsRTL, targetLangIsRTL;
+    private ORIENTATION currentOrientation;
 
     /**
      * Positions of begin and end translation. Since positions moved on each
@@ -101,8 +111,22 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      *             exception
      */
     OmElementSegment[] initialize(StringBuilder text,
-            SegmentElementsDescription[] descriptions)
-            throws BadLocationException {
+            SegmentElementsDescription[] descriptions, String sourceLang,
+            String targetLang) throws BadLocationException {
+
+        // Define orientation
+        sourceLangIsRTL = EditorUtils.isRTL(sourceLang);
+        targetLangIsRTL = EditorUtils.isRTL(targetLang);
+        if (sourceLangIsRTL != targetLangIsRTL) {
+            currentOrientation = ORIENTATION.DIFFER;
+        } else {
+            if (sourceLangIsRTL) {
+                currentOrientation = ORIENTATION.RTL;
+            } else {
+                currentOrientation = ORIENTATION.LTR;
+            }
+        }
+
         try {
             writeLock();
             getContent().insertString(0, text.toString());
@@ -247,16 +271,15 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
         // remove old children
         segmentView.removeAll();
         // required to call 'loadChildren'
-//        ((BoxView) segmentView).layoutChanged(View.X_AXIS);
-//        ((BoxView) segmentView).layoutChanged(View.Y_AXIS);
+        // ((BoxView) segmentView).layoutChanged(View.X_AXIS);
+        // ((BoxView) segmentView).layoutChanged(View.Y_AXIS);
         segmentView.setParent(mainDocView);
-        
-        
-//        View[] nv = new View[seg.getElementCount()];
-//        for (int i = 0; i < nv.length; i++) {
-//            nv[i] = kit.getViewFactory().create(seg.getElement(i));
-//        }
-//        segmentView.replace(0, segmentView.getViewCount(), nv);
+
+        // View[] nv = new View[seg.getElementCount()];
+        // for (int i = 0; i < nv.length; i++) {
+        // nv[i] = kit.getViewFactory().create(seg.getElement(i));
+        // }
+        // segmentView.replace(0, segmentView.getViewCount(), nv);
 
     }
 
@@ -334,7 +357,8 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      * Fix bidi values for full document.
      */
     protected void omFixBidi() {
-        if (true) return;//TODO debug
+        if (true)
+            return;// TODO debug
         System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
 
         // initialize bidi elements
@@ -351,15 +375,15 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
         System.out.println("yyyyyyyyyyyyyyyyyy");
     }
 
-//    protected void setDirection(Boolean dir) {
-//        getDocumentProperties().put(TextAttribute.RUN_DIRECTION, dir);
-//        writeLock();
-//        try {
-//            omFixBidi();
-//        } finally {
-//            writeUnlock();
-//        }
-//    }
+    // protected void setDirection(Boolean dir) {
+    // getDocumentProperties().put(TextAttribute.RUN_DIRECTION, dir);
+    // writeLock();
+    // try {
+    // omFixBidi();
+    // } finally {
+    // writeUnlock();
+    // }
+    // }
 
     /**
      * Rebuild elements fro specified segment after user's change.
@@ -372,7 +396,8 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      */
     private void rebuildElementsForSegment(DefaultDocumentEvent chng,
             int segmentIndex) throws BadLocationException {
-        try {System.out.println("rebuild");
+        try {
+            System.out.println("rebuild");
             writeLock();
 
             OmElementSegment segElement;
@@ -426,6 +451,27 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
             rebuildElementsForSegment(null, segmentIndex);
         } catch (BadLocationException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Toggle component orientation: LTR, RTL, language dependent.
+     */
+    void toggleOrientation() {
+        switch (currentOrientation) {
+        case LTR:
+            currentOrientation = ORIENTATION.RTL;
+            break;
+        case RTL:
+            if (sourceLangIsRTL != targetLangIsRTL) {
+                currentOrientation = ORIENTATION.DIFFER;
+            } else {
+                currentOrientation = ORIENTATION.LTR;
+            }
+            break;
+        case DIFFER:
+            currentOrientation = ORIENTATION.LTR;
+            break;
         }
     }
 
