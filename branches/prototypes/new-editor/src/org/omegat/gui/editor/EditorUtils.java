@@ -38,8 +38,10 @@ public class EditorUtils {
      * @return true if language is RTL
      */
     public static boolean isRTL(final String language) {
-        return "ar".equals(language) || "iw".equals(language)
-                || "he".equals(language) || "fa".equals(language)
-                || "ur".equals(language);
+        return "ar".equalsIgnoreCase(language)
+                || "iw".equalsIgnoreCase(language)
+                || "he".equalsIgnoreCase(language)
+                || "fa".equalsIgnoreCase(language)
+                || "ur".equalsIgnoreCase(language);
     }
 }

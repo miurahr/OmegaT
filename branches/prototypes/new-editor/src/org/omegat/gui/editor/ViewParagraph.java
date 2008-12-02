@@ -12,6 +12,7 @@ import javax.swing.text.StyleConstants;
 public class ViewParagraph extends ParagraphView {
     public ViewParagraph(final Element elem, final boolean isRTL) {
         super(elem);
+        System.out.println("par rtl="+isRTL);
         setJustification(isRTL ? StyleConstants.ALIGN_RIGHT
                 : StyleConstants.ALIGN_LEFT);
     }

@@ -26,7 +26,9 @@ package org.omegat.gui.editor;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.font.TextAttribute;
 import java.util.Enumeration;
+import java.util.logging.Logger;
 
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -35,6 +37,7 @@ import javax.swing.text.BoxView;
 import javax.swing.text.CompositeView;
 import javax.swing.text.EditorKit;
 import javax.swing.text.Element;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.Position;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
@@ -62,6 +65,10 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class OmDocument extends AbstractDocument implements StyledDocument {
+    /** Local logger. */
+    private static final Logger LOGGER = Logger.getLogger(OmDocument.class
+            .getName());
+
     enum ORIENTATION {
         /** Both segments is left aligned. */
         LTR,
@@ -77,7 +84,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     /** Root element for full document. */
     private OmElementMain root;
 
-    private boolean sourceLangIsRTL, targetLangIsRTL;
+    protected boolean sourceLangIsRTL, targetLangIsRTL;
     private ORIENTATION currentOrientation;
 
     /**
@@ -94,6 +101,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
         super(new OmContent(), new StyleContext());
         this.controller = controller;
         root = new OmElementMain();
+        putProperty("i18n", Boolean.TRUE);
     }
 
     /**
@@ -146,8 +154,6 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
                 segments[i].replace(0, 0, paragraphs);
             }
             root.replace(0, 0, segments);
-
-            omFixBidi();
 
             return segments;
         } finally {
@@ -337,9 +343,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     protected void insertUpdate(DefaultDocumentEvent chng, AttributeSet attr) {
         UIThreadsUtil.mustBeSwingThread();
 
-        super.insertUpdate(chng, attr);
-        // if( getProperty("i18n").equals( Boolean.TRUE ) )
-        // omUpdateBidi( chng );
+        super.insertUpdate(chng, attr);//TODO
         try {
             int segmentIndex = root.getElementIndex(chng.getOffset());
 
@@ -352,38 +356,6 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
             throw new RuntimeException(ex);
         }
     }
-
-    /**
-     * Fix bidi values for full document.
-     */
-    protected void omFixBidi() {
-        if (true)
-            return;// TODO debug
-        System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
-
-        // initialize bidi elements
-        BranchElement bidiRoot = (BranchElement) getBidiRootElement();
-        LeafElement[] segsBidi = new LeafElement[root.getElementCount()];
-        for (int i = 0; i < segsBidi.length; i++) {
-            Element seg = root.getElement(i);
-            segsBidi[i] = new LeafElement(bidiRoot, new SimpleAttributeSet(),
-                    seg.getStartOffset(), seg.getEndOffset());
-            segsBidi[i].addAttribute(StyleConstants.BidiLevel, 2);
-        }
-        bidiRoot.replace(0, bidiRoot.getElementCount(), segsBidi);
-        dump();
-        System.out.println("yyyyyyyyyyyyyyyyyy");
-    }
-
-    // protected void setDirection(Boolean dir) {
-    // getDocumentProperties().put(TextAttribute.RUN_DIRECTION, dir);
-    // writeLock();
-    // try {
-    // omFixBidi();
-    // } finally {
-    // writeUnlock();
-    // }
-    // }
 
     /**
      * Rebuild elements fro specified segment after user's change.
@@ -421,12 +393,12 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
                     fullSegmentText, offsetFromDocumentBegin);
 
             // fix bidi for segment
-            BranchElement bidiRoot = (BranchElement) getBidiRootElement();
-            LeafElement segBidi = new LeafElement(bidiRoot,
-                    new SimpleAttributeSet(), segElement.getStartOffset(),
-                    segElement.getEndOffset());
-            segBidi.addAttribute(StyleConstants.BidiLevel, 0);
-            bidiRoot.replace(segmentIndex, 1, new Element[] { segBidi });
+            // BranchElement bidiRoot = (BranchElement) getBidiRootElement();
+            // LeafElement segBidi = new LeafElement(bidiRoot,
+            // new SimpleAttributeSet(), segElement.getStartOffset(),
+            // segElement.getEndOffset());
+            // segBidi.addAttribute(StyleConstants.BidiLevel, 0);
+            // bidiRoot.replace(segmentIndex, 1, new Element[] { segBidi });
 
             // set elements to document
             replaceSegmentElements(segmentIndex,
@@ -458,21 +430,30 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      * Toggle component orientation: LTR, RTL, language dependent.
      */
     void toggleOrientation() {
+        ORIENTATION newOrientation = currentOrientation;
         switch (currentOrientation) {
         case LTR:
-            currentOrientation = ORIENTATION.RTL;
+            newOrientation = ORIENTATION.RTL;
             break;
         case RTL:
             if (sourceLangIsRTL != targetLangIsRTL) {
-                currentOrientation = ORIENTATION.DIFFER;
+                newOrientation = ORIENTATION.DIFFER;
             } else {
-                currentOrientation = ORIENTATION.LTR;
+                newOrientation = ORIENTATION.LTR;
             }
             break;
         case DIFFER:
-            currentOrientation = ORIENTATION.LTR;
+            newOrientation = ORIENTATION.LTR;
             break;
         }
+        LOGGER.info("Switch document orientation from " + currentOrientation
+                + " to " + newOrientation);
+        currentOrientation = newOrientation;
+
+        controller.editor.repaint();
+        // View mainDocView = controller.editor.getUI().getRootView(
+        // controller.editor).getView(0);
+        // mainDocView.removeAll();
     }
 
     /**
@@ -652,12 +633,34 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      * Element for paragraphs, i.e. lines inside "segment" element.
      */
     public class OmElementParagraph extends BranchElement {
+        private boolean langRTL;
+
         public OmElementParagraph(Element p, AttributeSet a) {
             super(p, a);
         }
 
         public String getName() {
             return "paragraph";
+        }
+
+        public boolean isLangRTL() {
+            return langRTL;
+        }
+
+        public void setLangRTL(boolean langRTL) {
+            this.langRTL = langRTL;
+            MutableAttributeSet attrs = (MutableAttributeSet) getAttributes();
+            attrs.addAttribute(TextAttribute.RUN_DIRECTION, new Boolean(langRTL));
+        }
+
+        public boolean isRTLAligned() {
+            switch (currentOrientation) {
+            case LTR:
+                return false;
+            case RTL:
+                return true;
+            }
+            return langRTL;
         }
     }
 

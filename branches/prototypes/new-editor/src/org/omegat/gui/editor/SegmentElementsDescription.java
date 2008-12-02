@@ -229,22 +229,21 @@ public class SegmentElementsDescription {
     Element[] createElementsForSegment(OmDocument doc,
             OmElementSegment segElement, String text,
             int offsetFromDocumentBegin) {
-        SimpleAttributeSet a = new SimpleAttributeSet();// TODO
-        a.addAttribute(TextAttribute.RUN_DIRECTION,
-                TextAttribute.RUN_DIRECTION_LTR);
-
-        paragraphElements.add(doc.new OmElementParagraph(segElement, a));
+        int sourceParagraphsCount;
+        paragraphElements.add(doc.new OmElementParagraph(segElement, new SimpleAttributeSet()));
 
         // add sources
         addLines(segElement, ATTR_SOURCE, text.substring(0,
                 translationBeginTagStart), offsetFromDocumentBegin, false,
                 OmContent.POSITION_TYPE.BEFORE_EDITABLE);
+
+        sourceParagraphsCount = paragraphElements.size() - 1;
+
         // add <segment 0000>
         addSegmentMark(segElement, ATTR_SEGMENT_MARK, text.substring(
                 translationBeginTagStart, translationBeginTagEnd),
                 offsetFromDocumentBegin + translationBeginTagStart, false,
                 OmContent.POSITION_TYPE.BEFORE_EDITABLE);
-
         // add translation
         addLines(segElement, translationAttrs, text.substring(
                 translationBeginTagEnd, translationEndTagStart),
@@ -262,6 +261,14 @@ public class SegmentElementsDescription {
                 OmContent.POSITION_TYPE.AFTER_EDITABLE);
 
         paragraphElements.remove(paragraphElements.size() - 1);
+
+        for (int i = 0; i < sourceParagraphsCount; i++) {
+            paragraphElements.get(i).setLangRTL(doc.sourceLangIsRTL);
+        }
+        for (int i = sourceParagraphsCount; i < paragraphElements.size(); i++) {
+            paragraphElements.get(i).setLangRTL(doc.targetLangIsRTL);
+        }
+
         return paragraphElements.toArray(new Element[paragraphElements.size()]);
     }
 
@@ -307,10 +314,7 @@ public class SegmentElementsDescription {
                     textElements.toArray(new Element[textElements.size()]));
             textElements.clear();
 
-            SimpleAttributeSet a = new SimpleAttributeSet();// TODO
-            a.addAttribute(TextAttribute.RUN_DIRECTION,
-                    TextAttribute.RUN_DIRECTION_LTR);
-            paragraphElements.add(doc.new OmElementParagraph(section, a));
+            paragraphElements.add(doc.new OmElementParagraph(section, new SimpleAttributeSet()));
             prevPos = pos + 1;
         }
         addLine(attrs, partText.substring(prevPos), offsetFromDocumentBegin
