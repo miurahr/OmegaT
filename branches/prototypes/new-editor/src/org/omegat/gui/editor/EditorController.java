@@ -55,6 +55,7 @@ import org.omegat.core.data.stat.StatisticsInfo;
 import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
+import org.omegat.gui.editor.OmDocument.ORIENTATION;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.Log;
@@ -114,6 +115,10 @@ public class EditorController implements IEditor {
     private enum SHOW_TYPE {
         INTRO, EMPTY_PROJECT, FIRST_ENTRY, NO_CHANGE
     };
+    
+    private OmDocument.ORIENTATION currentOrientation;
+    protected boolean sourceLangIsRTL, targetLangIsRTL;
+    
 
     public EditorController(final MainWindow mainWindow) {
         this.mw = mainWindow;
@@ -148,6 +153,7 @@ public class EditorController implements IEditor {
                     } else {
                         showType = SHOW_TYPE.EMPTY_PROJECT;
                     }
+                    setInitialOrientation();
                     break;
                 case CLOSE:
                     history.clear();
@@ -248,6 +254,57 @@ public class EditorController implements IEditor {
     }
 
     /**
+     * Decide what document orientation should be default for source/target
+     * languages.
+     */
+    private void setInitialOrientation() {
+        String sourceLang = Core.getProject().getProjectProperties()
+                .getSourceLanguage().getLanguageCode();
+        String targetLang = Core.getProject().getProjectProperties()
+                .getTargetLanguage().getLanguageCode();
+
+         sourceLangIsRTL = EditorUtils.isRTL(sourceLang);
+         targetLangIsRTL = EditorUtils.isRTL(targetLang);
+        
+        if (sourceLangIsRTL != targetLangIsRTL) {
+            currentOrientation = OmDocument.ORIENTATION.DIFFER;
+        } else {
+            if (sourceLangIsRTL) {
+                currentOrientation = ORIENTATION.RTL;
+            } else {
+                currentOrientation = ORIENTATION.LTR;
+            }
+        }
+    }
+    
+    /**
+     * Toggle component orientation: LTR, RTL, language dependent.
+     */
+    protected void toggleOrientation() {     
+        ORIENTATION newOrientation = currentOrientation;
+        switch (currentOrientation) {
+        case LTR:
+            newOrientation = ORIENTATION.RTL;
+            break;
+        case RTL:
+            if (sourceLangIsRTL != targetLangIsRTL) {
+                newOrientation = ORIENTATION.DIFFER;
+            } else {
+                newOrientation = ORIENTATION.LTR;
+            }
+            break;
+        case DIFFER:
+            newOrientation = ORIENTATION.LTR;
+            break;
+        }
+        LOGGER.info("Switch document orientation from " + currentOrientation
+                + " to " + newOrientation);
+        currentOrientation = newOrientation;
+        editor.getOmDocument().setOrientation(currentOrientation);
+        editor.repaint();
+    }
+    
+    /**
      * {@inheritDoc}
      */
     public void requestFocus() {
@@ -297,10 +354,8 @@ public class EditorController implements IEditor {
                     segmentNumberOffset + i, false);
         }
 
-        String sourceLang=Core.getProject().getProjectProperties().getSourceLanguage().getLanguageCode();
-        String targetLang=Core.getProject().getProjectProperties().getTargetLanguage().getLanguageCode();
         try {
-            m_docSegList = doc.initialize(text, descriptions,sourceLang,targetLang);
+            m_docSegList = doc.initialize(text, descriptions,currentOrientation);
         } catch (BadLocationException ex) {
             LOGGER.log(Level.SEVERE, "Error initialize document", ex);
         }

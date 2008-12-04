@@ -24,7 +24,6 @@
 
 package org.omegat.gui.editor;
 
-import java.awt.font.TextAttribute;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -230,7 +229,8 @@ public class SegmentElementsDescription {
             OmElementSegment segElement, String text,
             int offsetFromDocumentBegin) {
         int sourceParagraphsCount;
-        paragraphElements.add(doc.new OmElementParagraph(segElement, new SimpleAttributeSet()));
+        paragraphElements.add(doc.new OmElementParagraph(segElement,
+                new SimpleAttributeSet()));
 
         // add sources
         addLines(segElement, ATTR_SOURCE, text.substring(0,
@@ -239,7 +239,7 @@ public class SegmentElementsDescription {
 
         sourceParagraphsCount = paragraphElements.size() - 1;
 
-        // add <segment 0000>
+        // add begin segment mark
         addSegmentMark(segElement, ATTR_SEGMENT_MARK, text.substring(
                 translationBeginTagStart, translationBeginTagEnd),
                 offsetFromDocumentBegin + translationBeginTagStart, false,
@@ -249,7 +249,7 @@ public class SegmentElementsDescription {
                 translationBeginTagEnd, translationEndTagStart),
                 offsetFromDocumentBegin + translationBeginTagEnd,
                 needToCheckSpelling, OmContent.POSITION_TYPE.INSIDE_EDITABLE);
-        // add <end segment>
+        // add end segment mark
         addSegmentMark(segElement, ATTR_SEGMENT_MARK, text.substring(
                 translationEndTagStart, translationEndTagEnd),
                 offsetFromDocumentBegin + translationEndTagStart, false,
@@ -263,10 +263,10 @@ public class SegmentElementsDescription {
         paragraphElements.remove(paragraphElements.size() - 1);
 
         for (int i = 0; i < sourceParagraphsCount; i++) {
-            paragraphElements.get(i).setLangRTL(doc.sourceLangIsRTL);
+            paragraphElements.get(i).setLangRTL(doc.controller.sourceLangIsRTL);
         }
         for (int i = sourceParagraphsCount; i < paragraphElements.size(); i++) {
-            paragraphElements.get(i).setLangRTL(doc.targetLangIsRTL);
+            paragraphElements.get(i).setLangRTL(doc.controller.targetLangIsRTL);
         }
 
         return paragraphElements.toArray(new Element[paragraphElements.size()]);
@@ -314,7 +314,8 @@ public class SegmentElementsDescription {
                     textElements.toArray(new Element[textElements.size()]));
             textElements.clear();
 
-            paragraphElements.add(doc.new OmElementParagraph(section, new SimpleAttributeSet()));
+            paragraphElements.add(doc.new OmElementParagraph(section,
+                    new SimpleAttributeSet()));
             prevPos = pos + 1;
         }
         addLine(attrs, partText.substring(prevPos), offsetFromDocumentBegin

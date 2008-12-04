@@ -41,7 +41,7 @@ import javax.swing.text.Position.Bias;
 
 /**
  * Class for display segmentation marks. It better to paint marks by own
- * component, because we will not have problems with RTL writing.
+ * component, because we will not have problems with RTL writing in this case.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
@@ -62,7 +62,7 @@ public class ViewSegmentMark extends View {
         updateDrawSettings();
         switch (axis) {
         case View.X_AXIS:
-            return super.getAlignment(axis);
+            return 0;//super.getAlignment(axis);
         case View.Y_AXIS:
             float h = fontMetrics.getHeight();
             float d = fontMetrics.getDescent();

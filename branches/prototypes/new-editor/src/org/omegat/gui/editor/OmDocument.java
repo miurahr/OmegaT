@@ -28,7 +28,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
 import java.util.Enumeration;
-import java.util.logging.Logger;
 
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -39,7 +38,6 @@ import javax.swing.text.EditorKit;
 import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.Position;
-import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -65,9 +63,6 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class OmDocument extends AbstractDocument implements StyledDocument {
-    /** Local logger. */
-    private static final Logger LOGGER = Logger.getLogger(OmDocument.class
-            .getName());
 
     enum ORIENTATION {
         /** Both segments is left aligned. */
@@ -84,7 +79,6 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     /** Root element for full document. */
     private OmElementMain root;
 
-    protected boolean sourceLangIsRTL, targetLangIsRTL;
     private ORIENTATION currentOrientation;
 
     /**
@@ -119,22 +113,10 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      *             exception
      */
     OmElementSegment[] initialize(StringBuilder text,
-            SegmentElementsDescription[] descriptions, String sourceLang,
-            String targetLang) throws BadLocationException {
+            SegmentElementsDescription[] descriptions, ORIENTATION orientation)
+            throws BadLocationException {
 
-        // Define orientation
-        sourceLangIsRTL = EditorUtils.isRTL(sourceLang);
-        targetLangIsRTL = EditorUtils.isRTL(targetLang);
-        if (sourceLangIsRTL != targetLangIsRTL) {
-            currentOrientation = ORIENTATION.DIFFER;
-        } else {
-            if (sourceLangIsRTL) {
-                currentOrientation = ORIENTATION.RTL;
-            } else {
-                currentOrientation = ORIENTATION.LTR;
-            }
-        }
-
+        currentOrientation = orientation;
         try {
             writeLock();
             getContent().insertString(0, text.toString());
@@ -343,7 +325,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     protected void insertUpdate(DefaultDocumentEvent chng, AttributeSet attr) {
         UIThreadsUtil.mustBeSwingThread();
 
-        super.insertUpdate(chng, attr);//TODO
+        super.insertUpdate(chng, attr);// TODO
         try {
             int segmentIndex = root.getElementIndex(chng.getOffset());
 
@@ -427,30 +409,10 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     }
 
     /**
-     * Toggle component orientation: LTR, RTL, language dependent.
+     * Set new orientation.
      */
-    void toggleOrientation() {
-        ORIENTATION newOrientation = currentOrientation;
-        switch (currentOrientation) {
-        case LTR:
-            newOrientation = ORIENTATION.RTL;
-            break;
-        case RTL:
-            if (sourceLangIsRTL != targetLangIsRTL) {
-                newOrientation = ORIENTATION.DIFFER;
-            } else {
-                newOrientation = ORIENTATION.LTR;
-            }
-            break;
-        case DIFFER:
-            newOrientation = ORIENTATION.LTR;
-            break;
-        }
-        LOGGER.info("Switch document orientation from " + currentOrientation
-                + " to " + newOrientation);
+    void setOrientation(ORIENTATION newOrientation) {
         currentOrientation = newOrientation;
-
-        controller.editor.repaint();
         // View mainDocView = controller.editor.getUI().getRootView(
         // controller.editor).getView(0);
         // mainDocView.removeAll();
@@ -642,7 +604,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
         public String getName() {
             return "paragraph";
         }
-
+        
         public boolean isLangRTL() {
             return langRTL;
         }
@@ -650,10 +612,11 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
         public void setLangRTL(boolean langRTL) {
             this.langRTL = langRTL;
             MutableAttributeSet attrs = (MutableAttributeSet) getAttributes();
-            attrs.addAttribute(TextAttribute.RUN_DIRECTION, new Boolean(langRTL));
+            attrs.addAttribute(TextAttribute.RUN_DIRECTION,
+                    new Boolean(langRTL));
         }
 
-        public boolean isRTLAligned() {
+        public boolean isRightAligned() {
             switch (currentOrientation) {
             case LTR:
                 return false;

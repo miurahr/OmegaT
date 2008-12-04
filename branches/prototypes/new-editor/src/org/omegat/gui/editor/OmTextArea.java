@@ -157,7 +157,7 @@ class OmTextArea extends JEditorPane {
         } else if (isKey(e, KeyEvent.VK_O, KeyEvent.CTRL_MASK
                 | KeyEvent.SHIFT_MASK)) {
             // handle Ctrl+Shift+O - toggle orientation LTR-RTL
-            getOmDocument().toggleOrientation();
+            controller.toggleOrientation();
         }
 
         // leave standard processing if need
