@@ -240,7 +240,7 @@ public class SegmentElementsDescription {
         sourceParagraphsCount = paragraphElements.size() - 1;
 
         // add begin segment mark
-        addSegmentMark(segElement, ATTR_SEGMENT_MARK, text.substring(
+        addSegmentMark(true, segElement, ATTR_SEGMENT_MARK, text.substring(
                 translationBeginTagStart, translationBeginTagEnd),
                 offsetFromDocumentBegin + translationBeginTagStart, false,
                 OmContent.POSITION_TYPE.BEFORE_EDITABLE);
@@ -250,7 +250,7 @@ public class SegmentElementsDescription {
                 offsetFromDocumentBegin + translationBeginTagEnd,
                 needToCheckSpelling, OmContent.POSITION_TYPE.INSIDE_EDITABLE);
         // add end segment mark
-        addSegmentMark(segElement, ATTR_SEGMENT_MARK, text.substring(
+        addSegmentMark(false, segElement, ATTR_SEGMENT_MARK, text.substring(
                 translationEndTagStart, translationEndTagEnd),
                 offsetFromDocumentBegin + translationEndTagStart, false,
                 OmContent.POSITION_TYPE.AFTER_EDITABLE);
@@ -272,12 +272,13 @@ public class SegmentElementsDescription {
         return paragraphElements.toArray(new Element[paragraphElements.size()]);
     }
 
-    private void addSegmentMark(OmDocument.OmElementSegment section,
-            AttributeSet attrs, String partText, int offsetFromDocumentBegin,
+    private void addSegmentMark(boolean isBeginMark,
+            OmDocument.OmElementSegment section, AttributeSet attrs,
+            String partText, int offsetFromDocumentBegin,
             boolean needSpellCheck, OmContent.POSITION_TYPE positionType) {
-        textElements.add(doc.new OmElementSegmentMark(last(paragraphElements),
-                attrs, offsetFromDocumentBegin, offsetFromDocumentBegin
-                        + partText.length(), positionType));
+        textElements.add(doc.new OmElementSegmentMark(isBeginMark,
+                last(paragraphElements), attrs, offsetFromDocumentBegin,
+                offsetFromDocumentBegin + partText.length(), positionType));
     }
 
     /**

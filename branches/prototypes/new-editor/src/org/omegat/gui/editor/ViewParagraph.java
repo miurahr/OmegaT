@@ -1,10 +1,14 @@
 package org.omegat.gui.editor;
 
+import java.awt.Shape;
+
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.FlowView;
 import javax.swing.text.ParagraphView;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.View;
+import javax.swing.text.Position.Bias;
 
 /**
  * Class for use some protected properties.
@@ -12,19 +16,23 @@ import javax.swing.text.View;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class ViewParagraph extends ParagraphView {
-    public ViewParagraph(final Element elem, final boolean isRTL, final boolean isRightAligned) {
+    public ViewParagraph(final Element elem, final boolean isRTL,
+            final boolean isRightAligned) {
         super(elem);
         strategy = new LayoutStrategy(isRTL);
         setJustification(isRightAligned ? StyleConstants.ALIGN_RIGHT
                 : StyleConstants.ALIGN_LEFT);
     }
-    
+
     @Override
-    protected View createRow() {
-        // TODO Auto-generated method stub
-        return super.createRow();
+    public int getNextVisualPositionFrom(int pos, Bias b, Shape a,
+            int direction, Bias[] biasRet) throws BadLocationException {
+        int r=super.getNextVisualPositionFrom(pos, b, a, direction, biasRet);
+        System.out.println("prev="+pos+" next="+r);
+        return r;
+        
     }
-    
+
     public static class LayoutStrategy extends FlowView.FlowStrategy {
         protected boolean isRTL;
 
@@ -40,32 +48,40 @@ public class ViewParagraph extends ParagraphView {
                 // Need to swap "begin" and "end" mark view, because paragraph
                 // is RTL
                 View row = fv.getView(rowIndex);
-                int n = row.getViewCount();
-                if (n > 1) {
-                    // only when more than one view, because nothing to do if
-                    // there
-                    // is no 2 view
-                    if (row.getView(0) instanceof ViewSegmentMark) {
-                        // the first view should always be mark
-                        int secondIndex = -1;
-                        View[] replace = new View[n];
-                        for (int i = 0; i < n; i++) {
-                            replace[i] = row.getView(i);
-                            if (replace[i] instanceof ViewSegmentMark) {
-                                /*
-                                 * index of latest segment view, length-2 in
-                                 * most cases
-                                 */
-                                secondIndex = i;
+                if (row.getViewCount() > 1) {
+                    /*
+                     * only when more than one view, because nothing to do if
+                     * there is no 2 view
+                     */
+                    int p = -1;
+                    // find begin mark
+                    for (int i = 0; i < row.getViewCount(); i++) {
+                        View v = row.getView(i);
+                        if (v instanceof ViewSegmentMark) {
+                            if (((ViewSegmentMark) v).isBeginMark()) {
+                                p = i;
+                                break;
                             }
                         }
-                        if (secondIndex >= 0) {
-                            // swap it
-                            System.out.println("replace");
-                            View firstView = replace[0];
-                            replace[0] = replace[secondIndex];
-                            replace[secondIndex] = firstView;
-                            row.replace(0, n, replace);
+                    }
+                    if (p >= 0) {
+                        // move begin mark to the right
+                        moveView(row, p, row.getViewCount() - 2);
+
+                        p = -1;
+                        // find end mark
+                        for (int i = 0; i < row.getViewCount(); i++) {
+                            View v = row.getView(i);
+                            if (v instanceof ViewSegmentMark) {
+                                if (!((ViewSegmentMark) v).isBeginMark()) {
+                                    p = i;
+                                    break;
+                                }
+                            }
+                        }
+                        if (p >= 0) {
+                            // move end mark to the left
+                            moveView(row, p, 0);
                         }
                     }
                 }
@@ -73,5 +89,24 @@ public class ViewParagraph extends ParagraphView {
 
             return res;
         }
+    }
+
+    private static void moveView(View parentView, int sourcePos, int targetPos) {
+        View[] newList = new View[parentView.getViewCount()];
+        for (int i = 0; i < newList.length; i++) {
+            newList[i] = parentView.getView(i);
+        }
+        View v = newList[sourcePos];
+        if (targetPos > sourcePos) {
+            // move to the end
+            System.arraycopy(newList, sourcePos + 1, newList, sourcePos,
+                    targetPos - sourcePos);
+        } else {
+            // move to the begin
+            System.arraycopy(newList, targetPos, newList, targetPos + 1,
+                    sourcePos - targetPos);
+        }
+        newList[targetPos] = v;
+        parentView.replace(0, newList.length, newList);
     }
 }

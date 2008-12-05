@@ -117,7 +117,10 @@ class OmTextArea extends JEditorPane {
         }
 
         boolean processed = false;
-
+if (e.getKeyCode()==37 || e.getKeyCode()==39) {
+    System.out.println(e.getKeyCode());
+    
+}
         // non-standard processing
         if (isKey(e, KeyEvent.VK_TAB, 0)) {
             // press TAB when 'Use TAB to advance'

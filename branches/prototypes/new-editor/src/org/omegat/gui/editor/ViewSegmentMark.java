@@ -49,9 +49,15 @@ public class ViewSegmentMark extends View {
     private Font font;
     private FontMetrics fontMetrics;
     private Color fg, bg;
+    private final boolean beginMark;
 
     public ViewSegmentMark(Element elem) {
         super(elem);
+        this.beginMark = ((OmDocument.OmElementSegmentMark)elem).isBeginMark;
+    }
+    
+    public boolean isBeginMark() {
+        return beginMark;
     }
 
     /**
@@ -62,7 +68,7 @@ public class ViewSegmentMark extends View {
         updateDrawSettings();
         switch (axis) {
         case View.X_AXIS:
-            return 0;//super.getAlignment(axis);
+            return 0;// super.getAlignment(axis);
         case View.Y_AXIS:
             float h = fontMetrics.getHeight();
             float d = fontMetrics.getDescent();

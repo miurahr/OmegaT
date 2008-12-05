@@ -604,7 +604,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
         public String getName() {
             return "paragraph";
         }
-        
+
         public boolean isLangRTL() {
             return langRTL;
         }
@@ -704,20 +704,15 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      */
     public class OmElementSegmentMark extends AbstractElement {
         protected final Position p0, p1;
+        protected final boolean isBeginMark;
 
-        public OmElementSegmentMark(Element parent, AttributeSet a, int offs0,
-                int offs1, OmContent.POSITION_TYPE positionType) {
+        public OmElementSegmentMark(boolean isBeginMark, Element parent,
+                AttributeSet a, int offs0, int offs1,
+                OmContent.POSITION_TYPE positionType) {
             super(parent, a);
+            this.isBeginMark = isBeginMark;
             p0 = getData().createPosition(offs0, positionType);
             p1 = getData().createPosition(offs1, positionType);
-        }
-
-        public OmElementSegmentMark(Element parent, AttributeSet a, int offs) {
-            super(parent, a);
-            p0 = getData().createPosition(offs,
-                    OmContent.POSITION_TYPE.BEFORE_EDITABLE);
-            p1 = getData().createPosition(offs,
-                    OmContent.POSITION_TYPE.AFTER_EDITABLE);
         }
 
         @Override
