@@ -322,7 +322,7 @@ public class SegmentElementsDescription {
                 + translationEndTagEnd, new ElementFactory() {
             @Override
             public Element create(Element parent, int posStart, int posEnd) {
-                return doc.new OmElementText(parent, null, posStart, posEnd,
+                return doc.new OmElementEOS(parent, null, posStart, posEnd,
                         OmContent.POSITION_TYPE.AFTER_EDITABLE);
             }
         });

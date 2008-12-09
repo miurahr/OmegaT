@@ -62,6 +62,8 @@ class OmEditorKit extends DefaultEditorKit {
             if (kind != null) {
                 if (kind.equals("text")) {
                     return new ExtendedLabelView(elem);
+                } else if (kind.equals("eos")) {
+                    return new ViewEOS(elem);
                 } else if (kind.equals("main")) {
                     return new BoxView(elem, View.Y_AXIS);
                 } else if (kind.equals("paragraph")) {

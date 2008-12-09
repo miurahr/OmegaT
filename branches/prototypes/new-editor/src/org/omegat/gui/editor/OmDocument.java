@@ -626,7 +626,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
             return langRTL;
         }
     }
-
+    
     /**
      * Implement own TextElement. We can't use standard LeafElement, because we
      * want to create "before/inside/after" positions.
@@ -695,6 +695,19 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
 
         public Enumeration<?> children() {
             return null;
+        }
+    }
+
+    /**
+     * Element for end-of-segment mark.
+     */
+    public class OmElementEOS extends OmElementText {
+        public OmElementEOS(Element parent, AttributeSet a, int offs0,
+                int offs1, OmContent.POSITION_TYPE positionType) {
+            super(parent, a, offs0, offs1, positionType);
+        }
+        public String getName() {
+            return "eos";
         }
     }
 

@@ -85,7 +85,11 @@ public class ViewParagraph extends ParagraphView {
                     }
                     if (p >= 0) {
                         // move begin mark to the right
-                        moveView(row, p, row.getViewCount() - 2);
+                        int target = row.getViewCount() - 1;
+                        if (row.getView(target) instanceof ViewEOS) {
+                            target--;
+                        }
+                        moveView(row, p, target);
 
                         p = -1;
                         // find end mark
