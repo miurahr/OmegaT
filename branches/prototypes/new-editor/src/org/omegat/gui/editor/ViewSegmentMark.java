@@ -136,7 +136,7 @@ public class ViewSegmentMark extends View {
         }
         return p0 + text.length();
     }
-
+    
     /**
      * Paint this view.
      */

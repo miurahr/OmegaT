@@ -2,6 +2,7 @@ package org.omegat.gui.editor;
 
 import java.awt.Shape;
 
+import javax.swing.SwingConstants;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.FlowView;
@@ -27,10 +28,28 @@ public class ViewParagraph extends ParagraphView {
     @Override
     public int getNextVisualPositionFrom(int pos, Bias b, Shape a,
             int direction, Bias[] biasRet) throws BadLocationException {
-        int r=super.getNextVisualPositionFrom(pos, b, a, direction, biasRet);
-        System.out.println("prev="+pos+" next="+r);
+        // TODO Auto-generated method stub
+        int r = super.getNextVisualPositionFrom(pos, b, a, direction, biasRet);
+        System.out.println("prev=" + pos + " next=" + r);
         return r;
-        
+    }
+
+    @Override
+    protected int getNextEastWestVisualPositionFrom(int pos, Bias b, Shape a,
+            int direction, Bias[] biasRet) throws BadLocationException {
+        int r;
+        switch (direction) {
+        case SwingConstants.WEST:
+            r = pos - 1;
+            break;
+        case SwingConstants.EAST:
+            r = pos + 1;
+            break;
+        default:
+            r = pos;
+            break;
+        }
+        return r;
     }
 
     public static class LayoutStrategy extends FlowView.FlowStrategy {

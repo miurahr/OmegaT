@@ -179,6 +179,7 @@ if (e.getKeyCode()==37 || e.getKeyCode()==39) {
                 // press END
                 checkAndFixCaret();
             }
+//            checkAndFixCaret();
         }
     }
 
