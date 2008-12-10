@@ -626,7 +626,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
             return langRTL;
         }
     }
-    
+
     /**
      * Implement own TextElement. We can't use standard LeafElement, because we
      * want to create "before/inside/after" positions.
@@ -706,6 +706,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
                 int offs1, OmContent.POSITION_TYPE positionType) {
             super(parent, a, offs0, offs1, positionType);
         }
+
         public String getName() {
             return "eos";
         }

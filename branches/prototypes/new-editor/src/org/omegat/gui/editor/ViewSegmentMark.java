@@ -53,9 +53,9 @@ public class ViewSegmentMark extends View {
 
     public ViewSegmentMark(Element elem) {
         super(elem);
-        this.beginMark = ((OmDocument.OmElementSegmentMark)elem).isBeginMark;
+        this.beginMark = ((OmDocument.OmElementSegmentMark) elem).isBeginMark;
     }
-    
+
     public boolean isBeginMark() {
         return beginMark;
     }
@@ -100,13 +100,23 @@ public class ViewSegmentMark extends View {
     @Override
     public Shape modelToView(int pos, Shape a, Bias b)
             throws BadLocationException {
+        int p0 = getElement().getStartOffset();
+
+        if (pos == p0) {
+            /*
+             * At the begin of "end mark". It can be RTL+empty segment. In this
+             * case we need to move caret between "start" and "end" marks, i.e.
+             * at the end of "end mark".
+             */
+
+        }
+
         Rectangle alloc = (a instanceof Rectangle) ? (Rectangle) a : a
                 .getBounds();
 
         Rectangle lineArea = new Rectangle();
 
         String text = getText();
-        int p0 = getElement().getStartOffset();
         // fill in the results and return
         lineArea.x = alloc.x
                 + fontMetrics.stringWidth(text.substring(0, pos - p0));
@@ -136,7 +146,7 @@ public class ViewSegmentMark extends View {
         }
         return p0 + text.length();
     }
-    
+
     /**
      * Paint this view.
      */

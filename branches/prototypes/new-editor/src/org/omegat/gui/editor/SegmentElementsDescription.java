@@ -232,7 +232,7 @@ public class SegmentElementsDescription {
         paragraphElements.add(doc.new OmElementParagraph(segElement,
                 new SimpleAttributeSet()));
 
-         // add sources
+        // add sources
         addLines2(segElement, text.substring(0, translationBeginTagStart),
                 offsetFromDocumentBegin, new ElementFactory() {
                     @Override
@@ -243,9 +243,6 @@ public class SegmentElementsDescription {
                                 OmContent.POSITION_TYPE.BEFORE_EDITABLE);
                     }
                 });
-//        addLines(segElement, ATTR_SOURCE, text.substring(0,
-//                translationBeginTagStart), offsetFromDocumentBegin, false,
-//                OmContent.POSITION_TYPE.BEFORE_EDITABLE);
 
         sourceParagraphsCount = paragraphElements.size() - 1;
 
@@ -260,12 +257,8 @@ public class SegmentElementsDescription {
                         OmContent.POSITION_TYPE.BEFORE_EDITABLE);
             }
         });
-//        addSegmentMark(true, segElement, ATTR_SEGMENT_MARK, text.substring(
-//                translationBeginTagStart, translationBeginTagEnd),
-//                offsetFromDocumentBegin + translationBeginTagStart, false,
-//                OmContent.POSITION_TYPE.BEFORE_EDITABLE);
 
-         ElementFactory trFac;
+        ElementFactory trFac;
         if (needToCheckSpelling) {
             trFac = new ElementFactorySpelled() {
                 @Override
@@ -295,10 +288,6 @@ public class SegmentElementsDescription {
         addLines2(segElement, text.substring(translationBeginTagEnd,
                 translationEndTagStart), offsetFromDocumentBegin
                 + translationBeginTagEnd, trFac);
-//        addLines(segElement, translationAttrs, text.substring(
-//                translationBeginTagEnd, translationEndTagStart),
-//                offsetFromDocumentBegin + translationBeginTagEnd,
-//                needToCheckSpelling, OmContent.POSITION_TYPE.INSIDE_EDITABLE);
 
         // add end segment mark
         addLine2(text.substring(translationEndTagStart, translationEndTagEnd),
@@ -312,23 +301,18 @@ public class SegmentElementsDescription {
                                 OmContent.POSITION_TYPE.AFTER_EDITABLE);
                     }
                 });
-//        addSegmentMark(false, segElement, ATTR_SEGMENT_MARK, text.substring(
-//                translationEndTagStart, translationEndTagEnd),
-//                offsetFromDocumentBegin + translationEndTagStart, false,
-//                OmContent.POSITION_TYPE.AFTER_EDITABLE);
 
         // add <new lines segments separator>
-        addLines2(segElement, text.substring(translationEndTagEnd), offsetFromDocumentBegin
-                + translationEndTagEnd, new ElementFactory() {
-            @Override
-            public Element create(Element parent, int posStart, int posEnd) {
-                return doc.new OmElementEOS(parent, null, posStart, posEnd,
-                        OmContent.POSITION_TYPE.AFTER_EDITABLE);
-            }
-        });
-//        addLines(segElement, null, text.substring(translationEndTagEnd),
-//                offsetFromDocumentBegin + translationEndTagEnd, false,
-//                OmContent.POSITION_TYPE.AFTER_EDITABLE);
+        addLines2(segElement, text.substring(translationEndTagEnd),
+                offsetFromDocumentBegin + translationEndTagEnd,
+                new ElementFactory() {
+                    @Override
+                    public Element create(Element parent, int posStart,
+                            int posEnd) {
+                        return doc.new OmElementEOS(parent, null, posStart,
+                                posEnd, OmContent.POSITION_TYPE.AFTER_EDITABLE);
+                    }
+                });
 
         paragraphElements.remove(paragraphElements.size() - 1);
 
@@ -340,59 +324,6 @@ public class SegmentElementsDescription {
         }
 
         return paragraphElements.toArray(new Element[paragraphElements.size()]);
-    }
-
-    private void addSegmentMark(boolean isBeginMark,
-            OmDocument.OmElementSegment section, AttributeSet attrs,
-            String partText, int offsetFromDocumentBegin,
-            boolean needSpellCheck, OmContent.POSITION_TYPE positionType) {
-        if (partText.length() > 0) {
-            textElements.add(doc.new OmElementSegmentMark(isBeginMark,
-                    last(paragraphElements), attrs, offsetFromDocumentBegin,
-                    offsetFromDocumentBegin + partText.length(), positionType));
-        }
-    }
-
-    /**
-     * Add lines elements.
-     * 
-     * @param section
-     *            segment element
-     * @param attrs
-     *            attributes
-     * @param partText
-     *            lines text
-     * @param offsetFromDocumentBegin
-     *            offset from document's begin
-     * @param needSpellCheck
-     *            true if need to check spelling
-     * @param positionType
-     *            position types for marks
-     */
-    private void addLines(OmDocument.OmElementSegment section,
-            AttributeSet attrs, String partText, int offsetFromDocumentBegin,
-            boolean needSpellCheck, OmContent.POSITION_TYPE positionType) {
-        if (partText.length() == 0) {
-            return;
-        }
-        int pos, prevPos = 0;
-        while (true) {
-            pos = partText.indexOf('\n', prevPos);
-            if (pos < 0)
-                break;
-            addLine(attrs, partText.substring(prevPos, pos + 1),
-                    offsetFromDocumentBegin + prevPos, needSpellCheck,
-                    positionType);
-            last(paragraphElements).replace(0, 0,
-                    textElements.toArray(new Element[textElements.size()]));
-            textElements.clear();
-
-            paragraphElements.add(doc.new OmElementParagraph(section,
-                    new SimpleAttributeSet()));
-            prevPos = pos + 1;
-        }
-        addLine(attrs, partText.substring(prevPos), offsetFromDocumentBegin
-                + prevPos, needSpellCheck, positionType);
     }
 
     /**
@@ -433,73 +364,6 @@ public class SegmentElementsDescription {
         }
         addLine2(partText.substring(prevPos),
                 offsetFromDocumentBegin + prevPos, factory);
-    }
-
-    /**
-     * Add elements for one line.
-     * 
-     * @param attrs
-     *            attributes
-     * @param partText
-     *            line text
-     * @param offsetFromDocumentBegin
-     *            offset from document's begin
-     * @param needSpellCheck
-     *            true if need to check spelling
-     * @param positionType
-     *            position types for marks
-     */
-    private void addLine(AttributeSet attrs, String partText,
-            int offsetFromDocumentBegin, boolean needSpellCheck,
-            OmContent.POSITION_TYPE positionType) {
-        if (partText.length() == 0) {
-            return;
-        }
-        if (!needSpellCheck) {
-            // don't need to spell check. just add element
-            textElements.add(doc.new OmElementText(last(paragraphElements),
-                    attrs, offsetFromDocumentBegin, offsetFromDocumentBegin
-                            + partText.length(), positionType));
-            return;
-        }
-
-        try {
-            int prevFinished = 0;
-            for (Token tok : Core.getTokenizer().tokenizeWordsForSpelling(
-                    partText)) {
-                String word = partText.substring(tok.getOffset(), tok
-                        .getOffset()
-                        + tok.getLength());
-                if (doc.controller.spellCheckerThread.isIncorrect(word)) {
-                    int tokBeg = tok.getOffset();
-                    int tokEnd = tok.getOffset() + tok.getLength();
-                    if (tokBeg > prevFinished) {
-                        // there is unhandled text before token
-                        textElements
-                                .add(doc.new OmElementText(
-                                        last(paragraphElements), attrs,
-                                        prevFinished + offsetFromDocumentBegin,
-                                        tokBeg + offsetFromDocumentBegin,
-                                        positionType));
-                    }
-                    textElements.add(doc.new OmElementText(
-                            last(paragraphElements),
-                            translationMisspelledAttrs, tokBeg
-                                    + offsetFromDocumentBegin, tokEnd
-                                    + offsetFromDocumentBegin, positionType));
-                    prevFinished = tokEnd;
-                }
-            }
-            if (prevFinished < partText.length()) {
-                // there is unhandled text before token
-                textElements.add(doc.new OmElementText(last(paragraphElements),
-                        attrs, prevFinished + offsetFromDocumentBegin, partText
-                                .length()
-                                + offsetFromDocumentBegin, positionType));
-            }
-        } catch (IndexOutOfBoundsException ex) {
-            Log.log(ex);
-        }
     }
 
     /**

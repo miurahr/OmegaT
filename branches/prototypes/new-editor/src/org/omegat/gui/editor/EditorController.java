@@ -115,10 +115,9 @@ public class EditorController implements IEditor {
     private enum SHOW_TYPE {
         INTRO, EMPTY_PROJECT, FIRST_ENTRY, NO_CHANGE
     };
-    
+
     private OmDocument.ORIENTATION currentOrientation;
     protected boolean sourceLangIsRTL, targetLangIsRTL;
-    
 
     public EditorController(final MainWindow mainWindow) {
         this.mw = mainWindow;
@@ -263,9 +262,9 @@ public class EditorController implements IEditor {
         String targetLang = Core.getProject().getProjectProperties()
                 .getTargetLanguage().getLanguageCode();
 
-         sourceLangIsRTL = EditorUtils.isRTL(sourceLang);
-         targetLangIsRTL = EditorUtils.isRTL(targetLang);
-        
+        sourceLangIsRTL = EditorUtils.isRTL(sourceLang);
+        targetLangIsRTL = EditorUtils.isRTL(targetLang);
+
         if (sourceLangIsRTL != targetLangIsRTL) {
             currentOrientation = OmDocument.ORIENTATION.DIFFER;
         } else {
@@ -276,11 +275,11 @@ public class EditorController implements IEditor {
             }
         }
     }
-    
+
     /**
      * Toggle component orientation: LTR, RTL, language dependent.
      */
-    protected void toggleOrientation() {     
+    protected void toggleOrientation() {
         ORIENTATION newOrientation = currentOrientation;
         switch (currentOrientation) {
         case LTR:
@@ -303,7 +302,7 @@ public class EditorController implements IEditor {
         editor.getOmDocument().setOrientation(currentOrientation);
         editor.repaint();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -355,7 +354,8 @@ public class EditorController implements IEditor {
         }
 
         try {
-            m_docSegList = doc.initialize(text, descriptions,currentOrientation);
+            m_docSegList = doc.initialize(text, descriptions,
+                    currentOrientation);
         } catch (BadLocationException ex) {
             LOGGER.log(Level.SEVERE, "Error initialize document", ex);
         }

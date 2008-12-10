@@ -61,6 +61,9 @@ public class ViewParagraph extends ParagraphView {
 
         @Override
         protected int layoutRow(FlowView fv, int rowIndex, int pos) {
+            if (fv.getElement().getElement(0) instanceof OmDocument.OmElementSegmentMark) {
+                System.out.println();
+            }
             int res = super.layoutRow(fv, rowIndex, pos);
 
             if (isRTL) {

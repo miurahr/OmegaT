@@ -29,7 +29,6 @@ import javax.swing.text.DefaultEditorKit;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
-import javax.swing.text.ParagraphView;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 
@@ -68,7 +67,8 @@ class OmEditorKit extends DefaultEditorKit {
                     return new BoxView(elem, View.Y_AXIS);
                 } else if (kind.equals("paragraph")) {
                     OmDocument.OmElementParagraph par = (OmDocument.OmElementParagraph) elem;
-                    return new ViewParagraph(par, par.isLangRTL(), par.isRightAligned());
+                    return new ViewParagraph(par, par.isLangRTL(), par
+                            .isRightAligned());
                 } else if (kind.equals("segment")) {
                     return new BoxView(elem, View.Y_AXIS);
                 } else if (kind.equals("segmentmark")) {
