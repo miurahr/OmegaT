@@ -1,11 +1,53 @@
 ----------------------------------------------------------------------
+ OmegaT 2.0.0 update 1 Changes
+----------------------------------------------------------------------
+2.0.0 update 1 vs. 2.0.0
+
+  5 Enhancements
+  1 Bugfixe
+
+----------------------------------------------------------------------
+2.0.0 update 1
+
+  Implemented requests:
+  - Extra checks in TagValidator for PO linefeed
+  http://sourceforge.net/support/tracker.php?aid=2371683
+  
+  - Extra check in TagValidator if printf variables in PO-file segments are correct
+  http://sourceforge.net/support/tracker.php?aid=2371713
+  
+  - New English segmentation exceptions
+  http://sourceforge.net/support/tracker.php?aid=1974262 
+
+  - Fuzzy Glossary Matching
+  http://sourceforge.net/support/tracker.php?aid=1374596  
+  (Requires tokenizers from http://sourceforge.net/projects/omegat-plugins)
+
+  Other enhancements:
+
+  - The instant start is displayed correctly (right aligned) for RTL languages
+
+  - OmegaT can use tokenizers to get stemming in fuzzy and glossary matches. 
+  (Requires tokenizers from http://sourceforge.net/projects/omegat-plugins)
+
+  - Japanese localisation updated to 2.0 (UI)
+  - Basque localisation updated to 2.0 (UI)
+  - Slovenian localisation updated to 2.0 (UI)
+  
+  Bugs fixes:
+    
+  - Spellcheck EN-US: incorrect handling of hyphenated compounds
+  http://sourceforge.net/support/tracker.php?aid=1815736 
+  (Requires tokenizers from http://sourceforge.net/projects/omegat-plugins)
+
+----------------------------------------------------------------------
  OmegaT 2.0.0 Changes
 ----------------------------------------------------------------------
-2.0.0 vs. 1.8.0 update 3 
+2.0.0 vs. 1.8.1 
 
 
-  6 Enhancements
-  0 Bugfix
+  14 Enhancements
+  0  Bugfix
 
 ----------------------------------------------------------------------
 2.0.0 
@@ -19,7 +61,16 @@
   http://sourceforge.net/support/tracker.php?aid=1618679  
 
   - Additions to the log
-  http://sourceforge.net/support/tracker.php?aid=1632959   
+  http://sourceforge.net/support/tracker.php?aid=1632959  
+
+  - Keep position after clicking a file 
+  http://sourceforge.net/support/tracker.php?aid=2150276 
+
+  - Project List to remain in front
+  http://sourceforge.net/support/tracker.php?aid=1808903 
+
+  - Rewrite thread use
+  http://sourceforge.net/support/tracker.php?aid=1581565  
 
   Other enhancements:
 
@@ -31,38 +82,87 @@ under a minute in most cases.
 and configurable content
 
   - New SRT (subtitles) filter
+  
+  - XHTML filter: The options that existed in the HTML filter only have been 
+ported
+
+  - HTML and XHTML filter: It is now possible to select specifically which
+meta content is to be translated
+
+  - New Project Files window. The keyboard can be used, and the Editor font
+can be applied or not with a new option in Options/Font.
+
+  - New filter: CopyFlow Gold for QuarkXPress
+
+  - OpenXML filter: New option to translate slide masters in PowerPoint documents
+
+  - French localisation updated to 2.0 (UI)
 
 ----------------------------------------------------------------------
- OmegaT 1.8.0 update 3 Changes
+ OmegaT 1.8.1 update 1 Changes
 ----------------------------------------------------------------------
-1.8.0 update 3 vs. 1.8.0 update 2
+1.8.1 update 1 vs. 1.8.1
 
+   3 Enhancements
+   3 Bugfixes
+----------------------------------------------------------------------
+1.8.1 update 1
 
-   4 Enhancements
+  Implemented requests:
+
+  - PO: transform \t to tabs and back
+  http://sourceforge.net/support/tracker.php?aid=2120936
+
+  Other enhancements:
+ 
+  - Japanese localisation updated to 1.8 (UI) 
+  - Slovenian localisation updated to 1.8 (UI) 
+
+  Bug fixes:
+
+  - PowerPoint: Non translatable text (<p:attrName>) was visible in the editor
+  - Various corrections in the manual
+  - PO Filter: \ is doubled for \t
+  http://sourceforge.net/support/tracker.php?aid=2149518
+
+----------------------------------------------------------------------
+1.8.1 vs. 1.8.0 update 2
+
+   8 Enhancements
    1 Bugfixe
 ----------------------------------------------------------------------
-1.8.0 update 3
+1.8.1 
 
   Implemented requests:
 
   - OpenDoc: Allow to translate or not Bookmark references  
   http://sourceforge.net/support/tracker.php?aid=2018244 
 
+  - Do not take user to first segment on project reload  
+  http://sourceforge.net/support/tracker.php?aid=1906198 
+
   Other enhancements:
 
+  - Revised manual
+
+  - The xml:lang attribute can be translated with the HTML filter
+  
   - Slovak localisation updated to 1.8 (UI)
   - Dutch localisation updated to 1.8 (UI, readme)
   - Czech localisation updated to 1.8 (UI, readme)
-
+  - Serbo-Croatian localisation updated to 1.8 (UI, readme)
+  
   Bug fixes:
-  - Extra space at the beginning of each segment in the German 
-localization
+  - Extra space in each segment in the German localization
+  http://sourceforge.net/support/tracker.php?aid=2169447  
+  - Vista: wrong location of configuration files
+  http://sourceforge.net/support/tracker.php?aid=2200872   
+
 
 ----------------------------------------------------------------------
  OmegaT 1.8.0 update 2 Changes
 ----------------------------------------------------------------------
 1.8.0 update 2 vs. 1.8.0 update 1
-
 
    3 Enhancements
    4 Bugfixes
@@ -182,7 +282,7 @@ localization
 
 
   2 Enhancements
-  3 Bugfixes
+  4 Bugfixes
 
 ----------------------------------------------------------------------
 1.7.3 update 4
@@ -203,6 +303,8 @@ localization
   - DocBook: entities resolved only under Java 1.4
   http://sourceforge.net/support/tracker.php?aid=1825174 
 
+  - PO: Bad handling of double quotes after no-wrap
+  http://sourceforge.net/support/tracker.php?aid=2021007 
 
 ----------------------------------------------------------------------
  OmegaT 1.7.3 update 3 Changes

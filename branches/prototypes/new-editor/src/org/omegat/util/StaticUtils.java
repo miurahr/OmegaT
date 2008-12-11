@@ -359,7 +359,8 @@ public class StaticUtils
      * configuration directory is being determined, an empty string will
      * be returned, resulting in the current working directory being used.
      *
-     * Windows:  <Documents and Settings>\<User name>\Application Data\OmegaT
+     * Windows XP :  <Documents and Settings>\<User name>\Application Data\OmegaT
+     * Windows Vista : User\<User name>\AppData\Roaming
      * Linux:    <User Home>/.omegat
      * Solaris/SunOS:  <User Home>/.omegat
      * FreeBSD:  <User Home>/.omegat
@@ -394,7 +395,7 @@ public class StaticUtils
             // access to the os/user home properties is restricted,
             // the location of the config dir cannot be determined,
             // set the config dir to the current working dir
-            m_configDir = new File(".").getAbsolutePath();                      // NOI18N
+            m_configDir = new File(".").getAbsolutePath() + File.separator;     // NOI18N
 
             // log the exception, only do this after the config dir
             // has been set to the current working dir, otherwise
@@ -411,22 +412,26 @@ public class StaticUtils
                 (home == null) || (home.length() == 0))
         {
             // set the config dir to the current working dir
-            m_configDir = new File(".").getAbsolutePath();                      // NOI18N
+            m_configDir = new File(".").getAbsolutePath() + File.separator;     // NOI18N
             return m_configDir;
         }
         
         // check for Windows versions
         if (os.startsWith("Windows"))                                           // NOI18N
         {
-            // get the user's application data directory through the environment
-            // variable %APPDATA%, which usually points to the directory
+            // Trying to locate "Application Data" for 2000 and XP
             // C:\Documents and Settings\<User>\Application Data
+            // We do not use %APPDATA%
             File appDataFile = new File(home, "Application Data");              // NOI18N
-            String appData;
+            String appData = null;
             if (appDataFile.exists())
                 appData = appDataFile.getAbsolutePath();
-            else
-                appData = null;                                                 // NOI18N
+            else // No "Application Data", we're trying Vista
+            {
+                File appDataFileVista = new File(home, "AppData\\Roaming");     // NOI18N
+                if (appDataFileVista.exists())
+                    appData = appDataFileVista.getAbsolutePath();
+            } 
             
             if ((appData != null) && (appData.length() > 0))
             {
@@ -437,8 +442,8 @@ public class StaticUtils
             else
             {
                 // otherwise set the config dir to the user's home directory, usually
-                // C:\Documents and Settings\<User>\
-                m_configDir = home + File.separator;
+                // C:\Documents and Settings\<User>\OmegaT
+                m_configDir = home + WINDOWS_CONFIG_DIR;
             }
         }
         // Check for UNIX varieties
@@ -481,7 +486,8 @@ public class StaticUtils
                     // set the config dir to the current working dir
                     if (!created) {
                         Log.logErrorRB("SU_CONFIG_DIR_CREATE_ERROR");
-                        m_configDir = new File(".").getAbsolutePath();          // NOI18N
+                        m_configDir = 
+                                new File(".").getAbsolutePath() + File.separator;// NOI18N
                     }
                 }
             }
@@ -489,7 +495,7 @@ public class StaticUtils
             {
                 // the system doesn't want us to write where we want to write
                 // reset the config dir to the current working dir
-                m_configDir = new File(".").getAbsolutePath();                  // NOI18N
+                m_configDir = new File(".").getAbsolutePath() + File.separator; // NOI18N
                 
                 // log the exception, but only after the config dir has been reset
                 Log.logErrorRB("SU_CONFIG_DIR_CREATE_ERROR");
