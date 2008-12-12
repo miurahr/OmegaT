@@ -478,33 +478,35 @@ public class EditorController implements IEditor {
 
         try {
             String newTrans = doc.extractTranslation();
-            SourceTextEntry entry = m_docSegList[displayedEntryIndex].ste;
+            if (newTrans != null) {
+                // segment was active
+                SourceTextEntry entry = m_docSegList[displayedEntryIndex].ste;
 
-            String old_translation = entry.getTranslation();
-            // update memory
-            if (newTrans.equals(entry.getSrcText())
-                    && !Preferences
-                            .isPreference(Preferences.ALLOW_TRANS_EQUAL_TO_SRC))
-                Core.getProject().setTranslation(entry, "");
-            else
-                Core.getProject().setTranslation(entry, newTrans);
+                String old_translation = entry.getTranslation();
+                // update memory
+                if (newTrans.equals(entry.getSrcText())
+                        && !Preferences
+                                .isPreference(Preferences.ALLOW_TRANS_EQUAL_TO_SRC))
+                    Core.getProject().setTranslation(entry, "");
+                else
+                    Core.getProject().setTranslation(entry, newTrans);
 
-            doc.replaceSegment(displayedEntryIndex, (OmEditorKit) editor
-                    .getEditorKit(), false);
+                doc.replaceSegment(displayedEntryIndex, (OmEditorKit) editor
+                        .getEditorKit(), false);
 
-            if (!entry.getTranslation().equals(old_translation)) {
-                // find all identical strings and redraw them
+                if (!entry.getTranslation().equals(old_translation)) {
+                    // find all identical strings and redraw them
 
-                for (int i = 0; i < m_docSegList.length; i++) {
-                    if (m_docSegList[i].ste.getSrcText().equals(
-                            entry.getSrcText())) {
-                        // the same source text - need to update
-                        doc.replaceSegment(i, (OmEditorKit) editor
-                                .getEditorKit(), false);
+                    for (int i = 0; i < m_docSegList.length; i++) {
+                        if (m_docSegList[i].ste.getSrcText().equals(
+                                entry.getSrcText())) {
+                            // the same source text - need to update
+                            doc.replaceSegment(i, (OmEditorKit) editor
+                                    .getEditorKit(), false);
+                        }
                     }
                 }
             }
-
         } catch (BadLocationException ex) {
             LOGGER.log(Level.SEVERE, "Error activate entry", ex);
         }
@@ -613,6 +615,16 @@ public class EditorController implements IEditor {
         }
 
         activateEntry();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getCurrentEntryNumber() {
+        int globalEntryIndex = Core.getProject().getProjectFiles().get(
+                displayedFileIndex).firstEntryIndexInGlobalList
+                + displayedEntryIndex;
+        return globalEntryIndex;
     }
 
     /**

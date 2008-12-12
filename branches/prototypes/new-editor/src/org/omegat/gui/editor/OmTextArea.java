@@ -187,6 +187,16 @@ class OmTextArea extends JEditorPane {
      * their positions accordingly if not.
      */
     private void checkAndFixCaret() {
+        OmDocument doc = getOmDocument();
+        if (doc == null) {
+            // doc is not active
+            return;
+        }
+        if (doc.activeTranslationBegin == null
+                || doc.activeTranslationEnd == null) {
+            return;
+        }
+
         // int pos = m_editor.getCaretPosition();
         int spos = getSelectionStart();
         int epos = getSelectionEnd();
@@ -194,13 +204,13 @@ class OmTextArea extends JEditorPane {
          * int start = m_segmentStartOffset + m_sourceDisplayLength +
          * OConsts.segmentStartStringFull.length();
          */
-        int start = getOmDocument().activeTranslationBegin.getOffset();
+        int start = doc.activeTranslationBegin.getOffset();
         // -1 for space before tag, -2 for newlines
         /*
          * int end = editor.getTextLength() - m_segmentEndInset -
          * OConsts.segmentEndStringFull.length();
          */
-        int end = getOmDocument().activeTranslationEnd.getOffset();
+        int end = doc.activeTranslationEnd.getOffset();
 
         if (spos != epos) {
             // dealing with a selection here - make sure it's w/in bounds

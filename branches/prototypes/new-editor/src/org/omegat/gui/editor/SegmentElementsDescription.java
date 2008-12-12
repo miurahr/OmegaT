@@ -235,7 +235,6 @@ public class SegmentElementsDescription {
         // add sources
         addLines2(segElement, text.substring(0, translationBeginTagStart),
                 offsetFromDocumentBegin, new ElementFactory() {
-                    @Override
                     public Element create(Element parent, int posStart,
                             int posEnd) {
                         return doc.new OmElementText(parent, ATTR_SOURCE,
@@ -250,7 +249,6 @@ public class SegmentElementsDescription {
         addLine2(text.substring(translationBeginTagStart,
                 translationBeginTagEnd), offsetFromDocumentBegin
                 + translationBeginTagStart, new ElementFactory() {
-            @Override
             public Element create(Element parent, int posStart, int posEnd) {
                 return doc.new OmElementSegmentMark(true, parent,
                         ATTR_SEGMENT_MARK, posStart, posEnd,
@@ -261,7 +259,6 @@ public class SegmentElementsDescription {
         ElementFactory trFac;
         if (needToCheckSpelling) {
             trFac = new ElementFactorySpelled() {
-                @Override
                 public Element create(Element parent, int posStart, int posEnd) {
                     return doc.new OmElementText(parent, translationAttrs,
                             posStart, posEnd,
@@ -277,7 +274,6 @@ public class SegmentElementsDescription {
             };
         } else {
             trFac = new ElementFactory() {
-                @Override
                 public Element create(Element parent, int posStart, int posEnd) {
                     return doc.new OmElementText(parent, translationAttrs,
                             posStart, posEnd,
@@ -293,7 +289,6 @@ public class SegmentElementsDescription {
         addLine2(text.substring(translationEndTagStart, translationEndTagEnd),
                 offsetFromDocumentBegin + translationEndTagStart,
                 new ElementFactory() {
-                    @Override
                     public Element create(Element parent, int posStart,
                             int posEnd) {
                         return doc.new OmElementSegmentMark(false, parent,
@@ -306,7 +301,6 @@ public class SegmentElementsDescription {
         addLines2(segElement, text.substring(translationEndTagEnd),
                 offsetFromDocumentBegin + translationEndTagEnd,
                 new ElementFactory() {
-                    @Override
                     public Element create(Element parent, int posStart,
                             int posEnd) {
                         return doc.new OmElementEOS(parent, null, posStart,

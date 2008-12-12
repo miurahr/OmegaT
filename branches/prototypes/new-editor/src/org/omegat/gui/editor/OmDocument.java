@@ -294,6 +294,9 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      * @throws BadLocationException
      */
     protected String extractTranslation() throws BadLocationException {
+        if (activeTranslationBegin == null || activeTranslationEnd == null) {
+            return null;
+        }
         return getTextBetween(activeTranslationBegin.getOffset(),
                 activeTranslationEnd.getOffset());
     }
