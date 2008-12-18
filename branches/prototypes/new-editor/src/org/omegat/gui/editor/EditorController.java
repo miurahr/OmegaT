@@ -343,18 +343,17 @@ public class EditorController implements IEditor {
         int segmentNumberOffset = Core.getProject().getProjectFiles().get(
                 displayedFileIndex).firstEntryIndexInGlobalList + 1;
 
-        StringBuilder text = new StringBuilder();
         List<SourceTextEntry> entries = Core.getProject().getAllEntries();
         SegmentElementsDescription[] descriptions = new SegmentElementsDescription[file.size];
         for (int i = 0; i < descriptions.length; i++) {
             SourceTextEntry ste = entries.get(file.firstEntryIndexInGlobalList
                     + i);
-            descriptions[i] = new SegmentElementsDescription(doc, text, ste,
-                    segmentNumberOffset + i, false);
+            descriptions[i] = new SegmentElementsDescription(doc,  ste,
+                    segmentNumberOffset + i);
         }
 
         try {
-            m_docSegList = doc.initialize(text, descriptions,
+            m_docSegList = doc.initialize( descriptions,
                     currentOrientation);
         } catch (BadLocationException ex) {
             LOGGER.log(Level.SEVERE, "Error initialize document", ex);

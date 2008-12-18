@@ -26,9 +26,8 @@ package org.omegat.gui.editor;
 
 import javax.swing.text.BoxView;
 import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
 import javax.swing.text.Element;
+import javax.swing.text.PlainView;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 
@@ -43,10 +42,6 @@ import org.omegat.util.gui.ExtendedLabelView;
 class OmEditorKit extends DefaultEditorKit {
     private OmViewFactory fac = new OmViewFactory();
 
-    public Document createDefaultDocument() {
-        return new DefaultStyledDocument();
-    }
-
     @Override
     public ViewFactory getViewFactory() {
         return fac;
@@ -59,23 +54,27 @@ class OmEditorKit extends DefaultEditorKit {
         public View create(Element elem) {
             String kind = elem.getName();
             if (kind != null) {
-                if (kind.equals("text")) {
+                if (kind.equals("OmElementText")) {
                     return new ExtendedLabelView(elem);
-                } else if (kind.equals("eos")) {
+                } else if (kind.equals("OmElementEOS")) {
                     return new ViewEOS(elem);
-                } else if (kind.equals("main")) {
+                } else if (kind.equals("OmElementMain")) {
                     return new BoxView(elem, View.Y_AXIS);
-                } else if (kind.equals("paragraph")) {
-                    OmDocument.OmElementParagraph par = (OmDocument.OmElementParagraph) elem;
-                    return new ViewParagraph(par, par.isLangRTL(), par
-                            .isRightAligned());
-                } else if (kind.equals("segment")) {
+                } else if (kind.equals("OmElementParagraph")) {
+                    return new ViewParagraph(elem, false,false);//par.isLangRTL(), par .isRightAligned());
+                } else if (kind.equals("OmElementSegment")) {
                     return new BoxView(elem, View.Y_AXIS);
-                } else if (kind.equals("segmentmark")) {
+                } else if (kind.equals("OmElementSegPart")) {
+                    return new BoxView(elem, View.Y_AXIS);
+                } else if (kind.equals("OmElementSegmentMark")) {
                     return new ViewSegmentMark(elem);
                 }
             }
-            return null;
+            // used for empty document
+            if (kind.equals("paragraph")) {
+                return new PlainView(elem);
+            }
+            throw new RuntimeException("Unknown element type: " + kind);
         }
     }
 }

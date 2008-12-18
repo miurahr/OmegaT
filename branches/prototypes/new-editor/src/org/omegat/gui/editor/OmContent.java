@@ -86,11 +86,14 @@ public class OmContent implements AbstractDocument.Content {
     protected final StringBuilder afterEditable = new StringBuilder();
 
     /** Position marks before editable translation. */
-    protected List<WeakReference<Mark>> positionsBeforeEditable = new ArrayList<WeakReference<Mark>>();
+    protected final List<WeakReference<Mark>> positionsBeforeEditable = new ArrayList<WeakReference<Mark>>();
     /** Position marks inside editable translation. */
-    protected List<WeakReference<Mark>> positionsAfterEditable = new ArrayList<WeakReference<Mark>>();
+    protected final List<WeakReference<Mark>> positionsAfterEditable = new ArrayList<WeakReference<Mark>>();
     /** Position marks after editable translation. */
-    protected List<WeakReference<Mark>> positionsInsideEditable = new ArrayList<WeakReference<Mark>>();
+    protected final List<WeakReference<Mark>> positionsInsideEditable = new ArrayList<WeakReference<Mark>>();
+
+    /** 'Unflushed' position marks. */
+    protected final List<WeakReference<Mark>> positionsUnflushed = new ArrayList<WeakReference<Mark>>();
 
     /**
      * Set editable range of full text. Used when segment activated for editing.
@@ -104,13 +107,16 @@ public class OmContent implements AbstractDocument.Content {
      */
     public void setEditableRange(int start, int end) {
         UIThreadsUtil.mustBeSwingThread();
-        LOGGER.finest("Set editable range from " + start + " to " + end);
+
+        int allCharactersSize = beforeEditable.length()
+                + insideEditable.length() + afterEditable.length();
+
+        LOGGER.finest("Set editable range from " + start + " to " + end
+                + ", doc size is " + allCharactersSize);
 
         editableMode = false;
 
         // move all data to one buffer
-        int allCharactersSize = beforeEditable.length()
-                + insideEditable.length() + afterEditable.length();
         StringBuilder allCharacters = new StringBuilder(allCharactersSize);
         allCharacters.append(beforeEditable);
         allCharacters.append(insideEditable);
@@ -166,8 +172,7 @@ public class OmContent implements AbstractDocument.Content {
         for (WeakReference<Mark> pos : allPositions) {
             Mark m = pos.get();
             if (m != null) {
-                m.positionType = calculatePositionType(m.offset,
-                        m.preferredPositionType);
+                m.positionType = calculatePositionType(m.offset);
                 m.offset = calculateRelativeOffset(m.offset, m.positionType);
                 switch (m.positionType) {
                 case BEFORE_EDITABLE:
@@ -193,50 +198,25 @@ public class OmContent implements AbstractDocument.Content {
      * AbstractDocument.Content. We should use
      * createPosition(offset,positionType) instead.
      */
-    public Position createPosition(int offset) {
-        return createPosition(offset, null);
-    }
-
+    // public Position createPosition(int offset) {
+    // //return createPosition(offset, null);
+    // throw new RuntimeException("Use own createPosition method instead");
+    // }
     /**
-     * Right method for create position, where we can define
-     * 'preferredPositionType'.
-     * 
-     * For example, in the text "<segment 0000>trans", position on offset==14
-     * can be defined INSIDE translation or OUTSIDE. The difference is :
-     * position can be moved right when we enter text in the translation's
-     * begin, or leaved in his place. We always know how to position should be
-     * moved on element creation.
-     * 
-     * 'preferredPositionType' required against moving element's end when user
-     * enters chars in the translation's begin.
+     * Create position and store it into 'unflushed' list. Positions will be
+     * added to main list after 'flush'.
      * 
      * @param offset
      * @param preferredPositionType
      * @return
      */
-    public Position createPosition(int offset,
-            OmContent.POSITION_TYPE preferredPositionType) {
+    public Position createPosition(int offset) {
         UIThreadsUtil.mustBeSwingThread();
+
         Mark mark = new Mark();
-        mark.positionType = calculatePositionType(offset);
-        mark.preferredPositionType = preferredPositionType;
-        switch (mark.positionType) {
-        case BEFORE_EDITABLE:
-            mark.offset = offset;
-            positionsBeforeEditable.add(new WeakReference<Mark>(mark));
-            break;
-        case INSIDE_EDITABLE:
-            mark.offset = offset - beforeEditable.length();
-            positionsInsideEditable.add(new WeakReference<Mark>(mark));
-            break;
-        case AFTER_EDITABLE:
-            mark.offset = offset - beforeEditable.length()
-                    - insideEditable.length();
-            positionsAfterEditable.add(new WeakReference<Mark>(mark));
-            break;
-        default:
-            throw new IllegalArgumentException();
-        }
+        mark.positionType = POSITION_TYPE.AFTER_EDITABLE;
+        mark.offset=offset;
+        positionsUnflushed.add(new WeakReference<Mark>(mark));
         LOGGER.finest("create position at " + offset + ": " + mark);
         return new StickyPosition(mark);
     }
@@ -284,6 +264,7 @@ public class OmContent implements AbstractDocument.Content {
             all.append(afterEditable);
             all.getChars(where, where + len, txt.array, 0);
         }
+        System.out.println("get=" + txt.toString() + "=");
     }
 
     /**
@@ -323,6 +304,17 @@ public class OmContent implements AbstractDocument.Content {
             all.append(afterEditable);
             return all.substring(where, where + len);
         }
+    }
+
+    protected void flush(StringBuilder text, int pos, int lengthToRemove) {
+        if (editableMode) {
+            throw new RuntimeException("OmContent flush in editable mode");
+        }
+        shiftMarks(POSITION_TYPE.AFTER_EDITABLE, pos + lengthToRemove, text.length() - lengthToRemove);
+        afterEditable.replace(pos, lengthToRemove, text.toString());
+
+        positionsAfterEditable.addAll(positionsUnflushed);
+        positionsUnflushed.clear();
     }
 
     /**
@@ -428,11 +420,6 @@ public class OmContent implements AbstractDocument.Content {
             Mark mark = ref.get();
             if (mark != null) {
                 if (mark.offset >= relativeOffset) {
-                    if (positionType == POSITION_TYPE.INSIDE_EDITABLE
-                            && mark.offset == 0) {
-                        // we shouldn't move begin of first editable element
-                        continue;
-                    }
                     mark.offset += shiftValue;
                 }
             }
@@ -577,7 +564,7 @@ public class OmContent implements AbstractDocument.Content {
      * on document's text change.
      */
     private static class Mark {
-        POSITION_TYPE positionType, preferredPositionType;
+        POSITION_TYPE positionType;
         int offset;
 
         @Override

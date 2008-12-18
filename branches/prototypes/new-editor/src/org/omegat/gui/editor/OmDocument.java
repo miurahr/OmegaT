@@ -82,6 +82,12 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     private ORIENTATION currentOrientation;
 
     /**
+     * 'Unflushed' text, i.e. text for newly created segments, which was not
+     * added to OmContent yet.
+     */
+    private final StringBuilder unflushedText = new StringBuilder();
+
+    /**
      * Positions of begin and end translation. Since positions moved on each
      * text change, we can just use text inside these positions when we need new
      * translation text.
@@ -112,32 +118,41 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      * @throws BadLocationException
      *             exception
      */
-    OmElementSegment[] initialize(StringBuilder text,
-            SegmentElementsDescription[] descriptions, ORIENTATION orientation)
-            throws BadLocationException {
+    OmElementSegment[] initialize(SegmentElementsDescription[] descriptions,
+            ORIENTATION orientation) throws BadLocationException {
+
+        OmElementSegment[] segElements = new OmElementSegment[descriptions.length];
 
         currentOrientation = orientation;
         try {
             writeLock();
-            getContent().insertString(0, text.toString());
 
-            int offset = 0;
-            OmElementSegment[] segments = new OmElementSegment[descriptions.length];
-            for (int i = 0; i < segments.length; i++) {
-                segments[i] = new OmElementSegment(root, null,
-                        descriptions[i].ste,
-                        descriptions[i].segmentNumberInProject);
-                Element[] paragraphs = descriptions[i]
-                        .createElementsForSegment(this, segments[i], text
-                                .substring(offset, offset
-                                        + descriptions[i].fullSegmentLength),
-                                offset);
-                offset += descriptions[i].fullSegmentLength;
-                segments[i].replace(0, 0, paragraphs);
+            for (int i = 0; i < descriptions.length; i++) {
+                segElements[i] = (OmElementSegment) descriptions[i]
+                        .createSegmentElement( root, false);
             }
-            root.replace(0, 0, segments);
 
-            return segments;
+            getData().flush(unflushedText,0,0);
+            unflushedText.setLength(0);
+            
+            // int offset = 0;
+            // OmElementSegment[] segments = new
+            // OmElementSegment[descriptions.length];
+            // for (int i = 0; i < segments.length; i++) {
+            // segments[i] = new OmElementSegment(root, null,
+            // descriptions[i].ste,
+            // descriptions[i].segmentNumberInProject);
+            // Element[] paragraphs = descriptions[i]
+            // .createElementsForSegment(this, segments[i], text
+            // .substring(offset, offset
+            // + descriptions[i].fullSegmentLength),
+            // offset);
+            // offset += descriptions[i].fullSegmentLength;
+            // segments[i].replace(0, 0, paragraphs);
+            // }
+            root.replace(0, 0, segElements);
+
+            return segElements;
         } finally {
             writeUnlock();
         }
@@ -167,61 +182,61 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      */
     void replaceSegment(int segmentIndex, OmEditorKit kit, boolean isActive)
             throws BadLocationException {
-        try {
-            writeLock();
-
-            activeTranslationBegin = null;
-            activeTranslationEnd = null;
-            getData().setEditableRange(0, 0);
-
-            OmElementSegment section = controller.m_docSegList[segmentIndex];
-
-            int startSegmentPos = section.getStartOffset();
-            int endSegmentPos = section.getEndOffset();
-
-            // Prepare text and pre-elements
-            StringBuilder newText = new StringBuilder();
-            SegmentElementsDescription desc = new SegmentElementsDescription(
-                    this, newText, section.ste, section.segmentNumberInProject,
-                    isActive);
-
-            /**
-             * We are inserting new string into end of old segment, because
-             * AbstractDocument resizes element in previous position. So, we
-             * will have old segment element with both old and new text.
-             */
-            getContent().insertString(endSegmentPos, newText.toString());
-            /**
-             * Then we remove old text, and have only new text in context.
-             */
-            getContent().remove(startSegmentPos,
-                    endSegmentPos - startSegmentPos);
-
-            // Change document elements
-            Element[] paragraphs = desc.createElementsForSegment(this, section,
-                    newText.toString(), startSegmentPos);
-
-            replaceSegmentElements(segmentIndex, kit, paragraphs);
-
-            if (isActive) {
-                int segStart = section.getStartOffset();
-
-                activeTranslationBegin = getData().createPosition(
-                        segStart + desc.translationBeginTagEnd,
-                        OmContent.POSITION_TYPE.BEFORE_EDITABLE);
-                activeTranslationEnd = getData().createPosition(
-                        segStart + desc.translationEndTagStart,
-                        OmContent.POSITION_TYPE.AFTER_EDITABLE);
-                getData().setEditableRange(activeTranslationBegin.getOffset(),
-                        activeTranslationEnd.getOffset());
-            } else {
-                activeTranslationBegin = null;
-                activeTranslationEnd = null;
-                getData().setEditableRange(0, 0);
-            }
-        } finally {
-            writeUnlock();
-        }
+        // try {
+        // writeLock();
+        //
+        // activeTranslationBegin = null;
+        // activeTranslationEnd = null;
+        // getData().setEditableRange(0, 0);
+        //
+        // OmElementSegment section = controller.m_docSegList[segmentIndex];
+        //
+        // int startSegmentPos = section.getStartOffset();
+        // int endSegmentPos = section.getEndOffset();
+        //
+        // // Prepare text and pre-elements
+        // StringBuilder newText = new StringBuilder();
+        // SegmentElementsDescription desc = new SegmentElementsDescription(
+        // this, newText, section.ste, section.segmentNumberInProject,
+        // isActive);
+        //
+        // /**
+        // * We are inserting new string into end of old segment, because
+        // * AbstractDocument resizes element in previous position. So, we
+        // * will have old segment element with both old and new text.
+        // */
+        // getContent().insertString(endSegmentPos, newText.toString());
+        // /**
+        // * Then we remove old text, and have only new text in context.
+        // */
+        // getContent().remove(startSegmentPos,
+        // endSegmentPos - startSegmentPos);
+        //
+        // // Change document elements
+        // Element[] paragraphs = desc.createElementsForSegment(this, section,
+        // newText.toString(), startSegmentPos);
+        //
+        // replaceSegmentElements(segmentIndex, kit, paragraphs);
+        //
+        // if (isActive) {
+        // int segStart = section.getStartOffset();
+        //
+        // activeTranslationBegin = getData().createPosition(
+        // segStart + desc.translationBeginTagEnd,
+        // OmContent.POSITION_TYPE.BEFORE_EDITABLE);
+        // activeTranslationEnd = getData().createPosition(
+        // segStart + desc.translationEndTagStart,
+        // OmContent.POSITION_TYPE.AFTER_EDITABLE);
+        // getData().setEditableRange(activeTranslationBegin.getOffset(),
+        // activeTranslationEnd.getOffset());
+        // } else {
+        // activeTranslationBegin = null;
+        // activeTranslationEnd = null;
+        // getData().setEditableRange(0, 0);
+        // }
+        // } finally {
+        // writeUnlock();
+        // }
     }
 
     /**
@@ -353,47 +368,47 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      */
     private void rebuildElementsForSegment(DefaultDocumentEvent chng,
             int segmentIndex) throws BadLocationException {
-        try {
-            System.out.println("rebuild");
-            writeLock();
-
-            OmElementSegment segElement;
-            if (chng != null) {
-                segElement = (OmElementSegment) root.getElement(root
-                        .getElementIndex(chng.getOffset()));
-            } else {
-                segElement = (OmElementSegment) root.getElement(segmentIndex);
-            }
-            int offsetFromDocumentBegin = segElement.getStartOffset();
-            // OmDocument.dump(segElement, 0);
-
-            String fullSegmentText = getTextInside(segElement);
-            String currentTranslation = extractTranslation();
-
-            SegmentElementsDescription desc = new SegmentElementsDescription(
-                    this, new StringBuilder(), segElement.ste.getSrcText(),
-                    currentTranslation, segElement.segmentNumberInProject);
-
-            Element[] added = desc.createElementsForSegment(this, segElement,
-                    fullSegmentText, offsetFromDocumentBegin);
-
-            // fix bidi for segment
-            // BranchElement bidiRoot = (BranchElement) getBidiRootElement();
-            // LeafElement segBidi = new LeafElement(bidiRoot,
-            // new SimpleAttributeSet(), segElement.getStartOffset(),
-            // segElement.getEndOffset());
-            // segBidi.addAttribute(StyleConstants.BidiLevel, 0);
-            // bidiRoot.replace(segmentIndex, 1, new Element[] { segBidi });
-
-            // set elements to document
-            replaceSegmentElements(segmentIndex,
-                    (OmEditorKit) controller.editor.getEditorKit(), added);
-
-            segElement.replace(0, segElement.getElementCount(), added);
-
-        } finally {
-            writeUnlock();
-        }
+        // try {
+        // System.out.println("rebuild");
+        // writeLock();
+        //
+        // OmElementSegment segElement;
+        // if (chng != null) {
+        // segElement = (OmElementSegment) root.getElement(root
+        // .getElementIndex(chng.getOffset()));
+        // } else {
+        // segElement = (OmElementSegment) root.getElement(segmentIndex);
+        // }
+        // int offsetFromDocumentBegin = segElement.getStartOffset();
+        // // OmDocument.dump(segElement, 0);
+        //
+        // String fullSegmentText = getTextInside(segElement);
+        // String currentTranslation = extractTranslation();
+        //
+        // SegmentElementsDescription desc = new SegmentElementsDescription(
+        // this, new StringBuilder(), segElement.ste.getSrcText(),
+        // currentTranslation, segElement.segmentNumberInProject);
+        //
+        // Element[] added = desc.createElementsForSegment(this, segElement,
+        // fullSegmentText, offsetFromDocumentBegin);
+        //
+        // // fix bidi for segment
+        // // BranchElement bidiRoot = (BranchElement) getBidiRootElement();
+        // // LeafElement segBidi = new LeafElement(bidiRoot,
+        // // new SimpleAttributeSet(), segElement.getStartOffset(),
+        // // segElement.getEndOffset());
+        // // segBidi.addAttribute(StyleConstants.BidiLevel, 0);
+        // // bidiRoot.replace(segmentIndex, 1, new Element[] { segBidi });
+        //
+        // // set elements to document
+        // replaceSegmentElements(segmentIndex,
+        // (OmEditorKit) controller.editor.getEditorKit(), added);
+        //
+        // segElement.replace(0, segElement.getElementCount(), added);
+        //
+        // } finally {
+        // writeUnlock();
+        // }
     }
 
     /**
@@ -570,12 +585,12 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
         }
 
         public String getName() {
-            return "main";
+            return "OmElementMain";
         }
     }
 
     /**
-     * Element for one segment, which includes paragraphs.
+     * Element for one segment, which includes segment parts.
      */
     public class OmElementSegment extends BranchElement {
         SourceTextEntry ste;
@@ -590,22 +605,24 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
         }
 
         public String getName() {
-            return "segment";
+            return "OmElementSegment";
         }
     }
 
     /**
-     * Element for paragraphs, i.e. lines inside "segment" element.
+     * Element for one segmet part. Segment part could be source or target
+     * segment text, or segment key, etc. Only one segment part can be active
+     * for change. Includes paragraphs.
      */
-    public class OmElementParagraph extends BranchElement {
+    public class OmElementSegPart extends BranchElement {
         private boolean langRTL;
 
-        public OmElementParagraph(Element p, AttributeSet a) {
+        public OmElementSegPart(Element p, AttributeSet a) {
             super(p, a);
         }
 
         public String getName() {
-            return "paragraph";
+            return "OmElementSegPart";
         }
 
         public boolean isLangRTL() {
@@ -631,41 +648,35 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     }
 
     /**
+     * Element for paragraphs, i.e. lines inside "segment part" element.
+     */
+    public class OmElementParagraph extends BranchElement {
+
+        public OmElementParagraph(Element p, AttributeSet a) {
+            super(p, a);
+        }
+
+        public String getName() {
+            return "OmElementParagraph";
+        }
+    }
+
+    /**
      * Implement own TextElement. We can't use standard LeafElement, because we
      * want to create "before/inside/after" positions.
      */
     public class OmElementText extends AbstractElement {
         protected final Position p0, p1;
 
-        public OmElementText(Element parent, AttributeSet a, int offs0,
-                int offs1, OmContent.POSITION_TYPE positionType) {
+        public OmElementText(Element parent, AttributeSet a, CharSequence text) {
             super(parent, a);
-            p0 = getData().createPosition(offs0, positionType);
-            p1 = getData().createPosition(offs1, positionType);
-        }
-
-        public OmElementText(Element parent, AttributeSet a, int offs) {
-            super(parent, a);
-            p0 = getData().createPosition(offs,
-                    OmContent.POSITION_TYPE.BEFORE_EDITABLE);
-            p1 = getData().createPosition(offs,
-                    OmContent.POSITION_TYPE.AFTER_EDITABLE);
-        }
-
-        @Override
-        public void addAttribute(Object name, Object value) {
-            // TODO debug
-            super.addAttribute(name, value);
-        }
-
-        @Override
-        public void addAttributes(AttributeSet attr) {
-            // TODO debug
-            super.addAttributes(attr);
+            p0 = getData().createPosition(unflushedText.length());
+            unflushedText.append(text);
+            p1 = getData().createPosition(unflushedText.length());
         }
 
         public String getName() {
-            return "text";
+            return "OmElementText";
         }
 
         public int getStartOffset() {
@@ -705,13 +716,12 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      * Element for end-of-segment mark.
      */
     public class OmElementEOS extends OmElementText {
-        public OmElementEOS(Element parent, AttributeSet a, int offs0,
-                int offs1, OmContent.POSITION_TYPE positionType) {
-            super(parent, a, offs0, offs1, positionType);
+        public OmElementEOS(Element parent, AttributeSet a, CharSequence text) {
+            super(parent, a, text);
         }
 
         public String getName() {
-            return "eos";
+            return "OmElementEOS";
         }
     }
 
@@ -724,12 +734,12 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
         protected final boolean isBeginMark;
 
         public OmElementSegmentMark(boolean isBeginMark, Element parent,
-                AttributeSet a, int offs0, int offs1,
-                OmContent.POSITION_TYPE positionType) {
+                AttributeSet a, CharSequence text) {
             super(parent, a);
             this.isBeginMark = isBeginMark;
-            p0 = getData().createPosition(offs0, positionType);
-            p1 = getData().createPosition(offs1, positionType);
+            p0 = getData().createPosition(unflushedText.length());
+            unflushedText.append(text);
+            p1 = getData().createPosition(unflushedText.length());
         }
 
         @Override
@@ -745,7 +755,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
         }
 
         public String getName() {
-            return "segmentmark";
+            return "OmElementSegmentMark";
         }
 
         public int getStartOffset() {

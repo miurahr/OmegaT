@@ -28,17 +28,13 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
-import javax.swing.text.SimpleAttributeSet;
 
-import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
-import org.omegat.gui.editor.OmDocument.OmElementSegment;
-import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.Preferences;
-import org.omegat.util.Token;
 import org.omegat.util.gui.Styles;
 
 /**
@@ -55,14 +51,9 @@ public class SegmentElementsDescription {
     protected static final AttributeSet ATTR_TRANS_TRANSLATED = Styles.TRANSLATED;
     protected static final AttributeSet ATTR_TRANS_UNTRANSLATED = Styles.UNTRANSLATED;
 
-    SourceTextEntry ste;
-    int segmentNumberInProject;
+    final SourceTextEntry ste;
+    final int segmentNumberInProject;
     boolean needToCheckSpelling;
-
-    int sourceTextEnd;
-    int translationBeginTagStart, translationBeginTagEnd;
-    int translationEndTagStart, translationEndTagEnd;
-    int fullSegmentLength;
 
     /**
      * Alex Buloichik:
@@ -85,259 +76,160 @@ public class SegmentElementsDescription {
 
     private final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0000");
 
-    enum SEGMENT_PART {
-        SOURCE, MARK1, MARK2, TRANSLATION, NONE
-    };
-
-    public SegmentElementsDescription(OmDocument doc, StringBuilder text,
-            SourceTextEntry ste, int segmentNumberInProject, boolean isActive) {
-        this(doc, text, ste.getSrcText(), ste.getTranslation(), isActive,
-                segmentNumberInProject, ste.getTranslation() != null
-                        && ste.getTranslation().length() > 0);
+    public SegmentElementsDescription(final OmDocument doc,
+            final SourceTextEntry ste, final int segmentNumberInProject) {
+        this.doc = doc;
         this.ste = ste;
         this.segmentNumberInProject = segmentNumberInProject;
     }
 
     /**
-     * Create description for active segment.
+     * Create element for one segment.
      * 
      * @param doc
-     * @param text
-     * @param sourceText
-     * @param translationText
-     * @param segmentNumber
+     *            document
+     * @return OmElementSegment
      */
-    public SegmentElementsDescription(OmDocument doc, StringBuilder text,
-            String sourceText, String translationText, int segmentNumber) {
-        this(doc, text, sourceText, translationText, true, segmentNumber, true);
-    }
+    protected Element createSegmentElement(final OmDocument.OmElementMain root,
+            final boolean isActive) {
 
-    /**
-     * Create description for display segment.
-     */
-    private SegmentElementsDescription(OmDocument doc, StringBuilder text,
-            String sourceText, String translationText, boolean isActive,
-            int segmentNumber, boolean translationExists) {
-        this.doc = doc;
+        segElement = new ElementWithChilds();
+        segElement.el = doc.new OmElementSegment(root, null, ste,
+                segmentNumberInProject);
 
-        int offset = 0;
+        boolean translationExists = ste.getTranslation() != null
+                && ste.getTranslation().length() > 0;
 
         EditorSettings settings = doc.controller.settings;
         if (isActive) {
             /** Create for active segment. */
+            addInactiveSegPart(ste.getSrcText(), ATTR_SOURCE);
 
-            // add source text
-            text.append(sourceText).append('\n');
-            offset += sourceText.length() + 1;
+            String markBeg = OConsts.segmentStartString.trim().replace("0000",
+                    NUMBER_FORMAT.format(segmentNumberInProject));
 
-            // add start translation tag
-            translationBeginTagStart = offset;
-            String tx = OConsts.segmentStartString.trim().replace("0000",
-                    NUMBER_FORMAT.format(segmentNumber));
-            text.append(tx);
-            offset += tx.length();
-            translationBeginTagEnd = offset;
+            String markEnd = OConsts.segmentEndString.trim();
 
-            // add exist translation
+            String activeText;
             if (translationExists) {
-                text.append(translationText);
-                offset += translationText.length();
+                // translation exist
+                activeText = ste.getTranslation();
                 if (doc.controller.settings.isAutoSpellChecking()) {
                     // spell it
                     needToCheckSpelling = true;
-                    doc.controller.spellCheckerThread
-                            .addForCheck(translationText);
+                    doc.controller.spellCheckerThread.addForCheck(ste
+                            .getTranslation());
                 }
             } else if (!Preferences
                     .isPreference(Preferences.DONT_INSERT_SOURCE_TEXT)) {
-                text.append(sourceText);
-                offset += sourceText.length();
+                // need to insert source text on empty translation
+                activeText = ste.getSrcText();
                 if (doc.controller.settings.isAutoSpellChecking()) {
                     // spell it
                     needToCheckSpelling = true;
-                    doc.controller.spellCheckerThread.addForCheck(sourceText);
+                    doc.controller.spellCheckerThread.addForCheck(ste
+                            .getSrcText());
                 }
+            } else {
+                // empty text on non-exist translation
+                activeText = "";
             }
 
-            // add end translation tag
-            translationEndTagStart = offset;
-            tx = OConsts.segmentEndString.trim();
-            text.append(tx).append('\n');
-            offset += tx.length() + 1;
-            translationEndTagEnd = offset;
+            addActiveSegPart(activeText, translationAttrs, markBeg, markEnd);
         } else {
             /** Create for inactive segment. */
-
             if (settings.isDisplaySegmentSources()) {
-                // add source text
-                text.append(sourceText).append('\n');
-                offset += sourceText.length() + 1;
+                addInactiveSegPart(ste.getSrcText(), ATTR_SOURCE);
             }
-            sourceTextEnd = offset;
-            translationBeginTagStart = offset;
-            translationBeginTagEnd = offset;
             if (translationExists) {
-                // add exist translation
-                text.append(translationText).append('\n');
-                offset += translationText.length() + 1;
-                translationAttrs = settings.isMarkTranslated() ? Styles.TRANSLATED
-                        : null;
+                // translation exist
                 if (doc.controller.settings.isAutoSpellChecking()) {
                     // spell it
                     needToCheckSpelling = true;
-                    doc.controller.spellCheckerThread
-                            .addForCheck(translationText);
+                    doc.controller.spellCheckerThread.addForCheck(ste
+                            .getTranslation());
                 }
+                addInactiveSegPart(ste.getTranslation(), Styles.TRANSLATED);
             } else if (!doc.controller.settings.isDisplaySegmentSources()) {
-                // translation not exist - add source instead
-                text.append(sourceText).append('\n');
-                offset += sourceText.length() + 1;
-                translationAttrs = settings.isMarkUntranslated() ? Styles.UNTRANSLATED
-                        : null;
+                addInactiveSegPart(ste.getSrcText(), Styles.UNTRANSLATED);
             }
-            translationEndTagStart = offset;
-            translationEndTagEnd = offset;
         }
+        addEmptyLine();
 
-        text.append('\n');
-        offset++;
-        fullSegmentLength = offset;
+        setChilds(segElement);
 
-        translationMisspelledAttrs = translationAttrs != null ? Styles
-                .applyStyles(translationAttrs, Styles.MISSPELLED)
-                : Styles.MISSPELLED;
+        return segElement.el;
     }
 
-    List<OmDocument.OmElementParagraph> paragraphElements = new ArrayList<OmDocument.OmElementParagraph>(
-            32);
-    List<Element> textElements = new ArrayList<Element>(64);
-
-    /**
-     * Create SegmentElement's child elements by segment description.
-     * 
-     * @param seg
-     *            info
-     * @param description
-     *            segment's description
-     * @param text
-     *            segment's text
-     * @param offsetFromDocumentBegin
-     *            segment offset from document begin
-     * @return OmElementParagraph[]
-     */
-    Element[] createElementsForSegment(final OmDocument doc,
-            OmElementSegment segElement, String text,
-            int offsetFromDocumentBegin) {
-        int sourceParagraphsCount;
-        paragraphElements.add(doc.new OmElementParagraph(segElement,
-                new SimpleAttributeSet()));
-
-        // add sources
-        addLines2(segElement, text.substring(0, translationBeginTagStart),
-                offsetFromDocumentBegin, new ElementFactory() {
-                    public Element create(Element parent, int posStart,
-                            int posEnd) {
-                        return doc.new OmElementText(parent, ATTR_SOURCE,
-                                posStart, posEnd,
-                                OmContent.POSITION_TYPE.BEFORE_EDITABLE);
-                    }
-                });
-
-        sourceParagraphsCount = paragraphElements.size() - 1;
-
-        // add begin segment mark
-        addLine2(text.substring(translationBeginTagStart,
-                translationBeginTagEnd), offsetFromDocumentBegin
-                + translationBeginTagStart, new ElementFactory() {
-            public Element create(Element parent, int posStart, int posEnd) {
-                return doc.new OmElementSegmentMark(true, parent,
-                        ATTR_SEGMENT_MARK, posStart, posEnd,
-                        OmContent.POSITION_TYPE.BEFORE_EDITABLE);
-            }
-        });
-
-        ElementFactory trFac;
-        if (needToCheckSpelling) {
-            trFac = new ElementFactorySpelled() {
-                public Element create(Element parent, int posStart, int posEnd) {
-                    return doc.new OmElementText(parent, translationAttrs,
-                            posStart, posEnd,
-                            OmContent.POSITION_TYPE.INSIDE_EDITABLE);
-                }
-
-                public Element createMisspelled(Element parent, int posStart,
-                        int posEnd) {
-                    return doc.new OmElementText(parent,
-                            translationMisspelledAttrs, posStart, posEnd,
-                            OmContent.POSITION_TYPE.INSIDE_EDITABLE);
-                }
-            };
-        } else {
-            trFac = new ElementFactory() {
-                public Element create(Element parent, int posStart, int posEnd) {
-                    return doc.new OmElementText(parent, translationAttrs,
-                            posStart, posEnd,
-                            OmContent.POSITION_TYPE.INSIDE_EDITABLE);
-                }
-            };
+    private void setChilds(ElementWithChilds el) {
+        if (!el.isChildsExist()) {
+            return;
         }
-        addLines2(segElement, text.substring(translationBeginTagEnd,
-                translationEndTagStart), offsetFromDocumentBegin
-                + translationBeginTagEnd, trFac);
-
-        // add end segment mark
-        addLine2(text.substring(translationEndTagStart, translationEndTagEnd),
-                offsetFromDocumentBegin + translationEndTagStart,
-                new ElementFactory() {
-                    public Element create(Element parent, int posStart,
-                            int posEnd) {
-                        return doc.new OmElementSegmentMark(false, parent,
-                                ATTR_SEGMENT_MARK, posStart, posEnd,
-                                OmContent.POSITION_TYPE.AFTER_EDITABLE);
-                    }
-                });
-
-        // add <new lines segments separator>
-        addLines2(segElement, text.substring(translationEndTagEnd),
-                offsetFromDocumentBegin + translationEndTagEnd,
-                new ElementFactory() {
-                    public Element create(Element parent, int posStart,
-                            int posEnd) {
-                        return doc.new OmElementEOS(parent, null, posStart,
-                                posEnd, OmContent.POSITION_TYPE.AFTER_EDITABLE);
-                    }
-                });
-
-        paragraphElements.remove(paragraphElements.size() - 1);
-
-        for (int i = 0; i < sourceParagraphsCount; i++) {
-            paragraphElements.get(i).setLangRTL(doc.controller.sourceLangIsRTL);
+        Element[] childs = new Element[el.getChilds().size()];
+        for (int i = 0; i < childs.length; i++) {
+            ElementWithChilds ch = el.getChilds().get(i);
+            setChilds(ch);
+            childs[i] = ch.el;
         }
-        for (int i = sourceParagraphsCount; i < paragraphElements.size(); i++) {
-            paragraphElements.get(i).setLangRTL(doc.controller.targetLangIsRTL);
-        }
-
-        return paragraphElements.toArray(new Element[paragraphElements.size()]);
+        ((AbstractDocument.BranchElement) el.el).replace(0, 0, childs);
     }
 
-    /**
-     * Add lines elements.
-     * 
-     * @param segElement
-     *            segment element
-     * @param attrs
-     *            attributes
-     * @param partText
-     *            lines text
-     * @param offsetFromDocumentBegin
-     *            offset from document's begin
-     * @param needSpellCheck
-     *            true if need to check spelling
-     * @param positionType
-     *            position types for marks
-     */
-    private void addLines2(OmDocument.OmElementSegment segElement,
-            String partText, int offsetFromDocumentBegin, ElementFactory factory) {
+    protected static class ElementWithChilds {
+        Element el;
+        private List<ElementWithChilds> childs;
+
+        public void addChild(ElementWithChilds ch) {
+            if (childs == null) {
+                childs = new ArrayList<ElementWithChilds>();
+            }
+            childs.add(ch);
+        }
+
+        public boolean isChildsExist() {
+            return childs != null;
+        }
+
+        public List<ElementWithChilds> getChilds() {
+            return childs;
+        }
+    }
+
+    private ElementWithChilds segElement;
+
+    private void addInactiveSegPart(String text, AttributeSet attrs) {
+        ElementWithChilds segPartElement = new ElementWithChilds();
+        segElement.addChild(segPartElement);
+        segPartElement.el = doc.new OmElementSegPart(segElement.el, attrs);
+        addLines3(segPartElement, text, false);
+    }
+
+    private void addActiveSegPart(String text, AttributeSet attrs,
+            String markBeg, String markEnd) {
+        ElementWithChilds segPartElement = new ElementWithChilds();
+        segElement.addChild(segPartElement);
+        segPartElement.el = doc.new OmElementSegPart(segElement.el, attrs);
+
+        ElementWithChilds segMarkB = new ElementWithChilds();
+        String smTextB = OConsts.segmentStartString.trim().replace("0000",
+                NUMBER_FORMAT.format(segmentNumberInProject));
+        segMarkB.el = doc.new OmElementSegmentMark(true, segPartElement.el,
+                ATTR_SEGMENT_MARK, smTextB);
+
+        addLines3(segPartElement, text, false);
+
+        ElementWithChilds segMarkE = new ElementWithChilds();
+        String smTextE = OConsts.segmentEndString.trim();
+        segMarkE.el = doc.new OmElementSegmentMark(true, segPartElement.el,
+                ATTR_SEGMENT_MARK, smTextE);
+
+    }
+
+    private void addEmptyLine() {
+        // docText.append('\n');
+    }
+
+    private void addLines3(ElementWithChilds segPartElement, String partText,
+            boolean needSpellCheck) {
         if (partText.length() == 0) {
             return;
         }
@@ -346,92 +238,65 @@ public class SegmentElementsDescription {
             pos = partText.indexOf('\n', prevPos);
             if (pos < 0)
                 break;
-            addLine2(partText.substring(prevPos, pos + 1),
-                    offsetFromDocumentBegin + prevPos, factory);
-            last(paragraphElements).replace(0, 0,
-                    textElements.toArray(new Element[textElements.size()]));
-            textElements.clear();
+            addLine3(segPartElement, partText.substring(prevPos, pos + 1),
+                    needSpellCheck);
 
-            paragraphElements.add(doc.new OmElementParagraph(segElement,
-                    new SimpleAttributeSet()));
             prevPos = pos + 1;
         }
-        addLine2(partText.substring(prevPos),
-                offsetFromDocumentBegin + prevPos, factory);
+        addLine3(segPartElement, partText.substring(prevPos), needSpellCheck);
     }
 
-    /**
-     * Add elements for one line.
-     * 
-     * @param attrs
-     *            attributes
-     * @param partText
-     *            line text
-     * @param offsetFromDocumentBegin
-     *            offset from document's begin
-     * @param needSpellCheck
-     *            true if need to check spelling
-     * @param positionType
-     *            position types for marks
-     */
-    private void addLine2(String partText, int offsetFromDocumentBegin,
-            ElementFactory factory) {
+    private void addLine3(ElementWithChilds segPartElement, String partText,
+            boolean needSpellCheck) {
         if (partText.length() == 0) {
             return;
         }
-        if (!(factory instanceof ElementFactorySpelled)) {
+        ElementWithChilds line = new ElementWithChilds();
+        line.el = doc.new OmElementParagraph(segPartElement.el, null);
+        if (!needSpellCheck) {
             // don't need to spell check. just add element
-            textElements.add(factory.create(last(paragraphElements),
-                    offsetFromDocumentBegin, offsetFromDocumentBegin
-                            + partText.length()));
+            ElementWithChilds text = new ElementWithChilds();
+            text.el = doc.new OmElementText(line.el, translationAttrs, partText);
+
+            line.addChild(text);
+
+            segPartElement.addChild(line);
             return;
         }
 
-        try {
-            int prevFinished = 0;
-            for (Token tok : Core.getTokenizer().tokenizeWordsForSpelling(
-                    partText)) {
-                String word = partText.substring(tok.getOffset(), tok
-                        .getOffset()
-                        + tok.getLength());
-                if (doc.controller.spellCheckerThread.isIncorrect(word)) {
-                    int tokBeg = tok.getOffset();
-                    int tokEnd = tok.getOffset() + tok.getLength();
-                    if (tokBeg > prevFinished) {
-                        // there is unhandled text before token
-                        textElements.add(factory.create(
-                                last(paragraphElements), prevFinished
-                                        + offsetFromDocumentBegin, tokBeg
-                                        + offsetFromDocumentBegin));
-                    }
-                    textElements.add(((ElementFactorySpelled) factory)
-                            .createMisspelled(last(paragraphElements), tokBeg
-                                    + offsetFromDocumentBegin, tokEnd
-                                    + offsetFromDocumentBegin));
-                    prevFinished = tokEnd;
-                }
-            }
-            if (prevFinished < partText.length()) {
-                // there is unhandled text before token
-                textElements.add(factory.create(last(paragraphElements),
-                        prevFinished + offsetFromDocumentBegin, partText
-                                .length()
-                                + offsetFromDocumentBegin));
-            }
-        } catch (IndexOutOfBoundsException ex) {
-            Log.log(ex);
-        }
-    }
-
-    private static <T> T last(List<T> list) {
-        return list.get(list.size() - 1);
-    }
-
-    private interface ElementFactory {
-        Element create(Element parent, int posStart, int posEnd);
-    }
-
-    private interface ElementFactorySpelled extends ElementFactory {
-        Element createMisspelled(Element parent, int posStart, int posEnd);
+        // try {
+        // int prevFinished = 0;
+        // for (Token tok : Core.getTokenizer().tokenizeWordsForSpelling(
+        // partText)) {
+        // String word = partText.substring(tok.getOffset(), tok
+        // .getOffset()
+        // + tok.getLength());
+        // if (doc.controller.spellCheckerThread.isIncorrect(word)) {
+        // int tokBeg = tok.getOffset();
+        // int tokEnd = tok.getOffset() + tok.getLength();
+        // if (tokBeg > prevFinished) {
+        // // there is unhandled text before token
+        // textElements.add(factory.create(
+        // last(paragraphElements), prevFinished
+        // + offsetFromDocumentBegin, tokBeg
+        // + offsetFromDocumentBegin));
+        // }
+        // textElements.add(((ElementFactorySpelled) factory)
+        // .createMisspelled(last(paragraphElements), tokBeg
+        // + offsetFromDocumentBegin, tokEnd
+        // + offsetFromDocumentBegin));
+        // prevFinished = tokEnd;
+        // }
+        // }
+        // if (prevFinished < partText.length()) {
+        // // there is unhandled text before token
+        // textElements.add(factory.create(last(paragraphElements),
+        // prevFinished + offsetFromDocumentBegin, partText
+        // .length()
+        // + offsetFromDocumentBegin));
+        // }
+        // } catch (IndexOutOfBoundsException ex) {
+        // Log.log(ex);
+        // }
     }
 }
