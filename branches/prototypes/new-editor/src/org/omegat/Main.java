@@ -62,8 +62,8 @@ public class Main
             else if (arg.startsWith("resource-bundle=")) {
                 String filename = arg.substring(16);
                 OStrings.loadBundle(filename);
-            } else if (arg.startsWith("project=")) {
-                startProject = arg.substring(8);
+            } else {
+                startProject = arg;
             }
         }
 
