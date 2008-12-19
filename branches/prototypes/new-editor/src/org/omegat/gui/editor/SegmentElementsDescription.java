@@ -35,6 +35,7 @@ import javax.swing.text.Element;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.util.OConsts;
 import org.omegat.util.Preferences;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.Styles;
 
 /**
@@ -75,6 +76,8 @@ public class SegmentElementsDescription {
     private final OmDocument doc;
 
     private final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0000");
+
+    protected int activeTranslationBeginOffset, activeTranslationEndOffset;
 
     public SegmentElementsDescription(final OmDocument doc,
             final SourceTextEntry ste, final int segmentNumberInProject) {
@@ -201,6 +204,7 @@ public class SegmentElementsDescription {
         segElement.addChild(segPartElement);
         segPartElement.el = doc.new OmElementSegPart(segElement.el, attrs);
         addLines3(segPartElement, text, false);
+        addLines3(segPartElement, "\n", false);
     }
 
     private void addActiveSegPart(String text, AttributeSet attrs,
@@ -215,17 +219,30 @@ public class SegmentElementsDescription {
         segMarkB.el = doc.new OmElementSegmentMark(true, segPartElement.el,
                 ATTR_SEGMENT_MARK, smTextB);
 
-        addLines3(segPartElement, text, false);
+        activeTranslationBeginOffset = doc.unflushedText.length();
+        if (StringUtil.isEmpty(text)) {
+            addLines3(segPartElement, "  ", false);
+        } else {
+            addLines3(segPartElement, ' ' + text + ' ', false);
+        }
+        activeTranslationEndOffset = doc.unflushedText.length();
 
         ElementWithChilds segMarkE = new ElementWithChilds();
         String smTextE = OConsts.segmentEndString.trim();
         segMarkE.el = doc.new OmElementSegmentMark(true, segPartElement.el,
                 ATTR_SEGMENT_MARK, smTextE);
 
+        ElementWithChilds lnFirst = segPartElement.getChilds().get(0);
+        lnFirst.getChilds().add(0, segMarkB);
+
+        ElementWithChilds lnLast = segPartElement.getChilds().get(
+                segPartElement.getChilds().size() - 1);
+        lnLast.getChilds().add(segMarkE);
+
+        addLines3(segPartElement, "\n", false);
     }
 
     private void addEmptyLine() {
-        // docText.append('\n');
     }
 
     private void addLines3(ElementWithChilds segPartElement, String partText,

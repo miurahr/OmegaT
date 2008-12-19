@@ -264,7 +264,7 @@ public class OmContent implements AbstractDocument.Content {
             all.append(afterEditable);
             all.getChars(where, where + len, txt.array, 0);
         }
-        System.out.println("get=" + txt.toString() + "=");
+        //System.out.println("get=" + txt.toString() + "=");
     }
 
     /**
@@ -307,11 +307,12 @@ public class OmContent implements AbstractDocument.Content {
     }
 
     protected void flush(StringBuilder text, int pos, int lengthToRemove) {
+        System.out.println("flush "+pos+"+"+lengthToRemove+": "+text);
         if (editableMode) {
             throw new RuntimeException("OmContent flush in editable mode");
         }
         shiftMarks(POSITION_TYPE.AFTER_EDITABLE, pos + lengthToRemove, text.length() - lengthToRemove);
-        afterEditable.replace(pos, lengthToRemove, text.toString());
+        afterEditable.replace(pos, pos+lengthToRemove, text.toString());
 
         positionsAfterEditable.addAll(positionsUnflushed);
         positionsUnflushed.clear();

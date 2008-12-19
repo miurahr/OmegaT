@@ -89,7 +89,7 @@ public class ViewParagraph extends ParagraphView {
                     if (p >= 0) {
                         // move begin mark to the right
                         int target = row.getViewCount() - 1;
-                        if (row.getView(target) instanceof ViewEOS) {
+                        if (row.getView(target) instanceof ViewEmptyLine) {
                             target--;
                         }
                         moveView(row, p, target);

@@ -358,13 +358,13 @@ public class EditorController implements IEditor {
         } catch (BadLocationException ex) {
             LOGGER.log(Level.SEVERE, "Error initialize document", ex);
         }
-
         doc.setDocumentFilter(new OmDocumentFilter());
 
         editor.setDocument(doc);
         doc.setFont(Core.getMainWindow().getApplicationFont());
 
         doc.addUndoableEditListener(editor.undoManager);
+        editor.repaint();
     }
 
     /**
@@ -417,7 +417,7 @@ public class EditorController implements IEditor {
             CoreEvents.fireEntryNewFile(Core.getProject().getProjectFiles()
                     .get(displayedFileIndex).filePath);
         }
-
+editor.repaint();
         // fire event about new segment activated
         CoreEvents.fireEntryActivated(ste.getStrEntry());
     }

@@ -85,7 +85,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      * 'Unflushed' text, i.e. text for newly created segments, which was not
      * added to OmContent yet.
      */
-    private final StringBuilder unflushedText = new StringBuilder();
+    protected final StringBuilder unflushedText = new StringBuilder();
 
     /**
      * Positions of begin and end translation. Since positions moved on each
@@ -129,12 +129,12 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
 
             for (int i = 0; i < descriptions.length; i++) {
                 segElements[i] = (OmElementSegment) descriptions[i]
-                        .createSegmentElement( root, false);
+                        .createSegmentElement(root, false);
             }
 
-            getData().flush(unflushedText,0,0);
+            getData().flush(unflushedText, 0, 0);
             unflushedText.setLength(0);
-            
+
             // int offset = 0;
             // OmElementSegment[] segments = new
             // OmElementSegment[descriptions.length];
@@ -182,61 +182,64 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      */
     void replaceSegment(int segmentIndex, OmEditorKit kit, boolean isActive)
             throws BadLocationException {
-        // try {
-        // writeLock();
-        //
-        // activeTranslationBegin = null;
-        // activeTranslationEnd = null;
-        // getData().setEditableRange(0, 0);
-        //
-        // OmElementSegment section = controller.m_docSegList[segmentIndex];
-        //
-        // int startSegmentPos = section.getStartOffset();
-        // int endSegmentPos = section.getEndOffset();
-        //
-        // // Prepare text and pre-elements
-        // StringBuilder newText = new StringBuilder();
-        // SegmentElementsDescription desc = new SegmentElementsDescription(
-        // this, newText, section.ste, section.segmentNumberInProject,
-        // isActive);
-        //
-        // /**
-        // * We are inserting new string into end of old segment, because
-        // * AbstractDocument resizes element in previous position. So, we
-        // * will have old segment element with both old and new text.
-        // */
-        // getContent().insertString(endSegmentPos, newText.toString());
-        // /**
-        // * Then we remove old text, and have only new text in context.
-        // */
-        // getContent().remove(startSegmentPos,
-        // endSegmentPos - startSegmentPos);
-        //
-        // // Change document elements
-        // Element[] paragraphs = desc.createElementsForSegment(this, section,
-        // newText.toString(), startSegmentPos);
-        //
-        // replaceSegmentElements(segmentIndex, kit, paragraphs);
-        //
-        // if (isActive) {
-        // int segStart = section.getStartOffset();
-        //
-        // activeTranslationBegin = getData().createPosition(
-        // segStart + desc.translationBeginTagEnd,
-        // OmContent.POSITION_TYPE.BEFORE_EDITABLE);
-        // activeTranslationEnd = getData().createPosition(
-        // segStart + desc.translationEndTagStart,
-        // OmContent.POSITION_TYPE.AFTER_EDITABLE);
-        // getData().setEditableRange(activeTranslationBegin.getOffset(),
-        // activeTranslationEnd.getOffset());
-        // } else {
-        // activeTranslationBegin = null;
-        // activeTranslationEnd = null;
-        // getData().setEditableRange(0, 0);
-        // }
-        // } finally {
-        // writeUnlock();
-        // }
+        try {
+            writeLock();
+
+            activeTranslationBegin = null;
+            activeTranslationEnd = null;
+            getData().setEditableRange(0, 0);
+
+            OmElementSegment section = controller.m_docSegList[segmentIndex];
+
+            int startSegmentPos = section.getStartOffset();
+            int endSegmentPos = section.getEndOffset();
+
+            SegmentElementsDescription desc=new SegmentElementsDescription(this,  section.ste,
+                    segmentIndex);
+            Element el=desc.createSegmentElement(root, isActive);
+            
+            if (isActive) {
+                int segStart = section.getStartOffset();
+
+                activeTranslationBegin = getData().createPosition(
+                        segStart + desc.activeTranslationBeginOffset);
+                activeTranslationEnd = getData().createPosition(
+                        segStart + desc.activeTranslationEndOffset);
+            } else {
+                activeTranslationBegin = null;
+                activeTranslationEnd = null;
+            }
+            
+            getData().flush(unflushedText, startSegmentPos, endSegmentPos-startSegmentPos);
+            unflushedText.setLength(0);
+
+            root.replace(segmentIndex, 1, new Element[]{el});
+
+            /**
+             * We are inserting new string into end of old segment, because
+             * AbstractDocument resizes element in previous position. So, we
+             * will have old segment element with both old and new text.
+             */
+            //getContent().insertString(endSegmentPos, newText.toString());
+            /**
+             * Then we remove old text, and have only new text in context.
+             */
+//            getContent().remove(startSegmentPos,
+//                    endSegmentPos - startSegmentPos);
+
+            // Change document elements
+//            Element[] paragraphs = desc.createElementsForSegment(this, section,
+//                    newText.toString(), startSegmentPos);
+//
+            replaceSegmentElements(segmentIndex, kit);
+
+            if (isActive) {
+                getData().setEditableRange(activeTranslationBegin.getOffset(),
+                        activeTranslationEnd.getOffset());
+            }
+        } finally {
+            writeUnlock();
+        }
     }
 
     /**
@@ -249,10 +252,9 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      * @param newElements
      *            new ParagraphElements
      */
-    private void replaceSegmentElements(int segmentIndex, EditorKit kit,
-            Element[] newElements) {
-        OmElementSegment seg = controller.m_docSegList[segmentIndex];
-        seg.replace(0, seg.getElementCount(), newElements);
+    private void replaceSegmentElements(int segmentIndex, EditorKit kit) {
+//        OmElementSegment seg = controller.m_docSegList[segmentIndex];
+//        seg.replace(0, seg.getElementCount(), newElements);
 
         // Change views
         View mainDocView = controller.editor.getUI().getRootView(
@@ -712,18 +714,6 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
         }
     }
 
-    /**
-     * Element for end-of-segment mark.
-     */
-    public class OmElementEOS extends OmElementText {
-        public OmElementEOS(Element parent, AttributeSet a, CharSequence text) {
-            super(parent, a, text);
-        }
-
-        public String getName() {
-            return "OmElementEOS";
-        }
-    }
 
     /**
      * Implement own TextElement. We can't use standard LeafElement, because we
