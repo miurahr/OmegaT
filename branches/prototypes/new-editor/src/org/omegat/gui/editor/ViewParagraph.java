@@ -28,9 +28,7 @@ public class ViewParagraph extends ParagraphView {
     @Override
     public int getNextVisualPositionFrom(int pos, Bias b, Shape a,
             int direction, Bias[] biasRet) throws BadLocationException {
-        // TODO Auto-generated method stub
         int r = super.getNextVisualPositionFrom(pos, b, a, direction, biasRet);
-        System.out.println("prev=" + pos + " next=" + r);
         return r;
     }
 
@@ -89,7 +87,7 @@ public class ViewParagraph extends ParagraphView {
                     if (p >= 0) {
                         // move begin mark to the right
                         int target = row.getViewCount() - 1;
-                        if (row.getView(target) instanceof ViewEmptyLine) {
+                        if (row.getView(target) instanceof ViewSegmentsSeparator) {
                             target--;
                         }
                         moveView(row, p, target);

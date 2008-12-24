@@ -33,9 +33,6 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
 import javax.swing.text.Segment;
-import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
 
 import org.omegat.util.gui.UIThreadsUtil;
@@ -77,6 +74,8 @@ public class OmContent implements AbstractDocument.Content {
      * segments.
      */
     protected boolean editableMode;
+    
+    protected OmDocument doc;
 
     /** Text before editable translation. */
     protected final StringBuilder beforeEditable = new StringBuilder();
@@ -95,6 +94,10 @@ public class OmContent implements AbstractDocument.Content {
     /** 'Unflushed' position marks. */
     protected final List<WeakReference<Mark>> positionsUnflushed = new ArrayList<WeakReference<Mark>>();
 
+    public void setDocument(final OmDocument doc) {
+		this.doc = doc;
+	}
+    
     /**
      * Set editable range of full text. Used when segment activated for editing.
      * In this time, full text and position marks rearranged into three
@@ -194,15 +197,6 @@ public class OmContent implements AbstractDocument.Content {
     }
 
     /**
-     * Create position. Exists only for compatibility with
-     * AbstractDocument.Content. We should use
-     * createPosition(offset,positionType) instead.
-     */
-    // public Position createPosition(int offset) {
-    // //return createPosition(offset, null);
-    // throw new RuntimeException("Use own createPosition method instead");
-    // }
-    /**
      * Create position and store it into 'unflushed' list. Positions will be
      * added to main list after 'flush'.
      * 
@@ -211,26 +205,56 @@ public class OmContent implements AbstractDocument.Content {
      * @return
      */
     public Position createPosition(int offset) {
-        UIThreadsUtil.mustBeSwingThread();
-
-        Mark mark = new Mark();
-        mark.positionType = POSITION_TYPE.AFTER_EDITABLE;
-        mark.offset=offset;
-        positionsUnflushed.add(new WeakReference<Mark>(mark));
-        LOGGER.finest("create position at " + offset + ": " + mark);
-        return new StickyPosition(mark);
-    }
-
+		UIThreadsUtil.mustBeSwingThread();
+		Mark mark = new Mark();
+			// created by standard behavior
+			mark.positionType = calculatePositionType(offset);
+			switch (mark.positionType) {
+			case BEFORE_EDITABLE:
+				mark.offset=offset;
+				positionsBeforeEditable.add(new WeakReference<Mark>(mark));
+				break;
+			case INSIDE_EDITABLE:
+				mark.offset=offset-beforeEditable.length();
+				positionsInsideEditable.add(new WeakReference<Mark>(mark));
+				break;
+			case AFTER_EDITABLE:
+				mark.offset=offset-beforeEditable.length()-insideEditable.length();
+				positionsAfterEditable.add(new WeakReference<Mark>(mark));
+				break;
+			}
+		LOGGER.finest("create position at " + offset + ": " + mark);
+		return new StickyPosition(mark);
+	}
     /**
-     * Get part of text in specified range.
+     * Create position and store it into 'unflushed' list. Positions will be
+     * added to main list after 'flush'.
      * 
-     * @param where
-     *            range start
-     * @param len
-     *            rangle length
-     * @param txt
-     *            output
+     * @param offset
+     * @param preferredPositionType
+     * @return
      */
+    public Position createUnflushedPosition(int offset) {
+		UIThreadsUtil.mustBeSwingThread();
+		Mark mark = new Mark();
+			// initialize content or replace one segment
+			mark.positionType = POSITION_TYPE.AFTER_EDITABLE;
+			mark.offset = offset;
+			positionsUnflushed.add(new WeakReference<Mark>(mark));
+		LOGGER.finest("create unflushed position at " + offset + ": " + mark);
+		return new StickyPosition(mark);
+	}
+    
+    /**
+	 * Get part of text in specified range.
+	 * 
+	 * @param where
+	 *            range start
+	 * @param len
+	 *            rangle length
+	 * @param txt
+	 *            output
+	 */
     public void getChars(int where, int len, Segment txt)
             throws BadLocationException {
         UIThreadsUtil.mustBeSwingThread();
@@ -307,16 +331,50 @@ public class OmContent implements AbstractDocument.Content {
     }
 
     protected void flush(StringBuilder text, int pos, int lengthToRemove) {
-        System.out.println("flush "+pos+"+"+lengthToRemove+": "+text);
+    	String strText=text.toString();
+    	text.setLength(0);
+    	
         if (editableMode) {
-            throw new RuntimeException("OmContent flush in editable mode");
+            throw new RuntimeException("OmContent flush is in editable mode");
         }
-        shiftMarks(POSITION_TYPE.AFTER_EDITABLE, pos + lengthToRemove, text.length() - lengthToRemove);
-        afterEditable.replace(pos, pos+lengthToRemove, text.toString());
+        shiftMarks(positionsAfterEditable, pos + lengthToRemove, strText.length() - lengthToRemove);
+        afterEditable.replace(pos, pos+lengthToRemove, strText);
 
+        shiftMarks(positionsUnflushed, 0, pos);
         positionsAfterEditable.addAll(positionsUnflushed);
         positionsUnflushed.clear();
     }
+    
+    protected void flushTranslationElements(StringBuilder text, int pos) {
+    	text.setLength(0);
+    	
+        if (!editableMode) {
+            throw new RuntimeException("OmContent flush is not in editable mode");
+        }
+
+        for (WeakReference<Mark> ref : positionsUnflushed) {
+            Mark mark = ref.get();
+            if (mark != null) {
+                mark.positionType = calculatePositionType(pos+mark.offset);
+    			switch (mark.positionType) {
+    			case BEFORE_EDITABLE:
+    				mark.offset=mark.offset+pos;
+    				positionsBeforeEditable.add(ref);
+    				break;
+    			case INSIDE_EDITABLE:
+    				mark.offset=mark.offset+pos-beforeEditable.length();
+    				positionsInsideEditable.add(ref);
+    				break;
+    			case AFTER_EDITABLE:
+    				mark.offset=mark.offset+pos-beforeEditable.length()-insideEditable.length();
+    				positionsAfterEditable.add(ref);
+    				break;
+    			}
+            }
+        }
+        positionsUnflushed.clear();
+    }
+
 
     /**
      * Insert text in the specified position and move marks.
@@ -331,24 +389,30 @@ public class OmContent implements AbstractDocument.Content {
         UIThreadsUtil.mustBeSwingThread();
         LOGGER.finest("insert string at " + where + " length=" + str.length());
 
-        POSITION_TYPE positionType = calculatePositionTypeForChange(where);
+        UndoableEdit undo = doc.createUndo();
+        
+        POSITION_TYPE positionType = calculatePositionType(where);
         int relativeOffset = calculateRelativeOffset(where, positionType);
         switch (positionType) {
         case BEFORE_EDITABLE:
+        	if (true) throw new RuntimeException("invalid mark processing");
             beforeEditable.insert(relativeOffset, str);
+            shiftMarks(positionsBeforeEditable, relativeOffset, str.length());
             break;
         case INSIDE_EDITABLE:
             insideEditable.insert(relativeOffset, str);
+            shiftMarks(positionsInsideEditable, relativeOffset, str.length());
             break;
         case AFTER_EDITABLE:
+        	if (true) throw new RuntimeException("invalid mark processing");
             afterEditable.insert(relativeOffset, str);
+            shiftMarks(positionsAfterEditable, relativeOffset, str.length());
             break;
         default:
             throw new IllegalArgumentException();
         }
 
-        shiftMarks(positionType, relativeOffset, str.length());
-        return new InsertUndo(where, str.length());
+        return undo;
     }
 
     /**
@@ -364,27 +428,29 @@ public class OmContent implements AbstractDocument.Content {
         UIThreadsUtil.mustBeSwingThread();
         LOGGER.finest("remove string at " + where + " length=" + nitems);
 
-        String removedString = getString(where, nitems);
+        UndoableEdit undo = doc.createUndo();
 
-        UndoableEdit undo = new RemoveUndo(where, removedString);
-
-        POSITION_TYPE positionType = calculatePositionTypeForChange(where);
+        POSITION_TYPE positionType = calculatePositionType(where);
         int relativeOffset = calculateRelativeOffset(where, positionType);
         switch (positionType) {
         case BEFORE_EDITABLE:
+        	if (true) throw new RuntimeException("invalid mark processing");
             beforeEditable.delete(relativeOffset, relativeOffset + nitems);
+            shiftMarks(positionsBeforeEditable, relativeOffset + nitems, -nitems);
             break;
         case INSIDE_EDITABLE:
             insideEditable.delete(relativeOffset, relativeOffset + nitems);
+            shiftMarks(positionsInsideEditable, relativeOffset + nitems, -nitems);
             break;
         case AFTER_EDITABLE:
+        	if (true) throw new RuntimeException("invalid mark processing");
             afterEditable.delete(relativeOffset, relativeOffset + nitems);
+            shiftMarks(positionsAfterEditable, relativeOffset + nitems, -nitems);
             break;
         default:
             throw new IllegalArgumentException();
         }
 
-        shiftMarks(positionType, relativeOffset + nitems, -nitems);
         return undo;
     }
 
@@ -401,22 +467,8 @@ public class OmContent implements AbstractDocument.Content {
      * @param relativeOffset
      * @param shiftValue
      */
-    private void shiftMarks(POSITION_TYPE positionType, int relativeOffset,
+    private void shiftMarks(List<WeakReference<Mark>> marksList, int relativeOffset,
             int shiftValue) {
-        List<WeakReference<Mark>> marksList;
-        switch (positionType) {
-        case BEFORE_EDITABLE:
-            marksList = positionsBeforeEditable;
-            break;
-        case INSIDE_EDITABLE:
-            marksList = positionsInsideEditable;
-            break;
-        case AFTER_EDITABLE:
-            marksList = positionsAfterEditable;
-            break;
-        default:
-            throw new IllegalArgumentException();
-        }
         for (WeakReference<Mark> ref : marksList) {
             Mark mark = ref.get();
             if (mark != null) {
@@ -425,41 +477,6 @@ public class OmContent implements AbstractDocument.Content {
                 }
             }
         }
-    }
-
-    /**
-     * Calculate - where offset placed, using preferred part type.
-     * 
-     * @param offset
-     *            offset
-     * @param preferredType
-     *            preferred part - before/inside/after editable
-     * @return part - before/inside/after editable
-     */
-    private POSITION_TYPE calculatePositionType(int offset,
-            POSITION_TYPE preferredType) {
-        if (preferredType != null) {
-            switch (preferredType) {
-            case BEFORE_EDITABLE:
-                if (offset <= beforeEditable.length()) {
-                    return preferredType;
-                }
-                break;
-            case INSIDE_EDITABLE:
-                if (offset >= beforeEditable.length()
-                        && offset <= beforeEditable.length()
-                                + insideEditable.length()) {
-                    return preferredType;
-                }
-                break;
-            case AFTER_EDITABLE:
-                if (offset >= beforeEditable.length() + insideEditable.length()) {
-                    return preferredType;
-                }
-                break;
-            }
-        }
-        return calculatePositionType(offset);
     }
 
     /**
@@ -475,35 +492,14 @@ public class OmContent implements AbstractDocument.Content {
             result = POSITION_TYPE.BEFORE_EDITABLE;
         } else if (offset < beforeEditable.length() + insideEditable.length()) {
             result = POSITION_TYPE.INSIDE_EDITABLE;
-        } else {
+        } else if (offset<=beforeEditable.length()+insideEditable.length()+afterEditable.length()+1){
             result = POSITION_TYPE.AFTER_EDITABLE;
+        }else {
+        	throw new RuntimeException("Unknown position: "+offset);
         }
         return result;
     }
 
-    /**
-     * Calculate position type for change.
-     * 
-     * @param offset
-     *            offset
-     * @return part - before/inside/after editable
-     */
-    private POSITION_TYPE calculatePositionTypeForChange(int offset) {
-        POSITION_TYPE result;
-        if (editableMode) {
-            if (offset >= beforeEditable.length()
-                    && offset <= beforeEditable.length()
-                            + insideEditable.length()) {
-                result = POSITION_TYPE.INSIDE_EDITABLE;
-            } else {
-                throw new IllegalArgumentException(
-                        "Invalid position in editable context: " + offset);
-            }
-        } else {
-            result = calculatePositionType(offset);
-        }
-        return result;
-    }
 
     /**
      * Calculate relation offset from position type part.
@@ -572,89 +568,6 @@ public class OmContent implements AbstractDocument.Content {
         public String toString() {
             return (positionType != null ? positionType.name() : "default")
                     + ": " + offset;
-        }
-    }
-
-    /**
-     * Undo information for insert.
-     */
-    protected class InsertUndo extends AbstractUndoableEdit {
-        /** Where string was inserted. */
-        protected int offset;
-        /** Length of string inserted. */
-        protected int length;
-        /** Removed string on undo. */
-        protected String string;
-
-        public InsertUndo(int offset, int length) {
-            this.offset = offset;
-            this.length = length;
-        }
-
-        @Override
-        public void undo() throws CannotUndoException {
-            super.undo();
-            try {
-                // remember for redo
-                string = getString(offset, length);
-
-                // undo
-                remove(offset, length);
-            } catch (BadLocationException bl) {
-                throw new CannotUndoException();
-            }
-        }
-
-        @Override
-        public void redo() throws CannotRedoException {
-            super.redo();
-            try {
-                insertString(offset, string);
-            } catch (BadLocationException bl) {
-                throw new CannotRedoException();
-            }
-        }
-    }
-
-    /**
-     * Undo information for remove.
-     */
-    protected class RemoveUndo extends AbstractUndoableEdit {
-        /** Where string was removed. */
-        protected int offset;
-        /** Removed string. */
-        protected String string;
-        /** Length of removed string. */
-        protected int length;
-
-        protected RemoveUndo(int offset, String string) {
-            this.offset = offset;
-            this.string = string;
-            this.length = string.length();
-        }
-
-        @Override
-        public void undo() throws CannotUndoException {
-            super.undo();
-            try {
-                insertString(offset, string);
-                string = null;
-            } catch (BadLocationException bl) {
-                throw new CannotUndoException();
-            }
-        }
-
-        public void redo() throws CannotRedoException {
-            super.redo();
-            try {
-                // remember for undo
-                string = getString(offset, length);
-
-                // redo
-                remove(offset, length);
-            } catch (BadLocationException bl) {
-                throw new CannotRedoException();
-            }
         }
     }
 }

@@ -74,7 +74,7 @@ public class OmDocumentFilter extends DocumentFilter {
         }
 
         // Is inside translation ?
-        return (offset >= doc.activeTranslationBegin.getOffset() && offset
-                + length <= doc.activeTranslationEnd.getOffset());
+        return (offset >= doc.activeTranslationBegin.getOffset()+1 && offset
+                + length <= doc.activeTranslationEnd.getOffset()-1);
     }
 }

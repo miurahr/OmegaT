@@ -40,13 +40,13 @@ import org.omegat.util.gui.ExtendedLabelView;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 class OmEditorKit extends DefaultEditorKit {
-    private OmViewFactory fac = new OmViewFactory();
+    protected static final OmViewFactory FACTORY = new OmViewFactory();
 
     @Override
     public ViewFactory getViewFactory() {
-        return fac;
+        return FACTORY;
     }
-
+    
     /**
      * Factory for create UI Views by Element.
      */
@@ -56,8 +56,8 @@ class OmEditorKit extends DefaultEditorKit {
             if (kind != null) {
                 if (kind.equals("OmElementText")) {
                     return new ExtendedLabelView(elem);
-                } else if (kind.equals("OmElementEmptyLine")) {
-                    return new ViewEmptyLine(elem);
+                } else if (kind.equals("OmElementSegmentsSeparator")) {
+                    return new ViewSegmentsSeparator(elem);
                 } else if (kind.equals("OmElementMain")) {
                     return new BoxView(elem, View.Y_AXIS);
                 } else if (kind.equals("OmElementParagraph")) {

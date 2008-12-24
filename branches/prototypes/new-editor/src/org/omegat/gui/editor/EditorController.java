@@ -386,14 +386,9 @@ public class EditorController implements IEditor {
             return;
 
         OmDocument doc = editor.getOmDocument();
-        try {
-            doc.replaceSegment(displayedEntryIndex, (OmEditorKit) editor
-                    .getEditorKit(), true);
-        } catch (BadLocationException ex) {
-            LOGGER.log(Level.SEVERE, "Error activate entry", ex);
-        }
+        doc.replaceSegment(displayedEntryIndex, true);
 
-        editor.setCaretPosition(doc.activeTranslationBegin.getOffset());
+        editor.setCaretPosition(doc.activeTranslationBegin.getOffset()+1);
 
         editor.cancelUndo();
 
@@ -417,7 +412,7 @@ public class EditorController implements IEditor {
             CoreEvents.fireEntryNewFile(Core.getProject().getProjectFiles()
                     .get(displayedFileIndex).filePath);
         }
-editor.repaint();
+
         // fire event about new segment activated
         CoreEvents.fireEntryActivated(ste.getStrEntry());
     }
@@ -475,7 +470,7 @@ editor.repaint();
 
         OmDocument doc = editor.getOmDocument();
 
-        try {
+//        try {
             String newTrans = doc.extractTranslation();
             if (newTrans != null) {
                 // segment was active
@@ -490,25 +485,27 @@ editor.repaint();
                 else
                     Core.getProject().setTranslation(entry, newTrans);
 
-                doc.replaceSegment(displayedEntryIndex, (OmEditorKit) editor
-                        .getEditorKit(), false);
+                doc.replaceSegment(displayedEntryIndex,  false);
 
                 if (!entry.getTranslation().equals(old_translation)) {
                     // find all identical strings and redraw them
 
                     for (int i = 0; i < m_docSegList.length; i++) {
+                    	if (i == displayedEntryIndex) {
+                    		// commited entry, skip
+                    		continue;
+                    	}
                         if (m_docSegList[i].ste.getSrcText().equals(
                                 entry.getSrcText())) {
                             // the same source text - need to update
-                            doc.replaceSegment(i, (OmEditorKit) editor
-                                    .getEditorKit(), false);
+                            doc.replaceSegment(i, false);
                         }
                     }
                 }
             }
-        } catch (BadLocationException ex) {
-            LOGGER.log(Level.SEVERE, "Error activate entry", ex);
-        }
+//        } catch (BadLocationException ex) {
+//            LOGGER.log(Level.SEVERE, "Error activate entry", ex);
+//        }
         editor.cancelUndo();
     }
 
@@ -830,14 +827,14 @@ editor.repaint();
      * Calculate the position of the start of the current translation
      */
     protected int getTranslationStart() {
-        return editor.getOmDocument().activeTranslationBegin.getOffset();
+        return editor.getOmDocument().activeTranslationBegin.getOffset()+1;
     }
 
     /**
      * Calculcate the position of the end of the current translation
      */
     protected int getTranslationEnd() {
-        return editor.getOmDocument().activeTranslationEnd.getOffset();
+        return editor.getOmDocument().activeTranslationEnd.getOffset()-1;
     }
 
     /**
