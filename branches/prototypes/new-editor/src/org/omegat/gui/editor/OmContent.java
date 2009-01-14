@@ -337,6 +337,8 @@ public class OmContent implements AbstractDocument.Content {
         if (editableMode) {
             throw new RuntimeException("OmContent flush is in editable mode");
         }
+        
+        // marks inside [pos,pos+lengthToRemove] are marks for old elements
         shiftMarks(positionsAfterEditable, pos + lengthToRemove, strText.length() - lengthToRemove);
         afterEditable.replace(pos, pos+lengthToRemove, strText);
 
@@ -512,10 +514,8 @@ public class OmContent implements AbstractDocument.Content {
             result = POSITION_TYPE.BEFORE_EDITABLE;
         } else if (offset < beforeEditable.length() + insideEditable.length()) {
             result = POSITION_TYPE.INSIDE_EDITABLE;
-        } else if (offset<=beforeEditable.length()+insideEditable.length()+afterEditable.length()+1){
-            result = POSITION_TYPE.AFTER_EDITABLE;
         }else {
-        	throw new RuntimeException("Unknown position: "+offset);
+            result = POSITION_TYPE.AFTER_EDITABLE;
         }
         return result;
     }
