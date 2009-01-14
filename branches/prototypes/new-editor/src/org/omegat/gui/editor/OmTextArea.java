@@ -116,10 +116,7 @@ class OmTextArea extends JEditorPane {
         }
 
         boolean processed = false;
-        if (e.getKeyCode() == 37 || e.getKeyCode() == 39) {
-            System.out.println(e.getKeyCode());
-
-        }
+        
         // non-standard processing
         if (isKey(e, KeyEvent.VK_TAB, 0)) {
             // press TAB when 'Use TAB to advance'
@@ -170,15 +167,16 @@ class OmTextArea extends JEditorPane {
         }
 
         // some after-processing catches
-        if (!processed) {
-            if (e.getKeyCode() == KeyEvent.VK_HOME) {
-                // press HOME
-                checkAndFixCaret();
-            } else if (e.getKeyCode() == KeyEvent.VK_END) {
-                // press END
+        if (!processed && e.getKeyChar() != 0) {
+            switch (e.getKeyCode()) {
+            case KeyEvent.VK_HOME:
+            case KeyEvent.VK_END:
+            case KeyEvent.VK_LEFT:
+            case KeyEvent.VK_RIGHT:
+            case KeyEvent.VK_UP:
+            case KeyEvent.VK_DOWN:
                 checkAndFixCaret();
             }
-            checkAndFixCaret();
         }
     }
 
@@ -204,13 +202,13 @@ class OmTextArea extends JEditorPane {
          * int start = m_segmentStartOffset + m_sourceDisplayLength +
          * OConsts.segmentStartStringFull.length();
          */
-        int start = doc.activeTranslationBegin.getOffset()+1;
+        int start = doc.activeTranslationBegin.getOffset() + 1;
         // -1 for space before tag, -2 for newlines
         /*
          * int end = editor.getTextLength() - m_segmentEndInset -
          * OConsts.segmentEndStringFull.length();
          */
-        int end = doc.activeTranslationEnd.getOffset()-1;
+        int end = doc.activeTranslationEnd.getOffset() - 1;
 
         if (spos != epos) {
             // dealing with a selection here - make sure it's w/in bounds

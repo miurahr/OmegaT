@@ -21,9 +21,9 @@ import org.omegat.gui.editor.OmDocument.OmElementSegPart;
 public class ViewParagraph extends ParagraphView {
     public ViewParagraph(final Element elem) {
         super(elem);
-        OmElementSegPart segPart=(OmElementSegPart)elem.getParentElement();
+        OmElementSegPart segPart = (OmElementSegPart) elem.getParentElement();
         strategy = new LayoutStrategy(segPart.isLangRTL());
-        setJustification(segPart .isRightAligned() ? StyleConstants.ALIGN_RIGHT
+        setJustification(segPart.isRightAligned() ? StyleConstants.ALIGN_RIGHT
                 : StyleConstants.ALIGN_LEFT);
     }
 
@@ -52,6 +52,10 @@ public class ViewParagraph extends ParagraphView {
         return r;
     }
 
+    /**
+     * Layout strategy for display begin/end mark correctly, i.e. at the end or
+     * begin of line.
+     */
     public static class LayoutStrategy extends FlowView.FlowStrategy {
         protected boolean isRTL;
 
@@ -61,9 +65,6 @@ public class ViewParagraph extends ParagraphView {
 
         @Override
         protected int layoutRow(FlowView fv, int rowIndex, int pos) {
-            if (fv.getElement().getElement(0) instanceof OmDocument.OmElementSegmentMark) {
-                System.out.println();
-            }
             int res = super.layoutRow(fv, rowIndex, pos);
 
             if (isRTL) {

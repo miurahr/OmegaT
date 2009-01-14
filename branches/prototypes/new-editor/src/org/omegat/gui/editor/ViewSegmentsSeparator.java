@@ -6,7 +6,6 @@ import java.awt.Shape;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
-import javax.swing.text.LabelView;
 import javax.swing.text.View;
 import javax.swing.text.Position.Bias;
 
@@ -16,42 +15,39 @@ import javax.swing.text.Position.Bias;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class ViewSegmentsSeparator extends View {
-	protected static final int SEPARATOR_HEIGHT = 16;
+    protected static final int SEPARATOR_HEIGHT = 16;
 
-	public ViewSegmentsSeparator(Element elem) {
-		super(elem);
-	}
+    public ViewSegmentsSeparator(Element elem) {
+        super(elem);
+    }
 
-	@Override
-	public float getPreferredSpan(int axis) {
-		return SEPARATOR_HEIGHT;
-	}
+    @Override
+    public float getPreferredSpan(int axis) {
+        return SEPARATOR_HEIGHT;
+    }
 
-	@Override
-	public Shape modelToView(int pos, Shape a, Bias b)
-			throws BadLocationException {
-		Rectangle alloc = (a instanceof Rectangle) ? (Rectangle) a : a
-				.getBounds();
+    @Override
+    public Shape modelToView(int pos, Shape a, Bias b)
+            throws BadLocationException {
+        Rectangle alloc = (a instanceof Rectangle) ? (Rectangle) a : a
+                .getBounds();
 
-		Rectangle lineArea = new Rectangle();
+        Rectangle lineArea = new Rectangle();
 
-		// fill in the results and return
-		lineArea.x = alloc.x;
-		lineArea.y = alloc.y;
-		lineArea.width = 0;
-		lineArea.height = SEPARATOR_HEIGHT;
-		return lineArea;
-	}
+        // fill in the results and return
+        lineArea.x = alloc.x;
+        lineArea.y = alloc.y;
+        lineArea.width = 0;
+        lineArea.height = SEPARATOR_HEIGHT;
+        return lineArea;
+    }
 
-	@Override
-	public void paint(Graphics g, Shape allocation) {
-		// TODO Auto-generated method stub
+    @Override
+    public void paint(Graphics g, Shape allocation) {
+    }
 
-	}
-
-	@Override
-	public int viewToModel(float x, float y, Shape a, Bias[] biasReturn) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int viewToModel(float x, float y, Shape a, Bias[] biasReturn) {
+        return 0;
+    }
 }

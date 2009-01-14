@@ -300,7 +300,6 @@ public class EditorController implements IEditor {
                 + " to " + newOrientation);
         currentOrientation = newOrientation;
         editor.getOmDocument().setOrientation(currentOrientation);
-        editor.repaint();
     }
 
     /**
@@ -348,13 +347,12 @@ public class EditorController implements IEditor {
         for (int i = 0; i < descriptions.length; i++) {
             SourceTextEntry ste = entries.get(file.firstEntryIndexInGlobalList
                     + i);
-            descriptions[i] = new SegmentElementsDescription(doc,  ste,
+            descriptions[i] = new SegmentElementsDescription(doc, ste,
                     segmentNumberOffset + i);
         }
 
         try {
-            m_docSegList = doc.initialize( descriptions,
-                    currentOrientation);
+            m_docSegList = doc.initialize(descriptions, currentOrientation);
         } catch (BadLocationException ex) {
             LOGGER.log(Level.SEVERE, "Error initialize document", ex);
         }
@@ -388,7 +386,7 @@ public class EditorController implements IEditor {
         OmDocument doc = editor.getOmDocument();
         doc.replaceSegment(displayedEntryIndex, true);
 
-        editor.setCaretPosition(doc.activeTranslationBegin.getOffset()+1);
+        editor.setCaretPosition(doc.activeTranslationBegin.getOffset() + 1);
 
         editor.cancelUndo();
 
@@ -470,42 +468,42 @@ public class EditorController implements IEditor {
 
         OmDocument doc = editor.getOmDocument();
 
-//        try {
-            String newTrans = doc.extractTranslation();
-            if (newTrans != null) {
-                // segment was active
-                SourceTextEntry entry = m_docSegList[displayedEntryIndex].ste;
+        // try {
+        String newTrans = doc.extractTranslation();
+        if (newTrans != null) {
+            // segment was active
+            SourceTextEntry entry = m_docSegList[displayedEntryIndex].ste;
 
-                String old_translation = entry.getTranslation();
-                // update memory
-                if (newTrans.equals(entry.getSrcText())
-                        && !Preferences
-                                .isPreference(Preferences.ALLOW_TRANS_EQUAL_TO_SRC))
-                    Core.getProject().setTranslation(entry, "");
-                else
-                    Core.getProject().setTranslation(entry, newTrans);
+            String old_translation = entry.getTranslation();
+            // update memory
+            if (newTrans.equals(entry.getSrcText())
+                    && !Preferences
+                            .isPreference(Preferences.ALLOW_TRANS_EQUAL_TO_SRC))
+                Core.getProject().setTranslation(entry, "");
+            else
+                Core.getProject().setTranslation(entry, newTrans);
 
-                doc.replaceSegment(displayedEntryIndex,  false);
+            doc.replaceSegment(displayedEntryIndex, false);
 
-                if (!entry.getTranslation().equals(old_translation)) {
-                    // find all identical strings and redraw them
+            if (!entry.getTranslation().equals(old_translation)) {
+                // find all identical strings and redraw them
 
-                    for (int i = 0; i < m_docSegList.length; i++) {
-                    	if (i == displayedEntryIndex) {
-                    		// commited entry, skip
-                    		continue;
-                    	}
-                        if (m_docSegList[i].ste.getSrcText().equals(
-                                entry.getSrcText())) {
-                            // the same source text - need to update
-                            doc.replaceSegment(i, false);
-                        }
+                for (int i = 0; i < m_docSegList.length; i++) {
+                    if (i == displayedEntryIndex) {
+                        // commited entry, skip
+                        continue;
+                    }
+                    if (m_docSegList[i].ste.getSrcText().equals(
+                            entry.getSrcText())) {
+                        // the same source text - need to update
+                        doc.replaceSegment(i, false);
                     }
                 }
             }
-//        } catch (BadLocationException ex) {
-//            LOGGER.log(Level.SEVERE, "Error activate entry", ex);
-//        }
+        }
+        // } catch (BadLocationException ex) {
+        // LOGGER.log(Level.SEVERE, "Error activate entry", ex);
+        // }
         editor.cancelUndo();
     }
 
@@ -786,8 +784,8 @@ public class EditorController implements IEditor {
             return input.toLowerCase(locale);
         case UPPER:
             return input.toUpperCase(locale);
-            // TODO: find out how to get a locale-aware title case
         case TITLE:
+            // TODO: find out how to get a locale-aware title case
             return Character.toTitleCase(input.charAt(0))
                     + input.substring(1).toLowerCase(locale);
         }
@@ -816,10 +814,6 @@ public class EditorController implements IEditor {
     public void insertText(final String text) {
         UIThreadsUtil.mustBeSwingThread();
 
-        // int pos = editor.getCaretPosition();
-        // editor.select(pos, pos);
-        // Removing the two lines above implements:
-        // RFE [ 1579488 ] overwriting with Ctrl+i
         editor.replaceSelection(text);
     }
 
@@ -827,14 +821,14 @@ public class EditorController implements IEditor {
      * Calculate the position of the start of the current translation
      */
     protected int getTranslationStart() {
-        return editor.getOmDocument().activeTranslationBegin.getOffset()+1;
+        return editor.getOmDocument().activeTranslationBegin.getOffset() + 1;
     }
 
     /**
      * Calculcate the position of the end of the current translation
      */
     protected int getTranslationEnd() {
-        return editor.getOmDocument().activeTranslationEnd.getOffset()-1;
+        return editor.getOmDocument().activeTranslationEnd.getOffset() - 1;
     }
 
     /**
