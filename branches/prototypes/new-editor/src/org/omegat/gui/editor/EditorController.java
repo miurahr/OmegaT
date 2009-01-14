@@ -877,9 +877,6 @@ public class EditorController implements IEditor {
         try {
             if (editor.undoManager.canUndo()) {
                 editor.undoManager.undo();
-                // rebuild elements if paragraphs changed
-                editor.getOmDocument().rebuildElementsForSegment(
-                        displayedEntryIndex);
             }
         } catch (CannotUndoException cue) {
             Log.log(cue);
@@ -895,9 +892,6 @@ public class EditorController implements IEditor {
         try {
             if (editor.undoManager.canRedo()) {
                 editor.undoManager.redo();
-                // rebuild elements if paragraphs changed
-                editor.getOmDocument().rebuildElementsForSegment(
-                        displayedEntryIndex);
             }
         } catch (CannotRedoException cue) {
             Log.log(cue);

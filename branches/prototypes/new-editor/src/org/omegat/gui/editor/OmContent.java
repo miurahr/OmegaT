@@ -345,28 +345,48 @@ public class OmContent implements AbstractDocument.Content {
         positionsUnflushed.clear();
     }
     
-    protected void flushTranslationElements(StringBuilder text, int pos) {
-    	text.setLength(0);
-    	
+    /**
+     * Move marks and use specified text.
+     * 
+     * @param text new text or null if text shouldn't be changed
+     * @param startPos start position to update
+     * @param endPos end position to update
+     */
+    protected void flushTranslationElements(StringBuilder text, int startPos, int endPos) {
         if (!editableMode) {
             throw new RuntimeException("OmContent flush is not in editable mode");
         }
 
+        if (text != null) {
+        	/* need to use new text. just replace inside editable fragment */
+        	int begMarkLen=beforeEditable.length()-startPos;
+        	int endMarkLen=endPos-beforeEditable.length()-insideEditable.length();
+        	insideEditable.setLength(0);
+        	insideEditable.append(text.substring(begMarkLen, text.length()
+					- endMarkLen));
+			for (WeakReference<Mark> ref : positionsInsideEditable) {
+				Mark mark = ref.get();
+				if (mark != null) {
+					mark.offset = 0;
+				}
+			}
+        }
+        
         for (WeakReference<Mark> ref : positionsUnflushed) {
             Mark mark = ref.get();
             if (mark != null) {
-                mark.positionType = calculatePositionType(pos+mark.offset);
+                mark.positionType = calculatePositionType(startPos+mark.offset);
     			switch (mark.positionType) {
     			case BEFORE_EDITABLE:
-    				mark.offset=mark.offset+pos;
+    				mark.offset=mark.offset+startPos;
     				positionsBeforeEditable.add(ref);
     				break;
     			case INSIDE_EDITABLE:
-    				mark.offset=mark.offset+pos-beforeEditable.length();
+    				mark.offset=mark.offset+startPos-beforeEditable.length();
     				positionsInsideEditable.add(ref);
     				break;
     			case AFTER_EDITABLE:
-    				mark.offset=mark.offset+pos-beforeEditable.length()-insideEditable.length();
+    				mark.offset=mark.offset+startPos-beforeEditable.length()-insideEditable.length();
     				positionsAfterEditable.add(ref);
     				break;
     			}

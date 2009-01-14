@@ -381,7 +381,6 @@ class OmTextArea extends JEditorPane {
         controller.spellCheckerThread.resetCache();
 
         // redraw segment
-        getOmDocument().rebuildElementsForSegment(
-                controller.displayedEntryIndex);
+        getOmDocument().replaceTranslationElements(null);
     }
 }

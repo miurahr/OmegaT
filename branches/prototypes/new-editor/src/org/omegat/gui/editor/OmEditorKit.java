@@ -61,7 +61,7 @@ class OmEditorKit extends DefaultEditorKit {
                 } else if (kind.equals("OmElementMain")) {
                     return new BoxView(elem, View.Y_AXIS);
                 } else if (kind.equals("OmElementParagraph")) {
-                    return new ViewParagraph(elem, false,false);//par.isLangRTL(), par .isRightAligned());
+                    return new ViewParagraph(elem);
                 } else if (kind.equals("OmElementSegment")) {
                     return new BoxView(elem, View.Y_AXIS);
                 } else if (kind.equals("OmElementSegPart")) {

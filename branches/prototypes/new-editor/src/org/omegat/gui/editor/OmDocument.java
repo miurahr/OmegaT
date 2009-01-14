@@ -144,7 +144,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
 
             for (int i = 0; i < descriptions.length; i++) {
                 segElements[i] = (OmElementSegment) descriptions[i]
-                        .createSegmentElement(root, false);
+                        .createSegmentElement(root, false, controller.sourceLangIsRTL, controller.targetLangIsRTL);
             }
 
             getData().flush(unflushedText, 0, 0);
@@ -192,7 +192,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
         try {
             writeLock();
             
-            OmElementSegment seg=(OmElementSegment)root.getElement(activeSegmentIndex);
+            OmElementSegment seg=(OmElementSegment)root.getElement(segmentIndex);
 
             activeTranslationBegin = null;
             activeTranslationEnd = null;
@@ -203,7 +203,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
 
             SegmentElementsDescription desc = new SegmentElementsDescription(
 					this, seg.ste, segmentIndex);
-			Element el = desc.createSegmentElement(root, isActive);
+			Element el = desc.createSegmentElement(root, isActive, controller.sourceLangIsRTL, controller.targetLangIsRTL);
             
             if (isActive) {
                 activeTranslationBegin = getData().createUnflushedPosition(
@@ -237,12 +237,11 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     }
     
     /**
-	 * Replace elements for translation, based on translation text in OmContent.
+	 * Replace elements for translation.
 	 * 
-	 * We shouldn't change text, because it already changed, just set new
-	 * elements and views.
+	 * @param newTranslation new translation text, or null if we need to use text in ths OmContent
 	 */
-	void replaceTranslationElements() {
+	void replaceTranslationElements(String newTranslation) {
 		try {
 			writeLock();
 
@@ -255,12 +254,24 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
 			View segView = mainDocView.getView(activeSegmentIndex);
 
 			int startSegmentPos = segPart.getStartOffset();
+			int endSegmentPos = segPart.getEndOffset();
 
 			SegmentElementsDescription desc = new SegmentElementsDescription(
 					this, seg.ste, activeSegmentIndex);
-			Element el = desc.createTranslationElement(seg, seg, extractTranslation());
 
-			getData().flushTranslationElements(unflushedText, startSegmentPos);
+			Element el;
+			if (newTranslation != null) {
+				// need to use new text
+				el = desc.createTranslationElement(seg, seg, newTranslation, controller.targetLangIsRTL);
+				getData().flushTranslationElements(unflushedText,
+						startSegmentPos,endSegmentPos);
+			} else {
+				// need to use exist text
+				el = desc.createTranslationElement(seg, seg,
+						extractTranslation(), controller.targetLangIsRTL);
+				getData().flushTranslationElements(null, startSegmentPos, endSegmentPos);
+			}
+			unflushedText.setLength(0);
 
 			// replace element
 			seg.replace(1, 1, new Element[] { el });
@@ -305,46 +316,46 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     }
 
     /**
-     * Handle user's document change for rebuild segments.
-     */
-    @Override
-    protected void postRemoveUpdate(DefaultDocumentEvent chng) {
-        UIThreadsUtil.mustBeSwingThread();
+	 * Handle user's document change for rebuild segments.
+	 */
+	@Override
+	protected void postRemoveUpdate(DefaultDocumentEvent chng) {
+		UIThreadsUtil.mustBeSwingThread();
 
-        super.postRemoveUpdate(chng);
+		super.postRemoveUpdate(chng);
 
-        // we have to rebuild segment each time, because we need to check
-        // spelling, and possible rebuild paragraphs
-        try {
-            int segmentIndex = root.getElementIndex(chng.getOffset());
+		/*
+		 * we have to rebuild segment's elements each time, because we need to
+		 * check spelling, and possible rebuild paragraphs
+		 */
+		replaceTranslationElements(null);
+	}
 
-            rebuildElementsForSegment(chng, segmentIndex);
-        } catch (BadLocationException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
+	/**
+	 * Handle user's document change for rebuild segments.
+	 */
+	@Override
+	protected void insertUpdate(DefaultDocumentEvent chng, AttributeSet attr) {
+		UIThreadsUtil.mustBeSwingThread();
+
+		super.insertUpdate(chng, attr);
+
+		/*
+		 * we have to rebuild segment's elements each time, because we need to
+		 * check spelling, and possible rebuild paragraphs
+		 */
+		replaceTranslationElements(null);
+	}
 
     /**
-     * Handle user's document change for rebuild segments.
-     */
-    @Override
-    protected void insertUpdate(DefaultDocumentEvent chng, AttributeSet attr) {
-        UIThreadsUtil.mustBeSwingThread();
-
-        super.insertUpdate(chng, attr);
-        
-        replaceTranslationElements();
-    }
-
-    /**
-     * Rebuild elements fro specified segment after user's change.
-     * 
-     * @param chng
-     *            change
-     * @param segmentIndex
-     *            segment index
-     * @throws BadLocationException
-     */
+	 * Rebuild elements fro specified segment after user's change.
+	 * 
+	 * @param chng
+	 *            change
+	 * @param segmentIndex
+	 *            segment index
+	 * @throws BadLocationException
+	 */
     private void rebuildElementsForSegment(DefaultDocumentEvent chng,
             int segmentIndex) throws BadLocationException {
 //         try {
@@ -391,28 +402,16 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     }
 
     /**
-	 * Rebuild elements fro specified segment after user's change.
-	 * 
-	 * @param segmentIndex
-	 *            segment index
-	 */
-    void rebuildElementsForSegment(int segmentIndex) {
-        UIThreadsUtil.mustBeSwingThread();
-        try {
-            rebuildElementsForSegment(null, segmentIndex);
-        } catch (BadLocationException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    /**
      * Set new orientation.
      */
     void setOrientation(ORIENTATION newOrientation) {
         currentOrientation = newOrientation;
-        // View mainDocView = controller.editor.getUI().getRootView(
-        // controller.editor).getView(0);
-        // mainDocView.removeAll();
+        View rootView = controller.editor.getUI().getRootView(
+         controller.editor);
+        rootView
+		.replace(1, 1,
+				new View[] { OmEditorKit.FACTORY.create(root) });
+         //mainDocView.removeAll();
     }
 
     /**
@@ -596,8 +595,12 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     public class OmElementSegPart extends BranchElement {
         private boolean langRTL;
 
-        public OmElementSegPart(Element p, AttributeSet a) {
+        public OmElementSegPart(Element p, AttributeSet a, boolean langRTL) {
             super(p, a);
+            this.langRTL = langRTL;
+            MutableAttributeSet attrs = (MutableAttributeSet) a;
+            attrs.addAttribute(TextAttribute.RUN_DIRECTION,
+                    new Boolean(langRTL));
         }
 
         public String getName() {
@@ -608,12 +611,11 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
             return langRTL;
         }
 
-        public void setLangRTL(boolean langRTL) {
-            this.langRTL = langRTL;
-            MutableAttributeSet attrs = (MutableAttributeSet) getAttributes();
-            attrs.addAttribute(TextAttribute.RUN_DIRECTION,
-                    new Boolean(langRTL));
-        }
+//        public void setLangRTL(boolean langRTL) {
+//            this.langRTL = langRTL;
+//            MutableAttributeSet attrs = (MutableAttributeSet) getAttributes();
+//        }
+
 
         public boolean isRightAligned() {
             switch (currentOrientation) {
@@ -633,6 +635,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
 
         public OmElementParagraph(Element p, AttributeSet a) {
             super(p, a);
+            OmElementSegPart segPart=(OmElementSegPart)p;
         }
 
         public String getName() {
@@ -920,19 +923,22 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
      */
     protected class UndoInfo extends AbstractUndoableEdit {
     	protected final String oldText;
+    	protected String newText;
     	public UndoInfo(String oldText) {
 			this.oldText=oldText;
 		}
     	@Override
     	public void undo() throws CannotUndoException {
     		super.undo();
-    		//undo
+    		newText=extractTranslation();
+    		replaceTranslationElements(oldText);
     	}
     	
     	@Override
     	public void redo() throws CannotRedoException {
     		super.redo();
     		// redo
+    		replaceTranslationElements(newText);
     	}
     }
 }

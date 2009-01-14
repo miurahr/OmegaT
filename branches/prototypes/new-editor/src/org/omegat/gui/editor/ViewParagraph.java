@@ -11,17 +11,19 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.View;
 import javax.swing.text.Position.Bias;
 
+import org.omegat.gui.editor.OmDocument.OmElementSegPart;
+
 /**
  * Class for use some protected properties.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class ViewParagraph extends ParagraphView {
-    public ViewParagraph(final Element elem, final boolean isRTL,
-            final boolean isRightAligned) {
+    public ViewParagraph(final Element elem) {
         super(elem);
-        strategy = new LayoutStrategy(isRTL);
-        setJustification(isRightAligned ? StyleConstants.ALIGN_RIGHT
+        OmElementSegPart segPart=(OmElementSegPart)elem.getParentElement();
+        strategy = new LayoutStrategy(segPart.isLangRTL());
+        setJustification(segPart .isRightAligned() ? StyleConstants.ALIGN_RIGHT
                 : StyleConstants.ALIGN_LEFT);
     }
 
