@@ -259,7 +259,7 @@ public class SegmentElementsDescription {
 
 		ElementWithChilds segMarkE = new ElementWithChilds();
 		String smTextE = OConsts.segmentEndString.trim();
-		segMarkE.el = doc.new OmElementSegmentMark(true, segPartElement.el,
+		segMarkE.el = doc.new OmElementSegmentMark(false, segPartElement.el,
 				ATTR_SEGMENT_MARK, smTextE);
 
 		ElementWithChilds lnFirst = segPartElement.getChilds().get(0);
