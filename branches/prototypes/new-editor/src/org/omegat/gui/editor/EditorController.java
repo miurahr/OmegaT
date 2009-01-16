@@ -320,6 +320,10 @@ public class EditorController implements IEditor {
      * {@inheritDoc}
      */
     public String getCurrentFile() {
+        if (Core.getProject().getProjectFiles().isEmpty()) {
+            // there is no files yet
+            return null;
+        }
         return Core.getProject().getProjectFiles().get(displayedFileIndex).filePath;
     }
 
@@ -468,6 +472,11 @@ public class EditorController implements IEditor {
 
         OmDocument doc = editor.getOmDocument();
 
+        if (doc == null) {
+            // there is no active doc, it's empty project
+            return;
+        }
+        
         // try {
         String newTrans = doc.extractTranslation();
         if (newTrans != null) {
@@ -615,6 +624,11 @@ public class EditorController implements IEditor {
      * {@inheritDoc}
      */
     public int getCurrentEntryNumber() {
+        if (Core.getProject().getProjectFiles().isEmpty()) {
+            // there is no files yet
+            return -1;
+        }
+
         int globalEntryIndex = Core.getProject().getProjectFiles().get(
                 displayedFileIndex).firstEntryIndexInGlobalList
                 + displayedEntryIndex;
@@ -632,20 +646,27 @@ public class EditorController implements IEditor {
 
         commitAndDeactivate();
 
-        IProject dataEngine = Core.getProject();
-        for (int i = 0; i < dataEngine.getProjectFiles().size(); i++) {
-            IProject.FileInfo fi = dataEngine.getProjectFiles().get(i);
-            if (fi.firstEntryIndexInGlobalList <= entryNum - 1
-                    && fi.firstEntryIndexInGlobalList + fi.size > entryNum - 1) {
-                // this file
-                displayedEntryIndex = entryNum - 1
-                        - fi.firstEntryIndexInGlobalList;
-                if (i != displayedFileIndex) {
-                    // it's other file than displayed
-                    displayedFileIndex = i;
-                    loadDocument();
+        if (entryNum == 0) {
+            // it was empty project, need to display first entry
+            displayedFileIndex = 0;
+            displayedEntryIndex = 0;
+            loadDocument();
+        } else {
+            IProject dataEngine = Core.getProject();
+            for (int i = 0; i < dataEngine.getProjectFiles().size(); i++) {
+                IProject.FileInfo fi = dataEngine.getProjectFiles().get(i);
+                if (fi.firstEntryIndexInGlobalList <= entryNum - 1
+                        && fi.firstEntryIndexInGlobalList + fi.size > entryNum - 1) {
+                    // this file
+                    displayedEntryIndex = entryNum - 1
+                            - fi.firstEntryIndexInGlobalList;
+                    if (i != displayedFileIndex) {
+                        // it's other file than displayed
+                        displayedFileIndex = i;
+                        loadDocument();
+                    }
+                    break;
                 }
-                break;
             }
         }
         activateEntry();
