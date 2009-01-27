@@ -3,11 +3,15 @@
 ----------------------------------------------------------------------
 1.8.1 update 2 vs. 1.8.1 update 1
 
-   0 Enhancement
+   1 Enhancement
    1 Bugfix
 ----------------------------------------------------------------------
 1.8.1 update 2
 
+  Other enhancements:
+
+  - Slovenian localisation updated to 1.8 (instant start, documentation)
+  
   Bug fixes:
   
   - PL "Create new project" too large on OSX
