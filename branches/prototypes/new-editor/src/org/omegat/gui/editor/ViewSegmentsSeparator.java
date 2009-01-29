@@ -48,6 +48,6 @@ public class ViewSegmentsSeparator extends View {
 
     @Override
     public int viewToModel(float x, float y, Shape a, Bias[] biasReturn) {
-        return 0;
+        return getStartOffset();
     }
 }
