@@ -4,7 +4,8 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey, Maxym Mykhalchuk, and Henry Pijffers
-                Home page: http://www.omegat.org/omegat/omegat.html
+               2009 Didier Briel
+               Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
  This program is free software; you can redistribute it and/or modify
@@ -63,6 +64,7 @@ import org.omegat.util.xml.XMLReader;
  * @author Keith Godfrey
  * @author Henry Pijffers (henry.pijffers@saxnot.com)
  * @author Maxym Mykhalchuk
+ * @author Didier Briel
  */
 public class TMXReader extends org.xml.sax.helpers.DefaultHandler 
 {
@@ -653,9 +655,17 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler
                            int    length) throws SAXException 
     {
         // only read (sub)segments, properties, and inline codes (if required)
-        if (   inSegment
-            || inProperty
-            || (includeLevel2 && ((String)currentElement.peek()).equals(TMX_TAG_INLINE)))
+        if ( inProperty || // We are in a property or
+             ( inSegment && // we're inside a segment and
+               ( ( includeLevel2 && // we read level 2 and
+                                    // we're inside a tag  
+                   ( currentElement.peek()).equals(TMX_TAG_INLINE) )
+                 || // or
+                 // we're not inside a tag
+                 ( !(currentElement.peek()).equals(TMX_TAG_INLINE) )
+               )
+             )
+           )
         {
             // append the data to the current buffer
             ((StringBuffer)currentSub.peek()).append(ch, start, length);
@@ -670,10 +680,17 @@ public class TMXReader extends org.xml.sax.helpers.DefaultHandler
                                     int    length) throws SAXException 
     {
         // only read (sub)segments, properties, and inline codes (if required)
-        if (   inSegment
-            || inProperty
-            || (includeLevel2 && ((String)currentElement.peek()).equals(TMX_TAG_INLINE)))
-        {
+        if ( inProperty || // We are in a property or
+             ( inSegment && // we're inside a segment and
+               ( ( includeLevel2 && // we read level 2 and
+                                    // we're inside a tag
+                   ( currentElement.peek()).equals(TMX_TAG_INLINE) )
+                 || // or
+                 // we're not inside a tag
+                 ( !(currentElement.peek()).equals(TMX_TAG_INLINE) )
+               )
+             )
+           )        {
             // append the data to the current buffer
             ((StringBuffer)currentSub.peek()).append(ch, start, length);
         }
