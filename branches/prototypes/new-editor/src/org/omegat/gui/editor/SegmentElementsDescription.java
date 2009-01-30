@@ -221,7 +221,7 @@ public class SegmentElementsDescription {
             AttributeSet attrs, boolean langIsRTL) {
         ElementWithChilds segPartElement = new ElementWithChilds();
         segPartElement.el = doc.new OmElementSegPart(parent, attrs, langIsRTL);
-        addLines(segPartElement, text, false);
+        addLines(segPartElement, text, needToCheckSpelling);
         addEOL(segPartElement);
         return segPartElement;
     }
