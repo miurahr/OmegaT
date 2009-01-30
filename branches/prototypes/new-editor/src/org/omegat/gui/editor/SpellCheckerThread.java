@@ -99,7 +99,7 @@ public class SpellCheckerThread extends Thread {
             r.unlock();
         }
         // we are passing here if word there is no in cache. then check it
-        return checkWordSpelling(word);
+        return !checkWordSpelling(word);
     }
 
     /**
