@@ -7,6 +7,7 @@
                          Benjamin Siband, and Kim Bruning
                2007 Zoltan Bartko
                2008 Andrzej Sawula, Didier Briel
+               2009 Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -632,6 +633,10 @@ public class MainWindow extends JFrame implements ActionListener, WindowListener
 
         saveScreenLayout();
         Preferences.save();
+
+        // Save the list of learned and ignore words
+        SpellChecker spellchecker = CommandThread.core.getSpellchecker();
+        spellchecker.saveWordLists();
 
         if (isProjectLoaded())
             doSave();
