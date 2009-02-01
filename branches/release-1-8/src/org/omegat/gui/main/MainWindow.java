@@ -634,12 +634,12 @@ public class MainWindow extends JFrame implements ActionListener, WindowListener
         saveScreenLayout();
         Preferences.save();
 
-        // Save the list of learned and ignore words
-        SpellChecker spellchecker = CommandThread.core.getSpellchecker();
-        spellchecker.saveWordLists();
-
-        if (isProjectLoaded())
+        if (isProjectLoaded()){
+            // Save the list of learned and ignore words
+            SpellChecker spellchecker = CommandThread.core.getSpellchecker();
+            spellchecker.saveWordLists();
             doSave();
+        }
 
         // shut down
         if( CommandThread.core!=null )
