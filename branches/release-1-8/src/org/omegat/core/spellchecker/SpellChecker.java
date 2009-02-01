@@ -29,6 +29,10 @@ package org.omegat.core.spellchecker;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -222,7 +226,8 @@ public class SpellChecker {
     private void fillWordList(String filename, ArrayList list) {
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(filename));
+            br = new BufferedReader(new InputStreamReader
+                    (new FileInputStream(filename), OConsts.UTF8));
             
             String thisLine;
             while ((thisLine = br.readLine()) != null) {
@@ -248,7 +253,8 @@ public class SpellChecker {
     private void dumpWordList(ArrayList list, String filename) {
         BufferedWriter bw = null;
         try {
-            bw = new BufferedWriter(new FileWriter(filename));
+            bw = new BufferedWriter(new OutputStreamWriter
+                                 (new FileOutputStream(filename),OConsts.UTF8));
             
             for (int i = 0; i < list.size(); i++) {
                 String text = (String) list.get(i);
