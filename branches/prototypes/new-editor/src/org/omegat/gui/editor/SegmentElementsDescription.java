@@ -31,6 +31,7 @@ import java.util.List;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
@@ -69,6 +70,7 @@ public class SegmentElementsDescription {
     protected static final AttributeSet ATTR_TRANS_TRANSLATED = Styles.TRANSLATED;
     protected static final AttributeSet ATTR_TRANS_UNTRANSLATED = Styles.UNTRANSLATED;
     protected static final AttributeSet ATTR_MISSPELLED = Styles.MISSPELLED;
+    protected static final AttributeSet ATTR_NONE = new SimpleAttributeSet();
 
     final SourceTextEntry ste;
     final int segmentNumberInProject;
@@ -115,37 +117,33 @@ public class SegmentElementsDescription {
 
             String markEnd = OConsts.segmentEndString.trim();
 
-            AttributeSet transAttrs;
             String activeText;
             if (translationExists) {
                 // translation exist
                 activeText = ste.getTranslation();
-                if (doc.controller.settings.isAutoSpellChecking()) {
+                if (settings.isAutoSpellChecking()) {
                     // spell it
                     needToCheckSpelling = true;
                     doc.controller.spellCheckerThread.addForCheck(ste
                             .getTranslation());
                 }
-                transAttrs = ATTR_TRANS_TRANSLATED;
             } else if (!Preferences
                     .isPreference(Preferences.DONT_INSERT_SOURCE_TEXT)) {
                 // need to insert source text on empty translation
                 activeText = ste.getSrcText();
-                if (doc.controller.settings.isAutoSpellChecking()) {
+                if (settings.isAutoSpellChecking()) {
                     // spell it
                     needToCheckSpelling = true;
                     doc.controller.spellCheckerThread.addForCheck(ste
                             .getSrcText());
                 }
-                transAttrs = ATTR_TRANS_UNTRANSLATED;
             } else {
                 // empty text on non-exist translation
                 activeText = "";
-                transAttrs = ATTR_TRANS_TRANSLATED;
             }
 
             segElement.addChild(addActiveSegPart(segElement.el, activeText,
-                    transAttrs, markBeg, markEnd, targetLangIsRTL));
+                    ATTR_NONE, markBeg, markEnd, targetLangIsRTL));
         } else {
             /** Create for inactive segment. */
             if (settings.isDisplaySegmentSources()) {
@@ -154,17 +152,17 @@ public class SegmentElementsDescription {
             }
             if (translationExists) {
                 // translation exist
-                if (doc.controller.settings.isAutoSpellChecking()) {
+                if (settings.isAutoSpellChecking()) {
                     // spell it
                     needToCheckSpelling = true;
                     doc.controller.spellCheckerThread.addForCheck(ste
                             .getTranslation());
                 }
                 segElement.addChild(addInactiveSegPart(segElement.el, ste
-                        .getTranslation(), Styles.TRANSLATED, targetLangIsRTL));
-            } else if (!doc.controller.settings.isDisplaySegmentSources()) {
+                        .getTranslation(), settings.getTranslatedAttributeSet(), targetLangIsRTL));
+            } else if (!settings.isDisplaySegmentSources()) {
                 segElement.addChild(addInactiveSegPart(segElement.el, ste
-                        .getSrcText(), Styles.UNTRANSLATED, targetLangIsRTL));
+                        .getSrcText(), settings.getUntranslatedAttributeSet(), targetLangIsRTL));
             }
         }
 
@@ -199,7 +197,7 @@ public class SegmentElementsDescription {
         }
 
         ElementWithChilds result = addActiveSegPart(parent, activeText,
-                ATTR_TRANS_TRANSLATED, markBeg, markEnd, targetLangIsRTL);
+                ATTR_NONE, markBeg, markEnd, targetLangIsRTL);
 
         result.setChilds();
         return result.el;
