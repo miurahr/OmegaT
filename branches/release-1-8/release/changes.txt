@@ -13,7 +13,7 @@
   Windows: Various corrections and enhancements to OmegaT.exe (the OmegaT 
 launcher), based on version 3.0.1 of Launch4J.
 
-  - Slovenian localisation updated to 1.8 (instant start, documentation)
+  - Slovenian localisation updated to 1.8 (readme, instant start, documentation)
   
   Bug fixes:
   
