@@ -467,10 +467,15 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     }
 
     /**
-     * Required implementation by AbstractDocument.
+     * Gets a character element based on a position.
      */
     public Element getCharacterElement(int pos) {
-        throw new UnsupportedOperationException();
+        Element e = null;
+        for (e = getDefaultRootElement(); ! e.isLeaf(); ) {
+            int index = e.getElementIndex(pos);
+            e = e.getElement(index);
+        }
+        return e;
     }
 
     /**
