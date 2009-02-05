@@ -6,6 +6,7 @@
  Copyright (C) 2000-2006 Keith Godfrey, Maxym Mykhalchuk, and Henry Pijffers
                2007 Zoltan Bartko
                2008 Didier Briel
+               2009 Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -129,6 +130,8 @@ public class Preferences
     public static final String BEST_MATCH_MINIMAL_SIMILARITY_DEFAULT = "80";                    // NOI18N
     /** Workflow Option: Insert Explanatory Text before the Best Fuzzy Match */
     public static final String BEST_MATCH_EXPLANATORY_TEXT = "wf_explanatoryText";              // NOI18N
+    /** Workflow Option: Export current segment  */
+    public static final String EXPORT_CURRENT_SEGMENT = "wf_exportCurrentSegment"; // NOI18N
 
     
     /** 
@@ -441,7 +444,6 @@ public class Preferences
     // use array lists for orderly recovery of it for saving to disk
     private static List<String> m_nameList;
     private static List<String> m_valList;
-    private static Map<String,Integer>   m_preferenceMap;
-    
+    private static Map<String,Integer>   m_preferenceMap;    
 }
 

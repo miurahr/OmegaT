@@ -43,6 +43,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.List;
@@ -104,7 +106,13 @@ import org.openide.awt.Mnemonics;
  */
 public class ProjectFrame extends JFrame {
 
-    private static final Color CURRENT_FILE_COLOR = new Color(0xC8DDF2);
+    private static final Color COLOR_STANDARD_FG = Color.BLACK;
+    private static final Color COLOR_STANDARD_BG = Color.WHITE;
+    private static final Color COLOR_CURRENT_FG = Color.BLACK;
+    private static final Color COLOR_CURRENT_BG = new Color(0xC8DDF2);
+    private static final Color COLOR_SELECTION_FG = Color.WHITE;
+    private static final Color COLOR_SELECTION_BG = new Color(0x2F77DA);
+
     private static final int LINE_SPACING = 6;
 
     private JTable tableFiles, tableTotal;
@@ -118,10 +126,10 @@ public class ProjectFrame extends JFrame {
     private JButton m_closeButton;
 
     private MainWindow m_parent;
-    
+
     private Font dialogFont;
-    
-      public ProjectFrame(MainWindow parent) {
+
+    public ProjectFrame(MainWindow parent) {
         m_parent = parent;
 
         createTableFiles();
@@ -210,7 +218,7 @@ public class ProjectFrame extends JFrame {
         bbut.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
         gbc.gridy = 6;
         cp.add(bbut, gbc); // NOI18N
-        
+
         // Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         // setBounds((screenSize.width-600)/2, (screenSize.height-500)/2, 600,
         // 400);
@@ -238,7 +246,7 @@ public class ProjectFrame extends JFrame {
                 tableTotal.repaint();
                 modelTotal.fireTableDataChanged();
             }
-       
+
             /**
              * Updates the number of translated segments only, does not rebuild
              * the whole display.
@@ -249,22 +257,23 @@ public class ProjectFrame extends JFrame {
             }
         });
 
-        CoreEvents.registerFontChangedEventListener(new IFontChangedEventListener() {
+        CoreEvents
+                .registerFontChangedEventListener(new IFontChangedEventListener() {
                     public void onFontChanged(Font newFont) {
-                        if  (!Preferences.isPreference(
-                                Preferences.PROJECT_FILES_USE_FONT))                           
+                        if (!Preferences
+                                .isPreference(Preferences.PROJECT_FILES_USE_FONT))
                             // We're using the standard dialog font
-                            newFont = dialogFont; 
+                            newFont = dialogFont;
                         tableFiles.setFont(newFont);
                         tableTotal.setFont(new Font(newFont.getName(),
-                                    Font.BOLD, newFont.getSize()));
+                                Font.BOLD, newFont.getSize()));
                         tableFiles.setRowHeight(newFont.getSize()
-                                    + LINE_SPACING);
+                                + LINE_SPACING);
                         tableTotal.setRowHeight(newFont.getSize()
-                                    + LINE_SPACING);
-                   }
-        });
-                
+                                + LINE_SPACING);
+                    }
+                });
+
         tableFiles.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -342,11 +351,18 @@ public class ProjectFrame extends JFrame {
     public void buildDisplay() {
         UIThreadsUtil.mustBeSwingThread();
 
-        String statFile = Core.getProject().getProjectProperties()
+        String path;
+        String statFileName = Core.getProject().getProjectProperties()
                 .getProjectInternal()
                 + OConsts.STATS_FILENAME;
+        File statFile = new File(statFileName);
+        try {
+            path = statFile.getCanonicalPath();
+        } catch (IOException ex) {
+            path = statFile.getAbsolutePath();
+        }
         String statText = MessageFormat.format(OStrings
-                .getString("PF_STAT_PATH"), statFile);
+                .getString("PF_STAT_PATH"), path);
         statLabel.setText(statText);
 
         files = Core.getProject().getProjectFiles();
@@ -385,6 +401,11 @@ public class ProjectFrame extends JFrame {
 
     private void createTableFiles() {
         tableFiles = new JTable();
+        tableFiles.setForeground(COLOR_STANDARD_FG);
+        tableFiles.setBackground(COLOR_STANDARD_BG);
+        tableFiles.setSelectionForeground(COLOR_SELECTION_FG);
+        tableFiles.setSelectionBackground(COLOR_SELECTION_BG);
+
         modelFiles = new AbstractTableModel() {
             public Object getValueAt(int rowIndex, int columnIndex) {
                 IProject.FileInfo fi;
@@ -414,9 +435,6 @@ public class ProjectFrame extends JFrame {
         };
         tableFiles.setModel(modelFiles);
 
-        tableFiles.setSelectionBackground(tableFiles.getBackground());
-        tableFiles.setSelectionForeground(tableFiles.getForeground());
-
         TableColumnModel columns = new DefaultTableColumnModel();
         TableColumn cFile = new TableColumn(0, 300);
         cFile.setHeaderValue(OStrings.getString("PF_FILENAME"));
@@ -430,11 +448,17 @@ public class ProjectFrame extends JFrame {
         columns.addColumn(cCount);
         tableFiles.setColumnModel(columns);
 
-        tableFiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableFiles
+                .setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
     }
 
     private void createTableTotal() {
         tableTotal = new JTable();
+        tableTotal.setForeground(COLOR_STANDARD_FG);
+        tableTotal.setBackground(COLOR_STANDARD_BG);
+        tableTotal.setSelectionForeground(COLOR_SELECTION_FG);
+        tableTotal.setSelectionBackground(COLOR_SELECTION_BG);
+
         modelTotal = new AbstractTableModel() {
             public Object getValueAt(int rowIndex, int columnIndex) {
                 if (columnIndex == 0) {
@@ -481,8 +505,6 @@ public class ProjectFrame extends JFrame {
         columns.addColumn(cFile);
         columns.addColumn(cCount);
         tableTotal.setColumnModel(columns);
-
-        tableTotal.setEnabled(false);
 
         tableTotal.setBorder(BorderFactory.createEmptyBorder(50, 5, 10, 5));
         tableFiles.getColumnModel().addColumnModelListener(
@@ -600,31 +622,39 @@ public class ProjectFrame extends JFrame {
                     // data changed
                     fi = null;
                 }
-                result.setBackground(table.getBackground());
+
+                if (isSelected) {
+                    super.setForeground(table.getSelectionForeground());
+                    super.setBackground(table.getSelectionBackground());
+                } else {
+                    super.setForeground(table.getForeground());
+                    super.setBackground(table.getBackground());
+                }
                 if (fi != null
                         && fi.filePath
                                 .equals(Core.getEditor().getCurrentFile())) {
-                    result.setBackground(CURRENT_FILE_COLOR);
-
+                    result.setForeground(COLOR_CURRENT_FG);
+                    result.setBackground(COLOR_CURRENT_BG);
                 }
             }
             return result;
         }
     }
-@Override
+
+    @Override
     public void setFont(Font f) {
         super.setFont(f);
 
-        if (Preferences.isPreference(Preferences.PROJECT_FILES_USE_FONT)){           
-            String fontName = Preferences.getPreference(OConsts.TF_SRC_FONT_NAME);
+        if (Preferences.isPreference(Preferences.PROJECT_FILES_USE_FONT)) {
+            String fontName = Preferences
+                    .getPreference(OConsts.TF_SRC_FONT_NAME);
             int fontSize = Integer.valueOf(
-                           Preferences.getPreference(OConsts.TF_SRC_FONT_SIZE)).
-                           intValue();
+                    Preferences.getPreference(OConsts.TF_SRC_FONT_SIZE))
+                    .intValue();
             tableFiles.setFont(new Font(fontName, Font.PLAIN, fontSize));
             tableTotal.setFont(new Font(fontName, Font.BOLD, fontSize));
             tableFiles.setRowHeight(fontSize + LINE_SPACING);
             tableTotal.setRowHeight(fontSize + LINE_SPACING);
         }
-
     }
 }

@@ -7,6 +7,7 @@
                          Benjamin Siband, and Kim Bruning
                2007 Zoltan Bartko
                2008 Andrzej Sawula, Alex Buloichik
+               2009 Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -58,6 +59,7 @@ import org.omegat.core.events.IProjectEventListener;
 import org.omegat.gui.editor.OmDocument.ORIENTATION;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.gui.main.MainWindow;
+import org.omegat.util.FileUtil;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -84,6 +86,7 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Zoltan Bartko - bartkozoltan@bartkozoltan.com
  * @author Andrzej Sawula
  * @author Alex Buloichik (alex73mail@gmail.com)
+ * @author Didier Briel
  */
 public class EditorController implements IEditor {
 
@@ -408,6 +411,10 @@ public class EditorController implements IEditor {
                 + Integer.toString(ste.getTranslation().length()) + " ";
         Core.getMainWindow().showLengthMessage(lMsg);
 
+        if (Preferences.isPreference(Preferences.EXPORT_CURRENT_SEGMENT)) {
+            exportCurrentSegment(ste);
+        }
+
         // check if file was changed
         if (previousDisplayedFileIndex != displayedFileIndex) {
             previousDisplayedFileIndex = displayedFileIndex;
@@ -417,6 +424,17 @@ public class EditorController implements IEditor {
 
         // fire event about new segment activated
         CoreEvents.fireEntryActivated(ste.getStrEntry());
+    }
+    
+    /**
+     * Export the current source and target segments in text files.
+     */
+    private void exportCurrentSegment(final SourceTextEntry ste){
+        String s1 = ste.getSrcText();
+        String s2 = ste.getTranslation();
+
+        FileUtil.writeScriptFile(s1, OConsts.SOURCE_EXPORT);                                   // NOI18N
+        FileUtil.writeScriptFile(s2, OConsts.TARGET_EXPORT);                                   // NOI18N
     }
 
     /**

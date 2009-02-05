@@ -63,7 +63,7 @@ import org.omegat.util.gui.UIThreadsUtil;
 
 /**
  * Loaded project implementation. Only translation could be changed after
- * project will be loaded and setted by Core.setProject.
+ * project will be loaded and set by Core.setProject.
  * 
  * All components can read all data directly without synchronization. All
  * synchronization implemented inside RealProject.
@@ -126,7 +126,7 @@ public class RealProject implements IProject
         }
         loadProject(props);
         
-        // make requered collections unmodifiable
+        // make required collections unmodifiable
         m_srcTextEntryArray = Collections.unmodifiableList(m_srcTextEntryArray);
         m_legacyTMs = Collections.unmodifiableList(m_legacyTMs);
         m_tmList = Collections.unmodifiableList(m_tmList);
@@ -142,7 +142,7 @@ public class RealProject implements IProject
     }
     
     /**
-     * Load exist project in a "big" sense -- loads project's properties, glossaryes,
+     * Load exist project in a "big" sense -- loads project's properties, glossaries,
      * tms, source files etc.
      * 
      * @param props properties for new project
@@ -150,7 +150,7 @@ public class RealProject implements IProject
     private void loadProject(final ProjectProperties props) {
         LOGGER.info(OStrings.getString("LOG_DATAENGINE_LOAD_START"));
         UIThreadsUtil.mustNotBeSwingThread();
-                        
+        
         // load new project
         try
         {
@@ -210,12 +210,9 @@ public class RealProject implements IProject
             // There, that should do it, now inform the user
             Log.logErrorRB("OUT_OF_MEMORY");
             Log.log(oome);
-            
-            JOptionPane.showMessageDialog(Core.getMainWindow()
-                    .getApplicationFrame(),
-                    OStrings.getString("OUT_OF_MEMORY"), OStrings
-                            .getString("TF_ERROR"), JOptionPane.ERROR_MESSAGE);
-
+            Core.getMainWindow().showErrorDialogRB(
+                    OStrings.getString("OUT_OF_MEMORY"),
+                    OStrings.getString("TF_ERROR"));
             // Just quit, we can't help it anyway
             System.exit(0);
         }

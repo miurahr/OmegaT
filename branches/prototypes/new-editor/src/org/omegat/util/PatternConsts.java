@@ -4,8 +4,8 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
-           (C) 2007 Didier Briel
- Portions copyright 2007 - Zoltan Bartko - bartkozoltan@bartkozoltan.com
+               2007 Didier Briel, Zoltan Bartko
+               2008 Martin Fleurke
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
  *
  * @author Maxym Mykhalchuk
  * @author Didier Briel
+ * @author Zoltan Bartko (bartkozoltan@bartkozoltan.com)
+ * @author Martin Fleurke
  */
 public class PatternConsts
 {
@@ -139,7 +141,7 @@ public class PatternConsts
      *  which can occur in languages like php, C and others. 
      *  placeholder ::= [ARGUMENTSWAPSPECIFIER] [SIGNSPECIFIER] [PADDINGSPECIFIER] [ALIGNMENTSPECIFIER] [WIDTHSPECIFIER] [PRECISIONSPECIFIER] TYPESPECIFIER
      *  NUMBER ::= { "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" }
-     *  ARGUMENTSWAPSPECIFIER = NUMBER "\$"
+     *  ARGUMENTSWAPSPECIFIER = NUMBER "$"
      *  SIGNSPECIFIER ::= "+" | "-"
      *  PADDINGSPECIFIER ::= " " | "0" | "'" CHARACTER
      *  ALIGNMENTSPECIFIER ::= "" | "-"
@@ -157,6 +159,6 @@ public class PatternConsts
      *  without it, the ordering is implicit (first in sequence is first in order)
      *  Example in code: <code>echo printf(gettext("%s is very %s"), "OmegaT", "great");</code>*/
     public static final Pattern PRINTF_VARS = Pattern.compile(
-            "%([1-9]+\\\\\\$)?([+-])?('.)?(-)?([0-9]*)(\\.[0-9]*)?[bcdeEfFgGinopsuxX%]", Pattern.CASE_INSENSITIVE);
+            "%([1-9]+\\$)?([+-])?('.)?(-)?([0-9]*)(\\.[0-9]*)?[bcdeEfFgGinopsuxX%]", Pattern.CASE_INSENSITIVE);
 
 }
