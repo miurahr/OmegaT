@@ -235,6 +235,16 @@ class OmTextArea extends JEditorPane {
     private static boolean isKey(KeyEvent e, int code, int modifiers) {
         return e.getKeyCode() == code && e.getModifiers() == modifiers;
     }
+    
+    /**
+     * Allow to paste into segment, even selection outside editable segment. In
+     * this case selection will be truncated into segment's boundaries.
+     */
+    @Override
+    public void paste() {
+        checkAndFixCaret();
+        super.paste();
+    }
 
     /**
      * creates a popup menu for inactive segments - with an item allowing to go
