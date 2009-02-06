@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2008 Alex Buloichik
+               2009 Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -25,6 +26,7 @@
 package org.omegat.gui.editor;
 
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -46,15 +48,24 @@ import org.omegat.core.Core;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
+import org.omegat.util.StaticUtils;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
  * New implementation of EditorPane. Only mouse handling required.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
+ * @author Didier Briel
  */
 class OmTextArea extends JEditorPane {
 
+    /**
+     * The key mask of the modifier used for Ctrl+Delete / Ctrl+Backspace. It's
+     * Ctrl on a PC, Alt on a Mac
+     */
+    private static final int CTRL_DEL_MASK = StaticUtils.onMacOSX() ? KeyEvent.ALT_MASK
+            : Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    
     /** Undo Manager to store edits */
     protected final UndoManager undoManager = new UndoManager();
 
@@ -157,6 +168,32 @@ class OmTextArea extends JEditorPane {
                 | KeyEvent.SHIFT_MASK)) {
             // handle Ctrl+Shift+O - toggle orientation LTR-RTL
             controller.toggleOrientation();
+        } else if (isKey(e, KeyEvent.VK_BACK_SPACE, CTRL_DEL_MASK)) {
+            try {
+                int offset = getCaretPosition();
+                int prevWord = Utilities.getPreviousWord(this, offset);
+                int c = Math.max(prevWord, controller.getTranslationStart());
+                setSelectionStart(c);
+                setSelectionEnd(offset);
+                replaceSelection("");
+
+                processed = true;
+            } catch (BadLocationException ex) {
+                // do nothing
+            }
+        } else if (isKey(e, KeyEvent.VK_DELETE, CTRL_DEL_MASK)) {
+            try {
+                int offset = getCaretPosition();
+                int nextWord = Utilities.getNextWord(this, offset);
+                int c = Math.min(nextWord, controller.getTranslationEnd());
+                setSelectionStart(offset);
+                setSelectionEnd(c);
+                replaceSelection("");
+
+                processed = true;
+            } catch (BadLocationException ex) {
+                // do nothing
+            }
         }
 
         // leave standard processing if need
