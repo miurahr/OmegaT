@@ -5,6 +5,7 @@
 
  Copyright (C) 2000-2006 Keith Godfrey, Maxym Mykhalchuk, and Henry Pijffers
                2007 Zoltan Bartko
+               2008 Didier Briel
                Home page: http://www.omegat.org/omegat/omegat.html
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -82,6 +83,7 @@ import org.omegat.util.TMXReader;
  * @author Henry Pijffers (henry.pijffers@saxnot.com)
  * @author Maxym Mykhalchuk
  * @author Zoltan Bartko (bartkozoltan@bartkozoltan.com)
+ * @author Didier Briel
  */
 public class CommandThread extends Thread
 {
@@ -1396,6 +1398,8 @@ public class CommandThread extends Thread
                 remainingSegments               = 0
                 ;
         
+        String charWithoutTags;
+        
         for (int i=0; i<m_strEntryList.size(); i++)
         {
             StringEntry se = (StringEntry) m_strEntryList.get(i);
@@ -1406,11 +1410,12 @@ public class CommandThread extends Thread
             uniqueWords += words;
             totalWords += words * dups;
             
-            int charsNoSpaces = numberOfCharactersWithoutSpaces(src);
+            charWithoutTags = StaticUtils.stripTags(src);
+            int charsNoSpaces = numberOfCharactersWithoutSpaces(charWithoutTags);
             uniqueCharsNoSpaces += charsNoSpaces;
             totalCharsNoSpaces += charsNoSpaces * dups;
             
-            int chars = src.length();
+            int chars = charWithoutTags.length();
             uniqueChars += chars;
             totalChars += chars * dups;
             
@@ -1442,11 +1447,12 @@ public class CommandThread extends Thread
                 numbers = new int[] {0, 0, 0, 0, 0, 0};
 
             String src = ste.getSrcText();
+            charWithoutTags = StaticUtils.stripTags(src);
             int words = numberOfWords(src);
             numbers[I_WORDS] += words;
-            int charsNoSpaces = numberOfCharactersWithoutSpaces(src);
+            int charsNoSpaces = numberOfCharactersWithoutSpaces(charWithoutTags);
             numbers[I_CHARSNSP] += charsNoSpaces;
-            int chars = src.length();
+            int chars = charWithoutTags.length();
             numbers[I_CHARS] += chars;
 
             if( !ste.isTranslated() )
