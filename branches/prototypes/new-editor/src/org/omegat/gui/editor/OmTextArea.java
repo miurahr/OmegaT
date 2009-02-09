@@ -65,7 +65,7 @@ class OmTextArea extends JEditorPane {
      */
     private static final int CTRL_DEL_MASK = StaticUtils.onMacOSX() ? KeyEvent.ALT_MASK
             : Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-    
+
     /** Undo Manager to store edits */
     protected final UndoManager undoManager = new UndoManager();
 
@@ -127,7 +127,7 @@ class OmTextArea extends JEditorPane {
         }
 
         boolean processed = false;
-        
+
         // non-standard processing
         if (isKey(e, KeyEvent.VK_TAB, 0)) {
             // press TAB when 'Use TAB to advance'
@@ -194,6 +194,14 @@ class OmTextArea extends JEditorPane {
             } catch (BadLocationException ex) {
                 // do nothing
             }
+        } else if (isKey(e, KeyEvent.VK_PAGE_UP, KeyEvent.CTRL_MASK)) {
+            // Ctrl+PgUp - to the begin of document
+            setCaretPosition(0);
+            processed = true;
+        } else if (isKey(e, KeyEvent.VK_PAGE_DOWN, KeyEvent.CTRL_MASK)) {
+            // Ctrl+PgDown - to the end of document
+            setCaretPosition(getOmDocument().getLength());
+            processed = true;
         }
 
         // leave standard processing if need
@@ -272,7 +280,7 @@ class OmTextArea extends JEditorPane {
     private static boolean isKey(KeyEvent e, int code, int modifiers) {
         return e.getKeyCode() == code && e.getModifiers() == modifiers;
     }
-    
+
     /**
      * Allow to paste into segment, even selection outside editable segment. In
      * this case selection will be truncated into segment's boundaries.
