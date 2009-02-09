@@ -25,6 +25,9 @@
 package org.omegat.util.gui;
 
 import javax.swing.text.*;
+
+import org.omegat.gui.editor.OmDocument;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Shape;
@@ -139,4 +142,22 @@ public class ExtendedLabelView extends LabelView {
     public static void setCustomUnderline(MutableAttributeSet a, int type) {
                 a.addAttribute(CustomUnderline, new Integer(type));
         }
+
+    /**
+     * Redefine for read background from parent element.
+     */
+    @Override
+    protected void setPropertiesFromAttributes() {
+        super.setPropertiesFromAttributes();
+
+        Element el = element;
+        while (el != null) {
+            AttributeSet attr = el.getAttributes();
+            if (attr.isDefined(StyleConstants.Background)) {
+                setBackground(((OmDocument) getDocument()).getBackground(attr));
+                break;
+            }
+            el = el.getParentElement();
+        }
+    }
 }
