@@ -125,7 +125,7 @@ class OmTextArea extends JEditorPane {
             super.processKeyEvent(e);
             return;
         }
-
+Log.log("Key pressed: code="+e.getKeyCode()+" modifiers="+e.getModifiers()+" modifiersEx="+e.getModifiersEx());
         boolean processed = false;
 
         // non-standard processing
