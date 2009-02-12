@@ -26,7 +26,6 @@
 package org.omegat.gui.editor;
 
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -58,13 +57,6 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Didier Briel
  */
 class OmTextArea extends JEditorPane {
-
-    /**
-     * The key mask of the modifier used for Ctrl+Delete / Ctrl+Backspace. It's
-     * Ctrl on a PC, Alt on a Mac
-     */
-    private static final int CTRL_DEL_MASK = StaticUtils.onMacOSX() ? KeyEvent.ALT_MASK
-            : Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
     /** Undo Manager to store edits */
     protected final UndoManager undoManager = new UndoManager();
@@ -125,8 +117,10 @@ class OmTextArea extends JEditorPane {
             super.processKeyEvent(e);
             return;
         }
-Log.log("Key pressed: code="+e.getKeyCode()+" modifiers="+e.getModifiers()+" modifiersEx="+e.getModifiersEx());
+
         boolean processed = false;
+
+        boolean mac = StaticUtils.onMacOSX();
 
         // non-standard processing
         if (isKey(e, KeyEvent.VK_TAB, 0)) {
@@ -147,8 +141,9 @@ Log.log("Key pressed: code="+e.getKeyCode()+" modifiers="+e.getModifiers()+" mod
                 controller.nextEntry();
                 processed = true;
             }
-        } else if (isKey(e, KeyEvent.VK_ENTER, KeyEvent.CTRL_MASK)) {
-            // press Ctrl+ENTER
+        } else if ((!mac && isKey(e, KeyEvent.VK_ENTER, KeyEvent.CTRL_MASK))
+                || (mac && isKey(e, KeyEvent.VK_ENTER, KeyEvent.META_MASK))) {
+            // press Ctrl+ENTER (Cmd+Enter for MacOS)
             if (!controller.settings.isUseTabForAdvance()) {
                 controller.prevEntry();
                 processed = true;
@@ -159,8 +154,9 @@ Log.log("Key pressed: code="+e.getKeyCode()+" modifiers="+e.getModifiers()+" mod
                     e.getWhen(), 0, KeyEvent.VK_ENTER, '\n');
             super.processKeyEvent(ke);
             processed = true;
-        } else if (isKey(e, KeyEvent.VK_A, KeyEvent.CTRL_MASK)) {
-            // handling Ctrl+A manually
+        } else if ((!mac && isKey(e, KeyEvent.VK_A, KeyEvent.CTRL_MASK))
+                || (mac && isKey(e, KeyEvent.VK_A, KeyEvent.META_MASK))) {
+            // handling Ctrl+A manually (Cmd+A for MacOS)
             setSelectionStart(controller.getTranslationStart());
             setSelectionEnd(controller.getTranslationEnd());
             processed = true;
@@ -168,7 +164,9 @@ Log.log("Key pressed: code="+e.getKeyCode()+" modifiers="+e.getModifiers()+" mod
                 | KeyEvent.SHIFT_MASK)) {
             // handle Ctrl+Shift+O - toggle orientation LTR-RTL
             controller.toggleOrientation();
-        } else if (isKey(e, KeyEvent.VK_BACK_SPACE, CTRL_DEL_MASK)) {
+        } else if ((!mac && isKey(e, KeyEvent.VK_BACK_SPACE, KeyEvent.CTRL_MASK))
+                || (mac && isKey(e, KeyEvent.VK_BACK_SPACE, KeyEvent.ALT_MASK))) {
+            // handle Ctrl+Backspace (Alt+Backspace for MacOS)
             try {
                 int offset = getCaretPosition();
                 int prevWord = Utilities.getPreviousWord(this, offset);
@@ -181,7 +179,9 @@ Log.log("Key pressed: code="+e.getKeyCode()+" modifiers="+e.getModifiers()+" mod
             } catch (BadLocationException ex) {
                 // do nothing
             }
-        } else if (isKey(e, KeyEvent.VK_DELETE, CTRL_DEL_MASK)) {
+        } else if ((!mac && isKey(e, KeyEvent.VK_DELETE, KeyEvent.CTRL_MASK))
+                || (mac && isKey(e, KeyEvent.VK_DELETE, KeyEvent.ALT_MASK))) {
+            // handle Ctrl+Backspace (Alt+Delete for MacOS)
             try {
                 int offset = getCaretPosition();
                 int nextWord = Utilities.getNextWord(this, offset);
@@ -194,12 +194,14 @@ Log.log("Key pressed: code="+e.getKeyCode()+" modifiers="+e.getModifiers()+" mod
             } catch (BadLocationException ex) {
                 // do nothing
             }
-        } else if (isKey(e, KeyEvent.VK_PAGE_UP, KeyEvent.CTRL_MASK)) {
-            // Ctrl+PgUp - to the begin of document
+        } else if ((!mac && isKey(e, KeyEvent.VK_PAGE_UP, KeyEvent.CTRL_MASK))
+                || (mac && isKey(e, KeyEvent.VK_UP, KeyEvent.META_MASK))) {
+            // Ctrl+PgUp - to the begin of document(Cmd+Up for MacOS)
             setCaretPosition(0);
             processed = true;
-        } else if (isKey(e, KeyEvent.VK_PAGE_DOWN, KeyEvent.CTRL_MASK)) {
-            // Ctrl+PgDown - to the end of document
+        } else if ((!mac && isKey(e, KeyEvent.VK_PAGE_DOWN, KeyEvent.CTRL_MASK))
+                || (mac && isKey(e, KeyEvent.VK_DOWN, KeyEvent.META_MASK))) {
+            // Ctrl+PgDown - to the end of document(Cmd+Down for MacOS)
             setCaretPosition(getOmDocument().getLength());
             processed = true;
         }
@@ -277,6 +279,17 @@ Log.log("Key pressed: code="+e.getKeyCode()+" modifiers="+e.getModifiers()+" mod
         }
     }
 
+    /**
+     * Check if specified key pressed.
+     * 
+     * @param e
+     *            pressed key event
+     * @param code
+     *            required key code
+     * @param modifiers
+     *            required modifiers
+     * @return true if checked key pressed
+     */
     private static boolean isKey(KeyEvent e, int code, int modifiers) {
         return e.getKeyCode() == code && e.getModifiers() == modifiers;
     }
