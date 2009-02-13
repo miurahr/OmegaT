@@ -327,7 +327,12 @@ public class EditorController implements IEditor {
             // there is no files yet
             return null;
         }
-        return Core.getProject().getProjectFiles().get(displayedFileIndex).filePath;
+
+        if (displayedFileIndex < Core.getProject().getProjectFiles().size()) {
+            return Core.getProject().getProjectFiles().get(displayedFileIndex).filePath;
+        } else {
+            return null;
+        }
     }
 
     /**
