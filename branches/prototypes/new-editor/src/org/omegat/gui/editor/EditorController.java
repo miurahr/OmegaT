@@ -398,8 +398,6 @@ public class EditorController implements IEditor {
         OmDocument doc = editor.getOmDocument();
         doc.replaceSegment(displayedEntryIndex, true);
 
-        editor.setCaretPosition(doc.activeTranslationBegin.getOffset() + 1);
-
         editor.cancelUndo();
 
         history
@@ -419,6 +417,9 @@ public class EditorController implements IEditor {
         if (Preferences.isPreference(Preferences.EXPORT_CURRENT_SEGMENT)) {
             exportCurrentSegment(ste);
         }
+        
+        scrollForDisplayNearestSegments(doc.activeTranslationBegin.getOffset() + 1);        
+        
 
         // check if file was changed
         if (previousDisplayedFileIndex != displayedFileIndex) {
@@ -429,6 +430,51 @@ public class EditorController implements IEditor {
 
         // fire event about new segment activated
         CoreEvents.fireEntryActivated(ste.getStrEntry());
+    }
+    
+    /**
+     * Display some segments before and after when user on the top or bottom of
+     * page.
+     */
+    private void scrollForDisplayNearestSegments(final int requiredPosition) {
+        int lookNext, lookPrev;
+        try {
+            OmDocument.OmElementSegment prev = m_docSegList[displayedEntryIndex - 2];
+            lookPrev = prev.getStartOffset();
+        } catch (IndexOutOfBoundsException ex) {
+            lookPrev = 0;
+        }
+        try {
+            OmDocument.OmElementSegment next = m_docSegList[displayedEntryIndex + 3];
+            lookNext = next.getStartOffset();
+        } catch (IndexOutOfBoundsException ex) {
+            lookNext = editor.getOmDocument().getLength() - 1;
+        }
+
+        final int p = lookPrev;
+        final int n = lookNext;
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    editor.setCaretPosition(n);
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            try {
+                                editor.setCaretPosition(p);
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    public void run() {
+                                        editor
+                                                .setCaretPosition(requiredPosition);
+                                    }
+                                });
+                            } catch (IllegalArgumentException iae) {
+                            } // eating silently
+                        }
+                    });
+                } catch (IllegalArgumentException iae) {
+                } // eating silently
+            }
+        });
     }
     
     /**
