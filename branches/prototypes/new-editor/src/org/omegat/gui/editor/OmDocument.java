@@ -203,7 +203,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
             int endSegmentPos = seg.getEndOffset();
 
             SegmentElementsDescription desc = new SegmentElementsDescription(
-                    this, seg.ste, segmentIndex);
+                    this, seg.ste, controller.getEntryNumber(segmentIndex));
             Element el = desc.createSegmentElement(root, isActive,
                     controller.sourceLangIsRTL, controller.targetLangIsRTL);
 
@@ -261,7 +261,7 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
             int endSegmentPos = segPart.getEndOffset();
 
             SegmentElementsDescription desc = new SegmentElementsDescription(
-                    this, seg.ste, activeSegmentIndex);
+                    this, seg.ste, controller.getEntryNumber(activeSegmentIndex));
 
             Element el;
             if (newTranslation != null) {

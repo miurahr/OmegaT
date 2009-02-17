@@ -351,16 +351,13 @@ public class EditorController implements IEditor {
 
         OmDocument doc = new OmDocument(this);
 
-        int segmentNumberOffset = Core.getProject().getProjectFiles().get(
-                displayedFileIndex).firstEntryIndexInGlobalList + 1;
-
         List<SourceTextEntry> entries = Core.getProject().getAllEntries();
         SegmentElementsDescription[] descriptions = new SegmentElementsDescription[file.size];
         for (int i = 0; i < descriptions.length; i++) {
             SourceTextEntry ste = entries.get(file.firstEntryIndexInGlobalList
                     + i);
             descriptions[i] = new SegmentElementsDescription(doc, ste,
-                    segmentNumberOffset + i);
+                    getEntryNumber(i));
         }
 
         try {
@@ -693,6 +690,17 @@ public class EditorController implements IEditor {
      * {@inheritDoc}
      */
     public int getCurrentEntryNumber() {
+        return getEntryNumber(displayedEntryIndex);
+    }
+
+    /**
+     * Convert entry index in current file into global entry number.
+     * 
+     * @param entryIndexInCurrentFile
+     *            index
+     * @return global number
+     */
+    protected int getEntryNumber(int entryIndexInCurrentFile) {
         if (Core.getProject().getProjectFiles().isEmpty()) {
             // there is no files yet
             return -1;
@@ -700,7 +708,7 @@ public class EditorController implements IEditor {
 
         int globalEntryIndex = Core.getProject().getProjectFiles().get(
                 displayedFileIndex).firstEntryIndexInGlobalList
-                + displayedEntryIndex;
+                + entryIndexInCurrentFile + 1;
         return globalEntryIndex;
     }
 
