@@ -195,13 +195,13 @@ class OmTextArea extends JEditorPane {
                 // do nothing
             }
         } else if ((!mac && isKey(e, KeyEvent.VK_PAGE_UP, KeyEvent.CTRL_MASK))
-                || (mac && isKey(e, KeyEvent.VK_UP, KeyEvent.META_MASK))) {
-            // Ctrl+PgUp - to the begin of document(Cmd+Up for MacOS)
+                || (mac && isKey(e, KeyEvent.VK_PAGE_UP, KeyEvent.META_MASK))) {
+            // Ctrl+PgUp - to the begin of document(Cmd+PgUp for MacOS)
             setCaretPosition(0);
             processed = true;
         } else if ((!mac && isKey(e, KeyEvent.VK_PAGE_DOWN, KeyEvent.CTRL_MASK))
-                || (mac && isKey(e, KeyEvent.VK_DOWN, KeyEvent.META_MASK))) {
-            // Ctrl+PgDown - to the end of document(Cmd+Down for MacOS)
+                || (mac && isKey(e, KeyEvent.VK_PAGE_DOWN, KeyEvent.META_MASK))) {
+            // Ctrl+PgDn - to the end of document(Cmd+PgDn for MacOS)
             setCaretPosition(getOmDocument().getLength());
             processed = true;
         }
