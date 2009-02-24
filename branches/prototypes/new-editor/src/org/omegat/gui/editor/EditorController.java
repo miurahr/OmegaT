@@ -436,14 +436,14 @@ public class EditorController implements IEditor {
     private void scrollForDisplayNearestSegments(final int requiredPosition) {
         int lookNext, lookPrev;
         try {
-            OmDocument.OmElementSegment prev = m_docSegList[displayedEntryIndex - 2];
+            OmDocument.OmElementSegment prev = m_docSegList[displayedEntryIndex - 3];
             lookPrev = prev.getStartOffset();
         } catch (IndexOutOfBoundsException ex) {
             lookPrev = 0;
         }
         try {
-            OmDocument.OmElementSegment next = m_docSegList[displayedEntryIndex + 3];
-            lookNext = next.getStartOffset();
+            OmDocument.OmElementSegment next = m_docSegList[displayedEntryIndex + 4];
+            lookNext = next.getStartOffset() - 1;
         } catch (IndexOutOfBoundsException ex) {
             lookNext = editor.getOmDocument().getLength() - 1;
         }
