@@ -393,6 +393,21 @@ public class OmDocument extends AbstractDocument implements StyledDocument {
     }
 
     /**
+     * Check if specified position inside active segment, i.e. between segment's
+     * marks.
+     */
+    protected boolean isInsideActiveSegPart(int pos) {
+        if (activeSegmentIndex < 0) {
+            // there is no active segment
+            return false;
+        }
+        OmElementSegment seg = (OmElementSegment) root
+                .getElement(activeSegmentIndex);
+        OmElementSegPart segPart = (OmElementSegPart) seg.getElement(1);
+        return segPart.getStartOffset() <= pos && segPart.getEndOffset() >= pos;
+    }
+    
+    /**
      * Required implementation by AbstractDocument.
      */
     @Override

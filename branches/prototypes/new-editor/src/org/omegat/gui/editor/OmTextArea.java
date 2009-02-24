@@ -210,6 +210,12 @@ class OmTextArea extends JEditorPane {
         if (processed) {
             e.consume();
         } else {
+            if ((e.getModifiers() & (KeyEvent.CTRL_MASK | KeyEvent.META_MASK | KeyEvent.ALT_MASK)) == 0) {
+                // there is no Alt,Ctrl,Cmd keys, i.e. it's char
+                if (getOmDocument().isInsideActiveSegPart(getCaretPosition())) {
+                    checkAndFixCaret();
+                }
+            }
             super.processKeyEvent(e);
         }
 
@@ -379,6 +385,8 @@ class OmTextArea extends JEditorPane {
                                 xlDoc.replace(wordStart, word.length(),
                                         replacement, controller.getSettings()
                                                 .getTranslatedAttributeSet());
+                                //pos = Math.min(
+                                //        wordStart + replacement.length(), pos);
                                 setCaretPosition(pos);
                             } catch (BadLocationException exc) {
                                 Log.log(exc);
