@@ -652,12 +652,6 @@ public class EditorController implements IEditor {
 
         while (true) {
             displayedEntryIndex++;
-            if (displayedFileIndex == oldDisplayedFileIndex
-                    && displayedEntryIndex == oldDisplayedEntryIndex) {
-                // The same entry which was displayed. So, there is no
-                // untranslated.
-                break;
-            }
             if (displayedEntryIndex >= m_docSegList.length) {
                 displayedFileIndex++;
                 displayedEntryIndex = 0;
@@ -665,6 +659,12 @@ public class EditorController implements IEditor {
                         .size()) {
                     displayedFileIndex = 0;
                 }
+            }
+            if (displayedFileIndex == oldDisplayedFileIndex
+                    && displayedEntryIndex == oldDisplayedEntryIndex) {
+                // The same entry which was displayed. So, there is no
+                // untranslated.
+                break;
             }
 
             int globalEntryIndex = Core.getProject().getProjectFiles().get(
