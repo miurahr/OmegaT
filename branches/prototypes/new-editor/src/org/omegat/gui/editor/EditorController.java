@@ -445,7 +445,7 @@ public class EditorController implements IEditor {
             OmDocument.OmElementSegment next = m_docSegList[displayedEntryIndex + 4];
             lookNext = next.getStartOffset() - 1;
         } catch (IndexOutOfBoundsException ex) {
-            lookNext = editor.getOmDocument().getLength() - 1;
+            lookNext = editor.getOmDocument().getLength();
         }
 
         final int p = lookPrev;
