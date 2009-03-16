@@ -13,7 +13,7 @@
   - Add keyboard shortcuts in Search dialog
   http://sourceforge.net/support/tracker.php?aid=1811065
   (Effective in English and in French, other translations must be 
-   updated)
+   updated. As for all dialogs, dialog shortcuts are not available on a Mac.)
 
   Other enhancements:
 
