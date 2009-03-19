@@ -4,9 +4,9 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
-           (C) 2007 Didier Briel
- Portions copyright 2007 - Zoltan Bartko - bartkozoltan@bartkozoltan.com
-               Home page: http://www.omegat.org/omegat/omegat.html
+               2007 Didier Briel, Zoltan Bartko
+               2009 Didier Briel
+               Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
  This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
  *
  * @author Maxym Mykhalchuk
  * @author Didier Briel
+ * @author Zoltan Bartko - bartkozoltan@bartkozoltan.com
  */
 public class PatternConsts
 {
@@ -129,5 +130,10 @@ public class PatternConsts
     
     /** Pattern for detecting remote dictionary file archives */
     public static final Pattern DICTIONARY_ZIP = Pattern.compile(
-            "\"([a-z]{1,8})(_([A-Z]{1,8})?)?\\.zip\"");
+//          "\"([a-z]{1,8})(_([A-Z]{1,8})?)?\\.zip\"");
+            // Hardcoded pattern to get the French dictionary
+            // (fr_FR_1-3-2.zip) in addition to the others
+            // The initial pattern is above.
+            // [ 2138846 ] French dictionary cannot be downloaded and installed
+            "\"([a-z]{1,8})(_([A-Z]{1,8})?)(_1-3-2)?\\.zip\"");
 }
