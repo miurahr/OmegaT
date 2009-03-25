@@ -3,8 +3,8 @@
 ----------------------------------------------------------------------
 1.8.1 update 3 vs. 1.8.1 update 2
 
-   3 Enhancements
-   2 Bugfixes
+   4 Enhancements
+   3 Bugfixes
 ----------------------------------------------------------------------
 1.8.1 update 3
  
@@ -19,6 +19,8 @@
 
   - New Welsh localisation (UI, readme, instant start)
   - czech localisation updated to 1.8 (UI, readme, instant start, documentation)
+  - Hunspell for Mac and Linux-i386 is updated to 1.2.8
+  - Hunspell for Windows is updated to 1.2.7
 
   Bug fixes:
 
@@ -27,6 +29,9 @@
 
   - French dictionary cannot be downloaded and installed
   http://sourceforge.net/support/tracker.php?aid=2138846  
+
+  - Linux: Exception on reading omegat/learned_words.txt
+  http://sourceforge.net/support/tracker.php?aid=2657589
 
 ----------------------------------------------------------------------
  OmegaT 1.8.1 update 2 Changes
