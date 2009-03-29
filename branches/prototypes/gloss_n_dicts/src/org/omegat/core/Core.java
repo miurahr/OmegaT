@@ -36,6 +36,7 @@ import org.omegat.core.spellchecker.SpellChecker;
 import org.omegat.core.threads.CheckThread;
 import org.omegat.core.threads.IAutoSave;
 import org.omegat.core.threads.SaveThread;
+import org.omegat.gui.dictionaries.DictionariesTextArea;
 import org.omegat.gui.editor.EditorController;
 import org.omegat.gui.editor.IEditor;
 import org.omegat.gui.glossary.GlossaryTextArea;
@@ -74,6 +75,7 @@ public class Core {
     private static IAutoSave saveThread;
 
     private static GlossaryTextArea glossary;
+    private static DictionariesTextArea dictionaries;
 
     /** Get project instance. */
     public static IProject getProject() {
@@ -136,6 +138,7 @@ public class Core {
         tagValidation = new TagValidationTool(me);
         matcher = new MatchesTextArea(me);
         glossary = new GlossaryTextArea();
+        dictionaries = new DictionariesTextArea();
         tokenizer = createComponent(ITokenizer.class, new Tokenizer(), params);
         spellChecker = new SpellChecker();
 
