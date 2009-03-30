@@ -30,7 +30,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.omegat.core.Core;
-import org.omegat.core.CoreEvents;
 import org.omegat.core.data.StringEntry;
 import org.omegat.core.dictionaries.DictionariesManager;
 import org.omegat.core.dictionaries.DictionaryEntry;
@@ -48,86 +47,82 @@ import org.omegat.util.gui.UIThreadsUtil;
  */
 public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
 
-	protected final DictionariesManager manager = new DictionariesManager();
+    protected final DictionariesManager manager = new DictionariesManager();
 
-	public DictionariesTextArea() {
-		super(true);
+    public DictionariesTextArea() {
+        super(true);
 
-		setEditable(false);
-		String title = "dict";
-		Core.getMainWindow().addDockable(
-				new DockableScrollPane("DICTIONARY", title, this, true));
+        setEditable(false);
+        String title = "dict";
+        Core.getMainWindow().addDockable(new DockableScrollPane("DICTIONARY", title, this, true));
+    }
 
-		CoreEvents.registerApplicationEventListener(this);
-		CoreEvents.registerEntryEventListener(this);
-	}
+    public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
+        super.onProjectChanged(eventType);
+        switch (eventType) {
+        case CREATE:
+        case LOAD:
+            manager.start(Core.getProject().getProjectProperties().getProjectRoot());
+            break;
+        case CLOSE:
+            manager.stop();
+            break;
+        }
+    }
 
-	public void onApplicationStartup() {
-		super.onApplicationStartup();
-		manager.start();
-	}
+    @Override
+    protected void startSearchThread(StringEntry newEntry) {
+        if (manager.isDictionariesExist()) {
+            new DictionaryEntriesSearchThread(newEntry).start();
+        }
+    }
 
-	public void onApplicationShutdown() {
-		manager.stop();
-		super.onApplicationShutdown();
-	}
+    @Override
+    protected void setFoundResult(List<DictionaryEntry> data) {
+        UIThreadsUtil.mustBeSwingThread();
 
-	@Override
-	protected void startSearchThread(StringEntry newEntry) {
-		if (manager.isDictionariesExist()) {
-			new DictionaryEntriesSearchThread(newEntry).start();
-		}
-	}
+        StringBuilder txt = new StringBuilder();
+        boolean wasPrev = false;
+        for (DictionaryEntry de : data) {
+            if (wasPrev) {
+                txt.append("<br><hr>");
+            } else {
+                wasPrev = true;
+            }
+            txt.append("<b>").append(de.getWord()).append("</b>").append(" - ");
+            txt.append(de.getArticle());
+        }
+        setContentType("text/html");
+        setText(txt.toString());
+        setCaretPosition(0);
+    }
 
-	@Override
-	protected void setFoundResult(List<DictionaryEntry> data) {
-		UIThreadsUtil.mustBeSwingThread();
+    public class DictionaryEntriesSearchThread extends EntryInfoSearchThread<List<DictionaryEntry>> {
+        protected final String src;
 
-		StringBuilder txt = new StringBuilder();
-		boolean wasPrev = false;
-		for (DictionaryEntry de : data) {
-			if (wasPrev) {
-				txt.append("<br><hr>");
-			} else {
-				wasPrev = true;
-			}
-			txt.append("<b>").append(de.getWord()).append("</b>").append(" - ");
-			txt.append(de.getArticle());
-		}
-		setContentType("text/html");
-		setText(txt.toString());
-		setCaretPosition(0);
-	}
+        public DictionaryEntriesSearchThread(final StringEntry newEntry) {
+            super(DictionariesTextArea.this, newEntry);
+            src = newEntry.getSrcText();
+        }
 
-	public class DictionaryEntriesSearchThread extends
-			EntryInfoSearchThread<List<DictionaryEntry>> {
-		protected final String src;
+        @Override
+        protected List<DictionaryEntry> search() {
+            List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
+            Token[] tokenList = Core.getTokenizer().tokenizeWords(src, ITokenizer.StemmingMode.NONE);
+            for (Token tok : tokenList) {
+                if (isEntryChanged()) {
+                    return null;
+                }
+                String w = src.substring(tok.getOffset(), tok.getOffset() + tok.getLength());
+                result.addAll(manager.findWord(w));
+            }
 
-		public DictionaryEntriesSearchThread(final StringEntry newEntry) {
-			super(DictionariesTextArea.this, newEntry);
-			src = newEntry.getSrcText();
-		}
-
-		@Override
-		protected List<DictionaryEntry> search() {
-			List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
-			Token[] tokenList = Core.getTokenizer().tokenizeWords(src,
-					ITokenizer.StemmingMode.NONE);
-			for (Token tok : tokenList) {
-				if (isEntryChanged()) {
-					return null;
-				}
-				String w = src.substring(tok.getOffset(), tok.getOffset()
-						+ tok.getLength());
-				result.addAll(manager.findWord(w));
-			}
-
-			Collections.sort(result, new Comparator<DictionaryEntry>() {
-				public int compare(DictionaryEntry o1, DictionaryEntry o2) {
-					return o1.getWord().compareTo(o2.getWord());
-				}
-			});
-			return result;
-		}
-	}
+            Collections.sort(result, new Comparator<DictionaryEntry>() {
+                public int compare(DictionaryEntry o1, DictionaryEntry o2) {
+                    return o1.getWord().compareTo(o2.getWord());
+                }
+            });
+            return result;
+        }
+    }
 }

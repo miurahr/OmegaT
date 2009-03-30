@@ -31,70 +31,60 @@ import javax.swing.JTextPane;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.StringEntry;
-import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
 
 /**
- * Base class for show information about currently selected entry.
- * 
- * It can be used for glossaries, dictionaries and other panes.
+ * Base class for show information about currently selected entry. It can be
+ * used for glossaries, dictionaries and other panes.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
- * 
  * @param <T>
  *            result type of found data
  */
-public abstract class EntryInfoPane<T> extends JTextPane implements
-		IApplicationEventListener, IProjectEventListener, IEntryEventListener {
-	StringEntry currentlyProcessedEntry;
+public abstract class EntryInfoPane<T> extends JTextPane implements IProjectEventListener, IEntryEventListener {
+    StringEntry currentlyProcessedEntry;
 
-	public EntryInfoPane(final boolean useApplicationFont) {
-		if (useApplicationFont) {
-			setFont(Core.getMainWindow().getApplicationFont());
-			CoreEvents
-					.registerFontChangedEventListener(new IFontChangedEventListener() {
-						public void onFontChanged(Font newFont) {
-							EntryInfoPane.this.setFont(newFont);
-						}
-					});
-		}
-	}
+    public EntryInfoPane(final boolean useApplicationFont) {
+        if (useApplicationFont) {
+            setFont(Core.getMainWindow().getApplicationFont());
+            CoreEvents.registerFontChangedEventListener(new IFontChangedEventListener() {
+                public void onFontChanged(Font newFont) {
+                    EntryInfoPane.this.setFont(newFont);
+                }
+            });
+        }
+        CoreEvents.registerProjectChangeListener(this);
+        CoreEvents.registerEntryEventListener(this);
+    }
 
-	public void onApplicationStartup() {
-	}
+    public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
+        currentlyProcessedEntry = null;
+    }
 
-	public void onApplicationShutdown() {
-		currentlyProcessedEntry = null;
-	}
+    public void onNewFile(String activeFileName) {
+        currentlyProcessedEntry = null;
+    }
 
-	public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
-		currentlyProcessedEntry = null;
-	}
+    public void onEntryActivated(StringEntry newEntry) {
+        currentlyProcessedEntry = newEntry;
+        startSearchThread(newEntry);
+    }
 
-	public void onNewFile(String activeFileName) {
-		currentlyProcessedEntry = null;
-	}
+    /**
+     * Each implementation should start own EntryInfoSearchThread thread.
+     * 
+     * @param newEntry
+     *            new entry for find
+     */
+    protected abstract void startSearchThread(final StringEntry newEntry);
 
-	public void onEntryActivated(StringEntry newEntry) {
-		currentlyProcessedEntry = newEntry;
-		startSearchThread(newEntry);
-	}
-
-	/**
-	 * Each implementation should start own EntryInfoSearchThread thread.
-	 * 
-	 * @param newEntry
-	 *            new entry for find
-	 */
-	protected abstract void startSearchThread(final StringEntry newEntry);
-
-	/**
-	 * Callback from search thread.
-	 * 
-	 * @param data
-	 *            found data
-	 */
-	protected abstract void setFoundResult(T data);
+    /**
+     * Callback from search thread.
+     * 
+     * @param data
+     *            found data
+     */
+    protected abstract void setFoundResult(T data);
 }
