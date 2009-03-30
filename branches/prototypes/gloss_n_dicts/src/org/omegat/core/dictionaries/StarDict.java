@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ import java.util.Map;
  */
 public class StarDict implements IDictionary {
 	protected final File ifoFile;
-	protected static final Charset UTF8 = Charset.forName("UTF-8");
+	protected static final String UTF8 = "UTF-8";
 
 	/**
 	 * @param ifoFile

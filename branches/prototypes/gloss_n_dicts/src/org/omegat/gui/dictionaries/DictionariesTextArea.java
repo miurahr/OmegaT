@@ -123,7 +123,6 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
 			}
 
 			Collections.sort(result, new Comparator<DictionaryEntry>() {
-				@Override
 				public int compare(DictionaryEntry o1, DictionaryEntry o2) {
 					return o1.getWord().compareTo(o2.getWord());
 				}
