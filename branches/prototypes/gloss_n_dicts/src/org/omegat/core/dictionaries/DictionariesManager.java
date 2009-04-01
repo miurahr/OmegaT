@@ -41,9 +41,10 @@ import org.omegat.util.Log;
 public class DictionariesManager implements DirectoryMonitor.Callback {
     protected DirectoryMonitor monitor;
     protected final Map<String, DictionaryInfo> infos = new TreeMap<String, DictionaryInfo>();
+    protected static String DICTIONARY_SUBDIR = "dictionary";
 
     public void start(final String projectDir) {
-        File dir = new File(projectDir, "dict");
+        File dir = new File(projectDir, DICTIONARY_SUBDIR);
         monitor = new DirectoryMonitor(dir, this);
         monitor.start();
     }
@@ -116,7 +117,8 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
         public final IDictionary dict;
         public final Map<String, Object> info;
 
-        public DictionaryInfo(final IDictionary dict, final Map<String, Object> info) {
+        public DictionaryInfo(final IDictionary dict,
+                final Map<String, Object> info) {
             this.dict = dict;
             this.info = info;
         }

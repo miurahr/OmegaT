@@ -75,7 +75,7 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
     @Override
     protected void onProjectClose() {
         UIThreadsUtil.mustBeSwingThread();
-        
+
         setText("");
     }
 
@@ -83,6 +83,8 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
     protected void startSearchThread(StringEntry newEntry) {
         if (manager.isDictionariesExist()) {
             new DictionaryEntriesSearchThread(newEntry).start();
+        } else {
+            setText("");
         }
     }
 
