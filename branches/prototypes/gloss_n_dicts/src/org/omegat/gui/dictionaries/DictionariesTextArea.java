@@ -37,6 +37,7 @@ import org.omegat.core.matching.ITokenizer;
 import org.omegat.gui.common.EntryInfoPane;
 import org.omegat.gui.common.EntryInfoSearchThread;
 import org.omegat.gui.main.DockableScrollPane;
+import org.omegat.util.OStrings;
 import org.omegat.util.Token;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -53,7 +54,7 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
         super(true);
 
         setEditable(false);
-        String title = "dict";
+        String title = OStrings.getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Dictionary");
         Core.getMainWindow().addDockable(
                 new DockableScrollPane("DICTIONARY", title, this, true));
     }
