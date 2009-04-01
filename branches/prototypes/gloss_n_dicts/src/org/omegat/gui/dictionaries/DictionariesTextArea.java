@@ -54,7 +54,8 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
 
         setEditable(false);
         String title = "dict";
-        Core.getMainWindow().addDockable(new DockableScrollPane("DICTIONARY", title, this, true));
+        Core.getMainWindow().addDockable(
+                new DockableScrollPane("DICTIONARY", title, this, true));
     }
 
     public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
@@ -62,12 +63,20 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
         switch (eventType) {
         case CREATE:
         case LOAD:
-            manager.start(Core.getProject().getProjectProperties().getProjectRoot());
+            manager.start(Core.getProject().getProjectProperties()
+                    .getProjectRoot());
             break;
         case CLOSE:
             manager.stop();
             break;
         }
+    }
+
+    @Override
+    protected void onProjectClose() {
+        UIThreadsUtil.mustBeSwingThread();
+        
+        setText("");
     }
 
     @Override
@@ -97,7 +106,8 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
         setCaretPosition(0);
     }
 
-    public class DictionaryEntriesSearchThread extends EntryInfoSearchThread<List<DictionaryEntry>> {
+    public class DictionaryEntriesSearchThread extends
+            EntryInfoSearchThread<List<DictionaryEntry>> {
         protected final String src;
 
         public DictionaryEntriesSearchThread(final StringEntry newEntry) {
@@ -108,12 +118,14 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
         @Override
         protected List<DictionaryEntry> search() {
             List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
-            Token[] tokenList = Core.getTokenizer().tokenizeWords(src, ITokenizer.StemmingMode.NONE);
+            Token[] tokenList = Core.getTokenizer().tokenizeWords(src,
+                    ITokenizer.StemmingMode.NONE);
             for (Token tok : tokenList) {
                 if (isEntryChanged()) {
                     return null;
                 }
-                String w = src.substring(tok.getOffset(), tok.getOffset() + tok.getLength());
+                String w = src.substring(tok.getOffset(), tok.getOffset()
+                        + tok.getLength());
                 result.addAll(manager.findWord(w));
             }
 
