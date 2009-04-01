@@ -44,7 +44,7 @@ public class GlossaryTextAreaTest extends TestCore
         entries.add(new GlossaryEntry("source1", "translation1", ""));
         entries.add(new GlossaryEntry("source2", "translation2", "comment2"));
         GlossaryTextArea gta = new GlossaryTextArea();
-        gta.setGlossaryEntries(entries);
+        gta.setFoundResult(entries);
         String GTATEXT = "source1 = translation1\n\nsource2 = translation2\ncomment2\n\n";
         if (!gta.getText().equals(GTATEXT))
             fail("Glossary pane doesn't show what it should.");        
@@ -59,7 +59,7 @@ public class GlossaryTextAreaTest extends TestCore
         entries.add(new GlossaryEntry("source1", "translation1", ""));
         entries.add(new GlossaryEntry("source2", "translation2", "comment2"));
         GlossaryTextArea gta = new GlossaryTextArea();
-        gta.setGlossaryEntries(entries);
+        gta.setFoundResult(entries);
         gta.clear();
         if (gta.getText().length()>0)
             fail("Glossary pane isn't empty.");

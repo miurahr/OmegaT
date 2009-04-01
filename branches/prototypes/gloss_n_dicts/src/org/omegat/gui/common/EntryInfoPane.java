@@ -63,11 +63,19 @@ public abstract class EntryInfoPane<T> extends JTextPane implements
 
     public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
         switch (eventType) {
+        case CREATE:
+        case LOAD:
+            currentlyProcessedEntry = null;
+            onProjectOpen();
+            break;
         case CLOSE:
             currentlyProcessedEntry = null;
             onProjectClose();
             break;
         }
+    }
+
+    protected void onProjectOpen() {
     }
 
     protected void onProjectClose() {

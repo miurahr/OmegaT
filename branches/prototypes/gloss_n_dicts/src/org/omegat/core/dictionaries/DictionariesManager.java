@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.omegat.gui.dictionaries.DictionariesTextArea;
 import org.omegat.util.DirectoryMonitor;
 import org.omegat.util.Log;
 
@@ -41,7 +42,12 @@ import org.omegat.util.Log;
 public class DictionariesManager implements DirectoryMonitor.Callback {
     protected DirectoryMonitor monitor;
     protected final Map<String, DictionaryInfo> infos = new TreeMap<String, DictionaryInfo>();
+    private final DictionariesTextArea pane;
     protected static String DICTIONARY_SUBDIR = "dictionary";
+
+    public DictionariesManager(final DictionariesTextArea pane) {
+        this.pane = pane;
+    }
 
     public void start(final String projectDir) {
         File dir = new File(projectDir, DICTIONARY_SUBDIR);
@@ -75,12 +81,7 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
                 }
             }
         }
-    }
-
-    public boolean isDictionariesExist() {
-        synchronized (this) {
-            return !infos.isEmpty();
-        }
+        pane.refresh();
     }
 
     /**

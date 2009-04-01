@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.omegat.core.Core;
+import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.StringEntry;
 import org.omegat.core.dictionaries.DictionariesManager;
 import org.omegat.core.dictionaries.DictionaryEntry;
@@ -48,33 +49,34 @@ import org.omegat.util.gui.UIThreadsUtil;
  */
 public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
 
-    protected final DictionariesManager manager = new DictionariesManager();
+    protected final DictionariesManager manager = new DictionariesManager(this);
 
     public DictionariesTextArea() {
         super(true);
 
         setEditable(false);
-        String title = OStrings.getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Dictionary");
+        String title = OStrings
+                .getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Dictionary");
         Core.getMainWindow().addDockable(
                 new DockableScrollPane("DICTIONARY", title, this, true));
     }
 
-    public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
-        super.onProjectChanged(eventType);
-        switch (eventType) {
-        case CREATE:
-        case LOAD:
-            manager.start(Core.getProject().getProjectProperties()
-                    .getProjectRoot());
-            break;
-        case CLOSE:
-            manager.stop();
-            break;
-        }
+    @Override
+    protected void onProjectOpen() {
+        clear();
+        manager
+                .start(Core.getProject().getProjectProperties()
+                        .getProjectRoot());
     }
 
     @Override
     protected void onProjectClose() {
+        clear();
+        manager.stop();
+    }
+
+    /** Clears up the pane. */
+    protected void clear() {
         UIThreadsUtil.mustBeSwingThread();
 
         setText("");
@@ -82,10 +84,17 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
 
     @Override
     protected void startSearchThread(StringEntry newEntry) {
-        if (manager.isDictionariesExist()) {
-            new DictionaryEntriesSearchThread(newEntry).start();
-        } else {
-            setText("");
+        new DictionaryEntriesSearchThread(newEntry).start();
+    }
+
+    /**
+     * Refresh content on dictionary file changed.
+     */
+
+    public void refresh() {
+        SourceTextEntry ste = Core.getEditor().getCurrentEntry();
+        if (ste != null) {
+            startSearchThread(ste.getStrEntry());
         }
     }
 
@@ -109,6 +118,9 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
         setCaretPosition(0);
     }
 
+    /**
+     * Thread for search data in dictionaries.
+     */
     public class DictionaryEntriesSearchThread extends
             EntryInfoSearchThread<List<DictionaryEntry>> {
         protected final String src;

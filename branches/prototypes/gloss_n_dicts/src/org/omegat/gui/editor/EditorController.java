@@ -322,7 +322,13 @@ public class EditorController implements IEditor {
      * {@inheritDoc}
      */
     public SourceTextEntry getCurrentEntry() {
+        if (m_docSegList == null || displayedEntryIndex < 0
+                || m_docSegList.length < displayedEntryIndex) {
+            // there is no current entry
+            return null;
+        }
         return m_docSegList[displayedEntryIndex].ste;
+
     }
 
     /**

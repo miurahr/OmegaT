@@ -26,8 +26,10 @@ package org.omegat.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 
 /**
  * Class for monitor directory content changes. It just looks directory every 3
@@ -36,11 +38,15 @@ import java.util.TreeMap;
  * @author Alex Buloichik <alex73mail@gmail.com>
  */
 public class DirectoryMonitor extends Thread {
+    /** Local logger. */
+    private static final Logger LOGGER = Logger
+            .getLogger(DirectoryMonitor.class.getName());
+
     private boolean stopped = false;
     protected final File dir;
     protected final Callback callback;
     private final Map<String, FileInfo> existFiles = new TreeMap<String, FileInfo>();
-    protected static final long LOOKUP_PERIOD = 3000;
+    protected static final long LOOKUP_PERIOD = 1000;
 
     /**
      * Create monitor.
@@ -63,25 +69,40 @@ public class DirectoryMonitor extends Thread {
     @Override
     public void run() {
         setName(this.getClass().getSimpleName());
+        setPriority(MIN_PRIORITY);
 
         while (!stopped) {
             // find deleted or changed files
-            for (Map.Entry<String, FileInfo> en : existFiles.entrySet()) {
-                File f = new File(en.getKey());
-                if (!f.exists() || en.getValue().isChanged(f)) {
-                    if (!stopped) {
+            for (String fn : new ArrayList<String>(existFiles.keySet())) {
+                if (stopped)
+                    return;
+                File f = new File(fn);
+                if (!f.exists()) {
+                    // file removed
+                    LOGGER.finer("File '" + f + "' removed");
+                    existFiles.remove(fn);
+                    callback.fileChanged(f);
+                } else {
+                    FileInfo fi = new FileInfo(f);
+                    if (!fi.equals(existFiles.get(fn))) {
+                        // file changed
+                        LOGGER.finer("File '" + f + "' changed");
+                        existFiles.put(fn, fi);
                         callback.fileChanged(f);
                     }
                 }
             }
+
             // find new files
             for (File f : readCurrentDir()) {
+                if (stopped)
+                    return;
                 String fn = f.getAbsolutePath();
                 if (!existFiles.keySet().contains(fn)) {
+                    // file added
+                    LOGGER.finer("File '" + f + "' added");
                     existFiles.put(fn, new FileInfo(f));
-                    if (!stopped) {
-                        callback.fileChanged(f);
-                    }
+                    callback.fileChanged(f);
                 }
             }
             try {
@@ -112,8 +133,10 @@ public class DirectoryMonitor extends Thread {
             length = file.length();
         }
 
-        public boolean isChanged(final File diskFile) {
-            return lastModified != diskFile.lastModified() || length != diskFile.length();
+        @Override
+        public boolean equals(Object obj) {
+            FileInfo o = (FileInfo) obj;
+            return lastModified == o.lastModified && length == o.length;
         }
     }
 
