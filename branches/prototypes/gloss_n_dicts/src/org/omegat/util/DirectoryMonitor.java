@@ -32,7 +32,7 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 /**
- * Class for monitor directory content changes. It just looks directory every 3
+ * Class for monitor directory content changes. It just looks directory every x
  * seconds and run callback if some files changed.
  * 
  * @author Alex Buloichik <alex73mail@gmail.com>
