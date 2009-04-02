@@ -27,6 +27,7 @@ package org.omegat.util;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Logger;
@@ -94,10 +95,12 @@ public class DirectoryMonitor extends Thread {
             }
 
             // find new files
-            for (File f : readCurrentDir()) {
+            List<File> foundFiles = new ArrayList<File>();
+            readDir(dir, foundFiles);
+            for (File f : foundFiles) {
                 if (stopped)
                     return;
-                String fn = f.getAbsolutePath();
+                String fn = f.getPath();
                 if (!existFiles.keySet().contains(fn)) {
                     // file added
                     LOGGER.finer("File '" + f + "' added");
@@ -113,13 +116,17 @@ public class DirectoryMonitor extends Thread {
         }
     }
 
-    protected File[] readCurrentDir() {
-        File[] result = dir.listFiles(new FileFilter() {
-            public boolean accept(File pathname) {
-                return !pathname.isDirectory();
+    protected void readDir(final File dir, final List<File> found) {
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    readDir(f, found);
+                } else {
+                    found.add(f);
+                }
             }
-        });
-        return result != null ? result : new File[0];
+        }
     }
 
     /**
