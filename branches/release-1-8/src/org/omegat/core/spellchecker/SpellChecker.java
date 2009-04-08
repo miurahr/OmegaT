@@ -270,6 +270,8 @@ public class SpellChecker {
      * dump word list to a file
      */
     private void dumpWordList(ArrayList list, String filename) {
+        if (filename == null)
+            return;
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new OutputStreamWriter
