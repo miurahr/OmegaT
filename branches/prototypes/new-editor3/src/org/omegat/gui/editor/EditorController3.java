@@ -56,7 +56,9 @@ import org.omegat.core.data.stat.StatisticsInfo;
 import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
-import org.omegat.gui.editor.OmDocument.ORIENTATION;
+import org.omegat.gui.editor.EditorUtils;
+import org.omegat.gui.editor.IEditor;
+import org.omegat.gui.editor.SpellCheckerThread;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.FileUtil;
@@ -88,20 +90,20 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Didier Briel
  */
-public class EditorController implements IEditor {
+public class EditorController3 implements IEditor {
 
     /** Local logger. */
     private static final Logger LOGGER = Logger
-            .getLogger(EditorController.class.getName());
+            .getLogger(EditorController3.class.getName());
 
     private final DockableScrollPane pane;
-    protected final OmTextArea editor;
+    protected final EditorTextArea3 editor;
     private String introPaneTitle, emptyProjectPaneTitle;
     private JTextPane introPane, emptyProjectPane;
     protected final MainWindow mw;
 
     /** Currently displayed segments info. */
-    protected OmDocument.OmElementSegment[] m_docSegList;
+    protected SegmentBuilder[] m_docSegList;
 
     /** Current displayed file. */
     protected int displayedFileIndex, previousDisplayedFileIndex;
@@ -119,13 +121,13 @@ public class EditorController implements IEditor {
         INTRO, EMPTY_PROJECT, FIRST_ENTRY, NO_CHANGE
     };
 
-    private OmDocument.ORIENTATION currentOrientation;
+    Document3.ORIENTATION currentOrientation;
     protected boolean sourceLangIsRTL, targetLangIsRTL;
 
-    public EditorController(final MainWindow mainWindow) {
+    public EditorController3(final MainWindow mainWindow) {
         this.mw = mainWindow;
 
-        editor = new OmTextArea(this);
+        editor = new EditorTextArea3(this);
         editor.setFont(Core.getMainWindow().getApplicationFont());
 
         pane = new DockableScrollPane("EDITOR", " ", editor, false);
@@ -198,7 +200,7 @@ public class EditorController implements IEditor {
                         // fonts have changed
                         if (m_docSegList != null) {
                             // segments displayed
-                            OmDocument doc = editor.getOmDocument();
+                            Document3 doc = editor.getOmDocument();
                             if (doc != null) {
                                 doc.setFont(newFont);
                             }
@@ -275,12 +277,12 @@ public class EditorController implements IEditor {
         targetLangIsRTL = EditorUtils.isRTL(targetLang);
 
         if (sourceLangIsRTL != targetLangIsRTL) {
-            currentOrientation = OmDocument.ORIENTATION.DIFFER;
+            currentOrientation = Document3.ORIENTATION.DIFFER;
         } else {
             if (sourceLangIsRTL) {
-                currentOrientation = ORIENTATION.RTL;
+                currentOrientation = Document3.ORIENTATION.RTL;
             } else {
-                currentOrientation = ORIENTATION.LTR;
+                currentOrientation = Document3.ORIENTATION.LTR;
             }
         }
     }
@@ -289,26 +291,31 @@ public class EditorController implements IEditor {
      * Toggle component orientation: LTR, RTL, language dependent.
      */
     protected void toggleOrientation() {
-        ORIENTATION newOrientation = currentOrientation;
+        Document3.ORIENTATION newOrientation = currentOrientation;
         switch (currentOrientation) {
         case LTR:
-            newOrientation = ORIENTATION.RTL;
+            newOrientation = Document3.ORIENTATION.RTL;
             break;
         case RTL:
             if (sourceLangIsRTL != targetLangIsRTL) {
-                newOrientation = ORIENTATION.DIFFER;
+                newOrientation = Document3.ORIENTATION.DIFFER;
             } else {
-                newOrientation = ORIENTATION.LTR;
+                newOrientation = Document3.ORIENTATION.LTR;
             }
             break;
         case DIFFER:
-            newOrientation = ORIENTATION.LTR;
+            newOrientation = Document3.ORIENTATION.LTR;
             break;
         }
         LOGGER.info("Switch document orientation from " + currentOrientation
                 + " to " + newOrientation);
         currentOrientation = newOrientation;
-        editor.getOmDocument().setOrientation(currentOrientation);
+        //TODO editor.getOmDocument().setOrientation(currentOrientation);
+        
+        int activeSegment=displayedEntryIndex;
+        loadDocument();
+        displayedEntryIndex=activeSegment;
+        activateEntry();
     }
 
     /**
@@ -355,23 +362,20 @@ public class EditorController implements IEditor {
         IProject.FileInfo file = Core.getProject().getProjectFiles().get(
                 displayedFileIndex);
 
-        OmDocument doc = new OmDocument(this);
+        Document3 doc = new Document3(this);
 
         List<SourceTextEntry> entries = Core.getProject().getAllEntries();
-        SegmentElementsDescription[] descriptions = new SegmentElementsDescription[file.size];
-        for (int i = 0; i < descriptions.length; i++) {
+        m_docSegList = new SegmentBuilder[file.size];
+        for (int i = 0; i < m_docSegList.length; i++) {
             SourceTextEntry ste = entries.get(file.firstEntryIndexInGlobalList
                     + i);
-            descriptions[i] = new SegmentElementsDescription(doc, ste,
+            m_docSegList[i] = new SegmentBuilder(this,doc, settings,ste,
                     getEntryNumber(i));
+            
+            m_docSegList[i].createSegmentElement(false);
         }
 
-        try {
-            m_docSegList = doc.initialize(descriptions, currentOrientation);
-        } catch (BadLocationException ex) {
-            LOGGER.log(Level.SEVERE, "Error initialize document", ex);
-        }
-        doc.setDocumentFilter(new OmDocumentFilter());
+        doc.setDocumentFilter(new DocumentFilter3());
 
         editor.setDocument(doc);
         doc.setFont(Core.getMainWindow().getApplicationFont());
@@ -398,8 +402,8 @@ public class EditorController implements IEditor {
         if (!Core.getProject().isProjectLoaded())
             return;
 
-        OmDocument doc = editor.getOmDocument();
-        doc.replaceSegment(displayedEntryIndex, true);
+        Document3 doc = editor.getOmDocument();
+        m_docSegList[displayedEntryIndex].createSegmentElement(true);
 
         editor.cancelUndo();
 
@@ -421,7 +425,7 @@ public class EditorController implements IEditor {
             exportCurrentSegment(ste);
         }
         
-        scrollForDisplayNearestSegments(doc.activeTranslationBegin.getOffset() + 1);        
+        scrollForDisplayNearestSegments(editor.getOmDocument().getTranslationStart());        
         
 
         // check if file was changed
@@ -431,6 +435,8 @@ public class EditorController implements IEditor {
                     .get(displayedFileIndex).filePath);
         }
 
+        editor.repaint();
+        
         // fire event about new segment activated
         CoreEvents.fireEntryActivated(ste.getStrEntry());
     }
@@ -440,44 +446,44 @@ public class EditorController implements IEditor {
      * page.
      */
     private void scrollForDisplayNearestSegments(final int requiredPosition) {
-        int lookNext, lookPrev;
-        try {
-            OmDocument.OmElementSegment prev = m_docSegList[displayedEntryIndex - 3];
-            lookPrev = prev.getStartOffset();
-        } catch (IndexOutOfBoundsException ex) {
-            lookPrev = 0;
-        }
-        try {
-            OmDocument.OmElementSegment next = m_docSegList[displayedEntryIndex + 4];
-            lookNext = next.getStartOffset() - 1;
-        } catch (IndexOutOfBoundsException ex) {
-            lookNext = editor.getOmDocument().getLength();
-        }
-
-        final int p = lookPrev;
-        final int n = lookNext;
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    editor.setCaretPosition(n);
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            try {
-                                editor.setCaretPosition(p);
-                                SwingUtilities.invokeLater(new Runnable() {
-                                    public void run() {
-                                        editor
-                                                .setCaretPosition(requiredPosition);
-                                    }
-                                });
-                            } catch (IllegalArgumentException iae) {
-                            } // eating silently
-                        }
-                    });
-                } catch (IllegalArgumentException iae) {
-                } // eating silently
-            }
-        });
+        int lookNext, lookPrev;//TODO
+//        try {
+//            OmDocument.OmElementSegment prev = m_docSegList[displayedEntryIndex - 3];
+//            lookPrev = prev.getStartOffset();
+//        } catch (IndexOutOfBoundsException ex) {
+//            lookPrev = 0;
+//        }
+//        try {
+//            OmDocument.OmElementSegment next = m_docSegList[displayedEntryIndex + 4];
+//            lookNext = next.getStartOffset() - 1;
+//        } catch (IndexOutOfBoundsException ex) {
+//            lookNext = editor.getOmDocument().getLength();
+//        }
+//
+//        final int p = lookPrev;
+//        final int n = lookNext;
+//        SwingUtilities.invokeLater(new Runnable() {
+//            public void run() {
+//                try {
+//                    editor.setCaretPosition(n);
+//                    SwingUtilities.invokeLater(new Runnable() {
+//                        public void run() {
+//                            try {
+//                                editor.setCaretPosition(p);
+//                                SwingUtilities.invokeLater(new Runnable() {
+//                                    public void run() {
+//                                        editor
+//                                                .setCaretPosition(requiredPosition);
+//                                    }
+//                                });
+//                            } catch (IllegalArgumentException iae) {
+//                            } // eating silently
+//                        }
+//                    });
+//                } catch (IllegalArgumentException iae) {
+//                } // eating silently
+//            }
+//        });
     }
     
     /**
@@ -542,7 +548,7 @@ public class EditorController implements IEditor {
     public void commitAndDeactivate() {
         UIThreadsUtil.mustBeSwingThread();
 
-        OmDocument doc = editor.getOmDocument();
+        Document3 doc = editor.getOmDocument();
 
         if (doc == null) {
             // there is no active doc, it's empty project
@@ -564,7 +570,7 @@ public class EditorController implements IEditor {
             else
                 Core.getProject().setTranslation(entry, newTrans);
 
-            doc.replaceSegment(displayedEntryIndex, false);
+            m_docSegList[displayedEntryIndex].createSegmentElement(false);
 
             if (!entry.getTranslation().equals(old_translation)) {
                 // find all identical strings and redraw them
@@ -577,7 +583,7 @@ public class EditorController implements IEditor {
                     if (m_docSegList[i].ste.getSrcText().equals(
                             entry.getSrcText())) {
                         // the same source text - need to update
-                        doc.replaceSegment(i, false);
+                        m_docSegList[i].createSegmentElement(false);
                     }
                 }
             }
@@ -770,8 +776,8 @@ public class EditorController implements IEditor {
 
         int caretPosition = editor.getCaretPosition();
 
-        int translationStart = getTranslationStart();
-        int translationEnd = getTranslationEnd();
+        int translationStart = editor.getOmDocument().getTranslationStart();
+        int translationEnd = editor.getOmDocument().getTranslationEnd();
 
         // both should be within the limits
         if (end < translationStart || start > translationEnd)
@@ -904,8 +910,8 @@ public class EditorController implements IEditor {
         UIThreadsUtil.mustBeSwingThread();
 
         // build local offsets
-        int start = getTranslationStart();
-        int end = getTranslationEnd();
+        int start = editor.getOmDocument().getTranslationStart();
+        int end = editor.getOmDocument().getTranslationEnd();
 
         // remove text
         editor.select(start, end);
@@ -923,20 +929,7 @@ public class EditorController implements IEditor {
         editor.replaceSelection(text);
     }
 
-    /**
-     * Calculate the position of the start of the current translation
-     */
-    protected int getTranslationStart() {
-        return editor.getOmDocument().activeTranslationBegin.getOffset() + 1;
-    }
-
-    /**
-     * Calculcate the position of the end of the current translation
-     */
-    protected int getTranslationEnd() {
-        return editor.getOmDocument().activeTranslationEnd.getOffset() - 1;
-    }
-
+   
     /**
      * {@inheritDoc}
      */
@@ -964,8 +957,8 @@ public class EditorController implements IEditor {
     /**
      * {@inheritDoc}
      */
-    public EditorSettings getSettings() {
-        return settings;
+    public org.omegat.gui.editor.EditorSettings getSettings() {
+        return new org.omegat.gui.editor.EditorSettings(null);//TODO
     }
 
     /**

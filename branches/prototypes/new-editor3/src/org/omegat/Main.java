@@ -242,6 +242,7 @@ public class Main {
     }
 
     public static void showError(Throwable ex) {
+        ex.printStackTrace();
         switch (runMode) {
         case GUI:
             JOptionPane.showMessageDialog(JOptionPane.getRootFrame(), ex

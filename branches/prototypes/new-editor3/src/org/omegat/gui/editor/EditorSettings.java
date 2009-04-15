@@ -25,8 +25,11 @@
 package org.omegat.gui.editor;
 
 import java.awt.event.KeyEvent;
+import java.awt.font.TextAttribute;
 
 import javax.swing.text.AttributeSet;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
 
 import org.omegat.core.Core;
 import org.omegat.util.Preferences;
@@ -39,7 +42,7 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class EditorSettings {
-    private final EditorController parent;
+    private final EditorController3 parent;
 
     private boolean useTabForAdvance;
     private boolean markTranslated;
@@ -47,7 +50,7 @@ public class EditorSettings {
     private boolean displaySegmentSources;
     private boolean autoSpellChecking;
 
-    protected EditorSettings(final EditorController parent) {
+    protected EditorSettings(final EditorController3 parent) {
         this.parent = parent;
 
         useTabForAdvance = Preferences
@@ -72,7 +75,10 @@ public class EditorSettings {
 
     /** the attribute set used for translated segments */
     public AttributeSet getTranslatedAttributeSet() {
-        return markTranslated ? Styles.TRANSLATED : Styles.PLAIN;
+        //return markTranslated ? Styles.TRANSLATED : Styles.PLAIN;
+        SimpleAttributeSet a=new SimpleAttributeSet();
+        a.addAttribute(TextAttribute.RUN_DIRECTION, TextAttribute.RUN_DIRECTION_RTL);
+        return a;
     }
 
     /** the attribute set used for untranslated segments */

@@ -36,7 +36,7 @@ import org.omegat.core.spellchecker.SpellChecker;
 import org.omegat.core.threads.CheckThread;
 import org.omegat.core.threads.IAutoSave;
 import org.omegat.core.threads.SaveThread;
-import org.omegat.gui.editor.EditorController;
+import org.omegat.gui.editor.EditorController3;
 import org.omegat.gui.editor.IEditor;
 import org.omegat.gui.glossary.GlossaryTextArea;
 import org.omegat.gui.main.ConsoleWindow;
@@ -132,7 +132,7 @@ public class Core {
         mainWindow = me;
 
         // 3. Initialize other components
-        editor = new EditorController(me);
+        editor = new EditorController3(me);
         tagValidation = new TagValidationTool(me);
         matcher = new MatchesTextArea(me);
         glossary = new GlossaryTextArea();

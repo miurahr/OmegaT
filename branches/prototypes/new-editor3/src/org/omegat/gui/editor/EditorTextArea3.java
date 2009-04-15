@@ -25,7 +25,6 @@
 
 package org.omegat.gui.editor;
 
-import java.awt.ComponentOrientation;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -43,6 +42,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledEditorKit;
 import javax.swing.text.Utilities;
 import javax.swing.undo.UndoManager;
 
@@ -59,19 +59,19 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Didier Briel
  */
-class OmTextArea extends JEditorPane {
+class EditorTextArea3 extends JEditorPane {
 
     /** Undo Manager to store edits */
     protected final UndoManager undoManager = new UndoManager();
 
-    protected final EditorController controller;
+    protected final EditorController3 controller;
     
     /** Label for draw segment marks. */
     protected final JLabel segmentMarkLabel = new JLabel();
 
-    public OmTextArea(EditorController controller) {
+    public EditorTextArea3(EditorController3 controller) {
         this.controller = controller;
-        setEditorKit(new OmEditorKit());
+        setEditorKit(new StyledEditorKit());
 
         addMouseListener(mouseListener);
     }
@@ -82,13 +82,13 @@ class OmTextArea extends JEditorPane {
     }
 
     /**
-     * Return OmDocument instaed just a Document. If editor was not initialized
+     * Return OmDocument instead just a Document. If editor was not initialized
      * with OmDocument, it will contains other Document implementation. In this
      * case we don't need it.
      */
-    public OmDocument getOmDocument() {
+    public Document3 getOmDocument() {
         try {
-            return (OmDocument) getDocument();
+            return (Document3) getDocument();
         } catch (ClassCastException ex) {
             return null;
         }
@@ -100,6 +100,8 @@ class OmTextArea extends JEditorPane {
     @Override
     public void setFont(Font font) {
         super.setFont(font);
+     
+        repaint();
         if (segmentMarkLabel != null) {
             segmentMarkLabel.setFont(new Font(font.getFontName(), Font.BOLD,
                     font.getSize()));
@@ -147,6 +149,8 @@ class OmTextArea extends JEditorPane {
         boolean processed = false;
 
         boolean mac = StaticUtils.onMacOSX();
+        
+        Document3 doc=getOmDocument();
 
         // non-standard processing
         if (isKey(e, KeyEvent.VK_TAB, 0)) {
@@ -183,8 +187,8 @@ class OmTextArea extends JEditorPane {
         } else if ((!mac && isKey(e, KeyEvent.VK_A, KeyEvent.CTRL_MASK))
                 || (mac && isKey(e, KeyEvent.VK_A, KeyEvent.META_MASK))) {
             // handling Ctrl+A manually (Cmd+A for MacOS)
-            setSelectionStart(controller.getTranslationStart());
-            setSelectionEnd(controller.getTranslationEnd());
+            setSelectionStart(doc.getTranslationStart());
+            setSelectionEnd(doc.getTranslationEnd());
             processed = true;
         } else if (isKey(e, KeyEvent.VK_O, KeyEvent.CTRL_MASK
                 | KeyEvent.SHIFT_MASK)) {
@@ -197,7 +201,7 @@ class OmTextArea extends JEditorPane {
             try {
                 int offset = getCaretPosition();
                 int prevWord = Utilities.getPreviousWord(this, offset);
-                int c = Math.max(prevWord, controller.getTranslationStart());
+                int c = Math.max(prevWord, doc.getTranslationStart());
                 setSelectionStart(c);
                 setSelectionEnd(offset);
                 replaceSelection("");
@@ -212,7 +216,7 @@ class OmTextArea extends JEditorPane {
             try {
                 int offset = getCaretPosition();
                 int nextWord = Utilities.getNextWord(this, offset);
-                int c = Math.min(nextWord, controller.getTranslationEnd());
+                int c = Math.min(nextWord, doc.getTranslationEnd());
                 setSelectionStart(offset);
                 setSelectionEnd(c);
                 replaceSelection("");
@@ -265,13 +269,13 @@ class OmTextArea extends JEditorPane {
      * their positions accordingly if not.
      */
     void checkAndFixCaret() {
-        OmDocument doc = getOmDocument();
+        Document3 doc = getOmDocument();
         if (doc == null) {
             // doc is not active
             return;
         }
-        if (doc.activeTranslationBegin == null
-                || doc.activeTranslationEnd == null) {
+        if (doc.activeTranslationBeginM1 == null
+                || doc.activeTranslationEndP1 == null) {
             return;
         }
 
@@ -282,13 +286,13 @@ class OmTextArea extends JEditorPane {
          * int start = m_segmentStartOffset + m_sourceDisplayLength +
          * OConsts.segmentStartStringFull.length();
          */
-        int start = doc.activeTranslationBegin.getOffset() + 1;
+        int start = doc.getTranslationStart();
         // -1 for space before tag, -2 for newlines
         /*
          * int end = editor.getTextLength() - m_segmentEndInset -
          * OConsts.segmentEndStringFull.length();
          */
-        int end = doc.activeTranslationEnd.getOffset() - 1;
+        int end = doc.getTranslationEnd();
 
         if (spos != epos) {
             // dealing with a selection here - make sure it's w/in bounds
@@ -354,9 +358,9 @@ class OmTextArea extends JEditorPane {
     private boolean createGoToSegmentPopUp(Point point) {
         final int mousepos = this.viewToModel(point);
 
-        if (mousepos >= controller.getTranslationStart()
+        if (mousepos >= getOmDocument().getTranslationStart()
                 - OConsts.segmentStartStringFull.length()
-                && mousepos <= controller.getTranslationEnd()
+                && mousepos <= getOmDocument().getTranslationEnd()
                         + OConsts.segmentStartStringFull.length())
             return false;
 
@@ -390,8 +394,8 @@ class OmTextArea extends JEditorPane {
         // where is the mouse
         int mousepos = viewToModel(point);
 
-        if (mousepos < controller.getTranslationStart()
-                || mousepos > controller.getTranslationEnd())
+        if (mousepos < getOmDocument().getTranslationStart()
+                || mousepos > getOmDocument().getTranslationEnd())
             return false;
 
         try {
