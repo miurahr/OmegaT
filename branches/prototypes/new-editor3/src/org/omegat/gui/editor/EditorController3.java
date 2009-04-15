@@ -524,8 +524,14 @@ public class EditorController3 implements IEditor {
 
     protected void goToSegmentAtLocation(int location) {
         // clicked segment
-        int segmentAtLocation = editor.getOmDocument().getSegmentAtLocation(
-                location);
+        
+        int segmentAtLocation=0;
+        for(int i=0;i<m_docSegList.length;i++) {
+            if (m_docSegList[i].isInsideSegment(location)) {
+                segmentAtLocation=i;
+                break;
+            }
+        }
         if (displayedEntryIndex != segmentAtLocation) {
             commitAndDeactivate();
             displayedEntryIndex = segmentAtLocation;
