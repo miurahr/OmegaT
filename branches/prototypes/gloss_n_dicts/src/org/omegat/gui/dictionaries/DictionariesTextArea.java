@@ -28,6 +28,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import javax.swing.SwingUtilities;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
@@ -50,11 +54,13 @@ import org.omegat.util.gui.UIThreadsUtil;
 public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
 
     protected final DictionariesManager manager = new DictionariesManager(this);
+    
+    protected Map<String,Integer> words=new TreeMap<String, Integer>();
 
     public DictionariesTextArea() {
         super(true);
 
-        setEditable(false);
+      //  setEditable(false);
         String title = OStrings
                 .getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Dictionary");
         Core.getMainWindow().addDockable(
@@ -82,6 +88,22 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
         setText("");
     }
 
+    /**
+     * Hack only for prototype.
+     * TODO
+     */
+    public void callDictionary(String word) {
+        final Integer pos=words.get(word);
+        if (pos!=null) {
+            setCaretPosition(getDocument().getLength());
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    setCaretPosition(pos);
+                };
+            });
+        }
+    }
+    
     @Override
     protected void startSearchThread(StringEntry newEntry) {
         new DictionaryEntriesSearchThread(newEntry).start();
@@ -101,6 +123,10 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
     @Override
     protected void setFoundResult(List<DictionaryEntry> data) {
         UIThreadsUtil.mustBeSwingThread();
+        
+        words.clear();
+
+        setContentType("text/html");
 
         StringBuilder txt = new StringBuilder();
         boolean wasPrev = false;
@@ -110,11 +136,12 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
             } else {
                 wasPrev = true;
             }
+            setText(txt.toString());
+            words.put(de.getWord(), getDocument().getLength());
             txt.append("<b>").append(de.getWord()).append("</b>").append(" - ");
             txt.append(de.getArticle());
+            setText(txt.toString());
         }
-        setContentType("text/html");
-        setText(txt.toString());
         setCaretPosition(0);
     }
 
@@ -138,6 +165,10 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
             for (Token tok : tokenList) {
                 if (isEntryChanged()) {
                     return null;
+                }
+                if (tok.getLength() < 3) {
+                    // disable to find less then 3-chars words
+                    continue;
                 }
                 String w = src.substring(tok.getOffset(), tok.getOffset()
                         + tok.getLength());

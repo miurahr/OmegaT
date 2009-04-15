@@ -41,6 +41,8 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
@@ -74,6 +76,18 @@ class OmTextArea extends JEditorPane {
         setEditorKit(new OmEditorKit());
 
         addMouseListener(mouseListener);
+        
+        addCaretListener(new CaretListener() {
+           public void caretUpdate(CaretEvent e) {
+               try {
+               int start = Utilities.getWordStart(OmTextArea.this, e.getMark());
+               int end = Utilities.getWordEnd(OmTextArea.this, e.getMark());
+             Core.callDictionary(getText(start, end-start));
+               } catch (BadLocationException ex) {
+                   ex.printStackTrace();
+               }
+            } 
+        });
     }
 
     /** Orders to cancel all Undoable edits. */

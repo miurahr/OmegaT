@@ -208,4 +208,12 @@ public class Core {
     protected static void setCurrentProject(IProject currentProject) {
         Core.currentProject = currentProject;
     }
+    
+    /**
+     * Hack only for prototype.
+     * TODO
+     */
+    public static void callDictionary(String word) {
+        dictionaries.callDictionary(word);
+    }
 }
