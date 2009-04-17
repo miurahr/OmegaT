@@ -285,6 +285,30 @@ public class EditorController3 implements IEditor {
                 currentOrientation = Document3.ORIENTATION.LTR;
             }
         }
+        applyOrientationToEditor();
+    }
+    
+    /**
+     * Define editor's orientation by target language orientation.
+     */
+    private void applyOrientationToEditor() {
+        ComponentOrientation targetOrientation = null;
+        switch (currentOrientation) {
+        case LTR:
+            targetOrientation = ComponentOrientation.LEFT_TO_RIGHT;
+            break;
+        case RTL:
+            targetOrientation = ComponentOrientation.RIGHT_TO_LEFT;
+            break;
+        case DIFFER:
+            if (targetLangIsRTL) {
+                targetOrientation = ComponentOrientation.RIGHT_TO_LEFT;
+            } else {
+                targetOrientation = ComponentOrientation.LEFT_TO_RIGHT;
+            }
+        }
+        // set editor's orientation by target language
+        editor.setComponentOrientation(targetOrientation);        
     }
 
     /**
@@ -310,7 +334,9 @@ public class EditorController3 implements IEditor {
         LOGGER.info("Switch document orientation from " + currentOrientation
                 + " to " + newOrientation);
         currentOrientation = newOrientation;
-        //TODO editor.getOmDocument().setOrientation(currentOrientation);
+        // editor.getOmDocument().setOrientation(currentOrientation);
+
+        applyOrientationToEditor();
         
         int activeSegment=displayedEntryIndex;
         loadDocument();

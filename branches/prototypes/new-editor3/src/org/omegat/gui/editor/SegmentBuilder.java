@@ -1,5 +1,6 @@
 package org.omegat.gui.editor;
 
+import java.awt.font.TextAttribute;
 import java.text.DecimalFormat;
 
 import javax.swing.text.AttributeSet;
@@ -152,22 +153,15 @@ public class SegmentBuilder {
     }
     
     private void setAttributes(int begin, int end, boolean isSource) {
-        
-        SimpleAttributeSet a=new SimpleAttributeSet();
-        switch (controller.currentOrientation) {
-        case RTL:
-            a.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_RIGHT);
-            doc.setParagraphAttributes(begin, end-begin, a, true);
-            break;
-        case DIFFER:
-            if (!isSource) {
-                a.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_RIGHT);
-                doc.setParagraphAttributes(begin, end-begin, a, true);
+        if (isSource) {
+            if (controller.currentOrientation == Document3.ORIENTATION.DIFFER) {
+                boolean rtl = controller.sourceLangIsRTL;
+                SimpleAttributeSet a = new SimpleAttributeSet();
+                a.addAttribute(StyleConstants.Alignment,
+                        rtl ? StyleConstants.ALIGN_RIGHT
+                                : StyleConstants.ALIGN_LEFT);
+                doc.setParagraphAttributes(begin, end - begin, a, true);
             }
-            break;
-//TODO
-        default:
-            break;
         }
     }
 

@@ -4,7 +4,6 @@ import java.awt.Font;
 
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Position;
-import javax.swing.text.StyleConstants;
 
 public class Document3 extends DefaultStyledDocument {
     enum ORIENTATION {
