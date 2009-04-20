@@ -2,6 +2,8 @@ package org.omegat.gui.editor;
 
 import java.awt.Font;
 
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Position;
 
@@ -14,35 +16,21 @@ public class Document3 extends DefaultStyledDocument {
         /** Segments have different alignment, depends of language alignment. */
         DIFFER
     };
-    
+
+    protected final EditorController3 controller;
     protected Position activeTranslationBeginM1, activeTranslationEndP1;
-    
+
+   
     /**
      * Flag for check internal schanges of content, which should be always
      * acceptable.
      */
     protected boolean trustedChangesInProgress = false;
-    
+
     public Document3(final EditorController3 controller) {
-        // TODO Auto-generated constructor stub
+        this.controller=controller;
     }
-    
-    /**
-     * Check if specified position inside active segment, i.e. between segment's
-     * marks.
-     */
-    protected boolean isInsideActiveSegPart(int pos) {
-        return true;//TODO
-//        if (activeSegmentIndex < 0) {
-//            // there is no active segment
-//            return false;
-//        }
-//        OmElementSegment seg = (OmElementSegment) root
-//                .getElement(activeSegmentIndex);
-//        OmElementSegPart segPart = (OmElementSegPart) seg.getElement(1);
-//        return segPart.getStartOffset() <= pos && segPart.getEndOffset() >= pos;
-    }
-    
+
     /**
      * Calculate the position of the start of the current translation
      */
@@ -57,23 +45,25 @@ public class Document3 extends DefaultStyledDocument {
         return activeTranslationEndP1.getOffset() - 1;
     }
 
-    
-    protected void setOrientation(final ORIENTATION newOrientation) {
-        //TODO
-    }
-    
     protected void hideMisspelledWord(final String word) {
-        //TODO
+        // TODO
     }
-    
-    protected void setFont(Font f) {
+
+    public Font getFont(AttributeSet attr) {
+        if (attr.containsAttribute(SegmentBuilder.SEGMENT_MARK_ATTRIBUTE, SegmentBuilder.SEGMENT_MARK_ATTRIBUTE)) {
+            return controller.boldFont;
+        }else {
+            return controller.baseFont;
+        }
     }
-    
-    protected int getSegmentAtLocation(int location) {
-        return 0;
-    }
-    
+
     protected String extractTranslation() {
-        return "ttt";//TODO
+        int start = getTranslationStart();
+        int end = getTranslationEnd();
+        try {
+            return getText(start, end - start);
+        } catch (BadLocationException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

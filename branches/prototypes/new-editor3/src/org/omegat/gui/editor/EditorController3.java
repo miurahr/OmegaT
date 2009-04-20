@@ -56,9 +56,6 @@ import org.omegat.core.data.stat.StatisticsInfo;
 import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
-import org.omegat.gui.editor.EditorUtils;
-import org.omegat.gui.editor.IEditor;
-import org.omegat.gui.editor.SpellCheckerThread;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.FileUtil;
@@ -116,6 +113,8 @@ public class EditorController3 implements IEditor {
     protected final EditorSettings settings;
 
     protected final SpellCheckerThread spellCheckerThread;
+    
+    protected Font baseFont, boldFont;
 
     private enum SHOW_TYPE {
         INTRO, EMPTY_PROJECT, FIRST_ENTRY, NO_CHANGE
@@ -123,12 +122,13 @@ public class EditorController3 implements IEditor {
 
     Document3.ORIENTATION currentOrientation;
     protected boolean sourceLangIsRTL, targetLangIsRTL;
-
+    
     public EditorController3(final MainWindow mainWindow) {
         this.mw = mainWindow;
 
         editor = new EditorTextArea3(this);
-        editor.setFont(Core.getMainWindow().getApplicationFont());
+        setFont(Core.getMainWindow().getApplicationFont());
+        editor.setFont(baseFont, boldFont);
 
         pane = new DockableScrollPane("EDITOR", " ", editor, false);
         pane.setComponentOrientation(ComponentOrientation.getOrientation(Locale
@@ -197,16 +197,10 @@ public class EditorController3 implements IEditor {
         CoreEvents
                 .registerFontChangedEventListener(new IFontChangedEventListener() {
                     public void onFontChanged(Font newFont) {
+                        setFont(newFont);
                         // fonts have changed
-                        if (m_docSegList != null) {
-                            // segments displayed
-                            Document3 doc = editor.getOmDocument();
-                            if (doc != null) {
-                                doc.setFont(newFont);
-                            }
-                        }
-                        editor.setFont(newFont);
-                        emptyProjectPane.setFont(newFont);
+                        editor.setFont(baseFont, boldFont);
+                        emptyProjectPane.setFont(baseFont);
                     }
                 });
 
@@ -261,6 +255,12 @@ public class EditorController3 implements IEditor {
         if (pane.getViewport().getView() != data) {
             pane.setViewportView(data);
         }
+    }
+    
+    private void setFont(final Font font) {
+        this.baseFont=font;
+        this.boldFont=new Font(font.getFontName(), Font.BOLD,
+                font.getSize());
     }
 
     /**
@@ -404,7 +404,6 @@ public class EditorController3 implements IEditor {
         doc.setDocumentFilter(new DocumentFilter3());
 
         editor.setDocument(doc);
-        doc.setFont(Core.getMainWindow().getApplicationFont());
 
         doc.addUndoableEditListener(editor.undoManager);
         editor.repaint();

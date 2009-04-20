@@ -1,6 +1,5 @@
 package org.omegat.gui.editor;
 
-import java.awt.font.TextAttribute;
 import java.text.DecimalFormat;
 
 import javax.swing.text.AttributeSet;
@@ -19,10 +18,17 @@ public class SegmentBuilder {
 
     /** Attributes for show text. */
     protected static final AttributeSet ATTR_SOURCE = Styles.GREEN;
-    protected static final AttributeSet ATTR_SEGMENT_MARK = Styles.BOLD;
+    protected static final AttributeSet ATTR_SEGMENT_MARK;
     protected static final AttributeSet ATTR_TRANS_TRANSLATED = Styles.TRANSLATED;
     protected static final AttributeSet ATTR_TRANS_UNTRANSLATED = Styles.UNTRANSLATED;
     protected static final AttributeSet ATTR_NONE = new SimpleAttributeSet();
+    public static final String SEGMENT_MARK_ATTRIBUTE="SEGMENT_MARK_ATTRIBUTE";
+    
+    static {
+        SimpleAttributeSet a=new SimpleAttributeSet();
+        a.addAttribute(SEGMENT_MARK_ATTRIBUTE, SEGMENT_MARK_ATTRIBUTE);
+        ATTR_SEGMENT_MARK=a;
+    }
 
     final SourceTextEntry ste;
     final int segmentNumberInProject;

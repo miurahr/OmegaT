@@ -42,8 +42,16 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.BoxView;
+import javax.swing.text.ComponentView;
+import javax.swing.text.Element;
+import javax.swing.text.IconView;
+import javax.swing.text.ParagraphView;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.Utilities;
+import javax.swing.text.View;
+import javax.swing.text.ViewFactory;
 import javax.swing.undo.UndoManager;
 
 import org.omegat.core.Core;
@@ -65,13 +73,17 @@ class EditorTextArea3 extends JEditorPane {
     protected final UndoManager undoManager = new UndoManager();
 
     protected final EditorController3 controller;
-    
+
     /** Label for draw segment marks. */
     protected final JLabel segmentMarkLabel = new JLabel();
 
     public EditorTextArea3(EditorController3 controller) {
         this.controller = controller;
-        setEditorKit(new StyledEditorKit());
+        setEditorKit(new StyledEditorKit() {
+            public ViewFactory getViewFactory() {
+                return factory3;
+            }
+        });
 
         addMouseListener(mouseListener);
     }
@@ -97,17 +109,15 @@ class EditorTextArea3 extends JEditorPane {
     /**
      * Apply new font on segment mark label.
      */
-    @Override
-    public void setFont(Font font) {
+    public void setFont(Font font, Font boldFont) {
         super.setFont(font);
-     
+
         repaint();
         if (segmentMarkLabel != null) {
-            segmentMarkLabel.setFont(new Font(font.getFontName(), Font.BOLD,
-                    font.getSize()));
+            segmentMarkLabel.setFont(boldFont);
         }
     }
-    
+
     /**
      * Getter for label for draw segment marks.
      */
@@ -149,8 +159,8 @@ class EditorTextArea3 extends JEditorPane {
         boolean processed = false;
 
         boolean mac = StaticUtils.onMacOSX();
-        
-        Document3 doc=getOmDocument();
+
+        Document3 doc = getOmDocument();
 
         // non-standard processing
         if (isKey(e, KeyEvent.VK_TAB, 0)) {
@@ -243,9 +253,7 @@ class EditorTextArea3 extends JEditorPane {
         } else {
             if ((e.getModifiers() & (KeyEvent.CTRL_MASK | KeyEvent.META_MASK | KeyEvent.ALT_MASK)) == 0) {
                 // there is no Alt,Ctrl,Cmd keys, i.e. it's char
-                if (getOmDocument().isInsideActiveSegPart(getCaretPosition())) {
-                    checkAndFixCaret();
-                }
+                checkAndFixCaret();
             }
             super.processKeyEvent(e);
         }
@@ -340,10 +348,10 @@ class EditorTextArea3 extends JEditorPane {
         checkAndFixCaret();
         super.paste();
     }
-    
+
     /**
-     * Allow to cut segment, even selection outside editable segment. In
-     * this case selection will be truncated into segment's boundaries.
+     * Allow to cut segment, even selection outside editable segment. In this
+     * case selection will be truncated into segment's boundaries.
      */
     @Override
     public void cut() {
@@ -426,8 +434,8 @@ class EditorTextArea3 extends JEditorPane {
                                 xlDoc.replace(wordStart, word.length(),
                                         replacement, controller.getSettings()
                                                 .getTranslatedAttributeSet());
-                                //pos = Math.min(
-                                //        wordStart + replacement.length(), pos);
+                                // pos = Math.min(
+                                // wordStart + replacement.length(), pos);
                                 setCaretPosition(pos);
                             } catch (BadLocationException exc) {
                                 Log.log(exc);
@@ -499,4 +507,26 @@ class EditorTextArea3 extends JEditorPane {
         // redraw all segments
         repaint();
     }
+
+    public static ViewFactory factory3 = new ViewFactory() {
+        public View create(Element elem) {
+            String kind = elem.getName();
+            if (kind != null) {
+                if (kind.equals(AbstractDocument.ContentElementName)) {
+                    return new ViewLabel(elem);
+                } else if (kind.equals(AbstractDocument.ParagraphElementName)) {
+                    return new ParagraphView(elem);
+                } else if (kind.equals(AbstractDocument.SectionElementName)) {
+                    return new BoxView(elem, View.Y_AXIS);
+                } else if (kind.equals(StyleConstants.ComponentElementName)) {
+                    return new ComponentView(elem);
+                } else if (kind.equals(StyleConstants.IconElementName)) {
+                    return new IconView(elem);
+                }
+            }
+
+            // default to text display
+            return new ViewLabel(elem);
+        }
+    };
 }

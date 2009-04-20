@@ -25,11 +25,8 @@
 package org.omegat.gui.editor;
 
 import java.awt.event.KeyEvent;
-import java.awt.font.TextAttribute;
 
 import javax.swing.text.AttributeSet;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
 
 import org.omegat.core.Core;
 import org.omegat.util.Preferences;
@@ -75,10 +72,7 @@ public class EditorSettings {
 
     /** the attribute set used for translated segments */
     public AttributeSet getTranslatedAttributeSet() {
-        //return markTranslated ? Styles.TRANSLATED : Styles.PLAIN;
-        SimpleAttributeSet a=new SimpleAttributeSet();
-        a.addAttribute(TextAttribute.RUN_DIRECTION, TextAttribute.RUN_DIRECTION_RTL);
-        return a;
+        return markTranslated ? Styles.TRANSLATED : Styles.PLAIN;
     }
 
     /** the attribute set used for untranslated segments */
