@@ -3,7 +3,7 @@
           with fuzzy matching, translation memory, keyword search, 
           glossaries, and translation leveraging into updated projects.
 
- Copyright (C) 2008 Alex Buloichik
+ Copyright (C) 2009 Alex Buloichik
                2009 Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
@@ -25,7 +25,6 @@
 
 package org.omegat.gui.editor;
 
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,7 +35,6 @@ import java.awt.event.MouseListener;
 import java.util.List;
 
 import javax.swing.JEditorPane;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
@@ -62,20 +60,17 @@ import org.omegat.util.StaticUtils;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
- * New implementation of EditorPane. Only mouse handling required.
+ * Changes of standard JEditorPane implementation for support custom behavior.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Didier Briel
  */
-class EditorTextArea3 extends JEditorPane {
+public class EditorTextArea3 extends JEditorPane {
 
     /** Undo Manager to store edits */
     protected final UndoManager undoManager = new UndoManager();
 
     protected final EditorController3 controller;
-
-    /** Label for draw segment marks. */
-    protected final JLabel segmentMarkLabel = new JLabel();
 
     public EditorTextArea3(EditorController3 controller) {
         this.controller = controller;
@@ -104,26 +99,6 @@ class EditorTextArea3 extends JEditorPane {
         } catch (ClassCastException ex) {
             return null;
         }
-    }
-
-    /**
-     * Apply new font on segment mark label.
-     */
-    public void setFont(Font font, Font boldFont) {
-        super.setFont(font);
-
-        repaint();
-        if (segmentMarkLabel != null) {
-            segmentMarkLabel.setFont(boldFont);
-        }
-    }
-
-    /**
-     * Getter for label for draw segment marks.
-     */
-    public JLabel getSegmentMarkLabel(final String text) {
-        segmentMarkLabel.setText(text);
-        return segmentMarkLabel;
     }
 
     protected MouseListener mouseListener = new MouseAdapter() {
@@ -508,6 +483,9 @@ class EditorTextArea3 extends JEditorPane {
         repaint();
     }
 
+    /**
+     * Factory for create own view.
+     */
     public static ViewFactory factory3 = new ViewFactory() {
         public View create(Element elem) {
             String kind = elem.getName();

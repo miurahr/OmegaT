@@ -1,3 +1,27 @@
+/**************************************************************************
+ OmegaT - Computer Assisted Translation (CAT) tool 
+          with fuzzy matching, translation memory, keyword search, 
+          glossaries, and translation leveraging into updated projects.
+
+ Copyright (C) 2009 Alex Buloichik
+               Home page: http://www.omegat.org/
+               Support center: http://groups.yahoo.com/group/OmegaT/
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ **************************************************************************/
+
 package org.omegat.gui.editor;
 
 import java.text.DecimalFormat;
@@ -14,34 +38,43 @@ import org.omegat.util.Preferences;
 import org.omegat.util.gui.Styles;
 import org.omegat.util.gui.UIThreadsUtil;
 
+/**
+ * Class for store information about displayed segment, and for show segment in
+ * editor.
+ * 
+ * @author Alex Buloichik (alex73mail@gmail.com)
+ */
 public class SegmentBuilder {
 
     /** Attributes for show text. */
     protected static final AttributeSet ATTR_SOURCE = Styles.GREEN;
-    protected static final AttributeSet ATTR_SEGMENT_MARK;
+    protected static final AttributeSet ATTR_SEGMENT_MARK = Styles.BOLD;
     protected static final AttributeSet ATTR_TRANS_TRANSLATED = Styles.TRANSLATED;
     protected static final AttributeSet ATTR_TRANS_UNTRANSLATED = Styles.UNTRANSLATED;
-    protected static final AttributeSet ATTR_NONE = new SimpleAttributeSet();
-    public static final String SEGMENT_MARK_ATTRIBUTE="SEGMENT_MARK_ATTRIBUTE";
-    
-    static {
-        SimpleAttributeSet a=new SimpleAttributeSet();
-        a.addAttribute(SEGMENT_MARK_ATTRIBUTE, SEGMENT_MARK_ATTRIBUTE);
-        ATTR_SEGMENT_MARK=a;
-    }
+    protected static final AttributeSet ATTR_ACTIVE = new SimpleAttributeSet();
+    public static final String SEGMENT_MARK_ATTRIBUTE = "SEGMENT_MARK_ATTRIBUTE";
+    public static final String SEGMENT_SPELL_CHECK = "SEGMENT_SPELL_CHECK";
+    private static final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0000");
 
     final SourceTextEntry ste;
     final int segmentNumberInProject;
-    boolean needToCheckSpelling;
 
     private final Document3 doc;
     private final EditorController3 controller;
     private final EditorSettings settings;
 
-    private final DecimalFormat NUMBER_FORMAT = new DecimalFormat("0000");
-
     protected int activeTranslationBeginOffset, activeTranslationEndOffset;
+
     protected Position beginPosP1, endPosM1;
+
+    /**
+     * true if beginSpellCheck/endSpellCheck is P/M mode, i.e. smaller of real
+     * text - used for inactive text
+     * 
+     * false if M/P mode, i.e. bigger of real text - used for active text
+     */
+    protected boolean spellPM;
+    protected Position beginSpellCheckPM1, endSpellCheckPM1;
 
     protected int offset;
 
@@ -64,8 +97,11 @@ public class SegmentBuilder {
      */
     protected void createSegmentElement(final boolean isActive) {
         UIThreadsUtil.mustBeSwingThread();
-        
-        doc.trustedChangesInProgress=true;
+
+        beginSpellCheckPM1 = null;
+        endSpellCheckPM1 = null;
+
+        doc.trustedChangesInProgress = true;
         try {
             int beginOffset, endOffset;
             try {
@@ -82,6 +118,7 @@ public class SegmentBuilder {
                 boolean translationExists = ste.getTranslation() != null
                         && ste.getTranslation().length() > 0;
 
+                boolean needToCheckSpelling = false;
                 beginOffset = offset;
                 if (isActive) {
                     /** Create for active segment. */
@@ -95,8 +132,8 @@ public class SegmentBuilder {
                         if (settings.isAutoSpellChecking()) {
                             // spell it
                             needToCheckSpelling = true;
-                            // doc.controller.spellCheckerThread.addForCheck(ste
-                            // .getTranslation());
+                            doc.controller.spellCheckerThread.addForCheck(ste
+                                    .getTranslation());
                         }
                     } else if (!Preferences
                             .isPreference(Preferences.DONT_INSERT_SOURCE_TEXT)) {
@@ -105,17 +142,25 @@ public class SegmentBuilder {
                         if (settings.isAutoSpellChecking()) {
                             // spell it
                             needToCheckSpelling = true;
-                            // doc.controller.spellCheckerThread.addForCheck(ste
-                            // .getSrcText());
+                            doc.controller.spellCheckerThread.addForCheck(ste
+                                    .getSrcText());
                         }
                     } else {
                         // empty text on non-exist translation
                         activeText = "";
                     }
 
-                    int prevOffset=offset;
-                    addActiveSegPart(activeText, ATTR_NONE);
+                    int prevOffset = offset;
+                    addActiveSegPart(activeText, ATTR_ACTIVE);
                     setAttributes(prevOffset, offset, false);
+
+                    if (needToCheckSpelling) {
+                        beginSpellCheckPM1 = doc
+                                .createPosition(activeTranslationBeginOffset - 1);
+                        endSpellCheckPM1 = doc
+                                .createPosition(activeTranslationEndOffset + 1);
+                        spellPM = false;
+                    }
                 } else {
                     /** Create for inactive segment. */
                     if (settings.isDisplaySegmentSources()) {
@@ -127,15 +172,22 @@ public class SegmentBuilder {
                         if (settings.isAutoSpellChecking()) {
                             // spell it
                             needToCheckSpelling = true;
-                            // doc.controller.spellCheckerThread.addForCheck(ste
-                            // .getTranslation());
+                            doc.controller.spellCheckerThread.addForCheck(ste
+                                    .getTranslation());
                         }
-                        int prevOffset=offset;
+                        int prevOffset = offset;
                         addInactiveSegPart(ste.getTranslation(), settings
                                 .getTranslatedAttributeSet());
                         setAttributes(prevOffset, offset, false);
+
+                        if (needToCheckSpelling) {
+                            beginSpellCheckPM1 = doc
+                                    .createPosition(prevOffset + 1);
+                            endSpellCheckPM1 = doc.createPosition(offset - 1);
+                            spellPM = true;
+                        }
                     } else if (!settings.isDisplaySegmentSources()) {
-                        int prevOffset=offset;
+                        int prevOffset = offset;
                         addInactiveSegPart(ste.getSrcText(), settings
                                 .getUntranslatedAttributeSet());
                         setAttributes(prevOffset, offset, false);
@@ -154,10 +206,29 @@ public class SegmentBuilder {
                 throw new RuntimeException(ex);
             }
         } finally {
-            doc.trustedChangesInProgress=false;
+            doc.trustedChangesInProgress = false;
         }
     }
-    
+
+    /**
+     * Get segment's start position.
+     * 
+     * @return start position
+     */
+    public int getStartPosition() {
+        return beginPosP1.getOffset() - 1;
+    }
+
+    /**
+     * Set attributes for created paragraphs for better RTL support.
+     * 
+     * @param begin
+     *            paragraphs begin
+     * @param end
+     *            paragraphs end
+     * @param isSource
+     *            is source segment part
+     */
     private void setAttributes(int begin, int end, boolean isSource) {
         if (isSource) {
             if (controller.currentOrientation == Document3.ORIENTATION.DIFFER) {
@@ -174,6 +245,22 @@ public class SegmentBuilder {
     public boolean isInsideSegment(int location) {
         return beginPosP1.getOffset() - 1 <= location
                 && location < endPosM1.getOffset() + 1;
+    }
+
+    public boolean isInsideSpellCheckable(int location) {
+        if (beginSpellCheckPM1 == null || endSpellCheckPM1 == null) {
+            return false;
+        }
+        int b = beginSpellCheckPM1.getOffset();
+        int e = endSpellCheckPM1.getOffset();
+        if (spellPM) {
+            b--;
+            e++;
+        } else {
+            b++;
+            e--;
+        }
+        return b <= location && location < e;
     }
 
     /**
@@ -219,7 +306,7 @@ public class SegmentBuilder {
         smTextB.append(OConsts.segmentStartString.trim().replace("0000",
                 NUMBER_FORMAT.format(segmentNumberInProject)));
         insert(smTextB.toString(), ATTR_SEGMENT_MARK);
-        insert(" ",null);
+        insert(" ", null);
 
         activeTranslationBeginOffset = offset;
         insert(text, attrs);
@@ -227,7 +314,7 @@ public class SegmentBuilder {
 
         StringBuilder smTextE = new StringBuilder();
         // place space on the left of end segment mark for LTR text
-        insert(" ",null);
+        insert(" ", null);
         smTextE.append(OConsts.segmentEndString.trim());
         insert(smTextE.toString(), ATTR_SEGMENT_MARK);
         insert("\n", null);
