@@ -142,6 +142,7 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
             txt.append(de.getArticle());
             setText(txt.toString());
         }
+        setText(txt.toString());
         setCaretPosition(0);
     }
 
