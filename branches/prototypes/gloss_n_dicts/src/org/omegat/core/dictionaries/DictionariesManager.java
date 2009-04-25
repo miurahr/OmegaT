@@ -108,7 +108,7 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
                     result.add(new DictionaryEntry(word, a));
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.log(ex);
             }
         }
         return result;
