@@ -42,6 +42,8 @@ import java.util.logging.Logger;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
 import javax.swing.undo.CannotRedoException;
@@ -405,6 +407,21 @@ public class EditorController3 implements IEditor {
         editor.setDocument(doc);
 
         doc.addUndoableEditListener(editor.undoManager);
+
+        doc.addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                showLengthMessage();
+            }
+
+            public void insertUpdate(DocumentEvent e) {
+                showLengthMessage();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                showLengthMessage();
+            }
+        });
+
         editor.repaint();
     }
 
@@ -438,11 +455,9 @@ public class EditorController3 implements IEditor {
 
         showStat();
 
-        // Show info about text length in status bar
+        showLengthMessage();
+
         SourceTextEntry ste = m_docSegList[displayedEntryIndex].ste;
-        String lMsg = " " + Integer.toString(ste.getSrcText().length()) + "/"
-                + Integer.toString(ste.getTranslation().length()) + " ";
-        Core.getMainWindow().showLengthMessage(lMsg);
 
         if (Preferences.isPreference(Preferences.EXPORT_CURRENT_SEGMENT)) {
             exportCurrentSegment(ste);
@@ -462,6 +477,20 @@ public class EditorController3 implements IEditor {
 
         // fire event about new segment activated
         CoreEvents.fireEntryActivated(ste.getStrEntry());
+    }
+
+    /**
+     * Display length of source and translation parts in the status bar.
+     */
+    void showLengthMessage() {
+        Document3 doc = editor.getOmDocument();
+        String trans = doc.extractTranslation();
+        if (trans != null) {
+            SourceTextEntry ste = m_docSegList[displayedEntryIndex].ste;
+            String lMsg = " " + ste.getSrcText().length() + "/"
+                    + trans.length() + " ";
+            Core.getMainWindow().showLengthMessage(lMsg);
+        }
     }
 
     /**
@@ -585,10 +614,12 @@ public class EditorController3 implements IEditor {
         }
 
         String newTrans = doc.extractTranslation();
+        doc.stopEditMode();
+
         if (newTrans != null) {
             // segment was active
             SourceTextEntry entry = m_docSegList[displayedEntryIndex].ste;
-
+            
             String old_translation = entry.getTranslation();
             // update memory
             if (newTrans.equals(entry.getSrcText())

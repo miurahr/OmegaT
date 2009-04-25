@@ -161,6 +161,11 @@ public class SegmentBuilder {
                                 .createPosition(activeTranslationEndOffset + 1);
                         spellPM = false;
                     }
+
+                    doc.activeTranslationBeginM1 = doc
+                            .createPosition(activeTranslationBeginOffset - 1);
+                    doc.activeTranslationEndP1 = doc
+                            .createPosition(activeTranslationEndOffset + 1);
                 } else {
                     /** Create for inactive segment. */
                     if (settings.isDisplaySegmentSources()) {
@@ -198,10 +203,6 @@ public class SegmentBuilder {
 
                 beginPosP1 = doc.createPosition(beginOffset + 1);
                 endPosM1 = doc.createPosition(endOffset - 1);
-                doc.activeTranslationBeginM1 = doc
-                        .createPosition(activeTranslationBeginOffset - 1);
-                doc.activeTranslationEndP1 = doc
-                        .createPosition(activeTranslationEndOffset + 1);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }

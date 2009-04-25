@@ -52,7 +52,7 @@ public class Document3 extends DefaultStyledDocument {
     protected final EditorController3 controller;
 
     /** Position of active translation in text. */
-    protected Position activeTranslationBeginM1, activeTranslationEndP1;
+    Position activeTranslationBeginM1, activeTranslationEndP1;
 
     /**
      * Flag for check internal schanges of content, which should be always
@@ -75,14 +75,10 @@ public class Document3 extends DefaultStyledDocument {
     }
 
     /**
-     * Calculcate the position of the end of the current translation
+     * Calculate the position of the end of the current translation
      */
     protected int getTranslationEnd() {
         return activeTranslationEndP1.getOffset() - 1;
-    }
-
-    protected void hideMisspelledWord(final String word) {
-        // TODO
     }
 
     /**
@@ -97,11 +93,31 @@ public class Document3 extends DefaultStyledDocument {
     }
 
     /**
+     * Check if document is in edit mode, i.e. one of segment activated for
+     * edit.
+     */
+    boolean isEditMode() {
+        return activeTranslationBeginM1 != null
+                && activeTranslationEndP1 != null;
+    }
+
+    /**
+     * Stop edit mode, remove info about active translation position.
+     */
+    void stopEditMode() {
+        activeTranslationBeginM1 = null;
+        activeTranslationEndP1 = null;
+    }
+
+    /**
      * Extract active translation.
      * 
      * @return active translation text
      */
-    protected String extractTranslation() {
+    String extractTranslation() {
+        if (!isEditMode()) {
+            return null;
+        }
         int start = getTranslationStart();
         int end = getTranslationEnd();
         try {

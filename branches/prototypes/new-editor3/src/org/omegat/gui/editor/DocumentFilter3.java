@@ -71,15 +71,14 @@ public class DocumentFilter3 extends DocumentFilter {
             // this call created by internal changes
             return true;
         }
-        
-        if (doc.activeTranslationBeginM1 == null
-                || doc.activeTranslationEndP1 == null) {
+
+        if (!doc.isEditMode()) {
             // segment not active - change disabled
             return false;
         }
 
         // Is inside translation ?
-        return (offset >= doc.activeTranslationBeginM1.getOffset()+1 && offset
-                + length <= doc.activeTranslationEndP1.getOffset()-1);
+        return (offset >= doc.getTranslationStart() && offset + length <= doc
+                .getTranslationEnd());
     }
 }

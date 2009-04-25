@@ -232,6 +232,8 @@ public class EditorTextArea3 extends JEditorPane {
             }
             super.processKeyEvent(e);
         }
+        
+        controller.showLengthMessage();
 
         // some after-processing catches
         if (!processed && e.getKeyChar() != 0) {
@@ -257,8 +259,7 @@ public class EditorTextArea3 extends JEditorPane {
             // doc is not active
             return;
         }
-        if (doc.activeTranslationBeginM1 == null
-                || doc.activeTranslationEndP1 == null) {
+        if (!doc.isEditMode()) {
             return;
         }
 
@@ -478,8 +479,7 @@ public class EditorTextArea3 extends JEditorPane {
 
         controller.spellCheckerThread.resetCache();
 
-        getOmDocument().hideMisspelledWord(word);
-        // redraw all segments
+        // redraw segments
         repaint();
     }
 
