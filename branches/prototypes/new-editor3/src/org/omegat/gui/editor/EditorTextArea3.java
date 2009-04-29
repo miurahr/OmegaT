@@ -228,7 +228,10 @@ public class EditorTextArea3 extends JEditorPane {
         } else {
             if ((e.getModifiers() & (KeyEvent.CTRL_MASK | KeyEvent.META_MASK | KeyEvent.ALT_MASK)) == 0) {
                 // there is no Alt,Ctrl,Cmd keys, i.e. it's char
-                checkAndFixCaret();
+                if (e.getKeyCode() != KeyEvent.VK_SHIFT) {
+                    // it's not a single 'shift' press
+                    checkAndFixCaret();
+                }
             }
             super.processKeyEvent(e);
         }
