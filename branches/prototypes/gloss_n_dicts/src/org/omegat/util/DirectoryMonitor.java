@@ -25,7 +25,6 @@
 package org.omegat.util;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +57,10 @@ public class DirectoryMonitor extends Thread {
     public DirectoryMonitor(final File dir, final Callback callback) {
         this.dir = dir;
         this.callback = callback;
+    }
+
+    public File getDir() {
+        return dir;
     }
 
     /**

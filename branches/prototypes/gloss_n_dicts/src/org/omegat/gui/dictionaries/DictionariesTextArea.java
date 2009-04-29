@@ -24,14 +24,20 @@
 
 package org.omegat.gui.dictionaries;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
+import javax.swing.text.Element;
+import javax.swing.text.html.HTMLDocument;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
@@ -54,17 +60,21 @@ import org.omegat.util.gui.UIThreadsUtil;
 public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
 
     protected final DictionariesManager manager = new DictionariesManager(this);
-    
-    protected Map<String,Integer> words=new TreeMap<String, Integer>();
+
+    protected final List<String> displayedWords = new ArrayList<String>();
 
     public DictionariesTextArea() {
         super(true);
 
-      //  setEditable(false);
+        setContentType("text/html");
+
+        // setEditable(false);
         String title = OStrings
                 .getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Dictionary");
         Core.getMainWindow().addDockable(
                 new DockableScrollPane("DICTIONARY", title, this, true));
+
+        addMouseListener(mouseCallback);
     }
 
     @Override
@@ -89,21 +99,21 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
     }
 
     /**
-     * Hack only for prototype.
-     * TODO
+     * Hack only for prototype. TODO
      */
     public void callDictionary(String word) {
-        final Integer pos=words.get(word);
-        if (pos!=null) {
+        HTMLDocument doc = (HTMLDocument) getDocument();
+        final Element el = doc.getElement(word);
+        if (el != null) {
             setCaretPosition(getDocument().getLength());
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    setCaretPosition(pos);
+                    setCaretPosition(el.getStartOffset());
                 };
             });
         }
     }
-    
+
     @Override
     protected void startSearchThread(StringEntry newEntry) {
         new DictionaryEntriesSearchThread(newEntry).start();
@@ -121,30 +131,59 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
     }
 
     @Override
-    protected void setFoundResult(List<DictionaryEntry> data) {
+    protected void setFoundResult(final List<DictionaryEntry> data) {
         UIThreadsUtil.mustBeSwingThread();
-        
-        words.clear();
 
-        setContentType("text/html");
-
+        displayedWords.clear();
         StringBuilder txt = new StringBuilder();
         boolean wasPrev = false;
+        int i = 0;
         for (DictionaryEntry de : data) {
             if (wasPrev) {
                 txt.append("<br><hr>");
             } else {
                 wasPrev = true;
             }
-            setText(txt.toString());
-            words.put(de.getWord(), getDocument().getLength());
-            txt.append("<b>").append(de.getWord()).append("</b>").append(" - ");
-            txt.append(de.getArticle());
-            setText(txt.toString());
+            txt.append("<b><span id=\"" + i + "\">");
+            txt.append(de.getWord());
+            txt.append("</span></b>");
+            txt.append(" - ").append(de.getArticle());
+
+            displayedWords.add(de.getWord());
+            i++;
         }
         setText(txt.toString());
         setCaretPosition(0);
     }
+
+    protected final MouseAdapter mouseCallback = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
+                UIThreadsUtil.mustBeSwingThread();
+
+                JPopupMenu popup = new JPopupMenu();
+                int mousepos = viewToModel(e.getPoint());
+                HTMLDocument doc = (HTMLDocument) getDocument();
+                for (int i = 0; i < displayedWords.size(); i++) {
+                    Element el = doc.getElement(Integer.toString(i));
+                    if (el != null) {
+                        if (el.getStartOffset() <= mousepos
+                                && el.getEndOffset() >= mousepos) {
+                            final String w = displayedWords.get(i);
+                            JMenuItem item = popup.add("Hide '" + w + "'");
+                            item.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent e) {
+                                    manager.addIgnoreWord(w);
+                                };
+                            });
+                        }
+                    }
+                }
+                popup.show(DictionariesTextArea.this, e.getX(), e.getY());
+            }
+        }
+    };
 
     /**
      * Thread for search data in dictionaries.

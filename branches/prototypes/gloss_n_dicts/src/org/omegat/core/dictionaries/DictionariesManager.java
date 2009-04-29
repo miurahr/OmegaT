@@ -24,11 +24,20 @@
 
 package org.omegat.core.dictionaries;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.omegat.gui.dictionaries.DictionariesTextArea;
 import org.omegat.util.DirectoryMonitor;
@@ -40,10 +49,14 @@ import org.omegat.util.Log;
  * @author Alex Buloichik <alex73mail@gmail.com>
  */
 public class DictionariesManager implements DirectoryMonitor.Callback {
+    protected static final String UTF8 = "UTF-8";
+
     protected DirectoryMonitor monitor;
     protected final Map<String, DictionaryInfo> infos = new TreeMap<String, DictionaryInfo>();
     private final DictionariesTextArea pane;
     protected static String DICTIONARY_SUBDIR = "dictionary";
+
+    protected final Set<String> ignoreWords = new TreeSet<String>();
 
     public DictionariesManager(final DictionariesTextArea pane) {
         this.pane = pane;
@@ -62,13 +75,22 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
         }
     }
 
+    /**
+     * Executed on file changed.
+     */
     public void fileChanged(File file) {
         String fn = file.getPath();
         synchronized (this) {
             infos.remove(fn);
         }
         if (file.exists()) {
-            if (fn.endsWith(".ifo")) {
+            if (file.getName().equals("ignore.txt")) {
+                try {
+                    loadIgnoreWords(file);
+                } catch (Exception ex) {
+                    Log.log("Error load ignore words:" + ex.getMessage());
+                }
+            } else if (fn.endsWith(".ifo")) {
                 try {
                     IDictionary dict = new StarDict(file);
                     Map<String, Object> header = dict.readHeader();
@@ -85,6 +107,52 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
     }
 
     /**
+     * Load ignored words from 'ignore.txt' file.
+     */
+    protected void loadIgnoreWords(final File f) throws IOException {
+        BufferedReader rd = new BufferedReader(new InputStreamReader(
+                new FileInputStream(f), UTF8));
+        try {
+            synchronized (ignoreWords) {
+                ignoreWords.clear();
+                String line;
+                while ((line = rd.readLine()) != null) {
+                    ignoreWords.add(line.trim());
+                }
+            }
+        } finally {
+            rd.close();
+        }
+    }
+
+    /**
+     * Add new ignore word.
+     */
+    public void addIgnoreWord(final String word) {
+        try {
+            File outFile = new File(monitor.getDir(), "ignore.txt");
+            File outFileTmp = new File(monitor.getDir(), "ignore.txt.new");
+            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(outFileTmp), UTF8));
+            try {
+                synchronized (ignoreWords) {
+                    ignoreWords.add(word);
+                    for (String w : ignoreWords) {
+                        wr.write(w + "\n");
+                    }
+                }
+                wr.flush();
+            } finally {
+                wr.close();
+            }
+            outFile.delete();
+            outFileTmp.renameTo(outFile);
+        } catch (Exception ex) {
+            Log.log("Error save ignore words:" + ex.getMessage());
+        }
+    }
+
+    /**
      * Find word in all dictionaries.
      * 
      * @param word
@@ -98,9 +166,19 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
         List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
         for (DictionaryInfo di : dicts) {
             try {
+                synchronized (ignoreWords) {
+                    if (ignoreWords.contains(word)) {
+                        continue;
+                    }
+                }
                 Object data = di.info.get(word);
                 if (data == null) {
                     word = word.toLowerCase();
+                    synchronized (ignoreWords) {
+                        if (ignoreWords.contains(word)) {
+                            continue;
+                        }
+                    }
                     data = di.info.get(word);
                 }
                 if (data != null) {

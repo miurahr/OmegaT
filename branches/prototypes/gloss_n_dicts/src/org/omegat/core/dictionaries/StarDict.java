@@ -79,7 +79,6 @@ public class StarDict implements IDictionary {
      */
     public Map<String, Object> readHeader() throws IOException {
         Map<String, Object> result = new HashMap<String, Object>();
-
         String f = ifoFile.getPath();
         if (f.endsWith(".ifo")) {
             f = f.substring(0, f.length() - 4);
