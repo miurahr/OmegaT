@@ -720,7 +720,8 @@ public class EditorController3 implements IEditor {
 
         while (true) {
             displayedEntryIndex++;
-            if (displayedEntryIndex >= m_docSegList.length) {
+            if (displayedEntryIndex >= Core.getProject().getProjectFiles().get(
+                    displayedFileIndex).size) {
                 displayedFileIndex++;
                 displayedEntryIndex = 0;
                 if (displayedFileIndex >= Core.getProject().getProjectFiles()
