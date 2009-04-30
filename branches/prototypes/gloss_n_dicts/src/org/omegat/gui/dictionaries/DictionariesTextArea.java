@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -67,7 +69,7 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
         super(true);
 
         setContentType("text/html");
-
+        
         // setEditable(false);
         String title = OStrings
                 .getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Dictionary");
@@ -102,15 +104,24 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
      * Hack only for prototype. TODO
      */
     public void callDictionary(String word) {
+        UIThreadsUtil.mustBeSwingThread();
+
         HTMLDocument doc = (HTMLDocument) getDocument();
-        final Element el = doc.getElement(word);
-        if (el != null) {
-            setCaretPosition(getDocument().getLength());
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    setCaretPosition(el.getStartOffset());
-                };
-            });
+
+        int i = displayedWords.indexOf(word);
+        if (i < 0) {
+            i = displayedWords.indexOf(word.toLowerCase());
+        }
+        if (i >= 0) {
+            final Element el = doc.getElement(Integer.toString(i));
+            if (el != null) {
+                setCaretPosition(getDocument().getLength());
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        setCaretPosition(el.getStartOffset());
+                    };
+                });
+            }
         }
     }
 
@@ -199,9 +210,9 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
 
         @Override
         protected List<DictionaryEntry> search() {
-            List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
             Token[] tokenList = Core.getTokenizer().tokenizeWords(src,
                     ITokenizer.StemmingMode.NONE);
+            Set<String> words = new TreeSet<String>();
             for (Token tok : tokenList) {
                 if (isEntryChanged()) {
                     return null;
@@ -212,8 +223,10 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
                 }
                 String w = src.substring(tok.getOffset(), tok.getOffset()
                         + tok.getLength());
-                result.addAll(manager.findWord(w));
+
+                words.add(w);
             }
+            List<DictionaryEntry> result = manager.findWords(words);
 
             Collections.sort(result, new Comparator<DictionaryEntry>() {
                 public int compare(DictionaryEntry o1, DictionaryEntry o2) {

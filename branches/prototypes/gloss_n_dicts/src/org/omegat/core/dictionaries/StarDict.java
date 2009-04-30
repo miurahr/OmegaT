@@ -56,6 +56,9 @@ public class StarDict implements IDictionary {
     protected static final String UTF8 = "UTF-8";
     protected static final int BUFFER_SIZE = 64 * 1024;
 
+    /** Dictionary type, from 'sametypesequence' header. */
+    protected final String contentType;
+
     /**
      * @param ifoFile
      *            ifo file with dictionary
@@ -68,8 +71,8 @@ public class StarDict implements IDictionary {
         if (!"2.4.2".equals(version)) {
             throw new Exception("Invalid version of dictionary: " + version);
         }
-        String contentType = header.get("sametypesequence");
-        if (!"g".equals(contentType)) {
+        contentType = header.get("sametypesequence");
+        if (!"g".equals(contentType) && !"m".equals(contentType)) {
             throw new Exception("Invalid type of dictionary: " + contentType);
         }
     }

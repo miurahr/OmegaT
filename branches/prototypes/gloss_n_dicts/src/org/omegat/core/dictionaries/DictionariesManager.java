@@ -153,40 +153,43 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
     }
 
     /**
-     * Find word in all dictionaries.
+     * Find words list in all dictionaries.
      * 
-     * @param word
-     * @return
+     * @param words
+     *            words list
+     * @return articles list
      */
-    public List<DictionaryEntry> findWord(String word) {
+    public List<DictionaryEntry> findWords(Set<String> words) {
         List<DictionaryInfo> dicts;
         synchronized (this) {
             dicts = new ArrayList<DictionaryInfo>(infos.values());
         }
         List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
-        for (DictionaryInfo di : dicts) {
-            try {
-                synchronized (ignoreWords) {
-                    if (ignoreWords.contains(word)) {
-                        continue;
-                    }
-                }
-                Object data = di.info.get(word);
-                if (data == null) {
-                    word = word.toLowerCase();
+        for (String word : words) {
+            for (DictionaryInfo di : dicts) {
+                try {
                     synchronized (ignoreWords) {
                         if (ignoreWords.contains(word)) {
                             continue;
                         }
                     }
-                    data = di.info.get(word);
+                    Object data = di.info.get(word);
+                    if (data == null) {
+                        word = word.toLowerCase();
+                        synchronized (ignoreWords) {
+                            if (ignoreWords.contains(word)) {
+                                continue;
+                            }
+                        }
+                        data = di.info.get(word);
+                    }
+                    if (data != null) {
+                        String a = di.dict.readArticle(word, data);
+                        result.add(new DictionaryEntry(word, a));
+                    }
+                } catch (Exception ex) {
+                    Log.log(ex);
                 }
-                if (data != null) {
-                    String a = di.dict.readArticle(word, data);
-                    result.add(new DictionaryEntry(word, a));
-                }
-            } catch (Exception ex) {
-                Log.log(ex);
             }
         }
         return result;
