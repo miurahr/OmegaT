@@ -51,6 +51,7 @@ import org.omegat.gui.common.EntryInfoPane;
 import org.omegat.gui.common.EntryInfoSearchThread;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.util.OStrings;
+import org.omegat.util.StaticUtils;
 import org.omegat.util.Token;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -182,7 +183,9 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
                         if (el.getStartOffset() <= mousepos
                                 && el.getEndOffset() >= mousepos) {
                             final String w = displayedWords.get(i);
-                            JMenuItem item = popup.add("Hide '" + w + "'");
+                            String hideW = StaticUtils.format(OStrings
+                                              .getString("DICTIONARY_HIDE"), w);
+                            JMenuItem item = popup.add(hideW);
                             item.addActionListener(new ActionListener() {
                                 public void actionPerformed(ActionEvent e) {
                                     manager.addIgnoreWord(w);
