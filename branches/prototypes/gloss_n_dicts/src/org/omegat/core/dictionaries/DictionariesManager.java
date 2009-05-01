@@ -138,7 +138,7 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
                 synchronized (ignoreWords) {
                     ignoreWords.add(word);
                     for (String w : ignoreWords) {
-                        wr.write(w + "\n");
+                        wr.write(w + System.getProperty("line.separator"));
                     }
                 }
                 wr.flush();
