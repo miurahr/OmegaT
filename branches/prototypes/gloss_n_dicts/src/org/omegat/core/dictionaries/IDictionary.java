@@ -30,11 +30,11 @@ import java.util.Map;
  * Interface for dictionary access.
  * 
  * Each dictionary format reader should implement this interface. Each instance
- * of this interface represent one dictionary.
+ * of this interface represents one dictionary.
  * 
  * Simplest dictionay implementation can just read full dictionary data into
  * map, but we don't recommend it, because it's very memory consuming
- * alghorithm. Recommended way is to just read article's names and store some
+ * algorithm. Recommended way is to just read article's names and store some
  * short data, like position in dictionary file, in the value of map. After
  * that, 'readArticle' method could read dictionary file. OS will cache
  * dictionary file against slow access.
@@ -45,8 +45,8 @@ public interface IDictionary {
     /**
      * Read dictionary's articles list on startup.
      * 
-     * @return map where key is dictionary article, value is object which allow
-     *         to read article's data by readArticle mathod
+     * @return map where key is dictionary article, value is object which allows
+     *         to read article's data by readArticle method
      */
     Map<String, Object> readHeader() throws Exception;
 
