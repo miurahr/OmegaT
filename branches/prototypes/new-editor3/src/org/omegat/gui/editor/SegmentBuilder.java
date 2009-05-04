@@ -186,9 +186,10 @@ public class SegmentBuilder {
                         setAttributes(prevOffset, offset, false);
 
                         if (needToCheckSpelling) {
+                            // remember about u202{a,b,c} chars !
                             beginSpellCheckPM1 = doc
-                                    .createPosition(prevOffset + 1);
-                            endSpellCheckPM1 = doc.createPosition(offset - 1);
+                                    .createPosition(prevOffset + 2);
+                            endSpellCheckPM1 = doc.createPosition(offset - 2);
                             spellPM = true;
                         }
                     } else if (!settings.isDisplaySegmentSources()) {
@@ -290,12 +291,10 @@ public class SegmentBuilder {
             AttributeSet attrs) throws BadLocationException {
         boolean rtl = isSource ? controller.sourceLangIsRTL
                 : controller.targetLangIsRTL;
-        StringBuilder data = new StringBuilder();
-        data.append(rtl?'\u202b':'\u202a'); // LTR- or RTL- embedding
-        data.append(text);
-        data.append('\u202c'); // end of embedding
-        data.append('\n');
-        insert(data.toString(), attrs);
+        insert(rtl ? "\u202b" : "\u202a", null); // LTR- or RTL- embedding
+        insert(text, attrs);
+        insert("\u202c", null); // end of embedding
+        insert("\n", null);
     }
 
     /**
