@@ -291,9 +291,9 @@ public class SegmentBuilder {
         boolean rtl = isSource ? controller.sourceLangIsRTL
                 : controller.targetLangIsRTL;
         StringBuilder data = new StringBuilder();
-        // data.append(rtl?'\u202b':'\u202a'); // LTR- or RTL- embedding
+        data.append(rtl?'\u202b':'\u202a'); // LTR- or RTL- embedding
         data.append(text);
-        // data.append('\u202c'); // end of embedding
+        data.append('\u202c'); // end of embedding
         data.append('\n');
         insert(data.toString(), attrs);
     }
