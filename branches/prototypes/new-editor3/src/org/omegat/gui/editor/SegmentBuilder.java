@@ -122,7 +122,7 @@ public class SegmentBuilder {
                 beginOffset = offset;
                 if (isActive) {
                     /** Create for active segment. */
-                    addInactiveSegPart(ste.getSrcText(), ATTR_SOURCE);
+                    addInactiveSegPart(true, ste.getSrcText(), ATTR_SOURCE);
                     setAttributes(beginOffset, offset, true);
 
                     String activeText;
@@ -169,7 +169,7 @@ public class SegmentBuilder {
                 } else {
                     /** Create for inactive segment. */
                     if (settings.isDisplaySegmentSources()) {
-                        addInactiveSegPart(ste.getSrcText(), ATTR_SOURCE);
+                        addInactiveSegPart(true, ste.getSrcText(), ATTR_SOURCE);
                         setAttributes(beginOffset, offset, true);
                     }
                     if (translationExists) {
@@ -181,8 +181,8 @@ public class SegmentBuilder {
                                     .getTranslation());
                         }
                         int prevOffset = offset;
-                        addInactiveSegPart(ste.getTranslation(), settings
-                                .getTranslatedAttributeSet());
+                        addInactiveSegPart(false, ste.getTranslation(),
+                                settings.getTranslatedAttributeSet());
                         setAttributes(prevOffset, offset, false);
 
                         if (needToCheckSpelling) {
@@ -193,7 +193,7 @@ public class SegmentBuilder {
                         }
                     } else if (!settings.isDisplaySegmentSources()) {
                         int prevOffset = offset;
-                        addInactiveSegPart(ste.getSrcText(), settings
+                        addInactiveSegPart(false, ste.getSrcText(), settings
                                 .getUntranslatedAttributeSet());
                         setAttributes(prevOffset, offset, false);
                     }
@@ -231,16 +231,26 @@ public class SegmentBuilder {
      *            is source segment part
      */
     private void setAttributes(int begin, int end, boolean isSource) {
-        if (isSource) {
-            if (controller.currentOrientation == Document3.ORIENTATION.DIFFER) {
-                boolean rtl = controller.sourceLangIsRTL;
-                SimpleAttributeSet a = new SimpleAttributeSet();
-                a.addAttribute(StyleConstants.Alignment,
-                        rtl ? StyleConstants.ALIGN_RIGHT
-                                : StyleConstants.ALIGN_LEFT);
-                doc.setParagraphAttributes(begin, end - begin, a, true);
-            }
+        boolean rtl = false;
+        switch (controller.currentOrientation) {
+        case LTR:
+            rtl = false;
+            break;
+        case RTL:
+            rtl = true;
+            break;
+        case DIFFER:
+            rtl = isSource ? controller.sourceLangIsRTL
+                    : controller.targetLangIsRTL;
+            break;
         }
+        SimpleAttributeSet a = new SimpleAttributeSet();
+        a.addAttribute(StyleConstants.Alignment,
+                rtl ? StyleConstants.ALIGN_RIGHT : StyleConstants.ALIGN_LEFT);
+        // a.addAttribute(TextAttribute.RUN_DIRECTION,
+        // rtl ? TextAttribute.RUN_DIRECTION_RTL
+        // : TextAttribute.RUN_DIRECTION_LTR);
+        doc.setParagraphAttributes(begin, end - begin, a, true);
     }
 
     public boolean isInsideSegment(int location) {
@@ -276,10 +286,16 @@ public class SegmentBuilder {
      * @param langIsRTL
      * @return true if language is RTL
      */
-    private void addInactiveSegPart(String text, AttributeSet attrs)
-            throws BadLocationException {
-        String data = text + "\n";
-        insert(data, attrs);
+    private void addInactiveSegPart(boolean isSource, String text,
+            AttributeSet attrs) throws BadLocationException {
+        boolean rtl = isSource ? controller.sourceLangIsRTL
+                : controller.targetLangIsRTL;
+        StringBuilder data = new StringBuilder();
+        // data.append(rtl?'\u202b':'\u202a'); // LTR- or RTL- embedding
+        data.append(text);
+        // data.append('\u202c'); // end of embedding
+        data.append('\n');
+        insert(data.toString(), attrs);
     }
 
     /**
@@ -301,8 +317,11 @@ public class SegmentBuilder {
      */
     private void addActiveSegPart(String text, AttributeSet attrs)
             throws BadLocationException {
+        boolean rtl = controller.targetLangIsRTL;
 
         StringBuilder smTextB = new StringBuilder();
+        // insert(rtl?"\u202b":"\u202a",null); // LTR- or RTL- embedding
+
         // place space on the left of begin segment mark for RTL text
         smTextB.append(OConsts.segmentStartString.trim().replace("0000",
                 NUMBER_FORMAT.format(segmentNumberInProject)));
@@ -318,6 +337,7 @@ public class SegmentBuilder {
         insert(" ", null);
         smTextE.append(OConsts.segmentEndString.trim());
         insert(smTextE.toString(), ATTR_SEGMENT_MARK);
+        // insert("\u202c", null); // end of embedding
         insert("\n", null);
     }
 

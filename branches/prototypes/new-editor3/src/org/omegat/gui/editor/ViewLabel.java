@@ -53,7 +53,12 @@ public class ViewLabel extends LabelView {
     @Override
     public void paint(Graphics g, Shape a) {
         super.paint(g, a);
-
+        
+        if (!(getElement().getDocument() instanceof Document3)) {
+            // document didn't created yet
+            return;
+        }
+        
         int location = (getStartOffset() + getEndOffset()) / 2;
         Document3 doc = (Document3) getElement().getDocument();
         int segmentAtLocation = -1;
