@@ -26,9 +26,12 @@ package org.omegat.gui.editor;
 
 import java.awt.Font;
 
+import javax.swing.event.DocumentEvent;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Element;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.Position;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
@@ -55,7 +58,7 @@ public class Document3 extends DefaultStyledDocument {
     Position activeTranslationBeginM1, activeTranslationEndP1;
 
     /**
-     * Flag for check internal schanges of content, which should be always
+     * Flag for check internal changes of content, which should be always
      * acceptable.
      */
     protected boolean trustedChangesInProgress = false;
@@ -124,6 +127,44 @@ public class Document3 extends DefaultStyledDocument {
             return getText(start, end - start);
         } catch (BadLocationException ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Set alignment for specified part of text.
+     * 
+     * @param beginOffset
+     *            begin offset
+     * @param endOffset
+     *            end offset
+     * @param isRightAlignment
+     *            false - left alignment, true - right alignment
+     */
+    protected void setAlignment(int beginOffset, int endOffset,
+            boolean isRightAlignment) {
+        try {
+            writeLock();
+
+            DefaultDocumentEvent changes = new DefaultDocumentEvent(
+                    beginOffset, endOffset - beginOffset,
+                    DocumentEvent.EventType.CHANGE);
+
+            Element root = getDefaultRootElement();
+            int parBeg = root.getElementIndex(beginOffset);
+            int parEnd = root.getElementIndex(endOffset - 1);
+            for (int par = parBeg; par <= parEnd; par++) {
+                Element el = root.getElement(par);
+                MutableAttributeSet attr = (MutableAttributeSet) el
+                        .getAttributes();
+                attr.addAttribute(StyleConstants.Alignment,
+                        isRightAlignment ? StyleConstants.ALIGN_RIGHT
+                                : StyleConstants.ALIGN_LEFT);
+            }
+
+            changes.end();
+            fireChangedUpdate(changes);
+        } finally {
+            writeUnlock();
         }
     }
 }

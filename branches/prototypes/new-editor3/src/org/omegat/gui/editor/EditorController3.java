@@ -400,6 +400,8 @@ public class EditorController3 implements IEditor {
                     getEntryNumber(i));
 
             m_docSegList[i].createSegmentElement(false);
+
+            SegmentBuilder.addSegmentSeparator(doc);
         }
 
         doc.setDocumentFilter(new DocumentFilter3());
@@ -619,7 +621,7 @@ public class EditorController3 implements IEditor {
         if (newTrans != null) {
             // segment was active
             SourceTextEntry entry = m_docSegList[displayedEntryIndex].ste;
-            
+
             String old_translation = entry.getTranslation();
             // update memory
             if (newTrans.equals(entry.getSrcText())

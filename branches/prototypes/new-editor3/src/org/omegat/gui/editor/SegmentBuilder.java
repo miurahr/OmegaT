@@ -95,7 +95,7 @@ public class SegmentBuilder {
      *            document
      * @return OmElementSegment
      */
-    protected void createSegmentElement(final boolean isActive) {
+    public void createSegmentElement(final boolean isActive) {
         UIThreadsUtil.mustBeSwingThread();
 
         beginSpellCheckPM1 = null;
@@ -103,112 +103,139 @@ public class SegmentBuilder {
 
         doc.trustedChangesInProgress = true;
         try {
-            int beginOffset, endOffset;
             try {
                 if (beginPosP1 != null && endPosM1 != null) {
                     // remove old segment
-                    beginOffset = beginPosP1.getOffset() - 1;
-                    endOffset = endPosM1.getOffset() + 1;
+                    int beginOffset = beginPosP1.getOffset() - 1;
+                    int endOffset = endPosM1.getOffset() + 1;
                     doc.remove(beginOffset, endOffset - beginOffset);
                     offset = beginOffset;
                 } else {
+                    // there is no segment in document yet - need to add
                     offset = doc.getLength();
                 }
 
                 boolean translationExists = ste.getTranslation() != null
                         && ste.getTranslation().length() > 0;
 
-                boolean needToCheckSpelling = false;
-                beginOffset = offset;
+                int beginOffset = offset;
                 if (isActive) {
-                    /** Create for active segment. */
-                    addInactiveSegPart(true, ste.getSrcText(), ATTR_SOURCE);
-                    setAttributes(beginOffset, offset, true);
-
-                    String activeText;
-                    if (translationExists) {
-                        // translation exist
-                        activeText = ste.getTranslation();
-                        if (settings.isAutoSpellChecking()) {
-                            // spell it
-                            needToCheckSpelling = true;
-                            doc.controller.spellCheckerThread.addForCheck(ste
-                                    .getTranslation());
-                        }
-                    } else if (!Preferences
-                            .isPreference(Preferences.DONT_INSERT_SOURCE_TEXT)) {
-                        // need to insert source text on empty translation
-                        activeText = ste.getSrcText();
-                        if (settings.isAutoSpellChecking()) {
-                            // spell it
-                            needToCheckSpelling = true;
-                            doc.controller.spellCheckerThread.addForCheck(ste
-                                    .getSrcText());
-                        }
-                    } else {
-                        // empty text on non-exist translation
-                        activeText = "";
-                    }
-
-                    int prevOffset = offset;
-                    addActiveSegPart(activeText, ATTR_ACTIVE);
-                    setAttributes(prevOffset, offset, false);
-
-                    if (needToCheckSpelling) {
-                        beginSpellCheckPM1 = doc
-                                .createPosition(activeTranslationBeginOffset - 1);
-                        endSpellCheckPM1 = doc
-                                .createPosition(activeTranslationEndOffset + 1);
-                        spellPM = false;
-                    }
-
-                    doc.activeTranslationBeginM1 = doc
-                            .createPosition(activeTranslationBeginOffset - 1);
-                    doc.activeTranslationEndP1 = doc
-                            .createPosition(activeTranslationEndOffset + 1);
+                    createActiveSegmentElement(translationExists);
                 } else {
-                    /** Create for inactive segment. */
-                    if (settings.isDisplaySegmentSources()) {
-                        addInactiveSegPart(true, ste.getSrcText(), ATTR_SOURCE);
-                        setAttributes(beginOffset, offset, true);
-                    }
-                    if (translationExists) {
-                        // translation exist
-                        if (settings.isAutoSpellChecking()) {
-                            // spell it
-                            needToCheckSpelling = true;
-                            doc.controller.spellCheckerThread.addForCheck(ste
-                                    .getTranslation());
-                        }
-                        int prevOffset = offset;
-                        addInactiveSegPart(false, ste.getTranslation(),
-                                settings.getTranslatedAttributeSet());
-                        setAttributes(prevOffset, offset, false);
-
-                        if (needToCheckSpelling) {
-                            // remember about u202{a,b,c} chars !
-                            beginSpellCheckPM1 = doc
-                                    .createPosition(prevOffset + 2);
-                            endSpellCheckPM1 = doc.createPosition(offset - 2);
-                            spellPM = true;
-                        }
-                    } else if (!settings.isDisplaySegmentSources()) {
-                        int prevOffset = offset;
-                        addInactiveSegPart(false, ste.getSrcText(), settings
-                                .getUntranslatedAttributeSet());
-                        setAttributes(prevOffset, offset, false);
-                    }
+                    createInactiveSegmentElement(translationExists);
                 }
-                insert("\n", null);
-                endOffset = offset;
+                int endOffset = offset;
 
                 beginPosP1 = doc.createPosition(beginOffset + 1);
                 endPosM1 = doc.createPosition(endOffset - 1);
-            } catch (Exception ex) {
+            } catch (BadLocationException ex) {
                 throw new RuntimeException(ex);
             }
         } finally {
             doc.trustedChangesInProgress = false;
+        }
+    }
+
+    /**
+     * Add separator between segments - one empty line.
+     * 
+     * @param doc
+     */
+    public static void addSegmentSeparator(final Document3 doc) {
+        doc.trustedChangesInProgress = true;
+        try {
+            try {
+                doc.insertString(doc.getLength(), "\n", null);
+            } catch (BadLocationException ex) {
+                throw new RuntimeException(ex);
+            }
+        } finally {
+            doc.trustedChangesInProgress = false;
+        }
+    }
+
+    /**
+     * Create method for active segment.
+     */
+    private void createActiveSegmentElement(boolean translationExists)
+            throws BadLocationException {
+
+        addInactiveSegPart(true, ste.getSrcText(), ATTR_SOURCE);
+
+        boolean needToCheckSpelling = false;
+
+        String activeText;
+        if (translationExists) {
+            // translation exist
+            activeText = ste.getTranslation();
+            if (settings.isAutoSpellChecking()) {
+                // spell it
+                needToCheckSpelling = true;
+                doc.controller.spellCheckerThread.addForCheck(ste
+                        .getTranslation());
+            }
+        } else if (!Preferences
+                .isPreference(Preferences.DONT_INSERT_SOURCE_TEXT)) {
+            // need to insert source text on empty translation
+            activeText = ste.getSrcText();
+            if (settings.isAutoSpellChecking()) {
+                // spell it
+                needToCheckSpelling = true;
+                doc.controller.spellCheckerThread.addForCheck(ste.getSrcText());
+            }
+        } else {
+            // empty text on non-exist translation
+            activeText = "";
+        }
+
+        addActiveSegPart(activeText, ATTR_ACTIVE);
+
+        if (needToCheckSpelling) {
+            beginSpellCheckPM1 = doc
+                    .createPosition(activeTranslationBeginOffset - 1);
+            endSpellCheckPM1 = doc
+                    .createPosition(activeTranslationEndOffset + 1);
+            spellPM = false;
+        }
+
+        doc.activeTranslationBeginM1 = doc
+                .createPosition(activeTranslationBeginOffset - 1);
+        doc.activeTranslationEndP1 = doc
+                .createPosition(activeTranslationEndOffset + 1);
+    }
+
+    /**
+     * Create method for inactive segment.
+     */
+    private void createInactiveSegmentElement(boolean translationExists)
+            throws BadLocationException {
+        if (settings.isDisplaySegmentSources()) {
+            addInactiveSegPart(true, ste.getSrcText(), ATTR_SOURCE);
+        }
+
+        boolean needToCheckSpelling = false;
+        if (translationExists) {
+            // translation exist
+            if (settings.isAutoSpellChecking()) {
+                // spell it
+                needToCheckSpelling = true;
+                doc.controller.spellCheckerThread.addForCheck(ste
+                        .getTranslation());
+            }
+            int prevOffset = offset;
+            addInactiveSegPart(false, ste.getTranslation(), settings
+                    .getTranslatedAttributeSet());
+
+            if (needToCheckSpelling) {
+                // remember about u202{a,b,c} chars !
+                beginSpellCheckPM1 = doc.createPosition(prevOffset + 2);
+                endSpellCheckPM1 = doc.createPosition(offset - 2);
+                spellPM = true;
+            }
+        } else if (!settings.isDisplaySegmentSources()) {
+            // translation not exist, and source part doesn't displayed yet
+            addInactiveSegPart(true, ste.getSrcText(), settings
+                    .getUntranslatedAttributeSet());
         }
     }
 
@@ -219,6 +246,15 @@ public class SegmentBuilder {
      */
     public int getStartPosition() {
         return beginPosP1.getOffset() - 1;
+    }
+
+    /**
+     * Get segment's end position.
+     * 
+     * @return end position
+     */
+    public int getEndPosition() {
+        return endPosM1.getOffset() + 1;
     }
 
     /**
@@ -245,13 +281,21 @@ public class SegmentBuilder {
                     : controller.targetLangIsRTL;
             break;
         }
-        SimpleAttributeSet a = new SimpleAttributeSet();
-        a.addAttribute(StyleConstants.Alignment,
-                rtl ? StyleConstants.ALIGN_RIGHT : StyleConstants.ALIGN_LEFT);
-        // a.addAttribute(TextAttribute.RUN_DIRECTION,
-        // rtl ? TextAttribute.RUN_DIRECTION_RTL
-        // : TextAttribute.RUN_DIRECTION_LTR);
-        doc.setParagraphAttributes(begin, end - begin, a, true);
+        doc.setAlignment(begin, end, rtl);
+    }
+
+    private boolean isRtlAlignment(boolean isSource) {
+        switch (controller.currentOrientation) {
+        case LTR:
+            return false;
+        case RTL:
+            return true;
+        case DIFFER:
+            return isSource ? controller.sourceLangIsRTL
+                    : controller.targetLangIsRTL;
+        default:
+            return false;
+        }
     }
 
     public boolean isInsideSegment(int location) {
@@ -289,12 +333,16 @@ public class SegmentBuilder {
      */
     private void addInactiveSegPart(boolean isSource, String text,
             AttributeSet attrs) throws BadLocationException {
+        boolean rtlAlign = isRtlAlignment(isSource);
+        int prevOffset = offset;
         boolean rtl = isSource ? controller.sourceLangIsRTL
                 : controller.targetLangIsRTL;
-        insert(rtl ? "\u202b" : "\u202a", null); // LTR- or RTL- embedding
-        insert(text, attrs);
-        insert("\u202c", null); // end of embedding
-        insert("\n", null);
+        insert(rtl ? "\u202b" : "\u202a", null, rtlAlign); // LTR- or RTL-
+        // embedding
+        insert(text, attrs, rtlAlign);
+        insert("\u202c", null, rtlAlign); // end of embedding
+        insert("\n", null, rtlAlign);
+        setAttributes(prevOffset, offset, isSource);
     }
 
     /**
@@ -316,32 +364,45 @@ public class SegmentBuilder {
      */
     private void addActiveSegPart(String text, AttributeSet attrs)
             throws BadLocationException {
+        int prevOffset = offset;
         boolean rtl = controller.targetLangIsRTL;
+        boolean rtlAlign = isRtlAlignment(false);
 
-        StringBuilder smTextB = new StringBuilder();
-        // insert(rtl?"\u202b":"\u202a",null); // LTR- or RTL- embedding
+        String smTextB = OConsts.segmentStartString.trim().replace("0000",
+                NUMBER_FORMAT.format(segmentNumberInProject));
+        insert(smTextB, ATTR_SEGMENT_MARK, rtlAlign);
+        insert(" ", null, rtlAlign);
 
-        // place space on the left of begin segment mark for RTL text
-        smTextB.append(OConsts.segmentStartString.trim().replace("0000",
-                NUMBER_FORMAT.format(segmentNumberInProject)));
-        insert(smTextB.toString(), ATTR_SEGMENT_MARK);
-        insert(" ", null);
+        insert(rtl ? "\u202b" : "\u202a", null, rtlAlign); // LTR- or RTL-
+        // embedding
 
         activeTranslationBeginOffset = offset;
-        insert(text, attrs);
+        insert(text, attrs, rtlAlign);
         activeTranslationEndOffset = offset;
 
-        StringBuilder smTextE = new StringBuilder();
-        // place space on the left of end segment mark for LTR text
-        insert(" ", null);
-        smTextE.append(OConsts.segmentEndString.trim());
-        insert(smTextE.toString(), ATTR_SEGMENT_MARK);
-        // insert("\u202c", null); // end of embedding
-        insert("\n", null);
+        insert("\u202c", null, rtlAlign); // end of embedding
+
+        insert(" ", null, rtlAlign);
+        String smTextE = OConsts.segmentEndString.trim();
+        insert(smTextE, ATTR_SEGMENT_MARK, rtlAlign);
+        insert("\n", null, rtlAlign);
+
+        setAttributes(prevOffset, offset, false);
     }
 
-    private void insert(String text, AttributeSet attrs)
+    private void insert(String text, AttributeSet attrs, boolean rtlAlign)
             throws BadLocationException {
+        SimpleAttributeSet a = new SimpleAttributeSet();
+        if (attrs != null) {
+            a.addAttributes(attrs);
+        }
+        if (rtlAlign) {
+            a
+                    .addAttribute(StyleConstants.Alignment,
+                            StyleConstants.ALIGN_RIGHT);
+        } else {
+            a.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
+        }
         doc.insertString(offset, text, attrs);
         offset += text.length();
     }
