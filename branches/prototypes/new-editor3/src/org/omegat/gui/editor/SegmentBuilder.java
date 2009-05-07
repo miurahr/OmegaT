@@ -25,12 +25,12 @@
 package org.omegat.gui.editor;
 
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Position;
 import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
 
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.util.OConsts;
@@ -284,20 +284,6 @@ public class SegmentBuilder {
         doc.setAlignment(begin, end, rtl);
     }
 
-    private boolean isRtlAlignment(boolean isSource) {
-        switch (controller.currentOrientation) {
-        case LTR:
-            return false;
-        case RTL:
-            return true;
-        case DIFFER:
-            return isSource ? controller.sourceLangIsRTL
-                    : controller.targetLangIsRTL;
-        default:
-            return false;
-        }
-    }
-
     /**
      * Check if location inside segment.
      */
@@ -356,15 +342,14 @@ public class SegmentBuilder {
      */
     private void addInactiveSegPart(boolean isSource, String text,
             AttributeSet attrs) throws BadLocationException {
-        boolean rtlAlign = isRtlAlignment(isSource);
         int prevOffset = offset;
         boolean rtl = isSource ? controller.sourceLangIsRTL
                 : controller.targetLangIsRTL;
-        insert(rtl ? "\u202b" : "\u202a", null, rtlAlign); // LTR- or RTL-
+        insert(rtl ? "\u202b" : "\u202a", null); // LTR- or RTL-
         // embedding
-        insert(text, attrs, rtlAlign);
-        insert("\u202c", null, rtlAlign); // end of embedding
-        insert("\n", null, rtlAlign);
+        insert(text, attrs);
+        insert("\u202c", null); // end of embedding
+        insert("\n", null);
         setAttributes(prevOffset, offset, isSource);
     }
 
@@ -389,44 +374,68 @@ public class SegmentBuilder {
             throws BadLocationException {
         int prevOffset = offset;
         boolean rtl = controller.targetLangIsRTL;
-        boolean rtlAlign = isRtlAlignment(false);
 
-        String smTextB = OConsts.segmentStartString.trim().replace("0000",
-                NUMBER_FORMAT.format(segmentNumberInProject));
-        insert(smTextB, ATTR_SEGMENT_MARK, rtlAlign);
-        insert(" ", null, rtlAlign);
+        insert(createSegmentMarkText(true), ATTR_SEGMENT_MARK);
+        insert(" ", null);
 
-        insert(rtl ? "\u202b" : "\u202a", null, rtlAlign); // LTR- or RTL-
+        insert(rtl ? "\u202b" : "\u202a", null); // LTR- or RTL-
         // embedding
 
         activeTranslationBeginOffset = offset;
-        insert(text, attrs, rtlAlign);
+        insert(text, attrs);
         activeTranslationEndOffset = offset;
 
-        insert("\u202c", null, rtlAlign); // end of embedding
+        insert("\u202c", null); // end of embedding
 
-        insert(" ", null, rtlAlign);
-        String smTextE = OConsts.segmentEndString.trim();
-        insert(smTextE, ATTR_SEGMENT_MARK, rtlAlign);
-        insert("\n", null, rtlAlign);
+        insert(" ", null);
+        insert(createSegmentMarkText(false), ATTR_SEGMENT_MARK);
+
+        insert("\n", null);
 
         setAttributes(prevOffset, offset, false);
     }
 
-    private void insert(String text, AttributeSet attrs, boolean rtlAlign)
+    private void insert(String text, AttributeSet attrs)
             throws BadLocationException {
-        SimpleAttributeSet a = new SimpleAttributeSet();
-        if (attrs != null) {
-            a.addAttributes(attrs);
-        }
-        if (rtlAlign) {
-            a
-                    .addAttribute(StyleConstants.Alignment,
-                            StyleConstants.ALIGN_RIGHT);
-        } else {
-            a.addAttribute(StyleConstants.Alignment, StyleConstants.ALIGN_LEFT);
-        }
         doc.insertString(offset, text, attrs);
         offset += text.length();
+    }
+
+    /**
+     * Make some changes of segment mark from resource bundle for display
+     * correctly in editor.
+     * 
+     * @param startMark
+     *            true if tart mark, false if end mark
+     * @return changed mark text
+     */
+    private String createSegmentMarkText(boolean startMark) {
+        String text = startMark ? OConsts.segmentStartString
+                : OConsts.segmentEndString;
+
+        boolean markIsRTL;
+        String language = Locale.getDefault().getLanguage().toLowerCase();
+        /*
+         * Hardcode for future - if somebody will translate marks to RTL
+         * language.
+         */
+        if ("some_RTL_language_code".equals(language)) {
+            markIsRTL = true;
+        } else {
+            markIsRTL = false;
+        }
+
+        // trim and replace spaces to non-break spaces
+        text = text.trim().replace(' ', '\u00A0');
+        if (text.indexOf("0000") >= 0) {
+            // Start mark - need to put segment number
+            text = text.replace("0000", NUMBER_FORMAT
+                    .format(segmentNumberInProject));
+        }
+
+        // add LTR/RTL embedded chars
+        text = (markIsRTL ? '\u202b' : '\u202a') + text + '\u202c';
+
+        return text;
     }
 }
