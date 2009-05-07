@@ -61,6 +61,7 @@ import org.omegat.core.events.IProjectEventListener;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.FileUtil;
+import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -405,6 +406,11 @@ public class EditorController3 implements IEditor {
         }
 
         doc.setDocumentFilter(new DocumentFilter3());
+
+        // add locate for target language to editor
+        Locale targetLocale = Core.getProject().getProjectProperties()
+                .getTargetLanguage().getLocale();
+        editor.setLocale(targetLocale);
 
         editor.setDocument(doc);
 

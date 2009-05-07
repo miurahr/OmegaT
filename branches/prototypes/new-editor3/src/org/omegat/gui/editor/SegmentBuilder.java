@@ -298,25 +298,48 @@ public class SegmentBuilder {
         }
     }
 
+    /**
+     * Check if location inside segment.
+     */
     public boolean isInsideSegment(int location) {
         return beginPosP1.getOffset() - 1 <= location
                 && location < endPosM1.getOffset() + 1;
     }
 
-    public boolean isInsideSpellCheckable(int location) {
-        if (beginSpellCheckPM1 == null || endSpellCheckPM1 == null) {
-            return false;
+    /**
+     * Get spell check start position.
+     * 
+     * @return start position
+     */
+    public int getStartSpellPosition() {
+        if (beginSpellCheckPM1 == null) {
+            return 0;
         }
         int b = beginSpellCheckPM1.getOffset();
-        int e = endSpellCheckPM1.getOffset();
         if (spellPM) {
             b--;
-            e++;
         } else {
             b++;
+        }
+        return b;
+    }
+
+    /**
+     * Get spell check end position.
+     * 
+     * @return end position
+     */
+    public int getEndSpellPosition() {
+        if (endSpellCheckPM1 == null) {
+            return 0;
+        }
+        int e = endSpellCheckPM1.getOffset();
+        if (spellPM) {
+            e++;
+        } else {
             e--;
         }
-        return b <= location && location < e;
+        return e;
     }
 
     /**

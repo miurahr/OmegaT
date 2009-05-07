@@ -235,7 +235,7 @@ public class EditorTextArea3 extends JEditorPane {
             }
             super.processKeyEvent(e);
         }
-        
+
         controller.showLengthMessage();
 
         // some after-processing catches
@@ -390,7 +390,8 @@ public class EditorTextArea3 extends JEditorPane {
             final int wordStart = Utilities.getWordStart(this, mousepos);
             final int wordEnd = Utilities.getWordEnd(this, mousepos);
 
-            final String word = getText(wordStart, wordEnd - wordStart);
+            final String word = EditorUtils.removeDirection(getText(wordStart,
+                    wordEnd - wordStart));
 
             final AbstractDocument xlDoc = (AbstractDocument) getDocument();
 

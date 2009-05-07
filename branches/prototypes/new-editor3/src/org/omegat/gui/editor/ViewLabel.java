@@ -53,42 +53,54 @@ public class ViewLabel extends LabelView {
     @Override
     public void paint(Graphics g, Shape a) {
         super.paint(g, a);
-        
+
         if (!(getElement().getDocument() instanceof Document3)) {
             // document didn't created yet
             return;
         }
-        
-        int location = (getStartOffset() + getEndOffset()) / 2;
+
+        int spellBegin = getStartOffset();
+        int spellEnd = getEndOffset();
         Document3 doc = (Document3) getElement().getDocument();
         int segmentAtLocation = -1;
+
         // find current segment
         for (int i = 0; i < doc.controller.m_docSegList.length; i++) {
-            if (doc.controller.m_docSegList[i].isInsideSegment(location)) {
+            if (doc.controller.m_docSegList[i]
+                    .isInsideSegment((spellBegin + spellEnd) / 2)) {
                 segmentAtLocation = i;
                 break;
             }
         }
         if (segmentAtLocation < 0) {
+            // segment not found
             return;
         }
-        if (doc.controller.m_docSegList[segmentAtLocation]
-                .isInsideSpellCheckable(location)) {
+
+        // check only required to spell part
+        SegmentBuilder seg = doc.controller.m_docSegList[segmentAtLocation];
+        spellBegin = Math.max(spellBegin, seg.getStartSpellPosition());
+        spellEnd = Math.min(spellEnd, seg.getEndSpellPosition());
+
+        if (spellBegin < spellEnd) {
             // is need spell checking ?
             try {
-                location = getStartOffset();
-                String text = doc.getText(getStartOffset(), getEndOffset()
-                        - getStartOffset());
+                String text = doc.getText(spellBegin, spellEnd - spellBegin);
                 Token[] words = Core.getTokenizer().tokenizeWordsForSpelling(
                         text);
                 for (Token w : words) {
+                    /*
+                     * Document can merge several 'insert's into one element,
+                     * so, direction chars could be added to word.
+                     */
+
                     if (doc.controller.spellCheckerThread.isIncorrect(text
                             .substring(w.getOffset(), w.getOffset()
                                     + w.getLength()))) {
-                        Rectangle b = modelToView(location + w.getOffset(), a,
-                                Position.Bias.Forward).getBounds();
+                        Rectangle b = modelToView(spellBegin + w.getOffset(),
+                                a, Position.Bias.Forward).getBounds();
                         Rectangle e = modelToView(
-                                location + w.getOffset() + w.getLength(), a,
+                                spellBegin + w.getOffset() + w.getLength(), a,
                                 Position.Bias.Backward).getBounds();
                         Rectangle line = new Rectangle();
                         line.x = b.x;
