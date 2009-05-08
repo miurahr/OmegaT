@@ -24,6 +24,7 @@
 
 package org.omegat.gui.dictionaries;
 
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -37,7 +38,7 @@ import java.util.TreeSet;
 
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTMLDocument;
 
@@ -70,7 +71,7 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
         super(true);
 
         setContentType("text/html");
-        
+
         // setEditable(false);
         String title = OStrings
                 .getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Dictionary");
@@ -116,12 +117,17 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
         if (i >= 0) {
             final Element el = doc.getElement(Integer.toString(i));
             if (el != null) {
-                setCaretPosition(getDocument().getLength());
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        setCaretPosition(el.getStartOffset());
-                    };
-                });
+                try {
+                    // rectangle to be visible
+                    Rectangle rect = getUI().modelToView(this,
+                            el.getStartOffset());
+                    // show 2 lines
+                    rect.height *= 2;
+
+                    scrollRectToVisible(rect);
+                } catch (BadLocationException ex) {
+                    // should be throwed
+                }
             }
         }
     }
@@ -184,7 +190,7 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
                                 && el.getEndOffset() >= mousepos) {
                             final String w = displayedWords.get(i);
                             String hideW = StaticUtils.format(OStrings
-                                              .getString("DICTIONARY_HIDE"), w);
+                                    .getString("DICTIONARY_HIDE"), w);
                             JMenuItem item = popup.add(hideW);
                             item.addActionListener(new ActionListener() {
                                 public void actionPerformed(ActionEvent e) {
