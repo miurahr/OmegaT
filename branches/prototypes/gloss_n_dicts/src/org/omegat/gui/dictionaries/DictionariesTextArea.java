@@ -226,10 +226,6 @@ public class DictionariesTextArea extends EntryInfoPane<List<DictionaryEntry>> {
                 if (isEntryChanged()) {
                     return null;
                 }
-                if (tok.getLength() < 3) {
-                    // disable to find less then 3-chars words
-                    continue;
-                }
                 String w = src.substring(tok.getOffset(), tok.getOffset()
                         + tok.getLength());
 
