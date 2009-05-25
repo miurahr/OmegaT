@@ -19,6 +19,9 @@
             <fileset dir="${root}/lib-mnemonics/dist" includes="**/*.jar" />
             <fileset dir="${root}/dist" includes="OmegaT.jar" />
         </copy>
+    	
+    	<jar jarfile="${root}/build/webstart/docs.jar"
+    	             basedir="${root}/docs_user/" />
 
         <jar jarfile="${root}/build/webstart/hunspell-win.jar" basedir="${root}/native" includes="hunspell.dll" />
         <jar jarfile="${root}/build/webstart/hunspell-lin-i386.jar"

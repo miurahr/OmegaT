@@ -32,7 +32,6 @@ import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -1083,15 +1082,14 @@ public class EditorController implements IEditor {
         introPaneTitle = OStrings.getString("DOCKING_INSTANT_START_TITLE");
         try {
             String language = detectInstantStartLanguage();
-            String filepath = StaticUtils.installDir() + File.separator
-                    + OConsts.HELP_DIR + File.separator + language
-                    + File.separator + OConsts.HELP_INSTANT_START;
+            String filepath = "/docs/" + language + "/"
+                    + OConsts.HELP_INSTANT_START;
             introPane = new JTextPane();
             introPane
                     .setComponentOrientation(EditorUtils.isRTL(language) ? ComponentOrientation.RIGHT_TO_LEFT
                             : ComponentOrientation.LEFT_TO_RIGHT);
             introPane.setEditable(false);
-            introPane.setPage("file:///" + filepath);
+            introPane.setPage(EditorController.class.getResource(filepath));
         } catch (IOException e) {
             // editorScroller.setViewportView(editor);
         }
@@ -1120,17 +1118,14 @@ public class EditorController implements IEditor {
         String country = Locale.getDefault().getCountry().toUpperCase();
 
         // Check if there's a translation for the full locale (lang + country)
-        File isg = new File(StaticUtils.installDir() + File.separator
-                + OConsts.HELP_DIR + File.separator + language + "_" + country
-                + File.separator + OConsts.HELP_INSTANT_START);
-        if (isg.exists())
+        String isg = "/docs/" + language + "_" + country + "/"
+                + OConsts.HELP_INSTANT_START;
+        if (EditorController.class.getResource(isg) != null)
             return language + "_" + country;
 
         // Check if there's a translation for the language only
-        isg = new File(StaticUtils.installDir() + File.separator
-                + OConsts.HELP_DIR + File.separator + language + File.separator
-                + OConsts.HELP_INSTANT_START);
-        if (isg.exists())
+        isg = "/docs/" + language + "/" + OConsts.HELP_INSTANT_START;
+        if (EditorController.class.getResource(isg) != null)
             return language;
 
         // Default to English, if no translation exists
