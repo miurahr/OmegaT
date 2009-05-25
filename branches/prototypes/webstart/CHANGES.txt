@@ -1,0 +1,3 @@
+Changes for webstart prototype:
+
+1. Move docs/ under classpath for be able to load from jar, not from disk
