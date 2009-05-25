@@ -1,3 +1,0 @@
-#!/bin/bash
-jre/bin/java -jar OmegaT.jar $*
-
