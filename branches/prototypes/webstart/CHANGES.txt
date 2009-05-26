@@ -1,12 +1,10 @@
 Changes for webstart prototype:
 
-1. Move docs/ under classpath for be able to load from jar, not from disk
-2. Add docs/list for store translations list
-3. Change HelpFrame for load translations from classpath instead disk 
-4. Add LFileCopy.copy for reader/writer
-5. Change EditorController for display html from classpath instead /docs dir
-6. Change build.xml
-7. Change release/WebStart-specific/build.xml
+1. Change HelpFrame for load translations from classpath if translation doesn't exist on disk 
+2. Add LFileCopy.copy for reader/writer
+3. Change EditorController for display html from classpath instead /docs dir
+4. Change build.xml
+5. Change release/WebStart-specific/build.xml
 
 TODO:
 1. Change logger for webstart initialization
