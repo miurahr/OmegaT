@@ -85,7 +85,7 @@
         </copy>
         <copy todir="${l10n.min.dir}/source">
             <fileset dir="." 
-                    includes="docs_user/docs/en/instantStartGuideNoTOC.html src/**/Bundle.properties"/>
+                    includes="docs/en/instantStartGuideNoTOC.html src/**/Bundle.properties"/>
         </copy>
         <copy file="release/readme.txt"
               tofile="${l10n.min.dir}/source/readme.utf8"
@@ -108,8 +108,8 @@
         </copy>
         <copy todir="${l10n.max.dir}/source"> <!-- Copy all files except legalNotices.html -->
             <fileset dir="."
-                    includes="docs_user/docs/en/** src/**/Bundle.properties"
-                    excludes="docs_user/docs/en/legalNotices.html"/>
+                    includes="docs/en/** src/**/Bundle.properties"
+                    excludes="docs/en/legalNotices.html"/>
         </copy>
         <copy file="release/readme.txt"
               tofile="${l10n.max.dir}/source/readme.utf8"
@@ -124,7 +124,7 @@
               encoding="UTF-8"
               outputencoding="UTF-8">
             <fileset dir="." 
-                     includes="docs_user/docs/en/legalNotices.html"/>
+                     includes="docs/en/legalNotices.html"/>
             <filterset begintoken="@@" endtoken="@@">
                 <filter token="TRANSLATION_NOTICE"
                         value="&lt;p&gt;This translation is the work of [insert your name], copyright© [insert year].&lt;/p&gt;"/>
@@ -138,7 +138,7 @@
     <target name="src" depends="init" description="Build source distribution">
         <mkdir dir="dist2"/>
         <zip destfile="dist2/OmegaT_${distversion}_Source.zip" basedir="." 
-                includes="addons/** docs_user/docs/** images/** lib/** nbproject/** lib-mnemonics/** release/** src/** test/** manifest-template.mf build.xml native/**"
+                includes="addons/** docs/** images/** lib/** nbproject/** lib-mnemonics/** release/** src/** test/** manifest-template.mf build.xml native/**"
                 excludes="**/nbproject/private/** **/build/** **/dist/**" />
     </target>
 
@@ -155,12 +155,12 @@
                 <filter token="TRANSLATION_NOTICE" value=""/>
             </filterset>
         </copy>
-        <mkdir dir="dist/docs_user/docs"/>
-        <copy todir="dist/docs_user/docs"> <!-- copy all files except English legalNotices.html -->
-            <fileset dir="docs_user/docs" excludes="en/legalNotices.html"/>
+        <mkdir dir="dist/docs"/>
+        <copy todir="dist/docs"> <!-- copy all files except English legalNotices.html -->
+            <fileset dir="docs" excludes="en/legalNotices.html"/>
         </copy>
-        <copy todir="dist/docs_user/docs"> <!-- copy just English legalNotices.html -->
-            <fileset dir="docs_user/docs" includes="en/legalNotices.html"/>
+        <copy todir="dist/docs"> <!-- copy just English legalNotices.html -->
+            <fileset dir="docs" includes="en/legalNotices.html"/>
             <!-- Remove TRANSLATION_NOTICE placeholder (from English manual) -->
             <filterset begintoken="@@" endtoken="@@">
                 <filter token="TRANSLATION_NOTICE" value=""/>
