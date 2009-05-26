@@ -32,17 +32,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -169,6 +172,34 @@ public class HelpFrame extends JFrame {
         return singleton;
     }
 
+    public static InputStream getHelpFileStream(String filename)
+            throws IOException {
+        // find in install dir
+        InputStream in = new FileInputStream(new File(StaticUtils.installDir()
+                + File.separator + OConsts.HELP_DIR, filename));
+        if (in == null) {
+            // find in classpath
+            in = HelpFrame.class.getResourceAsStream('/' + OConsts.HELP_DIR
+                    + '/' + filename);
+
+        }
+        return in;
+    }
+
+    public static URL getHelpFileURL(String filename) throws IOException {
+        // find in install dir
+        File f = new File(StaticUtils.installDir() + File.separator
+                + OConsts.HELP_DIR, filename);
+        if (f.exists()) {
+            return f.toURI().toURL();
+        }
+        // find in classpath
+        URL r = HelpFrame.class.getResource('/' + OConsts.HELP_DIR + '/'
+                + filename);
+
+        return r;
+    }
+
     public void displayHome() {
         // If not set, get the language (according to
         // the system locale) to display the manual in
@@ -191,14 +222,15 @@ public class HelpFrame extends JFrame {
         try {
             // Read template from docs/languageIndex.html
             StringWriter templateText = new StringWriter(1024);
-            InputStream in = HelpFrame.class
-                    .getResourceAsStream("/docs/languageIndex.html");
+
+            InputStream in = getHelpFileStream(OConsts.HELP_LANG_INDEX);
             if (in == null) {
                 throw new IOException(
-                        "There is no 'docs/languageIndex.html' in classpath");
+                        "There is no 'docs/languageIndex.html' in install_dir or classpath");
             }
+
             BufferedReader rd = new BufferedReader(new InputStreamReader(in,
-                    "UTF-8"));
+                    OConsts.UTF8));
             try {
                 LFileCopy.copy(rd, templateText);
             } finally {
@@ -209,8 +241,7 @@ public class HelpFrame extends JFrame {
             StringBuffer translations = new StringBuffer(1024);
             translations.append("<table>\n");
 
-            List<String> subDirs = getTranslationsList();
-            Collections.sort(subDirs); // sort on alphabetical order
+            Set<String> subDirs = getTranslationsList();
             for (String locale : subDirs) {
                 if (locale.length() == 0) {
                     // skip empty lines
@@ -269,21 +300,19 @@ public class HelpFrame extends JFrame {
      * 
      * @return translations list
      */
-    private static List<String> getTranslationsList() throws IOException {
-        InputStream in = HelpFrame.class.getResourceAsStream("/docs/list");
-        if (in == null) {
-            throw new IOException("There is no 'docs/list' in classpath");
-        }
-        List<String> result = new ArrayList<String>();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(in,
-                "UTF-8"));
-        try {
-            String s;
-            while ((s = rd.readLine()) != null) {
-                result.add(s.trim());
+    private static Set<String> getTranslationsList() throws IOException {
+        Set<String> result = new TreeSet<String>();
+        for (Locale loc : Locale.getAvailableLocales()) {
+            String language = loc.getLanguage().toLowerCase();
+            String country = loc.getCountry().toUpperCase();
+
+            if (getDocVersion(language) != null) {
+                result.add(language);
             }
-        } finally {
-            rd.close();
+            String locName = language + '_' + country;
+            if (getDocVersion(locName) != null) {
+                result.add(locName);
+            }
         }
         return result;
     }
@@ -336,11 +365,11 @@ public class HelpFrame extends JFrame {
             String anch = file.substring(sharppos);
             m_filename_nosharp = file.substring(0, sharppos);
 
-            String fullname = "/docs/" + m_language + "/" + m_filename_nosharp;
+            String fullname = m_language + "/" + m_filename_nosharp;
 
             try {
-                fullname = fullname.replace("/./", "/").replace("//", "/");
-                URL page = HelpFrame.class.getResource(fullname);
+//                fullname = fullname.replace("/./", "/").replace("//", "/");
+                URL page = getHelpFileURL(fullname);
                 m_helpPane.setPage(page);
                 if (anch != null && anch.length() > 0) {
                     m_helpPane.scrollToReference(anch.substring(1));
@@ -435,21 +464,24 @@ public class HelpFrame extends JFrame {
     private static String getDocVersion(String locale) {
         // Check if there's a manual for the specified locale
         // (Assume yes if the index file is there)
-        String cp = "/docs/" + locale + "/version.properties";
+        String file = locale + "/version.properties";
 
         // Load the property file containing the doc version
         Properties prop = new Properties();
-        InputStream in = HelpFrame.class.getResourceAsStream(cp);
-        if (in == null) {
-            return null;
-        }
+        InputStream in = null;
         try {
+            in = getHelpFileStream(file);
+            if (in == null) {
+                return null;
+            }
             prop.load(in);
         } catch (IOException ex) {
             return null;
         } finally {
             try {
-                in.close();
+                if (in != null) {
+                    in.close();
+                }
             } catch (IOException ex) {
             }
         }

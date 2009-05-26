@@ -57,6 +57,7 @@ import org.omegat.core.data.stat.StatisticsInfo;
 import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
+import org.omegat.gui.help.HelpFrame;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.FileUtil;
@@ -364,7 +365,7 @@ public class EditorController implements IEditor {
                 || m_docSegList.length < displayedEntryIndex) {
             // there is no current entry
             return null;
-        }        
+        }
         return m_docSegList[displayedEntryIndex].ste;
     }
 
@@ -805,7 +806,7 @@ public class EditorController implements IEditor {
 
         if (!Core.getProject().isProjectLoaded())
             return;
-        
+
         if (m_docSegList == null) {
             // document didn't loaded yet
             return;
@@ -1082,14 +1083,13 @@ public class EditorController implements IEditor {
         introPaneTitle = OStrings.getString("DOCKING_INSTANT_START_TITLE");
         try {
             String language = detectInstantStartLanguage();
-            String filepath = "/docs/" + language + "/"
-                    + OConsts.HELP_INSTANT_START;
+            String filepath = language + "/" + OConsts.HELP_INSTANT_START;
             introPane = new JTextPane();
             introPane
                     .setComponentOrientation(EditorUtils.isRTL(language) ? ComponentOrientation.RIGHT_TO_LEFT
                             : ComponentOrientation.LEFT_TO_RIGHT);
             introPane.setEditable(false);
-            introPane.setPage(EditorController.class.getResource(filepath));
+            introPane.setPage(HelpFrame.getHelpFileURL(filepath));
         } catch (IOException e) {
             // editorScroller.setViewportView(editor);
         }
@@ -1118,16 +1118,23 @@ public class EditorController implements IEditor {
         String country = Locale.getDefault().getCountry().toUpperCase();
 
         // Check if there's a translation for the full locale (lang + country)
-        String isg = "/docs/" + language + "_" + country + "/"
+        String isg = language + "_" + country + "/"
                 + OConsts.HELP_INSTANT_START;
-        if (EditorController.class.getResource(isg) != null)
-            return language + "_" + country;
+        try {
+            if (HelpFrame.getHelpFileURL(isg) != null) {
+                return language + "_" + country;
+            }
+        } catch (IOException ex) {
+        }
 
         // Check if there's a translation for the language only
-        isg = "/docs/" + language + "/" + OConsts.HELP_INSTANT_START;
-        if (EditorController.class.getResource(isg) != null)
-            return language;
-
+        isg = language + "/" + OConsts.HELP_INSTANT_START;
+        try {
+            if (HelpFrame.getHelpFileURL(isg) != null) {
+                return language;
+            }
+        } catch (IOException ex) {
+        }
         // Default to English, if no translation exists
         return "en";
     }
