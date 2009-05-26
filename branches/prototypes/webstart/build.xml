@@ -146,7 +146,7 @@
     <target name="release">
         <mkdir dir="dist"/>
         <copy todir="dist">
-            <fileset dir="release" includes="*" excludes="readme.txt win32-specific l10n-project"/>
+            <fileset dir="release" includes="*" excludes="readme.txt *-specific l10n-project"/>
         </copy>
         <copy todir="dist"
               file="release/readme.txt">
