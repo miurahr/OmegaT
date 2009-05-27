@@ -368,7 +368,6 @@ public class HelpFrame extends JFrame {
             String fullname = m_language + "/" + m_filename_nosharp;
 
             try {
-//                fullname = fullname.replace("/./", "/").replace("//", "/");
                 URL page = getHelpFileURL(fullname);
                 m_helpPane.setPage(page);
                 if (anch != null && anch.length() > 0) {
@@ -464,9 +463,16 @@ public class HelpFrame extends JFrame {
     private static String getDocVersion(String locale) {
         // Check if there's a manual for the specified locale
         // (Assume yes if the index file is there)
-        String file = locale + "/version.properties";
+        try {
+            if (getHelpFileURL(locale + "/" + OConsts.HELP_HOME) == null) {
+                return null;
+            }
+        } catch (IOException ex) {
+            return null;
+        }
 
         // Load the property file containing the doc version
+        String file = locale + "/version.properties";
         Properties prop = new Properties();
         InputStream in = null;
         try {
