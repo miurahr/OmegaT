@@ -1083,13 +1083,13 @@ public class EditorController implements IEditor {
         introPaneTitle = OStrings.getString("DOCKING_INSTANT_START_TITLE");
         try {
             String language = detectInstantStartLanguage();
-            String filepath = language + "/" + OConsts.HELP_INSTANT_START;
             introPane = new JTextPane();
             introPane
                     .setComponentOrientation(EditorUtils.isRTL(language) ? ComponentOrientation.RIGHT_TO_LEFT
                             : ComponentOrientation.LEFT_TO_RIGHT);
             introPane.setEditable(false);
-            introPane.setPage(HelpFrame.getHelpFileURL(filepath));
+            introPane.setPage(HelpFrame.getHelpFileURL(language,
+                    OConsts.HELP_INSTANT_START));
         } catch (IOException e) {
             // editorScroller.setViewportView(editor);
         }
@@ -1118,22 +1118,14 @@ public class EditorController implements IEditor {
         String country = Locale.getDefault().getCountry().toUpperCase();
 
         // Check if there's a translation for the full locale (lang + country)
-        String isg = language + "_" + country + "/"
-                + OConsts.HELP_INSTANT_START;
-        try {
-            if (HelpFrame.getHelpFileURL(isg) != null) {
-                return language + "_" + country;
-            }
-        } catch (IOException ex) {
+        if (HelpFrame.getHelpFileURL(language + "_" + country,
+                OConsts.HELP_INSTANT_START) != null) {
+            return language + "_" + country;
         }
 
         // Check if there's a translation for the language only
-        isg = language + "/" + OConsts.HELP_INSTANT_START;
-        try {
-            if (HelpFrame.getHelpFileURL(isg) != null) {
-                return language;
-            }
-        } catch (IOException ex) {
+        if (HelpFrame.getHelpFileURL(language, OConsts.HELP_INSTANT_START) != null) {
+            return language;
         }
         // Default to English, if no translation exists
         return "en";

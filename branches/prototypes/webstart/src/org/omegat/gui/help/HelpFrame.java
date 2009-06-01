@@ -6,6 +6,7 @@
  Copyright (C) 2000-2006 Keith Godfrey, Maxym Mykhalchuk, 
                             Sandra Jean Chua, and Henry Pijffers
                2007 Didier Briel
+               2009 Alex Buloichik
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -31,21 +32,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Random;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -59,8 +54,6 @@ import javax.swing.KeyStroke;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.omegat.util.LFileCopy;
-import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -74,6 +67,7 @@ import org.openide.awt.Mnemonics;
  * @author Sandra Jean Chua - sachachua at users.sourceforge.net
  * @author Maxym Mykhalchuk
  * @author Henry Pijffers (henry.pijffers@saxnot.com)
+ * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class HelpFrame extends JFrame {
     /*
@@ -84,9 +78,11 @@ public class HelpFrame extends JFrame {
      */
     private static HelpFrame singleton;
 
+    private static final String ANCH_SETHOME = "#__sethome";
+
     /** Creates the Help Frame */
     private HelpFrame() {
-        m_historyList = new ArrayList<String>();
+        m_historyList = new ArrayList<URL>();
 
         // set window size & position
         initWindowLayout();
@@ -103,7 +99,7 @@ public class HelpFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 m_historyList.add(m_filename);
                 displayHome();
-                m_backButton.setEnabled(true);
+                m_backButton.setEnabled(!m_historyList.isEmpty());
             }
         });
 
@@ -111,12 +107,10 @@ public class HelpFrame extends JFrame {
         m_backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (m_historyList.size() > 0) {
-                    String s = m_historyList.remove(m_historyList.size() - 1);
-                    displayFile(s);
+                    URL u = m_historyList.remove(m_historyList.size() - 1);
+                    displayURL(u);
                 }
-                if (m_historyList.isEmpty()) {
-                    m_backButton.setEnabled(false);
-                }
+                m_backButton.setEnabled(!m_historyList.isEmpty());
             }
         });
         m_backButton.setEnabled(false);
@@ -152,8 +146,8 @@ public class HelpFrame extends JFrame {
             public void hyperlinkUpdate(HyperlinkEvent he) {
                 if (he.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     m_historyList.add(m_filename);
-                    displayFile(he.getDescription());
-                    m_backButton.setEnabled(true);
+                    gotoLink(he.getDescription());
+                    m_backButton.setEnabled(!m_historyList.isEmpty());
                 }
             }
         });
@@ -172,149 +166,43 @@ public class HelpFrame extends JFrame {
         return singleton;
     }
 
-    public static InputStream getHelpFileStream(String filename)
-            throws IOException {
+    public static URL getHelpFileURL(String lang, String filename) {
         // find in install dir
-        InputStream in = new FileInputStream(new File(StaticUtils.installDir()
-                + File.separator + OConsts.HELP_DIR, filename));
-        if (in == null) {
-            // find in classpath
-            in = HelpFrame.class.getResourceAsStream('/' + OConsts.HELP_DIR
-                    + '/' + filename);
-
+        String path;
+        if (lang != null) {
+            path = lang + File.separator + filename;
+        } else {
+            path = filename;
         }
-        return in;
-    }
-
-    public static URL getHelpFileURL(String filename) throws IOException {
-        // find in install dir
         File f = new File(StaticUtils.installDir() + File.separator
-                + OConsts.HELP_DIR, filename);
-        if (f.exists()) {
-            return f.toURI().toURL();
+                + OConsts.HELP_DIR + File.separator + path);
+        try {
+            if (f.exists()) {
+                return f.toURI().toURL();
+            }
+        } catch (IOException ex) {
         }
         // find in classpath
-        URL r = HelpFrame.class.getResource('/' + OConsts.HELP_DIR + '/'
-                + filename);
+        if (lang != null) {
+            path = lang + '/' + filename;
+        } else {
+            path = filename;
+        }
+        URL r = HelpFrame.class
+                .getResource('/' + OConsts.HELP_DIR + '/' + path);
 
         return r;
     }
 
     public void displayHome() {
-        // If not set, get the language (according to
-        // the system locale) to display the manual in
-        if (m_language == null) {
-            m_language = detectDocLanguage();
-
-            // If the manual is not available in the system locale language,
-            // show a language selection screen
-            if (m_language == null) {
-                displayLanguageIndex();
-                return;
-            }
+        if (m_home != null) {
+            // home was already displayed, we know URL
+            displayURL(m_home);
+        } else {
+            // Need to detect home URL.
+            String lang = detectInitialLanguage();
+            displayURL(getHelpFileURL(lang, OConsts.HELP_HOME));
         }
-
-        // Display the manual's index page
-        displayFile(OConsts.HELP_HOME);
-    }
-
-    public void displayLanguageIndex() {
-        try {
-            // Read template from docs/languageIndex.html
-            StringWriter templateText = new StringWriter(1024);
-
-            InputStream in = getHelpFileStream(OConsts.HELP_LANG_INDEX);
-            if (in == null) {
-                throw new IOException(
-                        "There is no 'docs/languageIndex.html' in install_dir or classpath");
-            }
-
-            BufferedReader rd = new BufferedReader(new InputStreamReader(in,
-                    OConsts.UTF8));
-            try {
-                LFileCopy.copy(rd, templateText);
-            } finally {
-                rd.close();
-            }
-
-            // Get available translations and their versions
-            StringBuffer translations = new StringBuffer(1024);
-            translations.append("<table>\n");
-
-            Set<String> subDirs = getTranslationsList();
-            for (String locale : subDirs) {
-                if (locale.length() == 0) {
-                    // skip empty lines
-                    continue;
-                }
-
-                // Get the locale name and translation version
-                String localeName = getLocaleName(locale);
-                String transVersion = getDocVersion(locale);
-
-                // Skip incomplete translations
-                if (transVersion == null)
-                    continue;
-
-                // Add some HTML for the translation
-                translations
-                        .append("<tr><td><a href=\"omegat:select-lang?lang=");
-                translations.append(locale);
-                translations.append("\">");
-                translations.append(localeName);
-                translations.append("</a></td><td>(");
-                if (transVersion.equals(OStrings.VERSION))
-                    translations.append("<font color=\"green\"><strong>");
-                else
-                    translations.append("<font color=\"red\">");
-                translations.append(transVersion);
-                if (transVersion.equals(OStrings.VERSION))
-                    translations.append("</strong>");
-                translations.append("</font>)</td></tr>\n");
-            }
-            translations.append("</table>");
-
-            // Insert the translations table in the right place
-            String index = templateText.toString().replaceFirst("\\$INDEX",
-                    translations.toString());
-
-            // Display the language selection page
-            // m_helpPane.setContentType("text/plain"); // workaround for Java
-            // (?)
-            // bug
-            // m_helpPane.setContentType("text/html"); // workaround for Java
-            // (?)
-            // bug
-            m_helpPane.setText(index);
-            m_helpPane.setCaretPosition(0);
-
-            // Mark the current page, so we can get back to it
-            m_filename = "omegat:lang-index";
-        } catch (IOException ex) {
-            Log.log(ex);
-        }
-    }
-
-    /**
-     * Load translations list from docs/list file.
-     * 
-     * @return translations list
-     */
-    private static Set<String> getTranslationsList() throws IOException {
-        Set<String> result = new TreeSet<String>();
-        for (Locale loc : Locale.getAvailableLocales()) {
-            String language = loc.getLanguage().toLowerCase();
-            String country = loc.getCountry().toUpperCase();
-
-            if (getDocVersion(language) != null) {
-                result.add(language);
-            }
-            String locName = language + '_' + country;
-            if (getDocVersion(locName) != null) {
-                result.add(locName);
-            }
-        }
-        return result;
     }
 
     /**
@@ -333,18 +221,15 @@ public class HelpFrame extends JFrame {
      * @param file
      *            the file to display
      */
-    private void displayFile(String file) {
-        // workaround for Java (?) bug
-        // m_helpPane.setContentType("text/plain");
-        // m_helpPane.setContentType("text/html");
-
-        if (file.startsWith("http://")) {
-            String link = "<b>" + file + "</b>";
+    private void gotoLink(String link) {
+        if (link.startsWith("http://")) {
+            String txt = "<b>" + link + "</b>";
             StringBuffer buf = new StringBuffer();
             buf.append("<html><body><p>");
-            buf.append(StaticUtils
-                    .format(OStrings.getString("HF_ERROR_EXTLINK_TITLE"),
-                            new Object[] { link }));
+            buf
+                    .append(StaticUtils.format(OStrings
+                            .getString("HF_ERROR_EXTLINK_TITLE"),
+                            new Object[] { txt }));
             buf.append("<p>");
             buf.append(StaticUtils.format(OStrings
                     .getString("HF_ERROR_EXTLINK_MSG"),
@@ -352,63 +237,39 @@ public class HelpFrame extends JFrame {
             buf.append("</body></html>");
 
             m_helpPane.setText(buf.toString());
-        } else if (file.startsWith("omegat:")) {
-            handleCommand(file);
         } else {
-            if (file.startsWith("#"))
-                file = m_filename_nosharp + file;
-
-            int sharppos = file.indexOf('#');
-            if (sharppos < 0) {
-                sharppos = file.length();
-            }
-            String anch = file.substring(sharppos);
-            m_filename_nosharp = file.substring(0, sharppos);
-
-            String fullname = m_language + "/" + m_filename_nosharp;
-
             try {
-                URL page = getHelpFileURL(fullname);
-                m_helpPane.setPage(page);
-                if (anch != null && anch.length() > 0) {
-                    m_helpPane.scrollToReference(anch.substring(1));
-                } else {
-                    m_helpPane.setCaretPosition(0);
+                URL newPage = new URL(m_filename, link);
+                if (link.endsWith(ANCH_SETHOME)) {
+                    String s = newPage.toExternalForm();
+                    s = s.substring(0, s.length() - ANCH_SETHOME.length());
+                    newPage = new URL(s);
+                    m_home = newPage;
                 }
-                m_filename = file;
+                displayURL(newPage);
             } catch (IOException e) {
                 String s = errorHaiku() + "<p>&nbsp;<p>"
-                        + OStrings.getString("HF_CANT_FIND_HELP") + fullname;
+                        + OStrings.getString("HF_CANT_FIND_HELP") + link;
 
                 m_helpPane.setText(s);
             }
         }
     }
 
-    private void handleCommand(String command) {
-        // Check if the command is really a command
-        if (!command.startsWith("omegat:"))
-            throw new IllegalArgumentException(
-                    "Command must start with 'omegat:'");
+    /**
+     * Display url in the help pane.
+     * 
+     * @param url
+     */
+    private void displayURL(URL url) {
+        try {
+            m_helpPane.setPage(url);
+            m_filename = url;
+        } catch (IOException e) {
+            String s = errorHaiku() + "<p>&nbsp;<p>"
+                    + OStrings.getString("HF_CANT_FIND_HELP") + url;
 
-        // Extract the actual command string
-        command = command.substring(7, command.length());
-
-        // Handle the command
-        if (command.startsWith("select-lang")) { // Language selection command
-            // Get the language
-            int langPos = command.indexOf("lang=");
-            m_language = command.substring(langPos + 5, command.length());
-
-            // Display the user manual index
-            displayHome();
-        } else if (command.startsWith("lang-index")) { // Display language index
-            // command
-            // Display the language index page
-            displayLanguageIndex();
-        } else {
-            // We don't support the given command
-            throw new IllegalArgumentException("Unrecognized command");
+            m_helpPane.setText(s);
         }
     }
 
@@ -431,9 +292,12 @@ public class HelpFrame extends JFrame {
     /**
      * Detects the documentation language to use.
      * 
+     * If the latest manual is not available in the system locale language, it
+     * returns null, i.e. show a language selection screen.
+     * 
      * @author Henry Pijffers (henry.pijffers@saxnot.com)
      */
-    private static String detectDocLanguage() {
+    private static String detectInitialLanguage() {
         // Get the system locale (language and country)
         String language = Locale.getDefault().getLanguage().toLowerCase();
         String country = Locale.getDefault().getCountry().toUpperCase();
@@ -463,20 +327,17 @@ public class HelpFrame extends JFrame {
     private static String getDocVersion(String locale) {
         // Check if there's a manual for the specified locale
         // (Assume yes if the index file is there)
-        try {
-            if (getHelpFileURL(locale + "/" + OConsts.HELP_HOME) == null) {
-                return null;
-            }
-        } catch (IOException ex) {
+
+        if (getHelpFileURL(locale, OConsts.HELP_HOME) == null) {
             return null;
         }
 
         // Load the property file containing the doc version
-        String file = locale + "/version.properties";
         Properties prop = new Properties();
         InputStream in = null;
         try {
-            in = getHelpFileStream(file);
+            URL u = getHelpFileURL(locale, "version.properties");
+            in = u.openStream();
             if (in == null) {
                 return null;
             }
@@ -495,27 +356,6 @@ public class HelpFrame extends JFrame {
         // Get the doc version and return it
         // (null if the version entry is not present)
         return prop.getProperty("version");
-    }
-
-    /**
-     * Returns the full locale name for a locale tag.
-     * 
-     * @see Locale.getDisplayName(Locale inLocale)
-     * @author Henry Pijffers (henry.pijffers@saxnot.com)
-     * @author Didier Briel
-     */
-    private String getLocaleName(String localeTag) {
-        String language = localeTag.substring(0, 2);
-        String country = localeTag.length() >= 5 ? localeTag.substring(3, 5)
-                : "";
-        Locale locale = new Locale(language, country);
-        // The following test is necessary to fix
-        // [1748552] sh language is not expanded in the manual
-        // since Java does not display correctly the "sh" langage name
-        if (language.equalsIgnoreCase("sh"))
-            return "srpskohrvatski";
-        else
-            return locale.getDisplayName(locale);
     }
 
     /**
@@ -565,20 +405,14 @@ public class HelpFrame extends JFrame {
     private JButton m_closeButton;
     private JButton m_homeButton;
     private JButton m_backButton;
-    private List<String> m_historyList;
-
-    /**
-     * Stores the information about the currently opened HTML file, without
-     * trailing #...
-     */
-    private String m_filename_nosharp;
+    private List<URL> m_historyList;
 
     /**
      * Stores the full information about the currently opened HTML file,
      * including trailing #...
      */
-    private String m_filename = "";
+    private URL m_filename;
 
-    /** The language of the help files, English by default */
-    private String m_language;
+    /** Page which should be displayed as home. */
+    private URL m_home;
 }

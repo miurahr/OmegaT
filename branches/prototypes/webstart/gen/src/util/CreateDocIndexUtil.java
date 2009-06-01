@@ -1,4 +1,4 @@
-package svn;
+package util;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -20,6 +20,9 @@ import org.omegat.util.OStrings;
 
 public class CreateDocIndexUtil {
 
+    protected static final String MARK_BEG = "<table>";
+    protected static final String MARK_END = "</table>";
+
     public static void main(String[] args) throws Exception {
         File[] ls = new File("docs").listFiles(new FileFilter() {
             public boolean accept(File f) {
@@ -33,11 +36,17 @@ public class CreateDocIndexUtil {
         });
 
         String template = readTemplate();
+        int mb = template.indexOf(MARK_BEG);
+        int me = template.indexOf(MARK_END) + MARK_END.length();
+        if (mb < 0 || me < 0) {
+            throw new Exception(
+                    "Error creating docs/index.html: there are no marks");
+        }
         StringBuilder text = new StringBuilder();
         text.append("<table>\n");
+        int count = 0;
         for (File f : ls) {
             String locale = f.getName();
-            System.out.println(locale);
 
             String localeName = getLocaleName(locale);
             String transVersion = getDocVersion(locale);
@@ -47,8 +56,8 @@ public class CreateDocIndexUtil {
                 continue;
 
             // Add some HTML for the translation
-            text.append("<tr><td><a href=\"omegat:select-lang?lang=");
-            text.append(locale);
+            text.append("<tr><td><a href=\"").append(locale).append(
+                    "/index.html#__sethome");
             text.append("\">");
             text.append(localeName);
             text.append("</a></td><td>(");
@@ -60,14 +69,16 @@ public class CreateDocIndexUtil {
             if (transVersion.equals(OStrings.VERSION))
                 text.append("</strong>");
             text.append("</font>)</td></tr>\n");
+            count++;
         }
         text.append("</table>");
-        writeOut(template.replace("$INDEX", text));
+        System.out.println("Add " + count + " locales to docs/index.html");
+        writeOut(template.substring(0, mb) + text + template.substring(me));
     }
 
     protected static String readTemplate() throws IOException {
-        Reader rd = new InputStreamReader(new FileInputStream(
-                "docs/languageIndex.html"), "UTF-8");
+        Reader rd = new InputStreamReader(
+                new FileInputStream("docs/index.html"), "UTF-8");
         StringWriter wr = new StringWriter();
         LFileCopy.copy(rd, wr);
         return wr.toString();
@@ -75,16 +86,8 @@ public class CreateDocIndexUtil {
 
     protected static void writeOut(String text) throws IOException {
         Writer wr = new OutputStreamWriter(new FileOutputStream(
-                "docs/index-internal.html"), "UTF-8");
-        wr.write(text);
-        wr.flush();
-        wr.close();
-
-        String t = text.replace("omegat:select-lang?lang=", "PREF");
-        t = t.replaceAll("PREF([a-zA-Z_]+)", "$1/index.html");
-        wr = new OutputStreamWriter(new FileOutputStream(
                 "docs/index.html"), "UTF-8");
-        wr.write(t);
+        wr.write(text);
         wr.flush();
         wr.close();
     }
