@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------
 1.8.1 update 6 vs. 1.8.1 update 5
 
-   2 Enhancements
+   3 Enhancements
    0 Bugfix
 
 ----------------------------------------------------------------------
@@ -13,6 +13,7 @@
   
   - The Linux package (with JRE) is now compressed with bz2 instead of gz
   - German localisation updated to 1.8 (UI, Instant Start, Readme, backported from 2.0.3)
+  - Catalan localisation updated to 1.8 (UI, Readme, Instant Start, Documentation)
 
 ----------------------------------------------------------------------
  OmegaT 1.8.1 update 5 Changes
