@@ -169,8 +169,14 @@ public class ProjectFileStorage
                     try // Under Windows and Java 1.4, there is an exception if
                     {   // using getCanonicalPath on a non-existent drive letter
                         // [1875331] Relative paths not working under Windows/Java 1.4
+                        String platformRelativePath =
+                                relativePath.replace('/', File.separatorChar);
+                        // If a plaform-dependent form of relativePath is not
+                        // used, startWith will always fail under Windows,
+                        // because Windows uses C:\, while the path is stored as
+                        // C:/ in omegat.project
                         startsWithRoot = 
-                                relativePath.startsWith(roots[i].getCanonicalPath());
+                                platformRelativePath.startsWith(roots[i].getCanonicalPath());
                     }                    
                     catch (IOException e)
                     {
