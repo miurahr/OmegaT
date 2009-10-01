@@ -1,0 +1,124 @@
+<html>
+<head>
+	<link rel="stylesheet" href="./OmegaT.css" type="text/css">
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>Keresési lehetőségek - OmegaT 1.7.3 felhasználói kézikönyv</title>
+</head>
+<body>
+
+	<h1>Keresési lehetőségek</h1>
+
+	<ul>
+		<li><a href="#searchwindow">Keresőablak</a>
+			<ul>
+				<li><a href="#calling">Keresés indítása</a></li>
+				<li><a href="#location">Keresés helye</a></li>
+			</ul>
+		</li>
+		<li><a href="#searchmethods">Keresési módszerek</a></li>
+		<li><a href="#usingwildcards">Helyettesítő karakterek használata</a></li>
+		<li><a href="#usingregularexpressions">Keresés reguláris kifejezésekkel</a></li>
+		<li><a href="#display">A keresés eredményének megjelenítése</a></li>
+	</ul>
+
+
+
+<hr>
+
+	<a name="searchwindow" id="searchwindow"></a>
+	<h1>Keresőablak</h1>
+
+	<a name="calling" id="calling"></a>
+	<h2>Keresés indítása</h2>
+	
+	<p>Az OmegaT kiterjedt keresési lehetőségeket biztosít. A Szöveg keresése ablakot hívja elő a <code>Ctrl+F</code>-fel és a "Keresendő" mezőbe írja be a keresendő szót vagy kifejezést.</p>
+	
+	<p>Másik megoldásként jelölje ki a szerkesztő mezőben (az éppen fordítandó szöveg célnyelvi mezőjében) a keresendő szót vagy kifejezést, majd nyomja meg a <code>Ctrl+F</code>-et. A kijelölt szó vagy kifejezés ekkor automatikusan belekerül a "Keresendő" mezőbe.</p>
+
+	<p>A <strong>Szöveg keresése</strong> ablak minden egyes előhívásával új keresést indít el. Ha elfelejti bezárni őket, rövid idő alatt egy sor nyitott keresőablaka lesz.</p>
+	
+	<a name="location" id="location"></a>
+	<h2>Keresés helye</h2>
+	
+	<p>A keresés vonatkozhat mind a forrás-, mind a célnyelvre. Kereshet</p>
+
+	<ul>
+		<li>csak a projekten belül (alapbeállítás)</li>
+		<li>a projektben és a /tm/ mappában a referenciaként használt fordítási memóriákban (bejelölendő a <i>Keresés fordítási memóriákban</i>)</li>
+		<li>egyetlen állományban vagy több állományt tartalmazó könyvtárban (bejelölendő a <i>Keresés állományokban</i>)</li>
+	</ul>
+
+	<p>Ez utóbbi esetben az OmegaT csak azokban a fájlokban keres, amelyeket el tud olvasni (lásd: <a href="filesToTranslate.html">Támogatott állományformátumok</a>).</p>
+
+
+
+<hr>
+
+	<a name="searchmethods" id="searchmethods"></a>
+	<h1>Keresési módszerek</h1>
+
+	<p>A választógombokkal válassza ki a megfelelő módszert. Kétféle keresési módszer közül választhat:</p>
+
+	<dl>
+		<dt><strong>pontos egyezés</strong></dt><dd>A megadott betűsort tartalmazó szövegrészeket keresi ki.</dd>
+		<dt><strong>kulcsszavas keresés</strong></dt><dd>A megadott összes kulcsszót tartalmazó szövegrészeket keresi ki azok tetszőleges sorrendjében.</dd>
+	</dl>
+
+	<p>Mindkét módszer esetén az alábbi három lehetőség közül választhat:</p>
+
+	<dl>
+		<dt><strong>betűérzékeny</strong></dt><dd>Bejelölésekor a keresés pontosan a megadott szövegre irányul; ellenkező esetben a kis- és nagybetűk között nem tesz különbséget.</dd>
+		<dt><strong>reguláris kifejezéses</strong></dt><dd>Bejelölésekor a keresendő szöveget reguláris kifejezésnek tekinti (kulcsszavas keresés esetén többszörös kifejezésként kezeli).</dd>
+		<dt><strong>keresés fordítási memóriákban</strong></dt><dd>Bejelölésekor a keresés minden fordítási memóriára kiterjed.</dd>
+	</dl>
+
+	<p><strong>Pontos egyezéssel</strong> keres egy kifejezésre, azaz több egymás utáni szóra kereshet, melyeket viszont csak akkor talál meg a program, ha pontosan ugyanabban a sorrendben következnek. A pontos egyezésre keresés hasonlít a "pontos kifejezés" keresésére olyan internetes keresőgépek esetén, mint a Google.</p>
+
+	<p>A <strong>kulcsszavas keresés</strong> kiválasztása után tetszőleges számú és elrendezésű, egymástól szóközökkel elválasztott szavakat adhat meg.  Az OmegaT kijelzi az összes olyan szövegrészt, amelyben ezek a szavak mind előfordulnak. A kulcsszavas keresés hasonlít az internetes keresőkben, például a Google esetén alkalmazott "mindegyik szóra keresés"-re (logikai ÉS).</p>
+
+
+
+<hr>
+
+	<a name="usingwildcards" id="usingwildcards"></a>
+	<h1>Helyettesítő karakterek használata</h1>
+
+	<p>Mind pontos egyezéses, mind kulcsszavas keresés esetén használhatók a '<code>*</code>' és '<code>?</code>' helyettesítő karakterek. A helyettesítő karakterek használatánál ügyeljen arra, hogy a <strong>reguláris kifejezések</strong> ne legyen bejelölve, ellenkező esetben ezeket a karaktereket a rendszer speciális, reguláris kifejezésekben használt karakterekként fogja értelmezni.</p>
+	
+	<p>A '<strong>*</strong>' karakter nulla vagy több előfordulásnak felel meg (Pl. a '<strong>h*t</strong>' megtalálja a '<strong>hat</strong>', '<strong>hét</strong>' mellett a '<strong>húrt</strong>' alakot is.</p>
+	
+	<p>A '<strong>?</strong>' helyettesítő karakter pontosan egy karakter helyettesítésére használható (pl. a '<strong>h?t</strong>' illeszthető mind a '<strong>hat</strong>', mind a '<strong>hét</strong>' szóra, de a '<strong>húst</strong>' vagy a '<strong>hatot</strong>') alakokra nem.</p>
+
+	<p>Ha olyan szövegdarabokban kíván keresni, amelyek a <strong>*</strong> vagy a <strong>?</strong> karaktereket tartalmazzák, be kell kapcsolnia a reguláris kifejezésekkel végzett keresést, és visszaperjelt ('\') kell elébük írnia, azaz: 'x\*y', ha a keresett kifejezés az 'x*y', és 'x\?<code>y</code>' , ha a '<code>x?y</code>' betűsorra keres.</p>
+
+
+
+<hr>
+
+	<a name="usingregularexpressions" id="usingregularexpressions"></a>
+	<h1>Keresés reguláris kifejezésekkel</h1>
+
+	<p>A reguláris kifejezéssel hatékony keresést hajthat végre. A helyettesítő karakteres kereséshez képest sokkal rugalmasabb lehetőséget biztosít.</p>
+	
+	<p>A keresésekben használatos reguláris kifejezések megegyeznek a Java által támogatottakkal. Ezek rövid összegzését megtalálja a <a href="regexp.html">Reguláris kifejezések szerkezete</a> függelékben.</p>
+	
+	<p>Ha további információkra van szüksége, ezeket megtalálja itt: <a href= "http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html"> http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html</a>.</p>
+		
+	<p>Egyszerű oktatóprogramot számos helyen találhat a neten (pl. <a href="http://www.regular-expressions.info/quickstart.html">http://www.regular-expressions.info/quickstart.html</a>.)</p>
+	
+<hr>
+
+	<a name="display" id="display"></a>
+	<h1>A keresés eredményének megjelenítése</h1>
+	
+	<p>Ha a keresendő szöveg beírása után a keresőgombra kattint, eredményként ezen a területen megjelenik az összes olyan szövegdarab, amely a projektben a megadott szövegrészletet tartalmazza. Az OmegaT minden azonos szövegdarabot egy egységként kezel és csak az első egyedi szövegrészt jeleníti meg.</p>
+	
+	<p>A szövegrészek a projekten belüli előfordulásuk sorrendjében jelennek meg. A lefordított szövegrészek felül az eredeti szöveggel, alatta a fordítással jelennek meg, a még fordításra váró szövegek esetén pedig csak az eredeti szöveg látszik.</p>
+
+	<p>Ha a szövegrészre kattint, az módosításra a szerkesztőbe kerül. Ezután visszatérhet a keresőablakba és módosíthatja a következő szövegrészt. Az ilyen minta hasznos lehet terminológiai frissítések elvégzéséhez.</p>
+
+	<hr>
+	
+	<p><a href="legalNotices.html">Jogi tudnivalók</a></p>
+</body>
+</html>
