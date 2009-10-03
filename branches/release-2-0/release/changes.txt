@@ -4,7 +4,7 @@
   1 Enhancement
   0 Bugfix
 ----------------------------------------------------------------------
-2.0.5 update vs. 2.0.4 update 1
+2.0.5 vs. 2.0.4 update 1
 
   Other enhancements:
   - Revised manual
