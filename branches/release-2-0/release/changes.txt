@@ -13,10 +13,11 @@
 
   - Hunspell for Linux 64-bit updated to 1.2.8
 
+  - Images are included in the minimal localisation pack 
+
   Bug Fixes:
 
   - Various corrections in the manual
-  - Images are included in the minimal localisation pack 
 
   - sh tutorial in English
   http://sourceforge.net/support/tracker.php?aid=1895401
