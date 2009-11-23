@@ -7,6 +7,7 @@
 2.0.5 update 1 vs. 2.0.5
 
   Other enhancements:
+
   - Turkish localisation updated to 2.0.5 (UI, Readme, Instant Start)
   
   - Change pseudo-translated TMX parameter and documentation
