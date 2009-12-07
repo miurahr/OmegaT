@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------
  OmegaT 2.0.5 update 1
 ----------------------------------------------------------------------
-  4 Enhancements
+  5 Enhancements
   2 Bugfixes
 ----------------------------------------------------------------------
 2.0.5 update 1 vs. 2.0.5
@@ -9,6 +9,7 @@
   Other enhancements:
 
   - Turkish localisation updated to 2.0.5 (UI, Readme, Instant Start)
+  - Slovenian localisation updated to 2.0.5 (documentation)
   
   - Change pseudo-translated TMX parameter and documentation
 
