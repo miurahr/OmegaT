@@ -2,7 +2,7 @@
  OmegaT 2.0.5 update 1
 ----------------------------------------------------------------------
   5 Enhancements
-  2 Bugfixes
+  3 Bugfixes
 ----------------------------------------------------------------------
 2.0.5 update 1 vs. 2.0.5
 
@@ -23,6 +23,8 @@
 
   - sh tutorial in English
   http://sourceforge.net/support/tracker.php?aid=1895401
+
+  - The /gen folder was not included in the source package
 
 ----------------------------------------------------------------------
  OmegaT 2.0.5
