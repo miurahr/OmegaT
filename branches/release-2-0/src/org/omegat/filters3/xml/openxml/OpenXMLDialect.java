@@ -75,6 +75,7 @@ public class OpenXMLDialect extends DefaultXMLDialect
             "p:attrName",
             // Word
             "wp:align",
+            "w:drawing",
         });        
     }
 }
