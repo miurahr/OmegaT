@@ -2,7 +2,7 @@
  OmegaT 2.0.5 update 1
 ----------------------------------------------------------------------
   7 Enhancements
-  3 Bugfixes
+  4 Bugfixes
 ----------------------------------------------------------------------
 2.0.5 update 1 vs. 2.0.5
 
@@ -32,6 +32,8 @@
   http://sourceforge.net/support/tracker.php?aid=1895401
 
   - The /gen folder was not included in the source package
+
+  - Correct accelerators for Export Selection and Switch Case
 
 ----------------------------------------------------------------------
  OmegaT 2.0.5
