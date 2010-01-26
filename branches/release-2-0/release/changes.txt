@@ -2,7 +2,7 @@
  OmegaT 2.0.5 update 1
 ----------------------------------------------------------------------
   7 Enhancements
-  5 Bugfixes
+  6 Bugfixes
 ----------------------------------------------------------------------
 2.0.5 update 1 vs. 2.0.5
 
@@ -37,6 +37,9 @@
 
   - The Linux "with JRE" script wasn't working when the path contained
 a space
+
+  - Spanish exception rule error
+  http://sourceforge.net/support/tracker.php?aid=2939781
 
 ----------------------------------------------------------------------
  OmegaT 2.0.5
