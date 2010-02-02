@@ -1,4 +1,4 @@
-Tento překlad vypracoval [Josef Molnár], copyright© [2009].
+﻿Tento překlad vypracoval [Josef Molnár], copyright© [2009].
 
 ==============================================================================
   OmegaT 2.0, soubor Read Me / Čti mě
@@ -7,7 +7,6 @@ Tento překlad vypracoval [Josef Molnár], copyright© [2009].
   2.  Co je OmegaT?
   3.  Instalace programu OmegaT
   4.  Podpora projektu OmegaT
-5.
   5.  Máte s aplikací OmegaT problémy? Potřebujete pomoc?
   6.  Podrobnosti k vydání
 
