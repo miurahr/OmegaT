@@ -3640,15 +3640,15 @@
 
    <!-- Default language-related segmentation rules -->
    <languagerule languagerulename="Default">
-    <rule break="yes">
-     <!--numbered headers break rule -->
-     <beforebreak>^\s*[\p{Nd}\.]+\s*</beforebreak>
-     <afterbreak>.</afterbreak>
-    </rule>
     <rule break="no">
      <!-- ... exception -->
      <beforebreak>\.\.\.</beforebreak>
      <afterbreak>\s+\P{Lu}</afterbreak>
+    </rule>
+    <rule break="yes">
+     <!--numbered headers break rule -->
+     <beforebreak>^\s*[\p{Nd}\.]+\s*</beforebreak>
+     <afterbreak>.</afterbreak>
     </rule>
     <rule break="yes">
      <!-- .?! break rule -->
