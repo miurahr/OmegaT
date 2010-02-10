@@ -1,4 +1,16 @@
 ----------------------------------------------------------------------
+ OmegaT 2.0.5 update 3
+  0 Enhancement
+  1 Bugfix
+----------------------------------------------------------------------
+2.0.5 update 3 vs. 2.0.5 update 2
+
+  Bug fixes:
+
+  - References to Java 1.4 removed in OmegaT.l4J.ini
+  - Various corrections in the manual
+
+----------------------------------------------------------------------
  OmegaT 2.0.5 update 2
   7 Enhancements
   0 Bugfix
