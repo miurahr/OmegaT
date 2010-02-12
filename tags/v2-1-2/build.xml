@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/**************************************************************************
+ OmegaT - Java based Computer Assisted Translation (CAT) tool
+ Copyright (C) 2000-2007 Keith Godfrey and Maxym Mykhalchuk
+               Home page: http://www.omegat.org/omegat/omegat.html
+               Support center: http://groups.yahoo.com/group/OmegaT/
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+**************************************************************************/
+-->
+
+<project name="OmegaT" default="all" basedir=".">
+    <description>Builds, tests, and runs the project OmegaT.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <import file="nbproject/profiler-build-impl.xml"/>
+
+    <target name="-pre-init">
+        <property name="iscc.exe" value="iscc.exe"/>
+        <property file="src/org/omegat/Version.properties"/>
+        <filter filtersfile="src/org/omegat/Version.properties"/>
+        <copy file="manifest-template.mf" tofile="manifest.mf" filtering="true"/>
+        <condition property="updatenr"
+                   value="0${update}"
+                   else="${update}">
+           <length string="${update}"
+                   length="1"/>
+        </condition>
+        <condition property="distversion"
+                   value="${version}"
+                   else="${version}_${updatenr}">
+           <equals arg1="${updatenr}" arg2="00"/>
+        </condition>
+    </target>
+
+    <target name="-post-clean">
+        <delete>
+            <fileset dir="src" includes="**/*.class"/>
+        </delete>
+        <delete file="omegat.prefs"/>
+        <delete file="filters.conf"/>
+        <delete file="segmentation.conf"/>
+        <delete file="log.txt"/>
+        <delete file="manifest.mf"/>
+        <delete dir="dist2"/>
+        <ant antfile="addons/nbedge-filter/build.xml" target="clean" inheritall="false" />
+        <ant antfile="addons/properties-import/build.xml" target="clean" inheritall="false" />
+        <ant antfile="addons/sentseg-tmx/build.xml" target="clean" inheritall="false" />
+    </target>
+    
+    <target name="-post-jar">
+        <delete file="${dist.dir}/README.TXT"/>
+        <!-- copy the native libraries to the distribution directory -->
+        <copy todir="dist/native">
+            <fileset dir="native"/>
+        </copy>
+    </target>
+    
+    <!-- Creates a zip with two localization packs -->
+    <target name="l10n-pack" depends="init" description="Build a distribution of localizable files">
+        <mkdir dir="dist2"/>
+        <property name="l10n.project.dir" value="release/l10n-project"/>
+        <property name="l10n.dir" value="${build.dir}/l10n"/>
+        <mkdir dir="${l10n.dir}"/>
+        
+        <!-- minimal -->
+        <property name="l10n.min" value="OmegaT_${distversion}_L10N_Minimal"/>
+        <property name="l10n.min.dir" value="${l10n.dir}/${l10n.min}"/>
+        <mkdir dir="${l10n.min.dir}"/>
+        <copy todir="${l10n.min.dir}">
+            <fileset dir="${l10n.project.dir}"/>
+        </copy>
+        <copy todir="${l10n.min.dir}/source">
+            <fileset dir="." 
+                    includes="docs/en/instantStartGuideNoTOC.html 
+                    docs/en/images/NewProject.png
+                    docs/en/images/tagged_segment.png
+                    docs/en/images/tagged_segment_target.png
+                    src/**/Bundle.properties"/>
+        </copy>
+        <copy file="release/readme.txt"
+              tofile="${l10n.min.dir}/source/readme.utf8"
+              encoding="UTF-8"
+              outputencoding="UTF-8">
+            <filterset begintoken="@@" endtoken="@@">
+                <filter token="TRANSLATION_NOTICE"
+                        value="This translation is the work of [insert your name], copyright© [insert year]."/>
+            </filterset>
+        </copy>
+        <zip destfile="dist2/${l10n.min}.zip" 
+                basedir="${l10n.dir}" includes="${l10n.min}/**" />
+               
+        <!-- full -->
+        <property name="l10n.max" value="OmegaT_${distversion}_L10N_Full"/>
+        <property name="l10n.max.dir" value="${l10n.dir}/${l10n.max}"/>
+        <mkdir dir="${l10n.max.dir}"/>
+        <copy todir="${l10n.max.dir}">
+            <fileset dir="${l10n.project.dir}"/>
+        </copy>
+        <copy todir="${l10n.max.dir}/source"> <!-- Copy all files except legalNotices.html -->
+            <fileset dir="."
+                    includes="docs/en/** src/**/Bundle.properties"
+                    excludes="docs/en/legalNotices.html"/>
+        </copy>
+        <copy file="release/readme.txt"
+              tofile="${l10n.max.dir}/source/readme.utf8"
+              encoding="UTF-8"
+              outputencoding="UTF-8">
+            <filterset begintoken="@@" endtoken="@@">
+                <filter token="TRANSLATION_NOTICE"
+                        value="This translation is the work of [insert your name], copyright© [insert year]."/>
+            </filterset>
+        </copy>
+        <copy todir="${l10n.max.dir}/source"
+              encoding="UTF-8"
+              outputencoding="UTF-8">
+            <fileset dir="." 
+                     includes="docs/en/legalNotices.html"/>
+            <filterset begintoken="@@" endtoken="@@">
+                <filter token="TRANSLATION_NOTICE"
+                        value="&lt;p&gt;This translation is the work of [insert your name], copyright© [insert year].&lt;/p&gt;"/>
+            </filterset>
+        </copy>
+        <zip destfile="dist2/${l10n.max}.zip" 
+                basedir="${l10n.dir}" includes="${l10n.max}/**" />
+    </target>
+    
+    <!-- Builds a source distribution -->    
+    <target name="src" depends="init" description="Build source distribution">
+        <mkdir dir="dist2"/>
+        <zip destfile="dist2/OmegaT_${distversion}_Source.zip" basedir="." 
+                includes="addons/** docs/** images/** lib/** nbproject/** lib-mnemonics/** release/** src/** test/** gen/** manifest-template.mf build.xml native/**"
+                excludes="**/nbproject/private/** **/build/** **/dist/**" />
+    </target>
+
+    <!-- Copies all files to dist -->
+    <target name="release" depends="docindexgen">
+        <mkdir dir="dist"/>
+        <copy todir="dist">
+            <fileset dir="release" includes="*" excludes="readme.txt *-specific l10n-project"/>
+        </copy>
+        <copy todir="dist"
+              file="release/readme.txt">
+            <!-- Remove TRANSLATION_NOTICE placeholder (from English readme) -->
+            <filterset begintoken="@@" endtoken="@@">
+                <filter token="TRANSLATION_NOTICE" value=""/>
+            </filterset>
+        </copy>
+        <mkdir dir="dist/docs"/>
+        <copy todir="dist/docs"> <!-- copy all files except English legalNotices.html -->
+            <fileset dir="docs" excludes="en/legalNotices.html"/>
+        </copy>
+        <copy todir="dist/docs"> <!-- copy just English legalNotices.html -->
+            <fileset dir="docs" includes="en/legalNotices.html"/>
+            <!-- Remove TRANSLATION_NOTICE placeholder (from English manual) -->
+            <filterset begintoken="@@" endtoken="@@">
+                <filter token="TRANSLATION_NOTICE" value=""/>
+            </filterset>
+        </copy>
+        <mkdir dir="dist/images"/>
+        <copy todir="dist/images">
+            <fileset dir="images"/>
+        </copy>
+        <mkdir dir="dist/lib"/>
+        <copy todir="dist/lib">
+            <fileset dir="lib" excludes="sources/**"/>
+        </copy>
+    </target>
+   
+    <!-- Builds a ZIP distribution -->    
+    <target name="zip" description="Build Zip distro" depends="jar,release">
+        <mkdir dir="dist2"/>
+        <zip destfile="dist2/OmegaT_${distversion}.zip">
+            <zipfileset dir="dist" excludes="OmegaT OmegaT-JRE OmegaT.exe OmegaT.iss OmegaT-JRE.iss OmegaT.l4J.ini l10n-project"/>
+            <zipfileset dir="dist" includes="OmegaT" filemode="755"/>
+        </zip>
+    </target>
+
+    <!-- Builds a Linux (tar, bz2) distribution -->    
+   <target name="linux" description="Build Linux distro" depends="jar,release, check-jre-linux" if="jre-linux.exists">
+        <mkdir dir="dist2"/>
+        <mkdir dir="dist2/linux"/>
+        <copy todir="dist2/linux/OmegaT">
+            <fileset dir="dist" excludes="OmegaT OmegaT-JRE OmegaT.exe OmegaT.bat OmegaT.iss OmegaT-JRE.iss OmegaT.l4J.ini l10n-project"/>           
+        </copy>
+        <copy file="dist/OmegaT-JRE" tofile="dist2/linux/OmegaT/OmegaT"/>
+        <copy todir="dist2/linux/OmegaT/jre">
+            <fileset dir="../jre-linux"/>
+        </copy>
+        <tar destfile="dist2/OmegaT_${distversion}_Linux.tar">
+            <tarfileset dir="dist2/linux" excludes="OmegaT/OmegaT OmegaT/jre/bin/java"/>           
+            <tarfileset dir="dist2/linux" includes="OmegaT/OmegaT OmegaT/jre/bin/java" filemode="755"/>
+        </tar>
+        <bzip2 zipfile="dist2/OmegaT_${distversion}_Linux.tar.bz2" src="dist2/OmegaT_${distversion}_Linux.tar"/>
+   </target>
+
+    <!-- Creates a Windows Installer -->
+    <target name="do-win" depends="init,jar,zip" description="Creates a Windows Installer. PRE: Inno Setup (http://www.jrsoftware.org/isinfo.php) with all optional language packs must be installed and available on the path.">
+        <copy todir="dist" file="release/win32-specific/OmegaT.exe"/>
+        <copy todir="dist" file="release/win32-specific/OmegaT.l4J.ini"/>
+ 
+        <delete file="dist/OmegaT.iss"/>
+        <filter token="VERSION_NUMBER_SUBST" value="${distversion}"/>
+        <copy todir="dist" file="release/win32-specific/OmegaT.iss" filtering="on"/>
+        
+        <mkdir dir="dist2"/>
+        <exec executable="${iscc.exe}">
+            <arg file="dist/OmegaT.iss"/>
+        </exec>     
+    </target>
+
+    <!-- Creates a Windows Installer with JRE-->
+    <target name="do-win-jre" depends="check-jre" if="jre.exists" description="Creates a Windows Installer with JRE. PRE: Inno Setup (http://www.jrsoftware.org/isinfo.php) with all optional language packs must be installed and available on the path, and a JRE must be present in ..\\jre\\ ">
+        <copy todir="dist" file="release/win32-specific/OmegaT.exe"/>
+        <copy todir="dist" file="release/win32-specific/OmegaT.l4J.ini"/>
+        
+        <delete file="dist/OmegaT-JRE.iss"/>
+        <filter token="VERSION_NUMBER_SUBST" value="${distversion}"/>
+        <copy todir="dist" file="release/win32-specific/OmegaT-JRE.iss" filtering="on"/>
+        <exec executable="${iscc.exe}">
+            <arg file="dist/OmegaT-JRE.iss"/>
+        </exec>
+    </target>
+
+    <target name="check-win" depends="init">
+        <condition property="os.windows">
+            <and>
+                <os family="windows"/>
+                <available file="${iscc.exe}" filepath="${java.library.path}" />
+            </and>
+        </condition>
+    </target>
+    
+    <target name="check-jre" depends="check-win" if="os.windows">
+        <available file="../jre" type="dir" property="jre.exists" />
+    </target>
+    
+    <target name="check-jre-linux">
+        <available file="../jre-linux" type="dir" property="jre-linux.exists" />
+    </target>
+
+    <target name="win" description="Build Win32 distro if on Windows. PRE: Inno Setup (http://www.jrsoftware.org/isinfo.php) with all optional language packs must be installed and available on the path, and for the JRE-version a JRE must be present in ..\\jre\\ "
+                                        depends="check-win" if="os.windows">
+        <ant target="do-win" />
+        <ant target="do-win-jre" />
+    </target>
+    
+    <!-- Creates WebStart package -->
+    <target name="webstart" depends="init,jar">
+        <ant dir="release/WebStart-specific" antfile="build.xml"/>
+    </target>
+
+    <!-- Builds and copies to dist2 all addons -->
+    <target name="addons">
+        <ant antfile="addons/properties-import/build.xml" target="dist" inheritall="false"/>
+        <copy file="addons/properties-import/import_properties_1.3.zip" todir="dist2"/>
+        <ant antfile="addons/sentseg-tmx/build.xml" target="dist" inheritall="false"/>
+	<copy file="addons/sentseg-tmx/sentseg_tmx_1.1.zip" todir="dist2"/>
+	<!--
+        <ant antfile="addons/nbedge-filter/build.xml" target="jar" inheritall="false"/>
+	-->
+    </target>
+        
+    <!-- Builds all OmegaT products -->
+    <target name="all" depends="l10n-pack,src,jar,zip,win, linux" />
+
+	<target name="gen">
+		<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+			<classpath>
+				<fileset dir="lib" includes="**/*.jar" />
+				<fileset dir="gen/lib" includes="**/*.jar" />
+			</classpath>
+		</taskdef>
+
+		<xjc schema="src/schemas/srx20.xsd" destdir="src" package="gen.core.segmentation" />
+	</target>
+
+	<target name="docindexgen" depends="jar">
+		<mkdir dir="build/genclasses" />
+		<javac srcdir="gen/src" destdir="build/genclasses">
+			<classpath>
+				<fileset dir="lib" includes="**/*.jar" />
+				<pathelement path="build/classes" />
+			</classpath>
+		</javac>
+		<copy todir="build/genclasses">
+			<fileset dir="gen/src" excludes="**/*.java"/>
+		</copy>
+
+		<java classname="util.CreateDocIndexUtil">
+			<classpath>
+				<pathelement path="build/genclasses" />
+				<pathelement path="build/classes" />
+			</classpath>
+		</java>
+	</target>
+	
+</project>
