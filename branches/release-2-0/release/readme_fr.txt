@@ -167,7 +167,7 @@ Les personnes qui ont contribué incluent :
 
 Contributions au code :
   Zoltan Bartko
-  Didier Briel (responsable de version)
+  Didier Briel (responsable de versions)
   Kim Bruning
   Alex Buloichik
   Sandra Jean Chua
