@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------
  OmegaT 2.0.5 update 3
-  2 Enhancements
+  3 Enhancements
   4 Bugfixes
 ----------------------------------------------------------------------
 2.0.5 update 3 vs. 2.0.5 update 2
@@ -12,6 +12,9 @@
 
   - Define Uyghur as RTL
   http://sourceforge.net/support/tracker.php?aid=2970467
+
+  Other enhancements:
+  - Russian localisation updated to 2.0.5 (UI, Readme, Instant Start, documentation)
 
   Bug Fixes:
 
