@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"file:///C:/docbook-xml-4.5/docbookx.dtd">
+<chapter id="ch10.glossaries">
+  <title>Glossaries<indexterm class="singular">
+      <primary>Windows in OmegaT</primary>
+
+      <secondary>Glossary pane</secondary>
+    </indexterm><indexterm class="singular">
+      <primary>Glossaries</primary>
+    </indexterm></title>
+
+  <para>Glossaries are files created and updated manually for use in
+  <application>OmegaT</application>.</para>
+
+  <para>If an <application>OmegaT</application> project contains one or more
+  glossaries, any terms in the glossary which are also found in the active
+  segment will be automatically displayed in the Glossary viewer.</para>
+
+  <section>
+    <title>Usage</title>
+
+    <para>To use an existing glossary, simply place it in the<indexterm
+        class="singular">
+        <primary>Project files</primary>
+
+        <secondary>Glossary subfolder</secondary>
+      </indexterm> <filename>/glossary </filename>folder after creating the
+    project. <application>OmegaT</application> automatically detects glossary
+    files in this folder when a project is opened. Terms in the active segment
+    which <application>OmegaT</application> finds in the glossary file(s) are
+    displayed in the Glossary pane:</para>
+
+    <mediaobject>
+      <imageobject role="html">
+        <imagedata fileref="images/Glossary_pane.png" />
+      </imageobject>
+      <imageobject role="fo">
+        <imagedata fileref="images/Glossary_pane.png" width = "40%"/>
+      </imageobject>
+    </mediaobject>
+
+    <para>The word before the = sign is the source term, and its translation
+    is (or are) the words behind =. The vocabulary entry can have a comment
+    added (see "transitive verb" for the second item). The glossary function
+    only finds exact matches with the glossary entry (e.g. does not find
+    inflected forms etc.). New terms can be added manually to the glossary
+    file(s) during translation (for example in a text editor), but newly added
+    terms will not be recognized until the project is reloaded.</para>
+  </section>
+
+  <section>
+    <title><indexterm class="singular">
+        <primary>Glossaries</primary>
+
+        <secondary>File format</secondary>
+      </indexterm>File format<indexterm class="singular">
+        <primary>Project files</primary>
+
+        <secondary>User files</secondary>
+
+        <seealso>Glossaries</seealso>
+      </indexterm></title>
+
+    <para>Glossary files are simply plain text files containing three-column,
+    tab-delimited lists with the source and target terms in the first and
+    second columns respectively. The third column can be used for additional
+    information. Glossary files can be either in system default encoding (and
+    indicated by the extension .tab) or in UTF-8 (the extension .utf8). The
+    Unicode encoding (UTF8) is to be preferred for obvious reasons.</para>
+
+    <para>Also supported is the CSV format. The format is the same as the tab
+    separated one: source term, target term, comment Fields are separated by a
+    comma ','. Strings can be enclosed by quotes ", which allows having a
+    comma inside a string:</para>
+
+    <para><literal>"This is a source term, which contains a comma",c'est un
+    terme cible,this is a comment</literal></para>
+
+    <para>Additional to the plain text format, TBX format is also supported.
+    TBX - Term Base eXchange (TBX) is the open, XML-based standard for
+    exchanging structured terminological data that has been approved as an
+    international standard by LISA and ISO. If you have an existing
+    terminology handling system - MultiTerm for example - It is quite possible
+    it offers the export of terminology data via TBX format.</para>
+  </section>
+
+  <section>
+    <title>How to create glossaries<indexterm class="singular">
+        <primary>Glossaries</primary>
+
+        <secondary>Creating a glossary</secondary>
+      </indexterm></title>
+
+    <para>The method here is foolproof, when followed in a reasonably careful
+    fashion. You need OpenOffice.org Writer for it, so - if you haven't
+    already done so - download and install OpenOffice.org. Launch
+    OpenOffice.org and open a new text document or launch "OpenOffice.org
+    Writer".</para>
+
+    <para>In the empty document, enter your glossary terms as follows: a
+    source-language term, tab space, the target-language term , tab space, a
+    comment or explanation for the item, and a Return. Tab space is the
+    tabulator key on the left hand side of the keyboard. If you do not want to
+    add any comments, you can drop the second tab space. A "term" can be a
+    single word or a whole phrase. On the second line, enter the second term
+    and its translation.</para>
+
+    <para>When you have finished entering the terms, you will have two
+    "columns" of terms, source-language terms on the left and their
+    target-language terms on the right, and possibly a third column,
+    containing you comments and explanations, The tab space (→ in the example
+    below) and Enter (¶ ) characters can be made visible by clicking on the ¶
+    icon in the Writer's Standard writer bar. Here's a few lines of an English
+    -German glossary)</para>
+
+    <para><literal> word →Wort→das (-/e/s, Wörter/-e)</literal></para>
+
+    <para><literal> small house→Häuschen→das, (pl Häuschen)¶</literal></para>
+
+    <para><literal> dog →Hund→m, f Hündin ¶</literal></para>
+
+    <para><literal> horse→Pferd→n, m Hengst f Stute n Fohlen</literal>¶</para>
+
+    <para>Do NOT use OpenOffice.org's "columns" function to create columns:
+    just separate each source and target-language term pair with a single tab
+    space.</para>
+
+    <para>When you are finished with the entries, save file as Unicode-encoded
+    file as follows: </para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Select<literal> File &gt; Save As</literal></para>
+      </listitem>
+
+      <listitem>
+        <para>In the <emphasis>"File location"</emphasis> box, enter the name
+        for your glossary file.</para>
+      </listitem>
+    </itemizedlist>
+
+    <itemizedlist>
+      <listitem>
+        <para>For "Filter", select "<emphasis>Text Encoded
+        (.txt.)</emphasis>"</para>
+      </listitem>
+
+      <listitem>
+        <para>make sure "<emphasis>Automatic file name extension</emphasis>"
+        and <emphasis>"Edit filter settings". </emphasis>are unchecked.
+        </para>
+      </listitem>
+    </itemizedlist>
+
+    <mediaobject>
+      <imageobject role="html">
+        <imagedata fileref="images/saveglossary.png" />
+      </imageobject>
+      <imageobject role="fo">
+        <imagedata fileref="images/saveglossary.png" width = "40%"/>
+      </imageobject>
+    </mediaobject>
+
+    <para>Confirm with OK. </para>
+
+    <para>After creating an <application>OmegaT</application> project, copy or
+    move this file into the project's \glossary folder. If the project is
+    already open, reload it after copying the glossary file. You can make
+    changes to a glossary file whilst it is being used in project. Glossary
+    changes are being detected approximately once every second and
+    modifications loaded transparently in the background, so there's no need
+    to reload the project after saving the new glossary file.</para>
+
+    <para>When a segment containing a source-text term is opened, the glossary
+    pane will display glossary entries for those items in the source segment
+    that can be found in the glossary (or glossaries - you can have more than
+    one available, and they can be stored in subfolders of <emphasis>glossary
+    </emphasis>as well).</para>
+
+    <para><emphasis role="bold">Note: </emphasis>Of course there's other ways
+    and means to create a simple file with tab delimited entries, and they are
+    all simpler, a lot of them much simpler, than the above suggestion. For
+    instance, one can export the contents above as a <filename>CSV</filename>,
+    instead of a <filename>UTF8</filename> text file. fileNote, however, that
+    the above suggestion works for any target system, be it Windows, OS X or
+    Linux. Nothing speaks against using Notepad++ on Windows or GEdit on Linux
+    for instance: any text editor, that is knowledgeable about UTF8 and that
+    can show white space, so that you do not miss the required
+    <keycap>TAB</keycap> characters can be used.</para>
+
+    <para>The contents of glossary files are kept in the memory and get
+    loaded, when the project gets opened or reloaded. Updating of a glossary
+    file is thus rather simple:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>keep the file opened in your selected editor</para>
+      </listitem>
+    </itemizedlist>
+
+    <itemizedlist>
+      <listitem>
+        <para>When you hit upon a new term, worth entering, enter the new
+        term, its translation and any comments you may have (making sure, you
+        tabe between the fields) and save the file. The contents of the
+        glossary pane will be updated accordingly. </para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title><indexterm class="singular">
+        <primary>Glossaries</primary>
+
+        <secondary>Trados MultiTerm</secondary>
+      </indexterm>Using Trados Multiterm</title>
+
+    <para>Data exported fromTrados MultiTerm can be used as
+    <application>OmegaT</application> glossaries without further modification,
+    provided they are given the file extension <filename>.tab </filename>and
+    the source and target term fields are the first two fields
+    respectively.</para>
+
+    <para>If you export using the system option "Tab-delimited export", you
+    will need to delete the first 5 columns (Seq. Nr, Date created etc). The
+    newer versions of MultiTerm support export in TBX format..</para>
+  </section>
+
+  <section>
+    <title><indexterm class="singular">
+        <primary>Glossaries</primary>
+
+        <secondary>Problems with glossaries</secondary>
+      </indexterm>Common glossary problems</title>
+
+    <variablelist>
+      <varlistentry>
+        <term>Problem: No glossary terms are displayed - possible
+        causes:</term>
+
+        <listitem>
+          <itemizedlist>
+            <listitem>
+              <para>no glossary file in the "glossary" folder</para>
+            </listitem>
+          </itemizedlist>
+
+          <itemizedlist>
+            <listitem>
+              <para>glossary file is empty</para>
+            </listitem>
+          </itemizedlist>
+
+          <itemizedlist>
+            <listitem>
+              <para>the items are not separated with a TAB character</para>
+            </listitem>
+          </itemizedlist>
+
+          <itemizedlist>
+            <listitem>
+              <para>the glossary file does not have the correct extension
+              (.tab or .utf8)</para>
+            </listitem>
+          </itemizedlist>
+
+          <itemizedlist>
+            <listitem>
+              <para>there is no EXACT match between the glossary entry and the
+              source text in your document - for instance when the item is in
+              plural</para>
+            </listitem>
+          </itemizedlist>
+
+          <itemizedlist>
+            <listitem>
+              <para>the glossary file does not have the correct
+              encoding</para>
+            </listitem>
+          </itemizedlist>
+
+          <itemizedlist>
+            <listitem>
+              <para>there are no terms in the active segment which match any
+              terms in the glossary</para>
+            </listitem>
+          </itemizedlist>
+
+          <itemizedlist>
+            <listitem>
+              <para>one or more of the above problems may have been fixed, but
+              the project has not been reloaded.</para>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>Problem: In the glossary pane, some characters are not displayed
+        properly (but the same characters are displayed properly in the
+        Editing pane). Possible causes:</term>
+
+        <listitem>
+          <itemizedlist>
+            <listitem>
+              <para>the extension and the file encoding do not match.</para>
+            </listitem>
+          </itemizedlist>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </section>
+</chapter>
