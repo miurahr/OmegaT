@@ -534,7 +534,7 @@ public class SegmentBuilder {
      */
     private AttributeSet attrs(boolean isSource) {
         Color fg;
-        if (settings.isMarkNonUniqueSegments() && ste.isDublicate()) {
+        if (settings.isMarkNonUniqueSegments() && ste.isDublicateSource()) {
             fg = Styles.COLOR_LIGHT_GRAY;
         } else {
             fg = null;

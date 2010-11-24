@@ -6,7 +6,8 @@
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
                2007 Didier Briel and Tiago Saboga
                2007 Zoltan Bartko - bartkozoltan@bartkozoltan.com
-               2008 Andrzej Sawula, Alex Buloichik
+               2008 Andrzej Sawula
+               2010 Alex Buloichik
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -77,5 +78,30 @@ public class StringUtil {
             return Character.isTitleCase(input.charAt(0)) && isLowerCase(input.substring(1));
         else
             return Character.isTitleCase(input.charAt(0));
+    }
+
+    /**
+     * Returns first not null object from list, or null if all values is null.
+     */
+    public static <T> T nvl(T... values) {
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] != null) {
+                return values[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Compare two values, which could be null.
+     */
+    public static <T> boolean compare(T v1, T v2) {
+        if (v1 == null && v2 == null) {
+            return true;
+        } else if (v1 != null && v2 != null) {
+            return v1.equals(v2);
+        } else {
+            return false;
+        }
     }
 }

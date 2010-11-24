@@ -39,7 +39,7 @@ public class SourceTextEntry {
     private String src;
 
     /** If entry with the same source already exist in project. */
-    boolean dublicate;
+    boolean dublicateSource;
 
     /**
      * Creates a new source text entry.
@@ -69,8 +69,8 @@ public class SourceTextEntry {
     }
 
     /** If entry with the same source already exist in project. */
-    public boolean isDublicate() {
-        return dublicate;
+    public boolean isDublicateSource() {
+        return dublicateSource;
     }
 
     /** Holds the number of this entry in a project. */

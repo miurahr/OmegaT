@@ -605,8 +605,8 @@ public class RealProject implements IProject {
         for (FileInfo fi : projectFilesList) {
             for (int i = 0; i < fi.entries.size(); i++) {
                 SourceTextEntry ste = fi.entries.get(i);
-                ste.dublicate = exists.contains(ste.getSrcText());
-                if (!ste.dublicate) {
+                ste.dublicateSource = exists.contains(ste.getSrcText());
+                if (!ste.dublicateSource) {
                     exists.add(ste.getSrcText());
                 }
             }
