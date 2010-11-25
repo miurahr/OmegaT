@@ -35,6 +35,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -250,7 +251,7 @@ public class RealProject implements IProject {
     /**
      * Align project.
      */
-    public Map<String, Translation> align(final ProjectProperties props, final File translatedDir)
+    public Map<String, TMXEntry> align(final ProjectProperties props, final File translatedDir)
             throws Exception {
         FilterMaster fm = FilterMaster.getInstance();
 
@@ -633,7 +634,7 @@ public class RealProject implements IProject {
         return allProjectEntries;
     }
 
-    public Translation getTranslation(SourceTextEntry ste) {
+    public TMXEntry getTranslation(SourceTextEntry ste) {
         return projectTMX.getTranslation(ste.getKey());
     }
 
@@ -665,7 +666,7 @@ public class RealProject implements IProject {
         String author = Preferences.getPreferenceDefault(Preferences.TEAM_AUTHOR,
                 System.getProperty("user.name"));
 
-        Translation prevTrEntry = projectTMX.getTranslation(entry.getKey());
+        TMXEntry prevTrEntry = projectTMX.getTranslation(entry.getKey());
 
         // don't change anything if nothing has changed
         if (prevTrEntry == null) {
@@ -683,7 +684,7 @@ public class RealProject implements IProject {
         if (StringUtil.isEmpty(trans)) {
             projectTMX.setTranslation(entry, null, false);
         } else {
-            Translation te = new Translation(trans, author, System.currentTimeMillis());
+            TMXEntry te = new TMXEntry(entry.getSrcText(), trans, author, System.currentTimeMillis());
             projectTMX.setTranslation(entry, te, false);
         }
         String prevTranslation = prevTrEntry != null ? prevTrEntry.translation : null;
@@ -696,31 +697,26 @@ public class RealProject implements IProject {
         hotStat.numberofTranslatedSegments += diff;
     }
 
+    public Collection<TMXEntry> getAllTranslations() {
+        List<TMXEntry> r = new ArrayList<TMXEntry>();
+
+        r.addAll(projectTMX.translationDefault.values());
+        r.addAll(projectTMX.translationMultiple.values());
+
+        return r;
+    }
+
+    public Collection<TMXEntry> getAllOrphanedTranslations() {
+        List<TMXEntry> r = new ArrayList<TMXEntry>();
+
+        r.addAll(projectTMX.orphanedDefault.values());
+        r.addAll(projectTMX.orphanedMultiple.values());
+
+        return r;
+    }
+
     public Map<String, ExternalTMX> getTransMemories() {
         return transMemories;
-    }
-
-    public void iterateByTranslations(TranslationIterator callback) {
-        for (Map.Entry<String, Translation> en : projectTMX.translationDefault.entrySet()) {
-            callback.onTmxEntry(null, en.getKey(), en.getValue().translation);
-        }
-        for (Map.Entry<EntryKey, Translation> en : projectTMX.translationMultiple.entrySet()) {
-            callback.onTmxEntry(null, en.getKey().sourceText, en.getValue().translation);
-        }
-    }
-
-    public void iterateByOrphaned(TranslationIterator callback) {
-        for (Map.Entry<String, Translation> en : projectTMX.orphanedDefault.entrySet()) {
-            callback.onTmxEntry(null, en.getKey(), en.getValue().translation);
-        }
-        for (Map.Entry<EntryKey, Translation> en : projectTMX.orphanedMultiple.entrySet()) {
-            callback.onTmxEntry(null, en.getKey().sourceText, en.getValue().translation);
-        }
-    }
-
-    public void iterateByTransMemories(TranslationIterator callback) {
-        // TODO Auto-generated method stub
-
     }
 
     /**
@@ -792,8 +788,7 @@ public class RealProject implements IProject {
         private final Set<String> existSource;
         private final Set<EntryKey> existKeys;
 
-        private final List<String> s = new ArrayList<String>();
-        private final List<String> t = new ArrayList<String>();
+        private List<TMXEntry> fileTMXentries;
 
         public LoadFilesCallback(final Set<String> existSource, final Set<EntryKey> existKeys) {
             super(m_config);
@@ -803,18 +798,16 @@ public class RealProject implements IProject {
 
         protected void setCurrentFile(FileInfo fi) {
             fileInfo = fi;
+            fileTMXentries = new ArrayList<TMXEntry>();
         }
 
         protected void fileFinished() {
-            if (s.size() > 0) {
-                ExternalTMX tmx = new ExternalTMX(fileInfo.filePath);
-                tmx.source = s.toArray(new String[s.size()]);
-                tmx.target = t.toArray(new String[t.size()]);
+            if (fileTMXentries.size() > 0) {
+                ExternalTMX tmx = new ExternalTMX(fileInfo.filePath, fileTMXentries);
                 transMemories.put(tmx.getName(), tmx);
             }
 
-            s.clear();
-            t.clear();
+            fileTMXentries = null;
             fileInfo = null;
         }
 
@@ -831,7 +824,7 @@ public class RealProject implements IProject {
             EntryKey ek = new EntryKey(fileInfo.filePath, segmentSource, id);
 
             if (!StringUtil.isEmpty(segmentTranslation)) {
-                projectTMX.putFromSourceFile(ek, new Translation(segmentTranslation, null, 0));
+                projectTMX.putFromSourceFile(ek, new TMXEntry(segmentSource, segmentTranslation, null, 0));
             }
             SourceTextEntry srcTextEntry = new SourceTextEntry(ek, allProjectEntries.size() + 1);
             allProjectEntries.add(srcTextEntry);
@@ -845,8 +838,7 @@ public class RealProject implements IProject {
             if (StringUtil.isEmpty(translation)) {
                 return;
             }
-            s.add(source);
-            t.add(translation);
+            fileTMXentries.add(new TMXEntry(source, translation, null, 0));
         }
     };
 
@@ -863,13 +855,13 @@ public class RealProject implements IProject {
 
         protected String getSegmentTranslation(String id, int segmentIndex, String segmentSource) {
             EntryKey ek = new EntryKey(currentFile, segmentSource, id);
-            Translation tr = projectTMX.getTranslation(ek);
+            TMXEntry tr = projectTMX.getTranslation(ek);
             return tr != null ? tr.translation : segmentSource;
         }
     };
 
     static class AlignFilesCallback implements IAlignCallback {
-        Map<String, Translation> data = new HashMap<String, Translation>();
+        Map<String, TMXEntry> data = new HashMap<String, TMXEntry>();
 
         public void addTranslation(String id, String source, String translation, boolean isFuzzy,
                 String comment, IFilter filter) {
@@ -881,7 +873,7 @@ public class RealProject implements IProject {
                     transS = "[" + filter.getFuzzyMark() + "] " + transS;
                 }
 
-                data.put(sourceS, new Translation(transS, null, 0));
+                data.put(sourceS, new TMXEntry(sourceS, transS, null, 0));
             }
         }
     }

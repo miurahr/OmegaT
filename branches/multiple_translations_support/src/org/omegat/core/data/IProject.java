@@ -27,7 +27,9 @@ package org.omegat.core.data;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.omegat.core.matching.ITokenizer;
 import org.omegat.core.statistics.StatisticsInfo;
@@ -119,22 +121,28 @@ public interface IProject {
      *            source entry
      * @return translation, or null if translation not exist
      */
-    Translation getTranslation(SourceTextEntry ste);
+    TMXEntry getTranslation(SourceTextEntry ste);
 
     /**
-     * Iterate by all translated segments from project_save.tmx.
+     * Get all translations for current project.
+     * 
+     * @return all translations map
      */
-    void iterateByTranslations(TranslationIterator callback);
+    Collection<TMXEntry> getAllTranslations();
 
     /**
-     * Iterate by all orphaned segments from project_save.tmx.
+     * Get orphaned translations.
+     * 
+     * @return orphaned translations
      */
-    void iterateByOrphaned(TranslationIterator callback);
+    Collection<TMXEntry> getAllOrphanedTranslations();
 
     /**
-     * Iterate by all translation memories in /tm/ folder.
+     * Get all translation memories from /tm/ folder.
+     * 
+     * @return translation memories
      */
-    void iterateByTransMemories(TranslationIterator callback);
+    Map<String, ExternalTMX> getTransMemories();
 
     /**
      * Get info about each source file in project. It's unmodifiable list, so, there is no need
@@ -146,9 +154,5 @@ public interface IProject {
         public String filePath;
 
         public List<SourceTextEntry> entries = new ArrayList<SourceTextEntry>();
-    }
-
-    interface TranslationIterator {
-        void onTmxEntry(String tmxName, String source, String target);
     }
 }

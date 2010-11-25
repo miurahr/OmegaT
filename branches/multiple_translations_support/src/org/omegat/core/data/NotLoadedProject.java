@@ -25,7 +25,9 @@
 package org.omegat.core.data;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.omegat.core.matching.ITokenizer;
 import org.omegat.core.statistics.StatisticsInfo;
@@ -55,21 +57,20 @@ public class NotLoadedProject implements IProject {
         return null;
     }
 
-    public List<LegacyTM> getMemory() {
+    public TMXEntry getTranslation(SourceTextEntry ste) {
         return null;
     }
 
-    public Translation getTranslation(SourceTextEntry ste) {
+    public Collection<TMXEntry> getAllTranslations() {
         return null;
     }
 
-    public void iterateByTranslations(TranslationIterator callback) {
+    public Collection<TMXEntry> getAllOrphanedTranslations() {
+        return null;
     }
 
-    public void iterateByOrphaned(TranslationIterator callback) {
-    }
-
-    public void iterateByTransMemories(TranslationIterator callback) {
+    public Map<String, ExternalTMX> getTransMemories() {
+        return null;
     }
 
     public List<FileInfo> getProjectFiles() {

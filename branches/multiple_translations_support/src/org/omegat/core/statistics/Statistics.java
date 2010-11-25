@@ -37,7 +37,7 @@ import java.util.Set;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
-import org.omegat.core.data.Translation;
+import org.omegat.core.data.TMXEntry;
 import org.omegat.core.matching.FuzzyMatcher;
 import org.omegat.core.matching.ISimilarityCalculator;
 import org.omegat.core.matching.Tokenizer;
@@ -121,9 +121,9 @@ public class Statistics {
         }
 
         /* Travel by TMs. */
-        for (List<Translation> tmFile : Core.getProject().getTransMemories().values()) {
+        for (List<TMXEntry> tmFile : Core.getProject().getTransMemories().values()) {
             for (int i = 0; i < tmFile.size(); i++) {
-                Translation tm = tmFile.get(i);
+                TMXEntry tm = tmFile.get(i);
                 Token[] candTokens = tokenizeExactlyWithCache(tokensCache, tm.source);
                 int newSimilarity = FuzzyMatcher
                         .calcSimilarity(distanceCalculator, strTokensStem, candTokens);

@@ -3,7 +3,7 @@
           with fuzzy matching, translation memory, keyword search, 
           glossaries, and translation leveraging into updated projects.
 
- Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
+ Copyright (C) 2010 Alex Buloichik
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -24,42 +24,21 @@
 
 package org.omegat.core.data;
 
-import java.util.List;
-
 /**
- * Represents a legacy Translation Memory file. These files generally reside in
- * /tm subfolder of the project folder.
+ * Storage for TMX entry.
  * 
- * @author Maxym Mykhalchuk
+ * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class LegacyTM {
+public class TMXEntry {
+    public final String source;
+    public final String translation;
+    public final String changer;
+    public final long changeDate;
 
-    /** name of TMX file */
-    private String tmxname;
-    /** list of StringEntry objects of the TM */
-    private List<StringEntry> tmstrings;
-
-    /**
-     * Creates a new instance of Legacy Translation Memory
-     * 
-     * @param tmxname
-     *            name of TMX file
-     * @param tmstrings
-     *            list of StringEntry objects of the TM
-     */
-    public LegacyTM(String tmxname, List<StringEntry> tmstrings) {
-        this.tmxname = tmxname;
-        this.tmstrings = tmstrings;
+    public TMXEntry(String source, String translation, String changer, long changeDate) {
+        this.source = source;
+        this.translation = translation;
+        this.changer = changer;
+        this.changeDate = changeDate;
     }
-
-    /** Returns the name of this legacy TMX file */
-    public String getName() {
-        return tmxname;
-    }
-
-    /** Returns the list of StringEntry-es of this Translation Memory */
-    public List<StringEntry> getStrings() {
-        return tmstrings;
-    }
-
 }

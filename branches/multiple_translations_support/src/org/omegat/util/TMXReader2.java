@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.SAXParserFactory;
@@ -141,6 +142,10 @@ public class TMXReader2 {
             return tuvL;
         }
         return tuvLW;
+    }
+
+    public static long parseISO8601date(String str) {
+        return str != null ? DatatypeConverter.parseDateTime(str).getTimeInMillis() : 0;
     }
 
     /**

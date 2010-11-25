@@ -37,8 +37,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.omegat.core.Core;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
@@ -57,26 +55,26 @@ public class ProjectTMX {
     /**
      * Storage for translation for current project.
      */
-    final Map<String, Translation> translationDefault;
+    final Map<String, TMXEntry> translationDefault;
 
-    final Map<EntryKey, Translation> translationMultiple;
+    final Map<EntryKey, TMXEntry> translationMultiple;
 
     /**
      * Storage for orphaned segments.
      */
-    final Map<String, Translation> orphanedDefault;
+    final Map<String, TMXEntry> orphanedDefault;
 
-    final Map<EntryKey, Translation> orphanedMultiple;
+    final Map<EntryKey, TMXEntry> orphanedMultiple;
 
     public ProjectTMX(File file, CheckOrphanedCallback callback) throws Exception {
 
         ProjectProperties props = Core.getProject().getProjectProperties();
 
-        translationMultiple = new HashMap<EntryKey, Translation>();
-        orphanedMultiple = new HashMap<EntryKey, Translation>();
+        translationMultiple = new HashMap<EntryKey, TMXEntry>();
+        orphanedMultiple = new HashMap<EntryKey, TMXEntry>();
         if (props.isSupportDefaultTranslations()) {
-            translationDefault = new HashMap<String, Translation>();
-            orphanedDefault = new HashMap<String, Translation>();
+            translationDefault = new HashMap<String, TMXEntry>();
+            orphanedDefault = new HashMap<String, TMXEntry>();
         } else {
             // Do not even create default storage if not required. It will
             // allow to see errors.
@@ -98,8 +96,8 @@ public class ProjectTMX {
     /**
      * Get translation or null if not exist.
      */
-    public Translation getTranslation(EntryKey ek) {
-        Translation r = translationMultiple.get(ek);
+    public TMXEntry getTranslation(EntryKey ek) {
+        TMXEntry r = translationMultiple.get(ek);
         if (r == null && translationDefault != null) {
             r = translationDefault.get(ek.sourceText);
         }
@@ -109,7 +107,7 @@ public class ProjectTMX {
     /**
      * Set new translation.
      */
-    public void setTranslation(SourceTextEntry ste, Translation te, boolean isDefault) {
+    public void setTranslation(SourceTextEntry ste, TMXEntry te, boolean isDefault) {
         // TODO review default
         if (te == null) {
             if (isDefault) {
@@ -129,7 +127,7 @@ public class ProjectTMX {
     /**
      * Store translation from source file.
      */
-    void putFromSourceFile(EntryKey key, Translation te) {
+    void putFromSourceFile(EntryKey key, TMXEntry te) {
         // TODO review default
         translationMultiple.put(key, te);
     }
@@ -142,12 +140,13 @@ public class ProjectTMX {
         }
 
         public void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget) {
-            String changeID = StringUtil.nvl(tuvTarget.getChangeid(), tuvTarget.getCreationid(),
+            String changer = StringUtil.nvl(tuvTarget.getChangeid(), tuvTarget.getCreationid(),
                     tu.getChangeid(), tu.getCreationid());
-            String changeDT = StringUtil.nvl(tuvTarget.getChangedate(), tuvTarget.getCreationdate(),
+            String dt = StringUtil.nvl(tuvTarget.getChangedate(), tuvTarget.getCreationdate(),
                     tu.getChangedate(), tu.getCreationdate());
 
-            Translation te = new Translation(tuvTarget.getSeg(), changeID, parseISO8601date(changeDT));
+            TMXEntry te = new TMXEntry(tuvSource.getSeg(), tuvTarget.getSeg(), changer,
+                    TMXReader2.parseISO8601date(dt));
             EntryKey key = createKeyByProps(tuvSource.getSeg(), tu);
             if (key.file == null) {
                 // default translation
@@ -183,10 +182,6 @@ public class ProjectTMX {
         return new EntryKey(file, src, id);
     }
 
-    private long parseISO8601date(String str) {
-        return str != null ? DatatypeConverter.parseDateTime(str).getTimeInMillis() : 0;
-    }
-
     public interface CheckOrphanedCallback {
         boolean existEntryInProject(EntryKey key);
 
@@ -195,10 +190,10 @@ public class ProjectTMX {
 
     private class SaveCallback implements TMXWriter2.SaveCallback {
         private final boolean forceValidTMX;
-        private final Iterator<Map.Entry<String, Translation>> itTD;
-        private final Iterator<Map.Entry<EntryKey, Translation>> itTM;
-        private final Iterator<Map.Entry<String, Translation>> itOD;
-        private final Iterator<Map.Entry<EntryKey, Translation>> itOM;
+        private final Iterator<Map.Entry<String, TMXEntry>> itTD;
+        private final Iterator<Map.Entry<EntryKey, TMXEntry>> itTM;
+        private final Iterator<Map.Entry<String, TMXEntry>> itOD;
+        private final Iterator<Map.Entry<EntryKey, TMXEntry>> itOM;
 
         /**
          * DateFormat with format YYYYMMDDThhmmssZ able to display a date in UTC time.
@@ -211,10 +206,10 @@ public class ProjectTMX {
             this.forceValidTMX = forceValidTMX;
 
             // we need to put entries into TreeMap for have sorted TMX
-            itTD = new TreeMap<String, Translation>(translationDefault).entrySet().iterator();
-            itTM = new TreeMap<EntryKey, Translation>(translationMultiple).entrySet().iterator();
-            itOD = new TreeMap<String, Translation>(orphanedDefault).entrySet().iterator();
-            itOM = new TreeMap<EntryKey, Translation>(orphanedMultiple).entrySet().iterator();
+            itTD = new TreeMap<String, TMXEntry>(translationDefault).entrySet().iterator();
+            itTM = new TreeMap<EntryKey, TMXEntry>(translationMultiple).entrySet().iterator();
+            itOD = new TreeMap<String, TMXEntry>(orphanedDefault).entrySet().iterator();
+            itOM = new TreeMap<EntryKey, TMXEntry>(orphanedMultiple).entrySet().iterator();
 
             tmxDateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.ENGLISH);
             tmxDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -227,8 +222,8 @@ public class ProjectTMX {
             tu.getTuv().add(s);
             tu.getTuv().add(t);
 
-            Map.Entry<String, Translation> ed = null;
-            Map.Entry<EntryKey, Translation> em = null;
+            Map.Entry<String, TMXEntry> ed = null;
+            Map.Entry<EntryKey, TMXEntry> em = null;
 
             // find next entry
             if ((ed = itTD.next()) != null) {
@@ -239,14 +234,14 @@ public class ProjectTMX {
                 return null;
             }
 
-            Translation te = null;
+            TMXEntry te = null;
             if (ed != null) {
                 s.setSeg(ed.getKey());
-                t.setSeg(ed.getValue().target);
+                t.setSeg(ed.getValue().translation);
                 te = ed.getValue();
             } else if (em != null) {
                 s.setSeg(em.getKey().sourceText);
-                t.setSeg(em.getValue().target);
+                t.setSeg(em.getValue().translation);
                 te = em.getValue();
 
                 addProp(tu, PROP_FILE, em.getKey().file);

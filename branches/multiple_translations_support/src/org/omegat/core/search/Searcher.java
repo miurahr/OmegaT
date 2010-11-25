@@ -44,7 +44,7 @@ import org.omegat.core.data.ParseEntry;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.TransEntry;
-import org.omegat.core.data.Translation;
+import org.omegat.core.data.TMXEntry;
 import org.omegat.filters2.IParseCallback;
 import org.omegat.filters2.TranslationException;
 import org.omegat.filters2.master.FilterMaster;
@@ -259,9 +259,9 @@ public class Searcher {
             // They are not available in external TM, so skip the search in
             // that case.
             if (!m_searchAuthor && !m_searchDateAfter && !m_searchDateBefore) {
-                for (Map.Entry<String, List<Translation>> tmEn : m_project.getTransMemories().entrySet()) {
+                for (Map.Entry<String, List<TMXEntry>> tmEn : m_project.getTransMemories().entrySet()) {
                     file = tmEn.getKey();
-                    for (Translation tm : tmEn.getValue()) {
+                    for (TMXEntry tm : tmEn.getValue()) {
                         // stop searching if the max. nr of hits has been
                         // reached
                         if (m_numFinds >= m_maxResults) {
