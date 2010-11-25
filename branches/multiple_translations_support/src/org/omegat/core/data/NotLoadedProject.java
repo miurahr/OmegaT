@@ -26,9 +26,6 @@ package org.omegat.core.data;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.omegat.core.matching.ITokenizer;
 import org.omegat.core.statistics.StatisticsInfo;
@@ -62,12 +59,17 @@ public class NotLoadedProject implements IProject {
         return null;
     }
 
-    public TransEntry getTranslation(SourceTextEntry ste) {
+    public Translation getTranslation(SourceTextEntry ste) {
         return null;
     }
 
-    public Set<Entry<String, TransEntry>> getTranslationsSet() {
-        return null;
+    public void iterateByTranslations(TranslationIterator callback) {
+    }
+
+    public void iterateByOrphaned(TranslationIterator callback) {
+    }
+
+    public void iterateByTransMemories(TranslationIterator callback) {
     }
 
     public List<FileInfo> getProjectFiles() {
@@ -79,14 +81,6 @@ public class NotLoadedProject implements IProject {
     }
 
     public StatisticsInfo getStatistics() {
-        return null;
-    }
-
-    public Map<String, TransEntry> getOrphanedSegments() {
-        return null;
-    }
-
-    public Map<String, List<TransMemory>> getTransMemories() {
         return null;
     }
 
@@ -105,9 +99,6 @@ public class NotLoadedProject implements IProject {
     }
 
     public void saveProjectProperties() throws IOException {
-    }
-
-    public void setAuthorTranslation(String author, SourceTextEntry entry, String trans) {
     }
 
     public void setTranslation(SourceTextEntry entry, String trans) {

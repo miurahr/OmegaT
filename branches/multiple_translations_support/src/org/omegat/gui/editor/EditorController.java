@@ -54,7 +54,7 @@ import org.omegat.core.CoreEvents;
 import org.omegat.core.data.IProject;
 import org.omegat.core.data.IProject.FileInfo;
 import org.omegat.core.data.SourceTextEntry;
-import org.omegat.core.data.TransEntry;
+import org.omegat.core.data.Translation;
 import org.omegat.core.events.IEntryEventListener;
 import org.omegat.core.events.IFontChangedEventListener;
 import org.omegat.core.events.IProjectEventListener;
@@ -593,7 +593,7 @@ public class EditorController implements IEditor {
      */
     private void exportCurrentSegment(final SourceTextEntry ste) {
         String s1 = ste.getSrcText();
-        TransEntry te = Core.getProject().getTranslation(ste);
+        Translation te = Core.getProject().getTranslation(ste);
         String s2 = te != null ? te.translation : "";
 
         FileUtil.writeScriptFile(s1, OConsts.SOURCE_EXPORT);
@@ -681,7 +681,7 @@ public class EditorController implements IEditor {
             // segment was active
             SourceTextEntry entry = m_docSegList[displayedEntryIndex].ste;
 
-            TransEntry oldTE = Core.getProject().getTranslation(entry);
+            Translation oldTE = Core.getProject().getTranslation(entry);
             String old_translation = oldTE != null ? oldTE.translation : "";
 
             // update memory

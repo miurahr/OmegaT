@@ -27,57 +27,48 @@ import gen.core.tmx14.Tu;
 import gen.core.tmx14.Tuv;
 
 import java.io.File;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.omegat.core.Core;
-import org.omegat.util.StringUtil;
 import org.omegat.util.TMXReader2;
 
 /**
- * Class for store data from TMX from /tm/ folder. They are used only for fuzzy
- * matches.
+ * Class for store data from TMX from /tm/ folder. They are used only for fuzzy matches.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class ExternalTMX {
 
-    private List<String> m_srcList;
-    private List<String> m_tarList;
-    private List<String> m_tarChangeIdList;
-    private List<Long> m_tarChangeDateList;
-    private Calendar c;
+    private final String name;
+
+    String[] source;
+    String[] target;
+
+    public ExternalTMX(String name) {
+        this.name = name;
+    }
 
     public ExternalTMX(File file) throws Exception {
+        this.name = file.getName();
         ProjectProperties props = Core.getProject().getProjectProperties();
 
-        c = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.ENGLISH);
-        c.setTimeInMillis(0);
+        final List<String> s = new ArrayList<String>();
+        final List<String> t = new ArrayList<String>();
+        TMXReader2.LoadCallback loader = new TMXReader2.LoadCallback() {
+            public void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget) {
+                s.add(tuvSource.getSeg());
+                t.add(tuvTarget.getSeg());
+            }
+        };
 
         TMXReader2.readTMX(file, props.getSourceLanguage(), props.getTargetLanguage(),
                 props.isSentenceSegmentingEnabled(), false, loader);
-
-        c = null;
+        source = s.toArray(new String[s.size()]);
+        target = t.toArray(new String[t.size()]);
     }
 
-    private TMXReader2.LoadCallback loader = new TMXReader2.LoadCallback() {
-        public void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget) {
-            m_srcList.add(tuvSource.getSeg());
-            m_tarList.add(tuvTarget.getSeg());
-            String changeID = StringUtil.nvl(tuvTarget.getChangeid(), tuvTarget.getCreationid(),
-                    tu.getChangeid(), tu.getCreationid());
-            m_tarChangeIdList.add(changeID);
-            String dt = StringUtil.nvl(tuvTarget.getChangedate(), tuvTarget.getCreationdate(),
-                    tu.getChangedate(), tu.getCreationdate());
-            m_tarChangeDateList.add(parseISO8601date(dt));
-        }
-    };
-
-    private long parseISO8601date(String str) {
-        return str != null ? DatatypeConverter.parseDateTime(str).getTimeInMillis() : 0;
+    public String getName() {
+        return name;
     }
 }

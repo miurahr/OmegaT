@@ -28,16 +28,13 @@ package org.omegat.core.data;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.omegat.core.matching.ITokenizer;
 import org.omegat.core.statistics.StatisticsInfo;
 import org.omegat.filters2.TranslationException;
 
 /**
- * Interface for access to loaded project. Each loaded project will be new
- * instance of IProject.
+ * Interface for access to loaded project. Each loaded project will be new instance of IProject.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Didier Briel
@@ -94,8 +91,7 @@ public interface IProject {
     ITokenizer getTargetTokenizer();
 
     /**
-     * Get all source segments. It's unmodifiable list, so, there is no need
-     * synchronization to read it.
+     * Get all source segments. It's unmodifiable list, so, there is no need synchronization to read it.
      */
     List<SourceTextEntry> getAllEntries();
 
@@ -110,31 +106,11 @@ public interface IProject {
     void setTranslation(SourceTextEntry entry, String trans);
 
     /**
-     * Set author and translation for entry. Use when user has typed a new
-     * translation.
-     * 
-     * @param author
-     *            author
-     * @param entry
-     *            entry
-     * @param trans
-     *            translation
-     */
-    void setAuthorTranslation(String author, SourceTextEntry entry, String trans);
-
-    /**
      * Get statistics for project.
      * 
      * @return
      */
     StatisticsInfo getStatistics();
-
-    /**
-     * Get all translations for current project.
-     * 
-     * @return all translations map
-     */
-    Set<Map.Entry<String, TransEntry>> getTranslationsSet();
 
     /**
      * Get translation for specified entry.
@@ -143,25 +119,26 @@ public interface IProject {
      *            source entry
      * @return translation, or null if translation not exist
      */
-    TransEntry getTranslation(SourceTextEntry ste);
+    Translation getTranslation(SourceTextEntry ste);
 
     /**
-     * Get all translation memories from /tm/ folder.
-     * 
-     * @return translation memories
+     * Iterate by all translated segments from project_save.tmx.
      */
-    Map<String, List<TransMemory>> getTransMemories();
+    void iterateByTranslations(TranslationIterator callback);
 
     /**
-     * Get orphaned segments.
-     * 
-     * @return orphaned segments
+     * Iterate by all orphaned segments from project_save.tmx.
      */
-    Map<String, TransEntry> getOrphanedSegments();
+    void iterateByOrphaned(TranslationIterator callback);
 
     /**
-     * Get info about each source file in project. It's unmodifiable list, so,
-     * there is no need synchronization to read it.
+     * Iterate by all translation memories in /tm/ folder.
+     */
+    void iterateByTransMemories(TranslationIterator callback);
+
+    /**
+     * Get info about each source file in project. It's unmodifiable list, so, there is no need
+     * synchronization to read it.
      */
     List<FileInfo> getProjectFiles();
 
@@ -169,5 +146,9 @@ public interface IProject {
         public String filePath;
 
         public List<SourceTextEntry> entries = new ArrayList<SourceTextEntry>();
+    }
+
+    interface TranslationIterator {
+        void onTmxEntry(String tmxName, String source, String target);
     }
 }

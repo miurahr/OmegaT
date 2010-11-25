@@ -4,8 +4,7 @@
   - Add multiple translations support
   - Changes in TM/ are detected automatically every second. The
 modified TMX are reloaded in memory transparently, without having to
-reload the project. TMXes are also read from nested folders, not only from
-the root of /tm.
+reload the project.
 
 
 ----------------------------------------------------------------------
