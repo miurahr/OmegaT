@@ -64,6 +64,7 @@ import org.omegat.filters2.IFilter;
 import org.omegat.filters2.TranslationException;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
+import org.omegat.util.DirectoryMonitor;
 import org.omegat.util.FileUtil;
 import org.omegat.util.LFileCopy;
 import org.omegat.util.Language;
@@ -80,11 +81,11 @@ import org.omegat.util.TMXWriter;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
- * Loaded project implementation. Only translation could be changed after
- * project will be loaded and set by Core.setProject.
+ * Loaded project implementation. Only translation could be changed after project will be loaded and set by
+ * Core.setProject.
  * 
- * All components can read all data directly without synchronization. All
- * synchronization implemented inside RealProject.
+ * All components can read all data directly without synchronization. All synchronization implemented inside
+ * RealProject.
  * 
  * @author Keith Godfrey
  * @author Henry Pijffers (henry.pijffers@saxnot.com)
@@ -105,37 +106,28 @@ public class RealProject implements IProject {
     private boolean m_modifiedFlag;
 
     /** List of all segments in project. */
-    private List<SourceTextEntry> allProjectEntries;
+    private List<SourceTextEntry> allProjectEntries = new ArrayList<SourceTextEntry>(4096);
 
     private final StatisticsInfo hotStat = new StatisticsInfo();
 
     private final ITokenizer sourceTokenizer, targetTokenizer;
 
-    /**
-     * Storage for all translation memories, which shouldn't be changed and
-     * saved, i.e. for /tm/*.tmx files, aligned data from source files.
-     */
-    private final Map<String, List<TransMemory>> transMemories;
+    private DirectoryMonitor tmMonitor;
 
     /**
-     * Storage for orphaned segments. The key is the source text, the value the
-     * translation with additional properties.
+     * Storage for all translation memories, which shouldn't be changed and saved, i.e. for /tm/*.tmx files,
+     * aligned data from source files.
      */
-    private final Map<String, TransEntry> orphanedSegments;
+    private final Map<String, ExternalTMX> transMemories = new TreeMap<String, ExternalTMX>();
 
-    /**
-     * Storage for translation for current project. The key is the source text,
-     * the value the translation with additional properties.
-     */
-    private final Map<String, TransEntry> translations;
+    private ProjectTMX projectTMX;
 
     /** Segments count in project files. */
-    private final List<FileInfo> projectFilesList;
+    private final List<FileInfo> projectFilesList = new ArrayList<FileInfo>();
 
     /**
-     * Create new project instance. It required to call {@link #createProject()
-     * createProject} or {@link #loadProject() loadProject} methods just after
-     * constructor before use project.
+     * Create new project instance. It required to call {@link #createProject() createProject} or
+     * {@link #loadProject() loadProject} methods just after constructor before use project.
      * 
      * @param props
      *            project properties
@@ -143,12 +135,6 @@ public class RealProject implements IProject {
      *            true if project need to be created
      */
     public RealProject(final ProjectProperties props) {
-        allProjectEntries = new ArrayList<SourceTextEntry>(4096);
-        transMemories = new TreeMap<String, List<TransMemory>>();
-        orphanedSegments = new HashMap<String, TransEntry>();
-        translations = new HashMap<String, TransEntry>();
-        projectFilesList = new ArrayList<FileInfo>();
-
         m_config = props;
 
         sourceTokenizer = createTokenizer(true);
@@ -193,8 +179,7 @@ public class RealProject implements IProject {
     }
 
     /**
-     * Load exist project in a "big" sense -- loads project's properties,
-     * glossaries, tms, source files etc.
+     * Load exist project in a "big" sense -- loads project's properties, glossaries, tms, source files etc.
      */
     public void loadProject() {
         LOGGER.info(OStrings.getString("LOG_DATAENGINE_LOAD_START"));
@@ -210,18 +195,18 @@ public class RealProject implements IProject {
 
             Core.getMainWindow().showStatusMessageRB("CT_LOADING_PROJECT");
 
-            loadSourceFiles();
+            // sets for collect exist entries for check orphaned
+            Set<String> existSource = new HashSet<String>();
+            Set<EntryKey> existKeys = new HashSet<EntryKey>();
 
-            loadTranslations();
+            loadSourceFiles(existSource, existKeys);
 
-            // load in translation database files
-            try {
-                loadTM();
-            } catch (IOException e) {
-                Log.logErrorRB(e, "TF_TM_LOAD_ERROR");
-                Core.getMainWindow().displayErrorRB(e, "TF_TM_LOAD_ERROR");
-                // allow project load to resume
-            }
+            loadTranslations(existSource, existKeys);
+
+            existSource = null;
+            existKeys = null;
+
+            loadTM();
 
             // build word count
             String stat = CalcStandardStatistics.buildProjectStats(this, hotStat);
@@ -246,9 +231,9 @@ public class RealProject implements IProject {
             // but since we didn't, do a bit of cleaning up now, otherwise
             // we can't even inform the user about our slacking off.
             allProjectEntries.clear();
+            projectFilesList.clear();
             transMemories.clear();
-            translations.clear();
-            orphanedSegments.clear();
+            projectTMX = null;
 
             // Well, that cleared up some, GC to the rescue!
             System.gc();
@@ -304,10 +289,11 @@ public class RealProject implements IProject {
     }
 
     /**
-     * Signals to the core thread that a project is being closed now, and if
-     * it's still being loaded, core thread shouldn't throw any error.
+     * Signals to the core thread that a project is being closed now, and if it's still being loaded, core
+     * thread shouldn't throw any error.
      */
     public void closeProject() {
+        tmMonitor.fin();
         unlockProject();
         LOGGER.info(OStrings.getString("LOG_DATAENGINE_CLOSE"));
     }
@@ -344,8 +330,7 @@ public class RealProject implements IProject {
     }
 
     /**
-     * Builds translated files corresponding to sourcePattern and creates fresh
-     * TM files.
+     * Builds translated files corresponding to sourcePattern and creates fresh TM files.
      * 
      * @param sourcePattern
      *            The regexp of files to create
@@ -525,8 +510,20 @@ public class RealProject implements IProject {
     // protected functions
 
     /** Finds and loads project's TMX file with translations (project_save.tmx). */
-    private void loadTranslations() {
+    private void loadTranslations(final Set<String> existSource, final Set<EntryKey> existKeys) {
+
+        ProjectTMX.CheckOrphanedCallback cb = new ProjectTMX.CheckOrphanedCallback() {
+            public boolean existSourceInProject(String src) {
+                return existSource.contains(src);
+            }
+
+            public boolean existEntryInProject(EntryKey key) {
+                return existKeys.contains(key);
+            }
+        };
+
         final File tmxFile = new File(m_config.getProjectInternal() + OConsts.STATUS_EXTENSION);
+
         try {
             if (!tmxFile.exists()) {
                 Log.logErrorRB("CT_ERROR_CANNOT_FIND_TMX", tmxFile.getAbsolutePath());
@@ -541,13 +538,10 @@ public class RealProject implements IProject {
         }
 
         try {
-            // recover existing translations
-            // since the source files may have changed since the last time
-            // they were loaded, load each string then look for it's
-            // owner
             Core.getMainWindow().showStatusMessageRB("CT_LOAD_TMX");
-            loadTMXFile(tmxFile.getAbsolutePath(), "UTF-8", true);
-        } catch (IOException e) {
+
+            projectTMX = new ProjectTMX(tmxFile, cb);
+        } catch (Exception e) {
             Log.logErrorRB(e, "CT_ERROR_LOADING_PROJECT_FILE");
             Core.getMainWindow().displayErrorRB(e, "CT_ERROR_LOADING_PROJECT_FILE");
         }
@@ -559,7 +553,8 @@ public class RealProject implements IProject {
      * @param projectRoot
      *            project root dir
      */
-    private void loadSourceFiles() throws IOException, InterruptedIOException, TranslationException {
+    private void loadSourceFiles(final Set<String> existSource, final Set<EntryKey> existKeys)
+            throws IOException, InterruptedIOException, TranslationException {
         long st = System.currentTimeMillis();
         FilterMaster fm = FilterMaster.getInstance();
 
@@ -575,7 +570,7 @@ public class RealProject implements IProject {
 
             Core.getMainWindow().showStatusMessageRB("CT_LOAD_FILE_MX", filepath);
 
-            LoadFilesCallback loadFilesCallback = new LoadFilesCallback();
+            LoadFilesCallback loadFilesCallback = new LoadFilesCallback(existSource, existKeys);
 
             FileInfo fi = new FileInfo();
             fi.filePath = filepath;
@@ -613,42 +608,42 @@ public class RealProject implements IProject {
         }
     }
 
-    /** Locates and loads external TMX files with legacy translations. */
+    /**
+     * Locates and loads external TMX files with legacy translations. Uses directory monitor for check file
+     * updates.
+     */
     private void loadTM() throws IOException {
-
-        List<String> tmFileList = new ArrayList<String>();
         File tmRoot = new File(m_config.getTMRoot());
-        StaticUtils.buildFileList(tmFileList, tmRoot, true);
-
-        for (String file : tmFileList) {
-            String fname = file;
-            int lastdot = fname.lastIndexOf('.');
-            if (lastdot < 0)
-                lastdot = fname.length();
-            String ext = fname.substring(lastdot);
-
-            if (ext.equalsIgnoreCase(OConsts.TMX_EXTENSION)) {
-                loadTMXFile(fname, "UTF-8", false);
-            } else if (ext.equalsIgnoreCase(OConsts.TMW_EXTENSION)) {
-                loadTMXFile(fname, "ISO-8859-1", false);
+        tmMonitor = new DirectoryMonitor(tmRoot, new DirectoryMonitor.Callback() {
+            public void fileChanged(File file) {
+                synchronized (transMemories) {
+                    if (file.exists()) {
+                        try {
+                            transMemories.put(file.getPath(), new ExternalTMX(file));
+                        } catch (Exception e) {
+                            Log.logErrorRB(e, "TF_TM_LOAD_ERROR");
+                            Core.getMainWindow().displayErrorRB(e, "TF_TM_LOAD_ERROR");
+                        }
+                    } else {
+                        transMemories.remove(file.getPath());
+                    }
+                }
             }
-        }
-    }
+        });
+        tmMonitor.start();
+l    }
 
     /**
-     * Loads TMX file. Either the one of the project with project's translation,
-     * or the legacy ones. IF the projects TMX is loaded, it is also backed up.
-     * The translations are added to either {@link translations} or to
-     * {@link orphanedSegments} for project TMX, or to a transMemory in
-     * {@link transMemories}.
+     * Loads TMX file. Either the one of the project with project's translation, or the legacy ones. IF the
+     * projects TMX is loaded, it is also backed up. The translations are added to either {@link translations}
+     * or to {@link orphanedSegments} for project TMX, or to a transMemory in {@link transMemories}.
      * 
      * @param fname
      *            The name of the TMX file
      * @param encoding
      *            The encoding of the tmx, usually "UTF-8"
      * @param isProject
-     *            Set to true when loading the projects TMX (e.g.
-     *            project_save.tmx)
+     *            Set to true when loading the projects TMX (e.g. project_save.tmx)
      */
     private void loadTMXFile(String fname, String encoding, boolean isProject) throws IOException {
         TMXReader tmx = new TMXReader(encoding, m_config.getSourceLanguage(), m_config.getTargetLanguage(),
@@ -923,13 +918,18 @@ public class RealProject implements IProject {
     private class LoadFilesCallback extends ParseEntry {
         private FileInfo fileInfo;
         /**
-         * a special 'reference' TMX that is used as extra refrence during
-         * translation. It is filled with fuzzy translations from source files.
+         * a special 'reference' TMX that is used as extra refrence during translation. It is filled with
+         * fuzzy translations from source files.
          */
         private List<TransMemory> tmForFile;
 
-        public LoadFilesCallback() {
+        private final Set<String> existSource;
+        private final Set<EntryKey> existKeys;
+
+        public LoadFilesCallback(final Set<String> existSource, final Set<EntryKey> existKeys) {
             super(m_config);
+            this.existSource = existSource;
+            this.existKeys = existKeys;
         }
 
         protected void setCurrentFile(FileInfo fi) {
@@ -948,9 +948,13 @@ public class RealProject implements IProject {
             if (!StringUtil.isEmpty(segmentTranslation)) {
                 translations.put(segmentSource, new TransEntry(segmentTranslation));
             }
-            SourceTextEntry srcTextEntry = new SourceTextEntry(segmentSource, allProjectEntries.size() + 1);
+            SourceTextEntry srcTextEntry = new SourceTextEntry(fileInfo.filePath, id, segmentSource,
+                    allProjectEntries.size() + 1);
             allProjectEntries.add(srcTextEntry);
             fileInfo.entries.add(srcTextEntry);
+
+            existSource.add(segmentSource);
+            existKeys.add(srcTextEntry.getKey());
         }
 
         public void addFileTMXEntry(String source, String translation) {

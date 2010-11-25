@@ -95,13 +95,28 @@ public class StringUtil {
     /**
      * Compare two values, which could be null.
      */
-    public static <T> boolean compare(T v1, T v2) {
+    public static <T> boolean equalsWithNulls(T v1, T v2) {
         if (v1 == null && v2 == null) {
             return true;
         } else if (v1 != null && v2 != null) {
             return v1.equals(v2);
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Compare two values, which could be null.
+     */
+    public static <T extends Comparable<T>> int compareToWithNulls(T v1, T v2) {
+        if (v1 == null && v2 == null) {
+            return 0;
+        } else if (v1 == null && v2 != null) {
+            return -1;
+        } else if (v1 != null && v2 == null) {
+            return 1;
+        } else {
+            return v1.compareTo(v2);
         }
     }
 }

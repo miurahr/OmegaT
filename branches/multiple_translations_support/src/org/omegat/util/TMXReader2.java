@@ -49,7 +49,7 @@ import org.xml.sax.XMLReader;
  */
 public class TMXReader2 {
 
-    private static final JAXBContext CONTEXT;
+    static final JAXBContext CONTEXT;
 
     static {
         try {
@@ -72,18 +72,7 @@ public class TMXReader2 {
         XMLReader reader = factory.newSAXParser().getXMLReader();
         reader.setContentHandler(un.getUnmarshallerHandler());
 
-        reader.setEntityResolver(new EntityResolver() {
-            public InputSource resolveEntity(String publicId, String systemId) throws SAXException,
-                    IOException {
-                if (systemId.endsWith("tmx11.dtd")) {
-                    return new InputSource(TMXReader2.class.getResourceAsStream("/schemas/tmx11.dtd"));
-                } else if (systemId.endsWith("tmx14.dtd")) {
-                    return new InputSource(TMXReader2.class.getResourceAsStream("/schemas/tmx14.dtd"));
-                } else {
-                    return null;
-                }
-            }
-        });
+        reader.setEntityResolver(TMX_DTD_RESOLVER);
 
         // install the callback on all PurchaseOrders instances
         un.setListener(new Unmarshaller.Listener() {
@@ -160,4 +149,16 @@ public class TMXReader2 {
     public interface LoadCallback {
         void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget);
     }
+
+    protected static final EntityResolver TMX_DTD_RESOLVER = new EntityResolver() {
+        public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+            if (systemId.endsWith("tmx11.dtd")) {
+                return new InputSource(TMXReader2.class.getResourceAsStream("/schemas/tmx11.dtd"));
+            } else if (systemId.endsWith("tmx14.dtd")) {
+                return new InputSource(TMXReader2.class.getResourceAsStream("/schemas/tmx14.dtd"));
+            } else {
+                return null;
+            }
+        }
+    };
 }

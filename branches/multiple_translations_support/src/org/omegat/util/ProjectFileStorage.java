@@ -131,6 +131,12 @@ public class ProjectFileStorage {
                 blk = lst.get(i);
                 if (blk != null)
                     result.setSentenceSegmentingEnabled(Boolean.parseBoolean(blk.getText()));
+            } else if (blk.getTagName().equals("support_default_translations")) {
+                if (++i >= lst.size())
+                    break;
+                blk = lst.get(i);
+                if (blk != null)
+                    result.setSupportDefaultTranslations(Boolean.parseBoolean(blk.getText()));
             }
         }
 

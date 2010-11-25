@@ -49,6 +49,7 @@ public class ProjectProperties {
         setDictRoot(projectRoot + OConsts.DEFAULT_DICT + File.separator);
 
         setSentenceSegmentingEnabled(true);
+        setSupportDefaultTranslations(true);
 
         String sourceLocale = Preferences.getPreference(Preferences.SOURCE_LOCALE);
         if (!StringUtil.isEmpty(sourceLocale)) {
@@ -194,6 +195,14 @@ public class ProjectProperties {
         this.sentenceSegmentingOn = sentenceSegmentingOn;
     }
 
+    public boolean isSupportDefaultTranslations() {
+        return supportDefaultTranslations;
+    }
+
+    public void setSupportDefaultTranslations(boolean supportDefaultTranslations) {
+        this.supportDefaultTranslations = supportDefaultTranslations;
+    }
+
     /**
      * @return true if project OK, false if some directories are missing
      */
@@ -267,4 +276,5 @@ public class ProjectProperties {
     private Language targetLanguage;
 
     private boolean sentenceSegmentingOn;
+    private boolean supportDefaultTranslations;
 }

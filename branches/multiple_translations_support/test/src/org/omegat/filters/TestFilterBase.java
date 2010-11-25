@@ -48,7 +48,7 @@ import org.xml.sax.InputSource;
  */
 public abstract class TestFilterBase extends XMLTestCase {
     protected File outFile = new File(System.getProperty("java.io.tmpdir"),
-            "OmegaT filter test - " + getClass().getSimpleName());
+            "OmegaT test - " + getClass().getSimpleName());
 
     protected List<String> parse(AbstractFilter filter, String filename)
             throws Exception {
