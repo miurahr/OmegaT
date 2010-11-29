@@ -43,7 +43,7 @@ import javax.swing.JPopupMenu;
 import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.StringData;
-import org.omegat.core.data.TransEntry;
+import org.omegat.core.data.TMXEntry;
 import org.omegat.core.matching.NearString;
 import org.omegat.gui.common.EntryInfoPane;
 import org.omegat.gui.main.DockableScrollPane;
@@ -184,7 +184,7 @@ public class MatchesTextArea extends EntryInfoPane<List<NearString>> implements 
                         Preferences.BEST_MATCH_EXPLANATORY_TEXT, OStrings.getString("WF_DEFAULT_PREFIX"))
                         + thebest.translation;
                 SourceTextEntry currentEntry = Core.getEditor().getCurrentEntry();
-                TransEntry te = Core.getProject().getTranslation(currentEntry);
+                TMXEntry te = Core.getProject().getTranslation(currentEntry);
                 if (te == null) {
                     Core.getEditor().replaceEditText(translation);
                 }

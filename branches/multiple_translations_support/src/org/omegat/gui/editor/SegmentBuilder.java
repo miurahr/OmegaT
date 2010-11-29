@@ -36,7 +36,7 @@ import javax.swing.text.Position;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.SourceTextEntry;
-import org.omegat.core.data.TransEntry;
+import org.omegat.core.data.TMXEntry;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -142,7 +142,7 @@ public class SegmentBuilder {
                     offset = doc.getLength();
                 }
 
-                TransEntry trans = Core.getProject().getTranslation(ste);
+                TMXEntry trans = Core.getProject().getTranslation(ste);
                 transExist = trans != null;
 
                 int beginOffset = offset;
@@ -184,7 +184,7 @@ public class SegmentBuilder {
     /**
      * Create method for active segment.
      */
-    private void createActiveSegmentElement(TransEntry trans) throws BadLocationException {
+    private void createActiveSegmentElement(TMXEntry trans) throws BadLocationException {
         try {
             if (EditorSettings.DISPLAY_MODIFICATION_INFO_ALL.equals(settings.getDisplayModificationInfo())
                     || EditorSettings.DISPLAY_MODIFICATION_INFO_SELECTED.equals(settings
@@ -237,7 +237,7 @@ public class SegmentBuilder {
     /**
      * Create method for inactive segment.
      */
-    private void createInactiveSegmentElement(TransEntry trans) throws BadLocationException {
+    private void createInactiveSegmentElement(TMXEntry trans) throws BadLocationException {
         if (EditorSettings.DISPLAY_MODIFICATION_INFO_ALL.equals(settings.getDisplayModificationInfo())) {
             addModificationInfoPart(trans, ATTR_INFO);
         }
@@ -399,12 +399,12 @@ public class SegmentBuilder {
      *            Font attributes
      * @throws BadLocationException
      */
-    private void addModificationInfoPart(TransEntry trans, AttributeSet attrs) throws BadLocationException {
+    private void addModificationInfoPart(TMXEntry trans, AttributeSet attrs) throws BadLocationException {
         if (trans == null)
             return;
 
-        String author = (trans.changeId == null ? OStrings.getString("TF_CUR_SEGMENT_UNKNOWN_AUTHOR")
-                : trans.changeId);
+        String author = (trans.changer == null ? OStrings.getString("TF_CUR_SEGMENT_UNKNOWN_AUTHOR")
+                : trans.changer);
         String template;
         String text;
         if (trans.changeDate != 0) {

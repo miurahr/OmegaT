@@ -26,15 +26,15 @@
 package org.omegat.gui.matches;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.omegat.core.data.ExternalTMX;
 import org.omegat.core.data.IProject;
 import org.omegat.core.data.SourceTextEntry;
-import org.omegat.core.data.TransEntry;
 import org.omegat.core.data.TMXEntry;
 import org.omegat.core.matching.FuzzyMatcher;
 import org.omegat.core.matching.ISimilarityCalculator;
@@ -106,9 +106,9 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
         }
 
         final List<SourceTextEntry> entries = project.getAllEntries();
-        Set<Map.Entry<String, TransEntry>> translations = project.getTranslationsSet();
-        Map<String, TransEntry> orphaned = project.getOrphanedSegments();
-        Map<String, List<TMXEntry>> memories = project.getTransMemories();
+        Collection<TMXEntry> translations = project.getAllTranslations();
+        Collection<TMXEntry> orphaned = project.getAllOrphanedTranslations();
+        Map<String, ExternalTMX> memories = project.getTransMemories();
         if (entries == null || memories == null || orphaned == null) {
             // project is closed
             return result;
@@ -127,33 +127,33 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
         /* HP: includes non - word tokens */
 
         // travel by project entries
-        for (Map.Entry<String, TransEntry> en : translations) {
+        for (TMXEntry en : translations) {
             if (isEntryChanged()) {
                 return null;
             }
-            if (en.getKey().equals(processedEntry.getSrcText())) {
+            if (en.source.equals(processedEntry.getSrcText())) {
                 // skip original==original entry comparison
                 continue;
             }
-            processEntry(en.getKey(), en.getValue().translation, null);
+            processEntry(en.source, en.translation, null);
         }
 
         // travel by orphaned
         String file = OStrings.getString("CT_ORPHAN_STRINGS");
-        for (Map.Entry<String, TransEntry> en : orphaned.entrySet()) {
+        for (TMXEntry en : orphaned) {
             if (isEntryChanged()) {
                 return null;
             }
-            processEntry(en.getKey(), en.getValue().translation, file);
+            processEntry(en.source, en.translation, file);
         }
 
         // travel by translation memories
-        for (Map.Entry<String, List<TMXEntry>> en : memories.entrySet()) {
-            for (TMXEntry tmen : en.getValue()) {
+        for (Map.Entry<String, ExternalTMX> en : memories.entrySet()) {
+            for (TMXEntry tmen : en.getValue().getEntries()) {
                 if (isEntryChanged()) {
                     return null;
                 }
-                processEntry(tmen.source, tmen.target, en.getKey());
+                processEntry(tmen.source, tmen.translation, en.getKey());
             }
         }
 

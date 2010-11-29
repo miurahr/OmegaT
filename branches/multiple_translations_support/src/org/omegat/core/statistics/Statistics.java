@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.omegat.core.Core;
+import org.omegat.core.data.ExternalTMX;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.TMXEntry;
 import org.omegat.core.matching.FuzzyMatcher;
@@ -103,7 +104,7 @@ public class Statistics {
                 // source entry
                 continue;
             }
-            TransEntry te = Core.getProject().getTranslation(cand);
+            TMXEntry te = Core.getProject().getTranslation(cand);
             if (te == null) {
                 // target without translation - skip
                 continue;
@@ -114,16 +115,16 @@ public class Statistics {
         }
 
         /* Travel by orphaned. */
-        for (String source : Core.getProject().getOrphanedSegments().keySet()) {
-            Token[] candTokens = tokenizeExactlyWithCache(tokensCache, source);
+        for (TMXEntry en : Core.getProject().getAllOrphanedTranslations()) {
+            Token[] candTokens = tokenizeExactlyWithCache(tokensCache, en.source);
             int newSimilarity = FuzzyMatcher.calcSimilarity(distanceCalculator, strTokensStem, candTokens);
             maxSimilarity = Math.max(maxSimilarity, newSimilarity);
         }
 
         /* Travel by TMs. */
-        for (List<TMXEntry> tmFile : Core.getProject().getTransMemories().values()) {
-            for (int i = 0; i < tmFile.size(); i++) {
-                TMXEntry tm = tmFile.get(i);
+        for (ExternalTMX tmFile : Core.getProject().getTransMemories().values()) {
+            for (int i = 0; i < tmFile.getEntries().size(); i++) {
+                TMXEntry tm = tmFile.getEntries().get(i);
                 Token[] candTokens = tokenizeExactlyWithCache(tokensCache, tm.source);
                 int newSimilarity = FuzzyMatcher
                         .calcSimilarity(distanceCalculator, strTokensStem, candTokens);

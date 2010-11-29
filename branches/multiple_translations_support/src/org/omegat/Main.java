@@ -47,7 +47,6 @@ import org.omegat.core.data.ProjectFactory;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.data.RealProject;
 import org.omegat.core.data.SourceTextEntry;
-import org.omegat.core.data.TransEntry;
 import org.omegat.core.data.TMXEntry;
 import org.omegat.filters2.master.PluginUtils;
 import org.omegat.util.Log;
@@ -300,10 +299,10 @@ public class Main {
             for (SourceTextEntry ste : entries) {
                 switch (pseudoTranslateType) {
                 case EQUAL:
-                    data.put(ste.getSrcText(), new TransEntry(ste.getSrcText()));
+                    data.put(ste.getSrcText(), new TMXEntry(ste.getSrcText(), ste.getSrcText(), null, 0));
                     break;
                 case EMPTY:
-                    data.put(ste.getSrcText(), new TransEntry(""));
+                    data.put(ste.getSrcText(), new TMXEntry(ste.getSrcText(), "", null, 0));
                     break;
                 }
             }
