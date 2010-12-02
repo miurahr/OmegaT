@@ -97,9 +97,10 @@ public class TMXWriter2 {
                 }
 
                 m.marshal(tu, wr);
+                wr.write('\n');
             }
 
-            wr.write("\n\n  </body>\n");
+            wr.write("\n  </body>\n");
             wr.write("</tmx>\n");
         } finally {
             wr.close();

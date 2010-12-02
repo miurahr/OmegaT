@@ -139,7 +139,7 @@ public class RealProject implements IProject {
         targetTokenizer = createTokenizer(false);
     }
 
-    public void saveProjectProperties() throws IOException {
+    public void saveProjectProperties() throws Exception {
         unlockProject();
         ProjectFileStorage.writeProjectFile(m_config);
         lockProject();
@@ -168,7 +168,7 @@ public class RealProject implements IProject {
             saveProjectProperties();
 
             allProjectEntries = Collections.unmodifiableList(allProjectEntries);
-        } catch (IOException e) {
+        } catch (Exception e) {
             // trouble in tinsletown...
             Log.logErrorRB(e, "CT_ERROR_CREATING_PROJECT");
             Core.getMainWindow().displayErrorRB(e, "CT_ERROR_CREATING_PROJECT");
@@ -433,8 +433,6 @@ public class RealProject implements IProject {
         File backup = new File(s + OConsts.BACKUP_EXTENSION);
         File orig = new File(s);
         File newFile = new File(s + OConsts.NEWFILE_EXTENSION);
-        if (orig.exists())
-            orig.renameTo(backup);
 
         try {
             saveProjectProperties();
@@ -442,15 +440,17 @@ public class RealProject implements IProject {
             projectTMX.save(newFile, false, false);
 
             if (backup.exists()) {
-                backup.delete();
+                if (!backup.delete()) {
+                    throw new IOException("Error delete backup file");
+                }
             }
 
             if (!orig.renameTo(backup)) {
-                throw new IOException("Error name old file to backup");
+                throw new IOException("Error rename old file to backup");
             }
 
             if (!newFile.renameTo(orig)) {
-                throw new IOException("Error name old file to backup");
+                throw new IOException("Error rename new file to tmx");
             }
 
             m_modifiedFlag = false;
@@ -526,7 +526,7 @@ public class RealProject implements IProject {
         try {
             Core.getMainWindow().showStatusMessageRB("CT_LOAD_TMX");
 
-            projectTMX = new ProjectTMX(tmxFile, cb);
+            projectTMX = new ProjectTMX(m_config, tmxFile, cb);
 
             // RFE 1001918 - backing up project's TMX upon successful read
             FileUtil.backupFile(tmxFile);
@@ -627,7 +627,7 @@ public class RealProject implements IProject {
                 Map<String, ExternalTMX> newTransMemories = new TreeMap<String, ExternalTMX>(transMemories);
                 if (file.exists()) {
                     try {
-                        ExternalTMX newTMX = new ExternalTMX(file);
+                        ExternalTMX newTMX = new ExternalTMX(m_config, file);
                         newTransMemories.put(file.getPath(), newTMX);
                     } catch (Exception e) {
                         Log.logErrorRB(e, "TF_TM_LOAD_ERROR");

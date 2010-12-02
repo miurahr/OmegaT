@@ -66,20 +66,16 @@ public class ProjectTMX {
 
     final Map<EntryKey, TMXEntry> orphanedMultiple;
 
-    public ProjectTMX(File file, CheckOrphanedCallback callback) throws Exception {
-
-        ProjectProperties props = Core.getProject().getProjectProperties();
-
+    public ProjectTMX(ProjectProperties props, File file, CheckOrphanedCallback callback) throws Exception {
         translationMultiple = new HashMap<EntryKey, TMXEntry>();
         orphanedMultiple = new HashMap<EntryKey, TMXEntry>();
+        orphanedDefault = new HashMap<String, TMXEntry>();
         if (props.isSupportDefaultTranslations()) {
             translationDefault = new HashMap<String, TMXEntry>();
-            orphanedDefault = new HashMap<String, TMXEntry>();
         } else {
             // Do not even create default storage if not required. It will
             // allow to see errors.
             translationDefault = null;
-            orphanedDefault = null;
         }
 
         TMXReader2.readTMX(file, props.getSourceLanguage(), props.getTargetLanguage(),
@@ -150,7 +146,7 @@ public class ProjectTMX {
             EntryKey key = createKeyByProps(tuvSource.getSeg(), tu);
             if (key.file == null) {
                 // default translation
-                if (callback.existSourceInProject(tuvSource.getSeg())) {
+                if (translationDefault != null && callback.existSourceInProject(tuvSource.getSeg())) {
                     translationDefault.put(tuvSource.getSeg(), te);
                 } else {
                     orphanedDefault.put(tuvSource.getSeg(), te);
@@ -206,7 +202,11 @@ public class ProjectTMX {
             this.forceValidTMX = forceValidTMX;
 
             // we need to put entries into TreeMap for have sorted TMX
-            itTD = new TreeMap<String, TMXEntry>(translationDefault).entrySet().iterator();
+            if (translationDefault != null) {
+                itTD = new TreeMap<String, TMXEntry>(translationDefault).entrySet().iterator();
+            } else {
+                itTD = null;
+            }
             itTM = new TreeMap<EntryKey, TMXEntry>(translationMultiple).entrySet().iterator();
             itOD = new TreeMap<String, TMXEntry>(orphanedDefault).entrySet().iterator();
             itOM = new TreeMap<EntryKey, TMXEntry>(orphanedMultiple).entrySet().iterator();
@@ -226,10 +226,14 @@ public class ProjectTMX {
             Map.Entry<EntryKey, TMXEntry> em = null;
 
             // find next entry
-            if ((ed = itTD.next()) != null) {
-            } else if ((em = itTM.next()) != null) {
-            } else if ((ed = itOD.next()) != null) {
-            } else if ((em = itOM.next()) != null) {
+            if (itTD != null && itTD.hasNext()) {
+                ed = itTD.next();
+            } else if (itTM.hasNext()) {
+                em = itTM.next();
+            } else if (itOD.hasNext()) {
+                ed = itOD.next();
+            } else if (itOM.hasNext()) {
+                em = itOM.next();
             } else {
                 return null;
             }
@@ -271,5 +275,6 @@ public class ProjectTMX {
         Prop p = new Prop();
         p.setType(propName);
         p.setvalue(propValue);
+        tu.getNoteOrProp().add(p);
     }
 }

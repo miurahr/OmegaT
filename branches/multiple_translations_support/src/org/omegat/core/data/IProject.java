@@ -46,7 +46,7 @@ public interface IProject {
     /**
      * Save project properties only.
      */
-    void saveProjectProperties() throws IOException;
+    void saveProjectProperties() throws Exception;
 
     /**
      * Save project.
@@ -61,7 +61,7 @@ public interface IProject {
     /**
      * Create translated documents.
      */
-    void compileProject(String sourcePattern) throws IOException, TranslationException;
+    void compileProject(String sourcePattern) throws Exception;
 
     /**
      * Get project properties.

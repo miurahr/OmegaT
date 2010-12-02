@@ -32,8 +32,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.TimeZone;
 
-import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.SAXParserFactory;
@@ -52,12 +55,21 @@ public class TMXReader2 {
 
     static final JAXBContext CONTEXT;
 
+    private static final SimpleDateFormat DATE_FORMAT1, DATE_FORMAT2, DATE_FORMAT_OUT;
+
     static {
         try {
             CONTEXT = JAXBContext.newInstance(Tmx.class);
         } catch (Exception ex) {
             throw new ExceptionInInitializerError(ex);
         }
+
+        DATE_FORMAT1 = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.ENGLISH);
+        DATE_FORMAT1.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DATE_FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+        DATE_FORMAT2.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DATE_FORMAT_OUT = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.ENGLISH);
+        DATE_FORMAT_OUT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     /**
@@ -145,7 +157,26 @@ public class TMXReader2 {
     }
 
     public static long parseISO8601date(String str) {
-        return str != null ? DatatypeConverter.parseDateTime(str).getTimeInMillis() : 0;
+        if (str == null) {
+            return 0;
+        }
+        try {
+            synchronized (DATE_FORMAT1) {
+
+                return DATE_FORMAT1.parse(str).getTime();
+            }
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            synchronized (DATE_FORMAT2) {
+                return DATE_FORMAT2.parse(str).getTime();
+            }
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        return 0;
     }
 
     /**

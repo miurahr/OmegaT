@@ -30,7 +30,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.omegat.core.Core;
 import org.omegat.util.StringUtil;
 import org.omegat.util.TMXReader2;
 
@@ -50,11 +49,9 @@ public class ExternalTMX {
         this.entries = entries;
     }
 
-    public ExternalTMX(File file) throws Exception {
+    public ExternalTMX(ProjectProperties props, File file) throws Exception {
         this.name = file.getName();
         entries = new ArrayList<TMXEntry>();
-
-        ProjectProperties props = Core.getProject().getProjectProperties();
 
         TMXReader2.LoadCallback loader = new TMXReader2.LoadCallback() {
             public void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget) {
