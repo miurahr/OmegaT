@@ -30,12 +30,12 @@ import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 
-import junit.framework.TestCase;
+import org.omegat.core.TestCore;
 
 /**
  * @author Alex Buloichik
  */
-public class TMXReaderTest extends TestCase {
+public class TMXReaderTest extends TestCore {
     public void testLeveL1() throws Exception {
         final Map<String, String> tr = new TreeMap<String, String>();
         TMXReader2.readTMX(new File("test/data/tmx/test-level1.tmx"), new Language("en-US"), new Language(
