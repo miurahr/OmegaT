@@ -30,6 +30,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.omegat.core.segmentation.Segmenter;
 import org.omegat.util.StringUtil;
 import org.omegat.util.TMXReader2;
 
@@ -49,20 +50,28 @@ public class ExternalTMX {
         this.entries = entries;
     }
 
-    public ExternalTMX(ProjectProperties props, File file) throws Exception {
+    public ExternalTMX(final ProjectProperties props, final File file) throws Exception {
         this.name = file.getName();
         entries = new ArrayList<TMXEntry>();
 
         TMXReader2.LoadCallback loader = new TMXReader2.LoadCallback() {
-            public void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget) {
+            public void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget, boolean isParagraphSegtype) {
                 String changer = StringUtil.nvl(tuvTarget.getChangeid(), tuvTarget.getCreationid(),
                         tu.getChangeid(), tu.getCreationid());
                 String dt = StringUtil.nvl(tuvTarget.getChangedate(), tuvTarget.getCreationdate(),
                         tu.getChangedate(), tu.getCreationdate());
 
-                TMXEntry te = new TMXEntry(tuvSource.getSeg(), tuvTarget.getSeg(), changer,
-                        TMXReader2.parseISO8601date(dt));
-                entries.add(te);
+                List<String> sources = new ArrayList<String>();
+                List<String> targets = new ArrayList<String>();
+                Segmenter.segmentEntries(props.isSentenceSegmentingEnabled() && isParagraphSegtype,
+                        props.getSourceLanguage(), tuvSource.getSeg(), props.getTargetLanguage(),
+                        tuvTarget.getSeg(), sources, targets);
+
+                for (int i = 0; i < sources.size(); i++) {
+                    TMXEntry te = new TMXEntry(sources.get(i), targets.get(i), changer,
+                            TMXReader2.parseISO8601date(dt));
+                    entries.add(te);
+                }
             }
         };
 

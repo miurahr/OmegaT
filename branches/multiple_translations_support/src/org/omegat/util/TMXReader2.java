@@ -23,6 +23,7 @@
  **************************************************************************/
 package org.omegat.util;
 
+import gen.core.tmx14.Header;
 import gen.core.tmx14.Tmx;
 import gen.core.tmx14.Tu;
 import gen.core.tmx14.Tuv;
@@ -57,6 +58,11 @@ public class TMXReader2 {
 
     private static final SimpleDateFormat DATE_FORMAT1, DATE_FORMAT2, DATE_FORMAT_OUT;
 
+    /** Segment Type attribute value: "paragraph" */
+    public static final String SEG_PARAGRAPH = "paragraph";
+    /** Segment Type attribute value: "sentence" */
+    public static final String SEG_SENTENCE = "sentence";
+
     static {
         try {
             CONTEXT = JAXBContext.newInstance(Tmx.class);
@@ -89,6 +95,8 @@ public class TMXReader2 {
 
         // install the callback on all PurchaseOrders instances
         un.setListener(new Unmarshaller.Listener() {
+            boolean isParagraphSegtype = true;
+
             public void beforeUnmarshal(Object target, Object parent) {
             }
 
@@ -98,8 +106,11 @@ public class TMXReader2 {
                     Tuv s = getTuv(tu, sourceLanguage);
                     Tuv t = getTuv(tu, targetLanguage);
                     if (s != null && t != null) {
-                        callback.onTu(tu, s, t);
+                        callback.onTu(tu, s, t, isParagraphSegtype);
                     }
+                } else if (target instanceof Header) {
+                    Header h = (Header) target;
+                    isParagraphSegtype = SEG_PARAGRAPH.equals(h.getSegtype());
                 }
             }
         });
@@ -162,18 +173,15 @@ public class TMXReader2 {
         }
         try {
             synchronized (DATE_FORMAT1) {
-
                 return DATE_FORMAT1.parse(str).getTime();
             }
         } catch (ParseException ex) {
-            ex.printStackTrace();
         }
         try {
             synchronized (DATE_FORMAT2) {
                 return DATE_FORMAT2.parse(str).getTime();
             }
         } catch (ParseException ex) {
-            ex.printStackTrace();
         }
 
         return 0;
@@ -183,7 +191,7 @@ public class TMXReader2 {
      * Callback for receive data from TMX.
      */
     public interface LoadCallback {
-        void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget);
+        void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget, boolean isParagraphSegtype);
     }
 
     protected static final EntityResolver TMX_DTD_RESOLVER = new EntityResolver() {

@@ -29,15 +29,19 @@ import gen.core.tmx14.Tuv;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
 import org.omegat.core.Core;
+import org.omegat.core.segmentation.Segmenter;
+import org.omegat.util.Language;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.TMXReader2;
@@ -78,8 +82,14 @@ public class ProjectTMX {
             translationDefault = null;
         }
 
-        TMXReader2.readTMX(file, props.getSourceLanguage(), props.getTargetLanguage(),
-                props.isSentenceSegmentingEnabled(), false, new Loader(callback));
+        TMXReader2.readTMX(
+                file,
+                props.getSourceLanguage(),
+                props.getTargetLanguage(),
+                props.isSentenceSegmentingEnabled(),
+                false,
+                new Loader(callback, props.getSourceLanguage(), props.getTargetLanguage(), props
+                        .isSentenceSegmentingEnabled()));
     }
 
     public void save(File outFile, final boolean forceValidTMX, final boolean levelTwo) throws Exception {
@@ -130,33 +140,47 @@ public class ProjectTMX {
 
     private class Loader implements TMXReader2.LoadCallback {
         private final CheckOrphanedCallback callback;
+        private final Language sourceLang;
+        private final Language targetLang;
+        private final boolean sentenceSegmentingEnabled;
 
-        public Loader(CheckOrphanedCallback callback) {
+        public Loader(CheckOrphanedCallback callback, Language sourceLang, Language targetLang,
+                boolean sentenceSegmentingEnabled) {
             this.callback = callback;
+            this.sourceLang = sourceLang;
+            this.targetLang = targetLang;
+            this.sentenceSegmentingEnabled = sentenceSegmentingEnabled;
         }
 
-        public void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget) {
+        public void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget, boolean isParagraphSegtype) {
             String changer = StringUtil.nvl(tuvTarget.getChangeid(), tuvTarget.getCreationid(),
                     tu.getChangeid(), tu.getCreationid());
             String dt = StringUtil.nvl(tuvTarget.getChangedate(), tuvTarget.getCreationdate(),
                     tu.getChangedate(), tu.getCreationdate());
 
-            TMXEntry te = new TMXEntry(tuvSource.getSeg(), tuvTarget.getSeg(), changer,
-                    TMXReader2.parseISO8601date(dt));
-            EntryKey key = createKeyByProps(tuvSource.getSeg(), tu);
-            if (key.file == null) {
-                // default translation
-                if (translationDefault != null && callback.existSourceInProject(tuvSource.getSeg())) {
-                    translationDefault.put(tuvSource.getSeg(), te);
+            List<String> sources = new ArrayList<String>();
+            List<String> targets = new ArrayList<String>();
+            Segmenter.segmentEntries(sentenceSegmentingEnabled && isParagraphSegtype, sourceLang,
+                    tuvSource.getSeg(), targetLang, tuvTarget.getSeg(), sources, targets);
+
+            for (int i = 0; i < sources.size(); i++) {
+                TMXEntry te = new TMXEntry(sources.get(i), targets.get(i), changer,
+                        TMXReader2.parseISO8601date(dt));
+                EntryKey key = createKeyByProps(tuvSource.getSeg(), tu);
+                if (key.file == null) {
+                    // default translation
+                    if (translationDefault != null && callback.existSourceInProject(tuvSource.getSeg())) {
+                        translationDefault.put(tuvSource.getSeg(), te);
+                    } else {
+                        orphanedDefault.put(tuvSource.getSeg(), te);
+                    }
                 } else {
-                    orphanedDefault.put(tuvSource.getSeg(), te);
-                }
-            } else {
-                // multiple translation
-                if (callback.existEntryInProject(key)) {
-                    translationMultiple.put(key, te);
-                } else {
-                    orphanedMultiple.put(key, te);
+                    // multiple translation
+                    if (callback.existEntryInProject(key)) {
+                        translationMultiple.put(key, te);
+                    } else {
+                        orphanedMultiple.put(key, te);
+                    }
                 }
             }
         }

@@ -36,7 +36,7 @@ import org.omegat.filters.TestFilterBase;
  */
 public class TMXWriterTest extends TestFilterBase {
     public void testLeveL1() throws Exception {
-        TMXWriter2.writeTMX(outFile, new Language("en-US"), new Language("be-BY"), false, false,
+        TMXWriter2.writeTMX(outFile, new Language("en-US"), new Language("be-BY"), false, true,
                 new TMXWriter2.SaveCallback() {
                     int i = 0;
 
@@ -49,8 +49,6 @@ public class TMXWriterTest extends TestFilterBase {
                         Tuv src = new Tuv();
                         Tuv tar = new Tuv();
 
-                        src.setXmlLang("en-US");
-                        tar.setXmlLang("be-BY");
                         src.setSeg("source");
                         tar.setSeg("target");
 

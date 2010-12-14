@@ -40,7 +40,7 @@ public class TMXReaderTest extends TestCore {
         final Map<String, String> tr = new TreeMap<String, String>();
         TMXReader2.readTMX(new File("test/data/tmx/test-level1.tmx"), new Language("en-US"), new Language(
                 "be"), false, false, new TMXReader2.LoadCallback() {
-            public void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget) {
+            public void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget, boolean isParagraphSegtype) {
                 tr.put(tuvSource.getSeg(), tuvTarget.getSeg());
             }
         });
@@ -54,7 +54,7 @@ public class TMXReaderTest extends TestCore {
         final Map<String, String> tr = new TreeMap<String, String>();
         TMXReader2.readTMX(new File("test/data/tmx/test-level2.tmx"), new Language("en-US"), new Language(
                 "be"), false, false, new TMXReader2.LoadCallback() {
-            public void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget) {
+            public void onTu(Tu tu, Tuv tuvSource, Tuv tuvTarget, boolean isParagraphSegtype) {
                 tr.put(tuvSource.getSeg(), tuvTarget.getSeg());
             }
         });
