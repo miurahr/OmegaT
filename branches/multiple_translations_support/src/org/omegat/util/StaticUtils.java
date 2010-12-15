@@ -272,6 +272,30 @@ public class StaticUtils {
     }
 
     /**
+     * Converts XML entities to characters. 
+     */
+    public static String entitiesToCharacters(String text) {
+
+        if (text.indexOf("&gt;") >= 0) {
+            text = text.replaceAll("&gt;", ">");
+        }
+        if (text.indexOf("&lt;") >= 0) {
+            text = text.replaceAll("&lt;", "<");
+        }
+        if (text.indexOf("&quot;") >= 0) {
+            text = text.replaceAll("&quot;", "\"");
+        }
+       // If makeValidXML converts ' to apos;, the following lines should be uncommented
+        /* if (text.indexOf("&apos;") >= 0) {
+            text = text.replaceAll("&apos;", "'");
+        }*/
+        if (text.indexOf("&amp;") >= 0) {
+            text = text.replaceAll("&amp;", "&");
+        }
+        return text;
+    }
+
+    /**
      * Converts a stream of plaintext into valid XML. Output stream must convert
      * stream to UTF-8 when saving to disk.
      */

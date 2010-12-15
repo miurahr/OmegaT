@@ -8,6 +8,65 @@ reload the project.
 
 
 ----------------------------------------------------------------------
+ OmegaT 2.2.2 update 2
+----------------------------------------------------------------------
+  3 Enhancements
+  1 Bugfix
+----------------------------------------------------------------------
+2.2.2 update 2 vs. 2.2.2 update 1
+
+  Other enhancements:
+
+  - Belarusian localisation updated to 2.2.1 update 1 (UI)
+  - Italian localisation updated to 2.2.2 update 1 (UI)
+  - Catalan localisation updated to 2.2.2 update 1 (UI, Readme, documentation)
+
+
+  Bug fix:
+
+  - When a paragraph-based TMX was resegmented to sequence mode, the 
+source language rules were used to segment the target paragraph
+
+----------------------------------------------------------------------
+ OmegaT 2.2.2 update 1
+----------------------------------------------------------------------
+  0 Enhancement
+  1 Bugfix
+----------------------------------------------------------------------
+2.2.2 update 1 vs. 2.2.2
+
+  Bug fix:
+
+  - XML entities in non translatable attributes were not converted back
+to XML entities in the target document
+
+----------------------------------------------------------------------
+ OmegaT 2.2.2
+----------------------------------------------------------------------
+  5 Enhancements
+  2 Bugfixes
+----------------------------------------------------------------------
+2.2.2 vs. 2.2.1
+
+  Implemented requests:
+
+  - Glossary term creation interface
+  http://sourceforge.net/support/tracker.php?aid=3054189
+
+  - Partial support for StarDict dictionaries with sametypesequence=x
+
+  Other enhancements:
+
+  - Japanese localisation updated to 2.2.2 (UI)
+  - Italian localisation updated to 2.2.1 (UI, documentation)
+  - Dutch localisation updated to 2.2.1 (UI)
+
+  Bug fixes:
+
+  - Some content ignored in DTD files
+    http://sourceforge.net/support/tracker.php?aid=3088802
+
+----------------------------------------------------------------------
  OmegaT 2.2.1 update 1
 ----------------------------------------------------------------------
   1 Enhancement

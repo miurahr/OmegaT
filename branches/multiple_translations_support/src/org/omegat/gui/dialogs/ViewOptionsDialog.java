@@ -50,7 +50,7 @@ public class ViewOptionsDialog extends JDialog {
     /** A return status code - returned if OK button has been pressed */
     public static final int RET_OK = 1;
 
-    /** Creates new form WorkflowOptionsDialog */
+    /** Creates new form ViewOptionsDialog */
     public ViewOptionsDialog(Frame parent) {
         super(parent, true);
 
@@ -120,6 +120,7 @@ public class ViewOptionsDialog extends JDialog {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(14, 4, 4, 4);
         getContentPane().add(okButton, gridBagConstraints);
@@ -185,10 +186,6 @@ public class ViewOptionsDialog extends JDialog {
     {
         doClose(RET_CANCEL);
     }// GEN-LAST:event_closeDialog
-
-    private void useSlashActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_useSlashActionPerformed
-        // TODO add your handling code here:
-    }// GEN-LAST:event_useSlashActionPerformed
 
     private void doClose(int retStatus) {
         returnStatus = retStatus;

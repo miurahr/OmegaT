@@ -36,11 +36,9 @@ import org.omegat.util.DirectoryMonitor;
 import org.omegat.util.Log;
 
 /**
- * Class that loads glossary files and adds glossary entries to strings of the
- * source files.
+ * Class that loads glossary files and adds glossary entries to strings of the source files.
  * 
- * This class don't need any threads synchronization code, since it only set and
- * clear 'glossaryEntries' var.
+ * This class don't need any threads synchronization code, since it only set and clear 'glossaryEntries' var.
  * 
  * @author Keith Godfrey
  * @author Maxym Mykhalchuk
