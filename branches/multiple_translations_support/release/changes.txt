@@ -9,18 +9,91 @@ reload the project.
 
 ----------------------------------------------------------------------
  OmegaT 2.2.2 update 2
+>>>>>>> .merge-right.r3369
 ----------------------------------------------------------------------
-  3 Enhancements
+  0 Enhancement
   1 Bugfix
 ----------------------------------------------------------------------
-2.2.2 update 2 vs. 2.2.2 update 1
+2.2.3 update 2 vs. 2.2.3 update 1
+
+  Bug fix:
+
+  - In the File Filter options, one of the filename configuration
+variable was wrongly spelt: ${targetCoutryCode} instead of 
+${targetCountryCode}. Configurations with the old variable name will
+still work.
+
+
+----------------------------------------------------------------------
+ OmegaT 2.2.3 update 1
+----------------------------------------------------------------------
+  4 Enhancements
+  5 Bugfixes
+----------------------------------------------------------------------
+2.2.3 update 1 vs. 2.2.3
+
+  Implemented requests:
+
+  - Translatable sheet names for Calc documents
+  http://sourceforge.net/support/tracker.php?aid=2804745
 
   Other enhancements:
+
+  - Windows installer: changes.txt can be read immediately after the 
+installation
+
+  - Create the "plugins" folder during installation
+
+  - Hungarian localisation updated to 2.2.3 (UI, documentation, readme)
+
+  Bug fix:
+
+  - HTML cryptic error message "StringIndexOutOfBoundsException"
+  http://sourceforge.net/support/tracker.php?aid=1653822
+
+  - On a Mac having both Java 1.5 and 1.6, the Okapi file filter plugin
+prevented OmegaT to run
+
+  - Windows installer overwrites existing OmegaT.I4J.ini
+  http://sourceforge.net/support/tracker.php?aid=3152734
+
+  - In the Spell Checking options, the uninstall button was selected
+(pressed) instead of being unabled when the list of dictionaries is 
+empty
+
+  - XHTML and OpenOffice.org filters: unchecking an option (e.g., 
+Translate href, Translate comments) only took effect after quitting
+and restarting OmegaT
+
+----------------------------------------------------------------------
+ OmegaT 2.2.3
+----------------------------------------------------------------------
+  9 Enhancements
+  1 Bugfix
+----------------------------------------------------------------------
+2.2.3 vs. 2.2.2 update 1
+
+
+  Implemented requests:
+
+  - Accept script in language code for documents
+  http://sourceforge.net/support/tracker.php?aid=3139010
+
+  - Add a TTX filter
+  http://sourceforge.net/support/tracker.php?aid=1851513
+
+  - Proxy authentication for machine translation
+  http://sourceforge.net/support/tracker.php?aid=3132893
+
+  Other enhancements:
+
+  - Typo3 l10nmgr File Filter
 
   - Belarusian localisation updated to 2.2.1 update 1 (UI)
   - Italian localisation updated to 2.2.2 update 1 (UI)
   - Catalan localisation updated to 2.2.2 update 1 (UI, Readme, documentation)
-
+  - Dutch localisation updated to 2.2.2 (UI, documentation)
+  - Japanese localisation updated to 2.2.3 (UI)
 
   Bug fix:
 

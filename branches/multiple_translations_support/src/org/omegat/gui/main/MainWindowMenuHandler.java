@@ -42,6 +42,7 @@ import org.omegat.filters2.master.FilterMaster;
 import org.omegat.gui.dialogs.AboutDialog;
 import org.omegat.gui.dialogs.ExternalTMXMatchesDialog;
 import org.omegat.gui.dialogs.FontSelectionDialog;
+import org.omegat.gui.dialogs.ProxyLoginDialog;
 import org.omegat.gui.dialogs.SpellcheckerConfigurationDialog;
 import org.omegat.gui.dialogs.TagValidationOptionsDialog;
 import org.omegat.gui.dialogs.TeamOptionsDialog;
@@ -679,8 +680,6 @@ public class MainWindowMenuHandler {
                     .setDisplaySegmentSources(
                             mainWindow.menu.viewDisplaySegmentSourceCheckBoxMenuItem.isSelected());
 
-            Core.getProject().findNonUniqueSegments();
-
             Core.getEditor()
                     .getSettings()
                     .setMarkNonUniqueSegments(
@@ -712,4 +711,14 @@ public class MainWindowMenuHandler {
     public void helpAboutMenuItemActionPerformed() {
         new AboutDialog(mainWindow).setVisible(true);
     }
+
+   /**
+     * Displays the dialog to set login and password for proxy.
+     */
+    public void optionsViewOptionsMenuLoginItemActionPerformed() {
+
+        ProxyLoginDialog proxyOptions = new ProxyLoginDialog(mainWindow);
+        proxyOptions.setVisible(true);
+    }
+
 }

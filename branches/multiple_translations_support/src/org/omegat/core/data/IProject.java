@@ -124,11 +124,6 @@ public interface IProject {
     TMXEntry getTranslation(SourceTextEntry ste);
 
     /**
-     * Finds non-unique segments in project.
-     */
-    void findNonUniqueSegments();
-
-    /**
      * Get all translations for current project.
      * 
      * @return all translations map

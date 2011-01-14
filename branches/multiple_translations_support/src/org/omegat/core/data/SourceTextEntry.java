@@ -38,8 +38,17 @@ public class SourceTextEntry {
     /** Storage for full entry's identifiers, including source text. */
     private EntryKey key;
 
+    public enum DUPLICATE {
+        /** There is no entries with the same source. */
+        NONE,
+        /** There is entries with the same source, and this is first entry. */
+        FIRST,
+        /** There is entries with the same source, and this is not first entry. */
+        NEXT
+    };
+
     /** If entry with the same source already exist in project. */
-    boolean duplicateSource;
+    DUPLICATE duplicate;
 
     /** Holds the number of this entry in a project. */
     private int m_entryNum;
@@ -52,8 +61,7 @@ public class SourceTextEntry {
      * @param id
      *            ID in source file
      * @param str
-     *            unique StringEntry that holds source and translation of this
-     *            entry.
+     *            unique StringEntry that holds source and translation of this entry.
      * @param entryNum
      *            the number of this entry in a project.
      */
@@ -67,8 +75,7 @@ public class SourceTextEntry {
     }
 
     /**
-     * Returns the source text (shortcut for
-     * <code>getStrEntry().getSrcText()</code>).
+     * Returns the source text (shortcut for <code>getStrEntry().getSrcText()</code>).
      */
     public String getSrcText() {
         return key.sourceText;
@@ -80,7 +87,7 @@ public class SourceTextEntry {
     }
 
     /** If entry with the same source already exist in project. */
-    public boolean isDuplicateSource() {
-        return duplicateSource;
+    public DUPLICATE getDuplicate() {
+        return duplicate;
     }
 }

@@ -9,6 +9,8 @@
                2006-2007 Didier Briel
                2008 Martin Fleurke, Didier Briel
                2009 Didier Briel, Arno Peters, Alex Buloichik
+               2010 Alex Buloichik
+               2011 Alex Buloichik, Didier Briel
 
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
@@ -49,6 +51,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.omegat.filters2.AbstractFilter;
+import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.IAlignCallback;
 import org.omegat.filters2.IFilter;
 import org.omegat.filters2.IParseCallback;
@@ -62,8 +65,8 @@ import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
 
 /**
- * A master class that registers and handles all the filters. Singleton - there
- * can be only one instance of this class.
+ * A master class that registers and handles all the filters. Singleton - there can be only one instance of
+ * this class.
  * 
  * @author Maxym Mykhalchuk
  * @author Henry Pijffers
@@ -80,8 +83,7 @@ public class FilterMaster {
     private static final JAXBContext CONFIG_CTX;
 
     /**
-     * There was no version of file filters support (1.4.5 Beta 1 -- 1.6.0
-     * RC12).
+     * There was no version of file filters support (1.4.5 Beta 1 -- 1.6.0 RC12).
      */
     public static String INITIAL_VERSION = new String();
     /** File filters support of 1.6.0 RC12a: now upgrading the configuration. */
@@ -101,8 +103,8 @@ public class FilterMaster {
     /** Filters config stored in XML file. */
     private Filters config;
 
-    /** Instances of all filter classes. */
-    private List<IFilter> filtersInstances;
+    /** Classes of all filters. */
+    private List<Class<IFilter>> filtersClasses;
 
     static {
         try {
@@ -116,15 +118,8 @@ public class FilterMaster {
      * Create a new FilterMaster.
      */
     private FilterMaster() {
-        filtersInstances = new ArrayList<IFilter>();
-        for (Class<?> c : PluginUtils.getFilterClasses()) {
-            try {
-                filtersInstances.add((IFilter) c.newInstance());
-            } catch (Exception ex) {
-                // error instantiate filter
-                Log.log(ex);
-            }
-        }
+        filtersClasses = new ArrayList<Class<IFilter>>();
+        filtersClasses.addAll((List)PluginUtils.getFilterClasses());
 
         loadConfig();
 
@@ -137,10 +132,10 @@ public class FilterMaster {
      * Adds new filters(which was not exist in config yet) into config.
      */
     private void addNewFiltersToConfig(final Filters conf) {
-        for (IFilter f : filtersInstances) {
+        for (Class<IFilter> fclass : filtersClasses) {
             boolean found = false;
             for (Filter fc : conf.getFilter()) {
-                if (f.getClass().getName().equals(fc.getClassName())) {
+                if (fclass.getName().equals(fc.getClassName())) {
                     // filter already exist in config
                     found = true;
                     break;
@@ -148,7 +143,7 @@ public class FilterMaster {
             }
             if (!found) {
                 // filter not found in config
-                conf.getFilter().add(getDefaultSettingsFromFilter(f.getClass().getName()));
+                conf.getFilter().add(getDefaultSettingsFromFilter(fclass.getName()));
             }
         }
     }
@@ -170,9 +165,13 @@ public class FilterMaster {
      * @return filter instance
      */
     public IFilter getFilterInstance(final String classname) {
-        for (IFilter f : filtersInstances) {
-            if (f.getClass().getName().equals(classname)) {
-                return f;
+        for (Class<IFilter> f : filtersClasses) {
+            if (f.getName().equals(classname)) {
+                try {
+                    return f.newInstance();
+                } catch (Exception ex) {
+                    Log.log(ex);
+                }
             }
         }
         return null;
@@ -186,18 +185,20 @@ public class FilterMaster {
      * @return Whether the file was handled by one of OmegaT filters.
      * @see #translateFile(String, String, String)
      */
-    public boolean loadFile(String filename, IParseCallback parseCallback) throws IOException,
-            TranslationException {
+    public boolean loadFile(String filename, FilterContext fc, IParseCallback parseCallback)
+            throws IOException, TranslationException {
         try {
-            LookupInformation lookup = lookupFilter(filename);
+            LookupInformation lookup = lookupFilter(filename, fc);
             if (lookup == null)
                 return false;
 
             File inFile = new File(filename);
-            String inEncoding = lookup.outFilesInfo.getSourceEncoding();
+            fc.setInEncoding(lookup.outFilesInfo.getSourceEncoding());
+            fc.setOutEncoding(lookup.outFilesInfo.getTargetEncoding());
+
             IFilter filterObject = lookup.filterObject;
 
-            filterObject.parseFile(inFile, inEncoding, lookup.config, parseCallback);
+            filterObject.parseFile(inFile, lookup.config, fc, parseCallback);
         } catch (Exception ioe) {
             ioe.printStackTrace();
             throw new IOException(filename + "\n" + ioe);
@@ -208,28 +209,25 @@ public class FilterMaster {
     /**
      * OmegaT core calls this method to translate a source file.
      * <ul>
-     * <li>OmegaT first looks through registered filter instances to find
-     * filter(s) that can handle this file.
+     * <li>OmegaT first looks through registered filter instances to find filter(s) that can handle this file.
      * <li>Tests if filter(s) want to handle it.
      * <li>If the filter accepts the file,
      * <li>Filter is asked to process the file.
      * </ul>
-     * If no filter is found, that processes this file, we simply copy it to
-     * target folder.
+     * If no filter is found, that processes this file, we simply copy it to target folder.
      * 
      * @param sourcedir
      *            The folder of the source inFile.
      * @param filename
-     *            The name of the source inFile to process (only the part,
-     *            relative to source folder).
+     *            The name of the source inFile to process (only the part, relative to source folder).
      * @param targetdir
      *            The folder to place the translated inFile to.
-     * @param targetLang
-     *            The target language for the translated file.
+     * @param fc
+     *            Filter context.
      */
-    public void translateFile(String sourcedir, String filename, Language targetLang, String targetdir,
+    public void translateFile(String sourcedir, String filename, String targetdir, FilterContext fc,
             ITranslateCallback translateCallback) throws IOException, TranslationException {
-        LookupInformation lookup = lookupFilter(sourcedir + File.separator + filename);
+        LookupInformation lookup = lookupFilter(sourcedir + File.separator + filename, fc);
         if (lookup == null) {
             // The file is not supported by any of the filters.
             // Copying it
@@ -238,7 +236,6 @@ public class FilterMaster {
         }
 
         File inFile = new File(sourcedir + File.separator + filename);
-        String inEncoding = lookup.outFilesInfo.getSourceEncoding();
 
         String name = inFile.getName();
         String path = filename.substring(0, filename.length() - name.length());
@@ -248,22 +245,23 @@ public class FilterMaster {
                 + path
                 + File.separator
                 + constructTargetFilename(lookup.outFilesInfo.getSourceFilenameMask(), name,
-                        lookup.outFilesInfo.getTargetFilenamePattern(), targetLang));
-        String outEncoding = lookup.outFilesInfo.getTargetEncoding();
+                        lookup.outFilesInfo.getTargetFilenamePattern(), fc.getTargetLang()));
+
+        fc.setInEncoding(lookup.outFilesInfo.getSourceEncoding());
+        fc.setOutEncoding(lookup.outFilesInfo.getTargetEncoding());
 
         IFilter filterObject = lookup.filterObject;
         try {
-            filterObject.translateFile(inFile, inEncoding, targetLang, outFile, outEncoding, lookup.config,
-                    translateCallback);
+            filterObject.translateFile(inFile, outFile, lookup.config, fc, translateCallback);
         } catch (Exception ex) {
             Log.log(ex);
         }
     }
 
-    public void alignFile(String sourceDir, String fileName, Language targetLang, String targetdir,
+    public void alignFile(String sourceDir, String fileName, String targetdir, FilterContext fc,
             IAlignCallback alignCallback) throws Exception {
 
-        LookupInformation lookup = lookupFilter(sourceDir + File.separator + fileName);
+        LookupInformation lookup = lookupFilter(sourceDir + File.separator + fileName, fc);
         if (lookup == null) {
             // The file is not supported by any of the filters.
             // Skip it
@@ -271,7 +269,6 @@ public class FilterMaster {
         }
 
         File inFile = new File(sourceDir + File.separator + fileName);
-        String inEncoding = lookup.outFilesInfo.getSourceEncoding();
 
         String name = inFile.getName();
         String path = fileName.substring(0, fileName.length() - name.length());
@@ -281,17 +278,19 @@ public class FilterMaster {
                 + path
                 + File.separator
                 + constructTargetFilename(lookup.outFilesInfo.getSourceFilenameMask(), name,
-                        lookup.outFilesInfo.getTargetFilenamePattern(), targetLang));
-        String outEncoding = lookup.outFilesInfo.getTargetEncoding();
+                        lookup.outFilesInfo.getTargetFilenamePattern(), fc.getTargetLang()));
 
         if (!outFile.exists()) {
             // out file not exist - skip
             return;
         }
 
+        fc.setInEncoding(lookup.outFilesInfo.getSourceEncoding());
+        fc.setOutEncoding(lookup.outFilesInfo.getTargetEncoding());
+
         IFilter filterObject = lookup.filterObject;
         try {
-            filterObject.alignFile(inFile, inEncoding, outFile, outEncoding, lookup.config, alignCallback);
+            filterObject.alignFile(inFile, outFile, lookup.config, fc, alignCallback);
         } catch (Exception ex) {
             Log.log(ex);
         }
@@ -310,8 +309,8 @@ public class FilterMaster {
     }
 
     /**
-     * Gets the filter according to the source filename provided. In case of
-     * failing to find a filter to handle the file returns <code>null</code>.
+     * Gets the filter according to the source filename provided. In case of failing to find a filter to
+     * handle the file returns <code>null</code>.
      * 
      * In case of finding an appropriate filter it
      * <ul>
@@ -319,15 +318,16 @@ public class FilterMaster {
      * <li>Creates a reader (use <code>OneFilter.getReader()</code> to get it)
      * <li>Checks whether the filter supports the file.
      * </ul>
-     * It <b>does not</b> check whether the filter supports the inFile, i.e. it
-     * doesn't call <code>isFileSupported</code>
+     * It <b>does not</b> check whether the filter supports the inFile, i.e. it doesn't call
+     * <code>isFileSupported</code>
      * 
      * 
      * @param filename
      *            The source filename.
      * @return The filter to handle the inFile.
      */
-    private LookupInformation lookupFilter(String filename) throws TranslationException, IOException {
+    private LookupInformation lookupFilter(String filename, FilterContext fc) throws TranslationException,
+            IOException {
         File inFile = new File(filename);
         String name = inFile.getName();
         String path = inFile.getParent();
@@ -344,9 +344,11 @@ public class FilterMaster {
                     filterObject = getFilterInstance(f.getClassName());
 
                     if (filterObject != null) {
+                        fc.setInEncoding(ff.getSourceEncoding());
+                        fc.setOutEncoding(ff.getTargetEncoding());
                         // only for exist filters
                         Map<String, String> config = forFilter(f.getOption());
-                        if (!filterObject.isFileSupported(inFile, ff.getSourceEncoding(), config)) {
+                        if (!filterObject.isFileSupported(inFile, config, fc)) {
                             break;
                         }
 
@@ -361,8 +363,7 @@ public class FilterMaster {
     private static List<String> supportedEncodings = null;
 
     /**
-     * Queries JRE for the list of supported encodings. Also adds the human name
-     * for no/automatic inEncoding.
+     * Queries JRE for the list of supported encodings. Also adds the human name for no/automatic inEncoding.
      * 
      * 
      * @return names of all the encodings in an array
@@ -396,8 +397,8 @@ public class FilterMaster {
     }
 
     /**
-     * Loads information about the filters from an XML file. If there's an error
-     * loading a file, it calls <code>setupDefaultFilters</code>.
+     * Loads information about the filters from an XML file. If there's an error loading a file, it calls
+     * <code>setupDefaultFilters</code>.
      */
     public void loadConfig() {
         if (!configFile.exists()) {
@@ -436,8 +437,7 @@ public class FilterMaster {
     // ////////////////////////////////////////////////////////////////////////
 
     /**
-     * Whether the mask matches the filename. Filename should be "name.ext",
-     * without path.
+     * Whether the mask matches the filename. Filename should be "name.ext", without path.
      * 
      * @param filename
      *            The filename to check
@@ -453,31 +453,26 @@ public class FilterMaster {
     }
 
     /**
-     * Construct a target filename according to pattern from a file's name.
-     * Filename should be "name.ext", without path.
+     * Construct a target filename according to pattern from a file's name. Filename should be "name.ext",
+     * without path.
      * <p>
      * Output filename pattern is pretty complex. <br>
-     * It may consist of normal characters and some substituted variables. They
-     * have the format <code>${variableName}</code> and are case insensitive. <br>
+     * It may consist of normal characters and some substituted variables. They have the format
+     * <code>${variableName}</code> and are case insensitive. <br>
      * There're such variables:
      * <ul>
-     * <li><code>${filename}</code> - full filename of the input file, both name
-     * and extension (default)
-     * <li><code>${nameOnly}</code> - only the name of the input file without
-     * extension part
+     * <li><code>${filename}</code> - full filename of the input file, both name and extension (default)
+     * <li><code>${nameOnly}</code> - only the name of the input file without extension part
      * <li><code>${extension}</code> - the extension of the input file
      * <li><code>${targetLocale}</code> - target locale code (of a form "xx_YY")
-     * <li><code>${targetLanguage}</code> - the target language and country code
-     * together (of a form "XX-YY")
+     * <li><code>${targetLanguage}</code> - the target language and country code together (of a form "XX-YY")
      * <li><code>${targetLanguageCode}</code> - the target language only ("XX")
-     * <li><code>${targetCoutryCode}</code> - the target country only ("YY")
+     * <li><code>${targetCountryCode}</code> - the target country only ("YY")
      * </ul>
      * <p>
-     * Most file filters will use default "<code>${filename}</code>, that leads
-     * to the name of translated file being the same as the name of source file.
-     * But for example the Java(TM) Resource Bundles file filter will have the
-     * pattern equal to "<code>${nameonly}_${targetlanguage}.${extension}</code>
-     * ".
+     * Most file filters will use default "<code>${filename}</code>, that leads to the name of translated file
+     * being the same as the name of source file. But for example the Java(TM) Resource Bundles file filter
+     * will have the pattern equal to "<code>${nameonly}_${targetlanguage}.${extension}</code> ".
      * <p>
      * E.g. if you have
      * <ul>
@@ -529,6 +524,8 @@ public class FilterMaster {
         res = res.replace(AbstractFilter.TFP_TARGET_LANGUAGE, targetLang.getLanguage());
         res = res.replace(AbstractFilter.TFP_TARGET_LANG_CODE, targetLang.getLanguageCode());
         res = res.replace(AbstractFilter.TFP_TARGET_COUNTRY_CODE, targetLang.getCountryCode());
+        // Replace also old variable spelling
+        res = res.replace(AbstractFilter.TFP_TARGET_COUTRY_CODE, targetLang.getCountryCode());
 
         return res;
     }

@@ -57,6 +57,7 @@ import org.omegat.core.matching.Tokenizer;
 import org.omegat.core.statistics.CalcStandardStatistics;
 import org.omegat.core.statistics.Statistics;
 import org.omegat.core.statistics.StatisticsInfo;
+import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.IAlignCallback;
 import org.omegat.filters2.IFilter;
 import org.omegat.filters2.TranslationException;
@@ -64,7 +65,6 @@ import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
 import org.omegat.util.DirectoryMonitor;
 import org.omegat.util.FileUtil;
-import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -208,7 +208,7 @@ public class RealProject implements IProject {
 
             // build word count
             String stat = CalcStandardStatistics.buildProjectStats(this, hotStat);
-            String fn = getProjectProperties().getProjectInternal() + OConsts.STATS_FILENAME;
+            String fn = m_config.getProjectInternal() + OConsts.STATS_FILENAME;
             Statistics.writeStat(fn, stat);
 
             allProjectEntries = Collections.unmodifiableList(allProjectEntries);
@@ -266,8 +266,8 @@ public class RealProject implements IProject {
             // shorten filename to that which is relative to src root
             String midName = filename.substring(srcRoot.length());
 
-            Language targetLang = getProjectProperties().getTargetLanguage();
-            fm.alignFile(srcRoot, midName, targetLang, translatedDir.getPath(), alignFilesCallback);
+            fm.alignFile(srcRoot, midName, translatedDir.getPath(), new FilterContext(props),
+                    alignFilesCallback);
         }
         return alignFilesCallback.data;
     }
@@ -392,8 +392,6 @@ public class RealProject implements IProject {
 
         TranslateFilesCallback translateFilesCallback = new TranslateFilesCallback();
 
-        Language targetLang = getProjectProperties().getTargetLanguage();
-
         for (String filename : fileList) {
             // shorten filename to that which is relative to src root
             String midName = filename.substring(srcRoot.length());
@@ -401,7 +399,8 @@ public class RealProject implements IProject {
             if (fileMatch.matches()) {
                 Core.getMainWindow().showStatusMessageRB("CT_COMPILE_FILE_MX", midName);
                 translateFilesCallback.setCurrentFileName(midName);
-                fm.translateFile(srcRoot, midName, targetLang, locRoot, translateFilesCallback);
+                fm.translateFile(srcRoot, midName, locRoot, new FilterContext(m_config),
+                        translateFilesCallback);
             }
         }
         Core.getMainWindow().showStatusMessageRB("CT_COMPILE_DONE_MX");
@@ -461,7 +460,7 @@ public class RealProject implements IProject {
 
         // update statistics
         String stat = CalcStandardStatistics.buildProjectStats(this, hotStat);
-        String fn = getProjectProperties().getProjectInternal() + OConsts.STATS_FILENAME;
+        String fn = m_config.getProjectInternal() + OConsts.STATS_FILENAME;
         Statistics.writeStat(fn, stat);
 
         CoreEvents.fireProjectChange(IProjectEventListener.PROJECT_CHANGE_TYPE.SAVE);
@@ -567,7 +566,7 @@ public class RealProject implements IProject {
 
             loadFilesCallback.setCurrentFile(fi);
 
-            boolean fileLoaded = fm.loadFile(filename, loadFilesCallback);
+            boolean fileLoaded = fm.loadFile(filename, new FilterContext(m_config), loadFilesCallback);
 
             loadFilesCallback.fileFinished();
 
@@ -586,38 +585,51 @@ public class RealProject implements IProject {
     /**
      * {@inheritDoc}
      */
-    public void findNonUniqueSegments() {
-        Set<String> exists = new HashSet<String>(16384);
-        Set<String> duplicate = new HashSet<String>(16384);
+    protected void findNonUniqueSegments() {
+        Map<String, SourceTextEntry> exists = new HashMap<String, SourceTextEntry>(16384);
 
         for (FileInfo fi : projectFilesList) {
             for (int i = 0; i < fi.entries.size(); i++) {
                 SourceTextEntry ste = fi.entries.get(i);
-                ste.duplicateSource = exists.contains(ste.getSrcText());
-                if (!ste.duplicateSource) {
-                    exists.add(ste.getSrcText());
-                } else if (Preferences.isPreference(Preferences.VIEW_OPTION_UNIQUE_FIRST)){
-                    duplicate.add(ste.getSrcText());
-                }
-            }
-        }
-       
-        // If the first non-unique has to marked also
-        if (Preferences.isPreference(Preferences.VIEW_OPTION_UNIQUE_FIRST)) {
-            for (FileInfo fi : projectFilesList) {
-                for (int i = 0; i < fi.entries.size(); i++) {
-                    SourceTextEntry ste = fi.entries.get(i);
-                    if (!ste.duplicateSource) {
-                        ste.duplicateSource = duplicate.contains(ste.getSrcText());
+                SourceTextEntry prevSte = exists.get(ste.getSrcText());
+
+                if (prevSte == null) {
+                    // didn't processed the same entry yet
+                    ste.duplicate = SourceTextEntry.DUPLICATE.NONE;
+                } else {
+                    if (prevSte.duplicate == SourceTextEntry.DUPLICATE.NONE) {
+                        // already processed,but this is first duplicate
+                        prevSte.duplicate = SourceTextEntry.DUPLICATE.FIRST;
+                        ste.duplicate = SourceTextEntry.DUPLICATE.NEXT;
+                    } else {
+                        // already processed, and this is not first duplicate
+                        ste.duplicate = SourceTextEntry.DUPLICATE.NEXT;
                     }
+                }
+
+                if (prevSte == null) {
+                    exists.put(ste.getSrcText(), ste);
                 }
             }
         }
     }
 
     /**
+<<<<<<< .working
      * Locates and loads external TMX files with legacy translations. Uses directory monitor for check file
      * updates.
+=======
+     * Loads TMX file. Either the one of the project with project's translation, or the legacy ones. IF the
+     * projects TMX is loaded, it is also backed up. The translations are added to either {@link translations}
+     * or to {@link orphanedSegments} for project TMX, or to a transMemory in {@link transMemories}.
+     * 
+     * @param fname
+     *            The name of the TMX file
+     * @param encoding
+     *            The encoding of the tmx, usually "UTF-8"
+     * @param isProject
+     *            Set to true when loading the projects TMX (e.g. project_save.tmx)
+>>>>>>> .merge-right.r3369
      */
     private void loadTM() throws IOException {
         File tmRoot = new File(m_config.getTMRoot());

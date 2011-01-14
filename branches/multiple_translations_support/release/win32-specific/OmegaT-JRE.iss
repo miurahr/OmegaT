@@ -20,9 +20,10 @@ Source: "docs\*"; DestDir: "{app}\docs"; Flags: recursesubdirs
 Source: "images\*"; DestDir: "{app}\images"; Flags: recursesubdirs
 Source: "lib\*"; DestDir: "{app}\lib"; Flags: recursesubdirs
 Source: "native\*"; DestDir: "{app}\native"; Flags: recursesubdirs
+Source: "plugins\*"; DestDir: "{app}\plugins"; Flags: recursesubdirs
 Source: "..\..\jre\*"; DestDir: "{app}\jre"; Flags: recursesubdirs
 Source: "OmegaT.exe"; DestDir: "{app}"
-Source: "OmegaT.l4J.ini"; DestDir: "{app}"
+Source: "OmegaT.l4J.ini"; DestDir: "{app}"; Flags: onlyifdoesntexist
 Source: "OmegaT.jar"; DestDir: "{app}"
 Source: "license.txt"; DestDir: "{app}"
 Source: "doc-license.txt"; DestDir: "{app}"
@@ -52,10 +53,7 @@ Source: "readme_zh_TW.txt"; DestDir: "{app}"; Flags: isreadme; Languages: zh_TW
 Source: "readme*.txt"; DestDir: "{app}";
 Source: "join.html"; DestDir: "{app}"
 Source: "index.html"; DestDir: "{app}"
-Source: "changes.txt"; DestDir: "{app}"
-
-[UninstallDelete]
-Type: filesandordirs; Name: "{app}\jre\launch4j-tmp"
+Source: "changes.txt"; DestDir: "{app}"; Flags: isreadme;
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
