@@ -690,7 +690,8 @@ public class EditorController implements IEditor {
 
         if (newTrans != null) {
             // segment was active
-            SourceTextEntry entry = m_docSegList[displayedEntryIndex].ste;
+            SegmentBuilder sb = m_docSegList[displayedEntryIndex];
+            SourceTextEntry entry = sb.ste;
 
             TMXEntry oldTE = Core.getProject().getTranslation(entry);
             String old_translation = oldTE != null ? oldTE.translation : "";
@@ -698,10 +699,10 @@ public class EditorController implements IEditor {
             // update memory
             if (newTrans.equals(entry.getSrcText())
                     && !Preferences.isPreference(Preferences.ALLOW_TRANS_EQUAL_TO_SRC)) {
-                Core.getProject().setTranslation(entry, "");
+                Core.getProject().setTranslation(entry, "", sb.isDefaultTranslation());
                 newTrans = "";
             } else {
-                Core.getProject().setTranslation(entry, newTrans);
+                Core.getProject().setTranslation(entry, newTrans, sb.isDefaultTranslation());
             }
 
             m_docSegList[displayedEntryIndex].createSegmentElement(false);

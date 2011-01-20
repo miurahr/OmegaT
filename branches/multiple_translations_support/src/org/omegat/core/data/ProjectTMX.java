@@ -100,14 +100,17 @@ public class ProjectTMX {
     }
 
     /**
-     * Get translation or null if not exist.
+     * Get default translation or null if not exist.
      */
-    public TMXEntry getTranslation(EntryKey ek) {
-        TMXEntry r = translationMultiple.get(ek);
-        if (r == null && translationDefault != null) {
-            r = translationDefault.get(ek.sourceText);
-        }
-        return r;
+    public TMXEntry getDefaultTranslation(String source) {
+        return translationDefault != null ? translationDefault.get(source) : null;
+    }
+
+    /**
+     * Get multiple translation or null if not exist.
+     */
+    public TMXEntry getMultipleTranslation(EntryKey ek) {
+        return translationMultiple.get(ek);
     }
 
     /**

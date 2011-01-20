@@ -25,7 +25,6 @@
 
 package org.omegat.core.data;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,7 +32,6 @@ import java.util.Map;
 
 import org.omegat.core.matching.ITokenizer;
 import org.omegat.core.statistics.StatisticsInfo;
-import org.omegat.filters2.TranslationException;
 
 /**
  * Interface for access to loaded project. Each loaded project will be new instance of IProject.
@@ -104,8 +102,10 @@ public interface IProject {
      *            entry
      * @param trans
      *            translation
+     * @param isDefault
+     *            true if default translation should be changed
      */
-    void setTranslation(SourceTextEntry entry, String trans);
+    void setTranslation(SourceTextEntry entry, String trans, boolean isDefault);
 
     /**
      * Get statistics for project.
@@ -115,13 +115,31 @@ public interface IProject {
     StatisticsInfo getStatistics();
 
     /**
-     * Get translation for specified entry.
+     * Get translation for specified entry. It looks first for multiple, then for default.
      * 
      * @param ste
      *            source entry
      * @return translation, or null if translation not exist
      */
     TMXEntry getTranslation(SourceTextEntry ste);
+
+    /**
+     * Get default translation for specified entry.
+     * 
+     * @param ste
+     *            source entry
+     * @return translation, or null if translation not exist
+     */
+    TMXEntry getDefaultTranslation(SourceTextEntry ste);
+    
+    /**
+     * Get multiple translation for specified entry.
+     * 
+     * @param ste
+     *            source entry
+     * @return translation, or null if translation not exist
+     */
+    TMXEntry getMultipleTranslation(SourceTextEntry ste);
 
     /**
      * Get all translations for current project.
@@ -136,6 +154,26 @@ public interface IProject {
      * @return orphaned translations
      */
     Collection<TMXEntry> getAllOrphanedTranslations();
+    
+    /**
+     * Iterate by all default translations in project.
+     */
+    void iterateByDefaultTranslations(DefaultTranslationsIterator it);
+
+    /**
+     * Iterate by all multiple translations in project.
+     */
+    void iterateByMultipleTranslations(MultipleTranslationsIterator it);
+
+    /**
+     * Iterate by all orphaned default translations in project.
+     */
+    void iterateByOrphanedDefaultTranslations(DefaultTranslationsIterator it);
+
+    /**
+     * Iterate by all orphaned multiple translations in project.
+     */
+    void iterateByOrphanedMultipleTranslations(MultipleTranslationsIterator it);
 
     /**
      * Get all translation memories from /tm/ folder.
@@ -154,5 +192,13 @@ public interface IProject {
         public String filePath;
 
         public List<SourceTextEntry> entries = new ArrayList<SourceTextEntry>();
+    }
+
+    public interface DefaultTranslationsIterator {
+        void iterate(String source, TMXEntry trans);
+    }
+
+    public interface MultipleTranslationsIterator {
+        void iterate(EntryKey source, TMXEntry trans);
     }
 }

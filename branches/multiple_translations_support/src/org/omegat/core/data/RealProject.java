@@ -660,9 +660,21 @@ public class RealProject implements IProject {
     public List<SourceTextEntry> getAllEntries() {
         return allProjectEntries;
     }
-
+    
     public TMXEntry getTranslation(SourceTextEntry ste) {
-        return projectTMX.getTranslation(ste.getKey());
+        TMXEntry r = projectTMX.getMultipleTranslation(ste.getKey());
+        if (r == null) {
+            r = projectTMX.getDefaultTranslation(ste.getSrcText());
+        }
+        return r;
+    }
+
+    public TMXEntry getDefaultTranslation(SourceTextEntry ste) {
+        return projectTMX.getDefaultTranslation(ste.getSrcText());
+    }
+
+    public TMXEntry getMultipleTranslation(SourceTextEntry ste) {
+        return projectTMX.getMultipleTranslation(ste.getKey());
     }
 
     /**
@@ -682,18 +694,12 @@ public class RealProject implements IProject {
     /**
      * {@inheritDoc}
      */
-    public void setAuthorTranslation(String author, SourceTextEntry entry, String trans) {
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setTranslation(final SourceTextEntry entry, String trans) {
+    public void setTranslation(final SourceTextEntry entry, final String trans, boolean isDefault) {
         String author = Preferences.getPreferenceDefault(Preferences.TEAM_AUTHOR,
                 System.getProperty("user.name"));
 
-        TMXEntry prevTrEntry = projectTMX.getTranslation(entry.getKey());
+        TMXEntry prevTrEntry = isDefault ? projectTMX.getDefaultTranslation(entry.getSrcText()) : projectTMX
+                .getMultipleTranslation(entry.getKey());
 
         // don't change anything if nothing has changed
         if (prevTrEntry == null) {
@@ -709,10 +715,10 @@ public class RealProject implements IProject {
         m_modifiedFlag = true;
 
         if (StringUtil.isEmpty(trans)) {
-            projectTMX.setTranslation(entry, null, false);
+            projectTMX.setTranslation(entry, null, isDefault);
         } else {
             TMXEntry te = new TMXEntry(entry.getSrcText(), trans, author, System.currentTimeMillis());
-            projectTMX.setTranslation(entry, te, false);
+            projectTMX.setTranslation(entry, te, isDefault);
         }
         String prevTranslation = prevTrEntry != null ? prevTrEntry.translation : null;
 
@@ -740,6 +746,30 @@ public class RealProject implements IProject {
         r.addAll(projectTMX.orphanedMultiple.values());
 
         return r;
+    }
+    
+    public void iterateByDefaultTranslations(DefaultTranslationsIterator it) {
+        for(Map.Entry<String, TMXEntry> en:projectTMX.translationDefault.entrySet()) {
+            it.iterate(en.getKey(), en.getValue());
+        }
+    }
+
+    public void iterateByMultipleTranslations(MultipleTranslationsIterator it) {
+        for(Map.Entry<EntryKey, TMXEntry> en:projectTMX.translationMultiple.entrySet()) {
+            it.iterate(en.getKey(), en.getValue());
+        }
+    }
+
+    public void iterateByOrphanedDefaultTranslations(DefaultTranslationsIterator it) {
+        for(Map.Entry<String, TMXEntry> en:projectTMX.orphanedDefault.entrySet()) {
+            it.iterate(en.getKey(), en.getValue());
+        }
+    }
+
+    public void iterateByOrphanedMultipleTranslations(MultipleTranslationsIterator it) {
+        for(Map.Entry<EntryKey, TMXEntry> en:projectTMX.orphanedMultiple.entrySet()) {
+            it.iterate(en.getKey(), en.getValue());
+        }
     }
 
     public Map<String, ExternalTMX> getTransMemories() {
@@ -882,7 +912,10 @@ public class RealProject implements IProject {
 
         protected String getSegmentTranslation(String id, int segmentIndex, String segmentSource) {
             EntryKey ek = new EntryKey(currentFile, segmentSource, id);
-            TMXEntry tr = projectTMX.getTranslation(ek);
+            TMXEntry tr=projectTMX.getMultipleTranslation(ek);
+            if (tr==null) {
+                tr = projectTMX.getDefaultTranslation(ek.sourceText);
+            }
             return tr != null ? tr.translation : segmentSource;
         }
     };

@@ -82,6 +82,8 @@ public class SegmentBuilder {
     private boolean active;
     /** True if translation exist for entry. */
     private boolean transExist;
+    /** True if translation is default, false - is multiple. */
+    private boolean defaultTranslation;
 
     private final Document3 doc;
     private final EditorController controller;
@@ -117,6 +119,14 @@ public class SegmentBuilder {
         hasRTL = controller.sourceLangIsRTL || controller.targetLangIsRTL;
     }
 
+    public boolean isDefaultTranslation() {
+        return defaultTranslation;
+    }
+
+    public void setDefaultTranslation(boolean defaultTranslation) {
+        this.defaultTranslation = defaultTranslation;
+    }
+
     /**
      * Create element for one segment.
      * 
@@ -144,7 +154,18 @@ public class SegmentBuilder {
                     offset = doc.getLength();
                 }
 
-                TMXEntry trans = Core.getProject().getTranslation(ste);
+                TMXEntry trans = Core.getProject().getMultipleTranslation(ste);
+                if (trans != null) {
+                    defaultTranslation = false;
+                } else {
+                    trans = Core.getProject().getDefaultTranslation(ste);
+                    if (trans != null) {
+                        defaultTranslation = true;
+                    } else {
+                        defaultTranslation = Core.getProject().getProjectProperties()
+                                .isSupportDefaultTranslations();
+                    }
+                }
                 transExist = trans != null;
 
                 int beginOffset = offset;
