@@ -57,7 +57,7 @@ public class ProjectTMX {
     protected static final String PROP_ID = "id";
 
     /**
-     * Storage for translation for current project.
+     * Storage for translation for current project. Will be null if default translation disabled.
      */
     final Map<String, TMXEntry> translationDefault;
 

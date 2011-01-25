@@ -166,6 +166,8 @@ public class RealProject implements IProject {
             createDirectory(m_config.getTargetRoot(), "target");
 
             saveProjectProperties();
+            
+            loadTM();
 
             allProjectEntries = Collections.unmodifiableList(allProjectEntries);
         } catch (Exception e) {
@@ -736,8 +738,10 @@ public class RealProject implements IProject {
     }
     
     public void iterateByDefaultTranslations(DefaultTranslationsIterator it) {
-        for(Map.Entry<String, TMXEntry> en:projectTMX.translationDefault.entrySet()) {
-            it.iterate(en.getKey(), en.getValue());
+        if (projectTMX.translationDefault != null) {
+            for (Map.Entry<String, TMXEntry> en : projectTMX.translationDefault.entrySet()) {
+                it.iterate(en.getKey(), en.getValue());
+            }
         }
     }
 
