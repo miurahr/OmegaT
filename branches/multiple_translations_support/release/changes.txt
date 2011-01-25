@@ -6,17 +6,28 @@
 modified TMX are reloaded in memory transparently, without having to
 reload the project.
 
-
 ----------------------------------------------------------------------
- OmegaT 2.2.2 update 2
->>>>>>> .merge-right.r3369
+ OmegaT 2.2.3 update 2
 ----------------------------------------------------------------------
-  0 Enhancement
+  4 Enhancements
   1 Bugfix
 ----------------------------------------------------------------------
 2.2.3 update 2 vs. 2.2.3 update 1
 
+  Implemented requests:
+
+  - Do not show "space" in empty segments
+  http://sourceforge.net/support/tracker.php?aid=2169106
+
   Bug fix:
+
+  Other enhancements:
+
+  - Give a specific title to the file chooser dialog in the Spellchecker
+dialog (it was just "Open")
+
+  - Dutch localisation updated to 2.2.3 (UI)
+  - Japanese localisation updated to 2.2.3 (UI)
 
   - In the File Filter options, one of the filename configuration
 variable was wrongly spelt: ${targetCoutryCode} instead of 

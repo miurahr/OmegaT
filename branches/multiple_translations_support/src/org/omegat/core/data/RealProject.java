@@ -615,21 +615,8 @@ public class RealProject implements IProject {
     }
 
     /**
-<<<<<<< .working
      * Locates and loads external TMX files with legacy translations. Uses directory monitor for check file
      * updates.
-=======
-     * Loads TMX file. Either the one of the project with project's translation, or the legacy ones. IF the
-     * projects TMX is loaded, it is also backed up. The translations are added to either {@link translations}
-     * or to {@link orphanedSegments} for project TMX, or to a transMemory in {@link transMemories}.
-     * 
-     * @param fname
-     *            The name of the TMX file
-     * @param encoding
-     *            The encoding of the tmx, usually "UTF-8"
-     * @param isProject
-     *            Set to true when loading the projects TMX (e.g. project_save.tmx)
->>>>>>> .merge-right.r3369
      */
     private void loadTM() throws IOException {
         File tmRoot = new File(m_config.getTMRoot());
