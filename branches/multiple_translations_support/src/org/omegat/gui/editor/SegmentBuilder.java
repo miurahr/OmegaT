@@ -33,6 +33,8 @@ import java.util.Locale;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.Position;
 
 import org.omegat.core.Core;
@@ -116,7 +118,8 @@ public class SegmentBuilder {
         this.ste = ste;
         this.segmentNumberInProject = segmentNumberInProject;
 
-        hasRTL = controller.sourceLangIsRTL || controller.targetLangIsRTL;
+        hasRTL = controller.sourceLangIsRTL || controller.targetLangIsRTL
+                || controller.currentOrientation != Document3.ORIENTATION.LTR;
     }
 
     public boolean isDefaultTranslation() {
@@ -468,9 +471,6 @@ public class SegmentBuilder {
         int prevOffset = offset;
         boolean rtl = controller.targetLangIsRTL;
 
-        insert(createSegmentMarkText(true), ATTR_SEGMENT_MARK);
-        insert(" ", null);
-
         if (hasRTL) {
             insert(rtl ? "\u202b" : "\u202a", null); // LTR- or RTL- embedding
         }
@@ -483,12 +483,17 @@ public class SegmentBuilder {
             insert("\u202c", null); // end of embedding
         }
 
-        insert(" ", null);
+        insert("<",ATTR_SEGMENT_MARK);
         insert(createSegmentMarkText(false), ATTR_SEGMENT_MARK);
+        insert(">",ATTR_SEGMENT_MARK);
 
         insert("\n", null);
 
         setAttributes(prevOffset, offset, false);
+    }
+
+    void createInputAttributes(Element element, MutableAttributeSet set) {
+        set.addAttributes(attrs(false));
     }
 
     private void insert(String text, AttributeSet attrs) throws BadLocationException {
@@ -505,10 +510,21 @@ public class SegmentBuilder {
      * @return changed mark text
      */
     private String createSegmentMarkText(boolean startMark) {
-        String text = startMark ? OConsts.segmentStartString : OConsts.segmentEndString;
+        String text = OConsts.segmentStartString;
 
-        boolean markIsRTL = localeIsRTL();
-
+        boolean markIsRTL = false;
+        switch (controller.currentOrientation) {
+        case LTR:
+            markIsRTL = false;
+            break;
+        case RTL:
+            markIsRTL = true;
+            break;
+        case DIFFER:
+            markIsRTL = controller.targetLangIsRTL;
+            break;
+        }
+        
         // trim and replace spaces to non-break spaces
         text = text.trim().replace(' ', '\u00A0');
         if (text.indexOf("0000") >= 0) {

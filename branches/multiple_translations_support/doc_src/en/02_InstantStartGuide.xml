@@ -18,14 +18,14 @@
         <keycap>Cmd</keycap>
 
         <keycap>key</keycap>
-      </keycombo>" The <keycap>"Cmd</keycap>" key either has a "command" label
+      </keycombo>". The "<keycap>Cmd</keycap>" key either has a "command" label
     or an apple mark on Apple keyboards.</para>
 
     <para>The <application>OmegaT</application> screen consists of one space
     with <link linkend="windows.you.will.use.frequently">five distinct
     panes</link>.<indexterm class="singular">
         <primary>Windows in OmegaT</primary>
-      </indexterm>. Each of these can be resized using the mouse. On the left
+      </indexterm> Each of these can be resized using the mouse. On the left
     is the Editor where you type your translation. On the top right is the
     Match Viewer, where translation memory matches are displayed. Below this
     is the Glossary Viewer, where glossary matches are displayed..</para>
@@ -359,7 +359,10 @@
             <imageobject role="html">
               <imagedata fileref="images/MatchesPane.png" />
             </imageobject>
-          </mediaobject>
+            <imageobject role="fo">
+              <imagedata fileref="images/MatchesPane.png" width="80%" />
+            </imageobject>
+       </mediaobject>
         </figure>
 
         <para>If <application>OmegaT</application> finds any fuzzy matches
@@ -571,6 +574,9 @@
           <imageobject role="html">
             <imagedata fileref="images/tagged_segment.png" />
           </imageobject>
+          <imageobject role="fo">
+            <imagedata fileref="images/tagged_segment.png" width="80%" />
+          </imageobject>
         </mediaobject>
       </figure>
 
@@ -583,6 +589,9 @@
         <mediaobject>
           <imageobject role="html">
             <imagedata fileref="images/tagged_segment_target.png" />
+          </imageobject>
+          <imageobject role="fo">
+            <imagedata fileref="images/tagged_segment_target.png" width="80%" />
           </imageobject>
         </mediaobject>
       </figure>
