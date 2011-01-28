@@ -624,6 +624,10 @@ public class RealProject implements IProject {
         File tmRoot = new File(m_config.getTMRoot());
         tmMonitor = new DirectoryMonitor(tmRoot, new DirectoryMonitor.Callback() {
             public void fileChanged(File file) {
+                if (!file.getName().endsWith(".tmx")) {
+                    // not a TMX file
+                    return;
+                }
                 // create new translation memories map
                 Map<String, ExternalTMX> newTransMemories = new TreeMap<String, ExternalTMX>(transMemories);
                 if (file.exists()) {
