@@ -59,7 +59,9 @@ public class MultipleTransPane extends EntryInfoPane<List<MultipleTransFoundEntr
         Core.getEditor().registerPopupMenuConstructors(300, new IPopupMenuConstructor() {
             public void addItems(JPopupMenu menu, JTextComponent comp, int mousepos, boolean isInActiveEntry,
                     boolean isInActiveTranslation, final SegmentBuilder sb) {
-                if (isInActiveEntry) {
+                if (isInActiveEntry
+                        && Core.getProject().getProjectProperties().isSupportDefaultTranslations()) {
+                    menu.addSeparator();
                     JMenuItem miDefault = menu.add(OStrings.getString("MULT_MENU_DEFAULT"));
                     JMenuItem miMultiple = menu.add(OStrings.getString("MULT_MENU_MULTIPLE"));
                     miDefault.setEnabled(!sb.isDefaultTranslation());
