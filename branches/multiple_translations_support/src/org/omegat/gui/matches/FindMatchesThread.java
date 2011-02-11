@@ -26,14 +26,16 @@
 package org.omegat.gui.matches;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.omegat.core.data.EntryKey;
 import org.omegat.core.data.ExternalTMX;
 import org.omegat.core.data.IProject;
+import org.omegat.core.data.IProject.DefaultTranslationsIterator;
+import org.omegat.core.data.IProject.MultipleTranslationsIterator;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.TMXEntry;
 import org.omegat.core.matching.FuzzyMatcher;
@@ -101,18 +103,16 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
 
     @Override
     protected List<NearString> search() throws Exception {
+        if (!project.isProjectLoaded()) {
+            // project is closed
+            return result;
+        }
+
         if (tok == null) {
             return null;
         }
 
-        final List<SourceTextEntry> entries = project.getAllEntries();
-        Collection<TMXEntry> translations = project.getAllTranslations();
-        Collection<TMXEntry> orphaned = project.getAllOrphanedTranslations();
         Map<String, ExternalTMX> memories = project.getTransMemories();
-        if (entries == null || memories == null || orphaned == null) {
-            // project is closed
-            return result;
-        }
 
         long before = 0;
         if (LOGGER.isLoggable(Level.FINER)) {
@@ -127,33 +127,57 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
         /* HP: includes non - word tokens */
 
         // travel by project entries
-        for (TMXEntry en : translations) {
-            if (isEntryChanged()) {
-                return null;
-            }
-            if (en.source.equals(processedEntry.getSrcText())) {
-                // skip original==original entry comparison
-                continue;
-            }
-            processEntry(en.source, en.translation, null);
+        if (project.getProjectProperties().isSupportDefaultTranslations()) {
+            project.iterateByDefaultTranslations(new DefaultTranslationsIterator() {
+                public void iterate(String source, TMXEntry trans) {
+                    checkEntryChanged();
+                    if (source.equals(processedEntry.getSrcText())) {
+                        // skip original==original entry comparison
+                        return;
+                    }
+                    processEntry(null, source, trans.translation, null);
+                    return;
+                }
+            });
         }
+        project.iterateByMultipleTranslations(new MultipleTranslationsIterator() {
+            public void iterate(EntryKey source, TMXEntry trans) {
+                checkEntryChanged();
+                if (source.sourceText.equals(processedEntry.getSrcText())) {
+                    // skip original==original entry comparison
+                    return;
+                }
+                processEntry(source, source.sourceText, trans.translation, null);
+                return;
+            }
+        });
 
         // travel by orphaned
-        String file = OStrings.getString("CT_ORPHAN_STRINGS");
-        for (TMXEntry en : orphaned) {
-            if (isEntryChanged()) {
-                return null;
+        final String orphanedFileName = OStrings.getString("CT_ORPHAN_STRINGS");
+        project.iterateByOrphanedDefaultTranslations(new DefaultTranslationsIterator() {
+            public void iterate(String source, TMXEntry trans) {
+                checkEntryChanged();
+                processEntry(null, source, trans.translation, orphanedFileName);
+                return;
             }
-            processEntry(en.source, en.translation, file);
-        }
+        });
+        project.iterateByOrphanedMultipleTranslations(new MultipleTranslationsIterator() {
+            public void iterate(EntryKey source, TMXEntry trans) {
+                checkEntryChanged();
+                if (source.equals(processedEntry.getSrcText())) {
+                    // skip original==original entry comparison
+                    return;
+                }
+                processEntry(source, source.sourceText, trans.translation, orphanedFileName);
+                return;
+            }
+        });
 
         // travel by translation memories
         for (Map.Entry<String, ExternalTMX> en : memories.entrySet()) {
             for (TMXEntry tmen : en.getValue().getEntries()) {
-                if (isEntryChanged()) {
-                    return null;
-                }
-                processEntry(tmen.source, tmen.translation, en.getKey());
+                checkEntryChanged();
+                processEntry(null, tmen.source, tmen.translation, en.getKey());
             }
         }
 
@@ -180,7 +204,8 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
      * @param candEntry
      *            entry to compare
      */
-    protected void processEntry(final String source, final String translation, final String tmxName) {
+    protected void processEntry(final EntryKey key, final String source, final String translation,
+            final String tmxName) {
         Token[] candTokens = tok.tokenizeWords(source, ITokenizer.StemmingMode.MATCHING);
 
         // First percent value - with stemming if possible
@@ -209,12 +234,12 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
             return;
         }
 
-        addNearString(source, translation, similarityStem, similarityNoStem, simAdjusted, null, tmxName);
+        addNearString(key, source, translation, similarityStem, similarityNoStem, simAdjusted, null, tmxName);
     }
 
     /**
-     * Check if entry have a chance to be added to result list. If no, there is
-     * no sense to calculate other parameters.
+     * Check if entry have a chance to be added to result list. If no, there is no sense to calculate other
+     * parameters.
      * 
      * @param simStem
      *            similarity with stemming
@@ -256,12 +281,11 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
     }
 
     /**
-     * Add near string into result list. Near strings sorted by
-     * "similarity,simAdjusted"
+     * Add near string into result list. Near strings sorted by "similarity,simAdjusted"
      */
-    protected void addNearString(final String source, final String translation, final int similarity,
-            final int similarityNoStem, final int simAdjusted, final byte[] similarityData,
-            final String tmxName) {
+    protected void addNearString(final EntryKey key, final String source, final String translation,
+            final int similarity, final int similarityNoStem, final int simAdjusted,
+            final byte[] similarityData, final String tmxName) {
         // find position for new data
         int pos = 0;
         for (int i = 0; i < result.size(); i++) {
@@ -293,7 +317,7 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
             pos = i + 1;
         }
 
-        result.add(pos, new NearString(source, translation, similarity, similarityNoStem, simAdjusted,
+        result.add(pos, new NearString(key, source, translation, similarity, similarityNoStem, simAdjusted,
                 similarityData, tmxName));
         if (result.size() > OConsts.MAX_NEAR_STRINGS) {
             result.remove(result.size() - 1);
