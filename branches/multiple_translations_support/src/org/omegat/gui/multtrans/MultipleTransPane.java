@@ -24,8 +24,13 @@
 package org.omegat.gui.multtrans;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JMenuItem;
@@ -47,6 +52,8 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Alex Buloichik <alex73mail@gmail.com>
  */
 public class MultipleTransPane extends EntryInfoPane<List<MultipleTransFoundEntry>> {
+    private List<DisplayedEntry> entries = new ArrayList<DisplayedEntry>();
+
     public MultipleTransPane() {
         super(true);
 
@@ -81,23 +88,31 @@ public class MultipleTransPane extends EntryInfoPane<List<MultipleTransFoundEntr
                 }
             }
         });
+
+        addMouseListener(mouseListener);
     }
 
     @Override
     protected void setFoundResult(SourceTextEntry processedEntry, List<MultipleTransFoundEntry> data) {
         UIThreadsUtil.mustBeSwingThread();
 
+        entries.clear();
         String o = "";
         for (MultipleTransFoundEntry e : data) {
             if (o.length() > 0) {
                 o += "----------------------------\n";
             }
+            DisplayedEntry de = new DisplayedEntry();
+            de.entry = e;
+            de.start = o.length();
             if (e.key != null) {
                 o += e.entry.translation + '\n';
                 o += "(" + e.key.file + "/" + e.key.id + ")\n";
             } else {
                 o += e.entry.translation + '\n';
             }
+            de.end = o.length();
+            entries.add(de);
         }
 
         setText(o);
@@ -106,5 +121,63 @@ public class MultipleTransPane extends EntryInfoPane<List<MultipleTransFoundEntr
     @Override
     protected void startSearchThread(SourceTextEntry newEntry) {
         new MultipleTransFindThread(this, Core.getProject(), newEntry).start();
+    }
+
+    protected MouseListener mouseListener = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            // is there anything?
+            if (entries.isEmpty())
+                return;
+
+            // where did we click?
+            int mousepos = MultipleTransPane.this.viewToModel(e.getPoint());
+
+            // find clicked entry
+            for (DisplayedEntry de : entries) {
+                if (de.start <= mousepos && de.end >= mousepos) {
+                    mouseRightClick(de, e.getPoint());
+                    break;
+                }
+            }
+        }
+
+    };
+
+    private void mouseRightClick(final DisplayedEntry de, final Point clickedPoint) {
+        // create the menu
+        JPopupMenu popup = new JPopupMenu();
+
+        JMenuItem item;
+        if (de.entry.key != null) {
+            // default translation
+            item = popup.add(OStrings.getString("MULT_POPUP_DEFAULT"));
+            item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    // TODO: set current entry as default translation
+                }
+            });
+        }
+        // non-default translation
+        item = popup.add(OStrings.getString("MULT_POPUP_REPLACE"));
+        item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // TODO: set text in editor to translation of this entry
+            }
+        });
+
+        item = popup.add(OStrings.getString("MULT_POPUP_GOTO"));
+        item.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // TODO: goto this entry
+            }
+        });
+
+        popup.show(this, clickedPoint.x, clickedPoint.y);
+    }
+
+    protected static class DisplayedEntry {
+        int start, end;
+        MultipleTransFoundEntry entry;
     }
 }
