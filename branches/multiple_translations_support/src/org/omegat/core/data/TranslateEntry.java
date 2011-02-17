@@ -68,11 +68,11 @@ public abstract class TranslateEntry implements ITranslateCallback {
             List<String> segments = Segmenter.segment(sourceLang, source, spaces, brules);
             for (int i = 0; i < segments.size(); i++) {
                 String onesrc = segments.get(i);
-                segments.set(i, getSegmentTranslation(id, i, onesrc));
+                segments.set(i, getSegmentTranslation(id, i, onesrc, null, null));
             }
             res.append(Segmenter.glue(sourceLang, targetLang, segments, spaces, brules));
         } else {
-            res.append(getSegmentTranslation(id, 0, source));
+            res.append(getSegmentTranslation(id, 0, source, null, null));
         }
 
         // replacing all occurrences of LF (\n) by either single CR (\r) or CRLF
@@ -97,5 +97,6 @@ public abstract class TranslateEntry implements ITranslateCallback {
         return r;
     }
 
-    protected abstract String getSegmentTranslation(String id, int segmentIndex, String segmentSource);
+    protected abstract String getSegmentTranslation(String id, int segmentIndex, String segmentSource,
+            String prevSegment, String nextSegment);
 }

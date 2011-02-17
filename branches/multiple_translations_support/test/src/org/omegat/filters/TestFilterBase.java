@@ -66,6 +66,9 @@ public abstract class TestFilterBase extends TestCore {
 
             public void addFileTMXEntry(String source, String translation) {
             }
+
+            public void linkPrevNextSegments() {
+            }
         });
 
         return result;
@@ -83,6 +86,9 @@ public abstract class TestFilterBase extends TestCore {
             }
 
             public void addFileTMXEntry(String source, String translation) {
+            }
+
+            public void linkPrevNextSegments() {
             }
         });
 
@@ -106,6 +112,9 @@ public abstract class TestFilterBase extends TestCore {
 
             public void addFileTMXEntry(String source, String translation) {
                 legacyTMX.put(source, translation);
+            }
+
+            public void linkPrevNextSegments() {
             }
         });
     }

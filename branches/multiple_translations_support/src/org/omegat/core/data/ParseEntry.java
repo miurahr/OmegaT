@@ -32,6 +32,7 @@ package org.omegat.core.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.omegat.core.data.IProject.FileInfo;
 import org.omegat.core.segmentation.Rule;
 import org.omegat.core.segmentation.Segmenter;
 import org.omegat.filters2.IFilter;
@@ -50,11 +51,52 @@ import org.omegat.util.StringUtil;
 public abstract class ParseEntry implements IParseCallback {
 
     private final ProjectProperties m_config;
+    
+    private List<ParseEntryQueueItem> parseQueue = new ArrayList<ParseEntryQueueItem>();
 
     public ParseEntry(final ProjectProperties m_config) {
         this.m_config = m_config;
     }
 
+    protected void setCurrentFile(FileInfo fi) {
+    }
+
+    protected void fileFinished() {
+        /**
+         * Flush queue.
+         */
+        for (ParseEntryQueueItem item : parseQueue) {
+            addSegment(item.id, item.segmentIndex, item.segmentSource, item.segmentTranslation, item.comment,
+                    item.prevSegment, item.nextSegment);
+        }
+
+        /**
+         * Clear queue for next file.
+         */
+        parseQueue.clear();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void linkPrevNextSegments() {
+        for (int i = 0; i < parseQueue.size() - 1; i++) {
+            ParseEntryQueueItem item = parseQueue.get(i);
+            try {
+                item.prevSegment = parseQueue.get(i - 1).segmentSource;
+            } catch (IndexOutOfBoundsException ex) {
+                // first entry - previous will be empty
+                item.prevSegment = "";
+            }
+            try {
+                item.nextSegment = parseQueue.get(i + 1).segmentSource;
+            } catch (IndexOutOfBoundsException ex) {
+                // last entry - next will be empty
+                item.nextSegment = "";
+            }
+        }
+    }
+    
     /**
      * This method is called by filters to add new entry in OmegaT after read it
      * from source file.
@@ -97,15 +139,15 @@ public abstract class ParseEntry implements IParseCallback {
             Language sourceLang = m_config.getSourceLanguage();
             List<String> segments = Segmenter.segment(sourceLang, source, spaces, brules);
             if (segments.size() == 1) {
-                addSegment(id, (short) 0, segments.get(0), segTranslation, comment);
+                addSegmentInQueue(id, (short) 0, segments.get(0), segTranslation, comment);
             } else {
                 for (short i = 0; i < segments.size(); i++) {
                     String onesrc = segments.get(i);
-                    addSegment(id, i, onesrc, null, comment);
+                    addSegmentInQueue(id, i, onesrc, null, comment);
                 }
             }
         } else {
-            addSegment(id, (short) 0, source, segTranslation, comment);
+            addSegmentInQueue(id, (short) 0, source, segTranslation, comment);
         }
         if (translation != null) {
             // Add systematically the TU as a legacy TMX
@@ -119,6 +161,20 @@ public abstract class ParseEntry implements IParseCallback {
         }
     }
 
+    /**
+     * Add segment to queue because we possible need to link prev/next segments.
+     */
+    private void addSegmentInQueue(String id, short segmentIndex, String segmentSource,
+            String segmentTranslation, String comment) {
+        ParseEntryQueueItem item = new ParseEntryQueueItem();
+        item.id = id;
+        item.segmentIndex = segmentIndex;
+        item.segmentSource = segmentSource;
+        item.segmentTranslation = segmentTranslation;
+        item.comment = comment;
+        parseQueue.add(item);
+    }
+    
     /**
      * Adds the source and translation to the generated 'reference TMX', a
      * special TMX that is used as extra refrence during translation.
@@ -140,9 +196,13 @@ public abstract class ParseEntry implements IParseCallback {
      *            it
      * @param comment
      *            entry's comment, if format supports it
+     * @param prevSegment
+     *            previous segment's text
+     * @param nextSegment
+     *            next segment's text
      */
     protected abstract void addSegment(String id, short segmentIndex, String segmentSource,
-            String segmentTranslation, String comment);
+            String segmentTranslation, String comment, String prevSegment, String nextSegment);
 
     /**
      * Strip some chars for represent string in UI.
@@ -207,5 +267,18 @@ public abstract class ParseEntry implements IParseCallback {
     public static class ParseEntryResult {
         public boolean crlf, cr;
         int spacesAtBegin, spacesAtEnd;
+    }
+    
+    /**
+     * Storage for segments for prev/next segments linking.
+     */
+    protected static class ParseEntryQueueItem {
+        String id;
+        short segmentIndex;
+        String segmentSource;
+        String segmentTranslation;
+        String comment;
+        String prevSegment;
+        String nextSegment;
     }
 }

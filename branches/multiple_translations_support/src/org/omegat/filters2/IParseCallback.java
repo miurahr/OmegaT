@@ -58,4 +58,10 @@ public interface IParseCallback {
      *            translation
      */
     void addFileTMXEntry(String source, String translation);
+    
+    /**
+     * This method can be called from any filter on the end of file processing. It links prev/next segments
+     * for multiple translations.
+     */
+    void linkPrevNextSegments();
 }

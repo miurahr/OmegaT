@@ -55,6 +55,8 @@ import org.omegat.util.TMXWriter2;
 public class ProjectTMX {
     protected static final String PROP_FILE = "file";
     protected static final String PROP_ID = "id";
+    protected static final String PROP_PREV = "prev";
+    protected static final String PROP_NEXT = "next";
 
     /**
      * Storage for translation for current project. Will be null if default translation disabled.
@@ -192,6 +194,8 @@ public class ProjectTMX {
     private EntryKey createKeyByProps(String src, Tu tu) {
         String file = null;
         String id = null;
+        String prev = null;
+        String next = null;
         for (int i = 0; i < tu.getNoteOrProp().size(); i++) {
             if (tu.getNoteOrProp().get(i) instanceof Prop) {
                 Prop p = (Prop) tu.getNoteOrProp().get(i);
@@ -199,10 +203,14 @@ public class ProjectTMX {
                     file = p.getvalue();
                 } else if (PROP_ID.equals(p.getType())) {
                     id = p.getvalue();
+                } else if (PROP_PREV.equals(p.getType())) {
+                    prev = p.getvalue();
+                } else if (PROP_NEXT.equals(p.getType())) {
+                    next = p.getvalue();
                 }
             }
         }
-        return new EntryKey(file, src, id);
+        return new EntryKey(file, src, id, prev, next);
     }
 
     public interface CheckOrphanedCallback {
@@ -271,12 +279,15 @@ public class ProjectTMX {
                 t.setSeg(ed.getValue().translation);
                 te = ed.getValue();
             } else if (em != null) {
-                s.setSeg(em.getKey().sourceText);
+                EntryKey emKey = em.getKey();
+                s.setSeg(emKey.sourceText);
                 t.setSeg(em.getValue().translation);
                 te = em.getValue();
 
-                addProp(tu, PROP_FILE, em.getKey().file);
-                addProp(tu, PROP_ID, em.getKey().id);
+                addProp(tu, PROP_FILE, emKey.file);
+                addProp(tu, PROP_ID, emKey.id);
+                addProp(tu, PROP_PREV, emKey.prev);
+                addProp(tu, PROP_NEXT, emKey.next);
             }
 
             if (!StringUtil.isEmpty(te.changer)) {

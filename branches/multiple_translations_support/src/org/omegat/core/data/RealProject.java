@@ -851,9 +851,12 @@ public class RealProject implements IProject {
         protected void setCurrentFile(FileInfo fi) {
             fileInfo = fi;
             fileTMXentries = new ArrayList<TMXEntry>();
+            super.setCurrentFile(fi);
         }
 
         protected void fileFinished() {
+            super.fileFinished();
+
             if (fileTMXentries.size() > 0) {
                 ExternalTMX tmx = new ExternalTMX(fileInfo.filePath, fileTMXentries);
                 transMemories.put(tmx.getName(), tmx);
@@ -867,13 +870,13 @@ public class RealProject implements IProject {
          * {@inheritDoc}
          */
         protected void addSegment(String id, short segmentIndex, String segmentSource,
-                String segmentTranslation, String comment) {
+                String segmentTranslation, String comment, String prevSegment, String nextSegment) {
             // if the source string is empty, don't add it to TM
             if (segmentSource.length() == 0 || segmentSource.trim().length() == 0) {
                 return;
             }
 
-            EntryKey ek = new EntryKey(fileInfo.filePath, segmentSource, id);
+            EntryKey ek = new EntryKey(fileInfo.filePath, segmentSource, id, prevSegment, nextSegment);
 
             if (!StringUtil.isEmpty(segmentTranslation)) {
                 projectTMX.putFromSourceFile(ek, new TMXEntry(segmentSource, segmentTranslation, null, 0));
@@ -905,8 +908,9 @@ public class RealProject implements IProject {
             currentFile = fn;
         }
 
-        protected String getSegmentTranslation(String id, int segmentIndex, String segmentSource) {
-            EntryKey ek = new EntryKey(currentFile, segmentSource, id);
+        protected String getSegmentTranslation(String id, int segmentIndex, String segmentSource,
+                String prevSegment, String nextSegment) {
+            EntryKey ek = new EntryKey(currentFile, segmentSource, id, prevSegment, nextSegment);
             TMXEntry tr=projectTMX.getMultipleTranslation(ek);
             if (tr==null) {
                 tr = projectTMX.getDefaultTranslation(ek.sourceText);

@@ -92,6 +92,10 @@ public class TextFilter extends AbstractFilter {
         } else {
             processSegEmptyLines(in, out);
         }
+        if (entryParseCallback != null) {
+            // parsing - need to link prev/next
+            entryParseCallback.linkPrevNextSegments();
+        }
     }
 
     /** Process the file without segmenting it. */
