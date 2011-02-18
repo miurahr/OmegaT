@@ -403,6 +403,7 @@ public class RealProject implements IProject {
                 translateFilesCallback.setCurrentFileName(midName);
                 fm.translateFile(srcRoot, midName, locRoot, new FilterContext(m_config),
                         translateFilesCallback);
+                translateFilesCallback.fileFinished();
             }
         }
         Core.getMainWindow().showStatusMessageRB("CT_COMPILE_DONE_MX");
@@ -907,7 +908,7 @@ public class RealProject implements IProject {
         protected void setCurrentFileName(String fn) {
             currentFile = fn;
         }
-
+        
         protected String getSegmentTranslation(String id, int segmentIndex, String segmentSource,
                 String prevSegment, String nextSegment) {
             EntryKey ek = new EntryKey(currentFile, segmentSource, id, prevSegment, nextSegment);

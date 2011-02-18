@@ -3,7 +3,7 @@
           with fuzzy matching, translation memory, keyword search, 
           glossaries, and translation leveraging into updated projects.
 
- Copyright (C) 2009 Alex Buloichik
+ Copyright (C) 2011 Alex Buloichik
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -30,6 +30,20 @@ package org.omegat.filters2;
  * @author Alex Buloichik <alex73mail@gmail.com>
  */
 public interface ITranslateCallback {
+    /**
+     * Set current pass number, i.e. 1 or 2.
+     * 
+     * Any filter called in one-pass mode by default. But if it require second pass for support prev/next
+     * segments, it can set flag 'needSecondPass'.
+     */
+    void setPass(int pass);
+
+    /**
+     * This method called from AbstractFilter if filter require second pass. It links prev/next segments for
+     * multiple translations.
+     */
+    void linkPrevNextSegments();
+
     /**
      * Get translation for output to compiled target.
      * 

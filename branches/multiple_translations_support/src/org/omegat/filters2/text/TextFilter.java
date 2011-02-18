@@ -96,6 +96,8 @@ public class TextFilter extends AbstractFilter {
             // parsing - need to link prev/next
             entryParseCallback.linkPrevNextSegments();
         }
+        
+        needSecondPass = true;
     }
 
     /** Process the file without segmenting it. */

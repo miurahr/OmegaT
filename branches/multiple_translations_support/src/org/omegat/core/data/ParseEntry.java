@@ -8,7 +8,7 @@
            (C) 2006 Martin Wunderlich
            (C) 2006-2007 Didier Briel
            (C) 2008 Martin Fleurke
-           (C) 2009 Alex Buloichik
+           (C) 2011 Alex Buloichik
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -44,6 +44,9 @@ import org.omegat.util.StringUtil;
 /**
  * Process one entry on parse source file.
  * 
+ * This class caches segments for one file, then flushes they. It required to ability to link prev/next
+ * segments.
+ * 
  * @author Maxym Mykhalchuk
  * @author Henry Pijffers
  * @author Alex Buloichik <alex73mail@gmail.com>
@@ -52,6 +55,7 @@ public abstract class ParseEntry implements IParseCallback {
 
     private final ProjectProperties m_config;
     
+    /** Cached segments. */
     private List<ParseEntryQueueItem> parseQueue = new ArrayList<ParseEntryQueueItem>();
 
     public ParseEntry(final ProjectProperties m_config) {
@@ -80,7 +84,7 @@ public abstract class ParseEntry implements IParseCallback {
      * {@inheritDoc}
      */
     public void linkPrevNextSegments() {
-        for (int i = 0; i < parseQueue.size() - 1; i++) {
+        for (int i = 0; i < parseQueue.size(); i++) {
             ParseEntryQueueItem item = parseQueue.get(i);
             try {
                 item.prevSegment = parseQueue.get(i - 1).segmentSource;
@@ -139,15 +143,15 @@ public abstract class ParseEntry implements IParseCallback {
             Language sourceLang = m_config.getSourceLanguage();
             List<String> segments = Segmenter.segment(sourceLang, source, spaces, brules);
             if (segments.size() == 1) {
-                addSegmentInQueue(id, (short) 0, segments.get(0), segTranslation, comment);
+                internalAddSegment(id, (short) 0, segments.get(0), segTranslation, comment);
             } else {
                 for (short i = 0; i < segments.size(); i++) {
                     String onesrc = segments.get(i);
-                    addSegmentInQueue(id, i, onesrc, null, comment);
+                    internalAddSegment(id, i, onesrc, null, comment);
                 }
             }
         } else {
-            addSegmentInQueue(id, (short) 0, source, segTranslation, comment);
+            internalAddSegment(id, (short) 0, source, segTranslation, comment);
         }
         if (translation != null) {
             // Add systematically the TU as a legacy TMX
@@ -164,7 +168,7 @@ public abstract class ParseEntry implements IParseCallback {
     /**
      * Add segment to queue because we possible need to link prev/next segments.
      */
-    private void addSegmentInQueue(String id, short segmentIndex, String segmentSource,
+    private void internalAddSegment(String id, short segmentIndex, String segmentSource,
             String segmentTranslation, String comment) {
         ParseEntryQueueItem item = new ParseEntryQueueItem();
         item.id = id;
@@ -270,7 +274,7 @@ public abstract class ParseEntry implements IParseCallback {
     }
     
     /**
-     * Storage for segments for prev/next segments linking.
+     * Storage for collected segments.
      */
     protected static class ParseEntryQueueItem {
         String id;
