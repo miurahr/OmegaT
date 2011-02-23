@@ -1,0 +1,26 @@
+                      Attributes:  "source text"  "filename"  "ID"  "prev/next segment"  "path"
+  Filter name
+Android Resource Files                    +            +        +
+DocBook Files                             +            +
+DokuWiki Files                            +            +
+Help & Manual Files                       +            +
+HTML and XHTML files                      +            +                                    ?
+HTML Help Compiler files                  +            +
+Java(TM) Resource Bundles                 +            +        +
+Key=Value Text Files                      +            +        +
+LaTeX Files                               +            +
+Microsoft Open XML Files                  +            +
+Mozilla DTD files                         +            +        +
+OpenDocument/OpenOffice.org Files         +            +                     +
+PO Files                                  +            +                                    +(context)
+QuarkXPress CopyFlow Gold Files           +            +
+ResX Files                                +            +        +
+SubRip Subtitles Files                    +            +        +
+SVG Image Files                           +            +
+Text Files                                +            +                     +
+Typo3 l10nmgr Files                       +            +
+Typo3 LocManager Files                    +            +
+Windows Resource Files                    +            +        +
+WiX Localization Files                    +            +        +
+XHTML Files                               +            +                                    ?
+XLIFF Files                               +            +
