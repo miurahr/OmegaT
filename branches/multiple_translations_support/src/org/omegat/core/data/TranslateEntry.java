@@ -82,7 +82,7 @@ public abstract class TranslateEntry implements ITranslateCallback {
      * @param source
      *            source text
      */
-    public String getTranslation(final String id, final String origSource) {
+    public String getTranslation(final String id, final String origSource, final String path) {
         ParseEntry.ParseEntryResult spr = new ParseEntry.ParseEntryResult();
 
         final String source = ParseEntry.stripSomeChars(origSource, spr);
@@ -97,11 +97,11 @@ public abstract class TranslateEntry implements ITranslateCallback {
             List<String> segments = Segmenter.segment(sourceLang, source, spaces, brules);
             for (int i = 0; i < segments.size(); i++) {
                 String onesrc = segments.get(i);
-                segments.set(i, internalGetSegmentTranslation(id, i, onesrc));
+                segments.set(i, internalGetSegmentTranslation(id, i, onesrc, path));
             }
             res.append(Segmenter.glue(sourceLang, targetLang, segments, spaces, brules));
         } else {
-            res.append(internalGetSegmentTranslation(id, 0, source));
+            res.append(internalGetSegmentTranslation(id, 0, source, path));
         }
 
         // replacing all occurrences of LF (\n) by either single CR (\r) or CRLF
@@ -156,7 +156,7 @@ public abstract class TranslateEntry implements ITranslateCallback {
      * @param segmentSource
      * @return
      */
-    private String internalGetSegmentTranslation(String id, int segmentIndex, String segmentSource) {
+    private String internalGetSegmentTranslation(String id, int segmentIndex, String segmentSource, String path) {
         TranslateEntryQueueItem item;
         switch (pass) {
         case 1:
@@ -166,7 +166,7 @@ public abstract class TranslateEntry implements ITranslateCallback {
             item.segmentSource = segmentSource;
             translateQueue.add(item);
             currentlyProcessedSegment++;
-            return getSegmentTranslation(id, segmentIndex, segmentSource, null, null);
+            return getSegmentTranslation(id, segmentIndex, segmentSource, null, null, path);
         case 2:
             item = translateQueue.get(currentlyProcessedSegment);
             if (!StringUtil.equalsWithNulls(id, item.id) || segmentIndex != item.segmentIndex
@@ -174,14 +174,14 @@ public abstract class TranslateEntry implements ITranslateCallback {
                 throw new RuntimeException("Invalid two-pass processing: not equals fields");
             }
             currentlyProcessedSegment++;
-            return getSegmentTranslation(id, segmentIndex, segmentSource, item.prevSegment, item.nextSegment);
+            return getSegmentTranslation(id, segmentIndex, segmentSource, item.prevSegment, item.nextSegment, path);
         default:
             throw new RuntimeException("Invalid pass number: " + pass);
         }
     }
     
     protected abstract String getSegmentTranslation(String id, int segmentIndex, String segmentSource,
-            String prevSegment, String nextSegment);
+            String prevSegment, String nextSegment, String path);
     
     /**
      * Storage for cached segments.

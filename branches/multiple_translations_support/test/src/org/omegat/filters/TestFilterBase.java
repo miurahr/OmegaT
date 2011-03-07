@@ -59,7 +59,7 @@ public abstract class TestFilterBase extends TestCore {
 
         filter.parseFile(new File(filename), new TreeMap<String, String>(), context, new IParseCallback() {
             public void addEntry(String id, String source, String translation, boolean isFuzzy,
-                    String comment, IFilter filter) {
+                    String comment, String path, IFilter filter) {
                 if (source.length() > 0)
                     result.add(source);
             }
@@ -80,7 +80,7 @@ public abstract class TestFilterBase extends TestCore {
 
         filter.parseFile(new File(filename), options, context, new IParseCallback() {
             public void addEntry(String id, String source, String translation, boolean isFuzzy,
-                    String comment, IFilter filter) {
+                    String comment, String path, IFilter filter) {
                 if (source.length() > 0)
                     result.add(source);
             }
@@ -100,7 +100,7 @@ public abstract class TestFilterBase extends TestCore {
 
         filter.parseFile(new File(filename), new TreeMap<String, String>(), context, new IParseCallback() {
             public void addEntry(String id, String source, String translation, boolean isFuzzy,
-                    String comment, IFilter filter) {
+                    String comment, String path, IFilter filter) {
                 String segTranslation = isFuzzy ? null : translation;
                 result.put(source, segTranslation);
                 if (translation != null) {
@@ -119,14 +119,46 @@ public abstract class TestFilterBase extends TestCore {
         });
     }
 
+    protected List<ParsedEntry> parse3(AbstractFilter filter, String filename, Map<String, String> options)
+            throws Exception {
+        final List<ParsedEntry> result = new ArrayList<ParsedEntry>();
+
+        filter.parseFile(new File(filename), options, context, new IParseCallback() {
+            public void addEntry(String id, String source, String translation, boolean isFuzzy,
+                    String comment, String path, IFilter filter) {
+                if (source.length() == 0) {
+                    return;
+                }
+                ParsedEntry e = new ParsedEntry();
+                e.id = id;
+                e.source = source;
+                e.translation = translation;
+                e.isFuzzy = isFuzzy;
+                e.comment = comment;
+                e.path = path;
+                result.add(e);
+            }
+
+            public void addFileTMXEntry(String source, String translation) {
+            }
+
+            public void linkPrevNextSegments() {
+            }
+        });
+
+        return result;
+    }
+
     protected void translate(AbstractFilter filter, String filename) throws Exception {
         filter.translateFile(new File(filename), outFile, new TreeMap<String, String>(), context,
                 new ITranslateCallback() {
-                    public String getTranslation(String id, String source) {
+                    public String getTranslation(String id, String source, String path) {
                         return source;
                     }
+
                     public void linkPrevNextSegments() {
                     }
+
                     public void setPass(int pass) {
                     }
                 });
@@ -169,5 +201,14 @@ public abstract class TestFilterBase extends TestCore {
 
     protected void compareXML(URL f1, URL f2) throws Exception {
         assertXMLEqual(new InputSource(f1.toExternalForm()), new InputSource(f2.toExternalForm()));
+    }
+
+    protected static class ParsedEntry {
+        String id;
+        String source;
+        String translation;
+        boolean isFuzzy;
+        String comment;
+        String path;
     }
 }

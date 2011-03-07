@@ -333,7 +333,8 @@ public class Searcher {
             fm.loadFile(filename, new FilterContext(m_project.getProjectProperties()), new SearchCallback(
                     m_project.getProjectProperties()) {
                 protected void addSegment(String id, short segmentIndex, String segmentSource,
-                        String segmentTranslation, String comment, String prevSegment, String nextSegment) {
+                        String segmentTranslation, String comment, String prevSegment, String nextSegment,
+                        String path) {
                     searchText(segmentSource);
                 }
 

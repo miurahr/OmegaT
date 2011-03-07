@@ -119,4 +119,15 @@ public class StringUtil {
             return v1.compareTo(v2);
         }
     }
+    
+    /**
+     * Extracts first N chars from string.
+     */
+    public static String firstN(String str, int len) {
+        if (str.length() < len) {
+            return str;
+        } else {
+            return str.substring(0, len) + "...";
+        }
+    }
 }

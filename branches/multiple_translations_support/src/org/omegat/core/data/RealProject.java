@@ -447,8 +447,10 @@ public class RealProject implements IProject {
                 }
             }
 
-            if (!orig.renameTo(backup)) {
-                throw new IOException("Error rename old file to backup");
+            if (orig.exists()) {
+                if (!orig.renameTo(backup)) {
+                    throw new IOException("Error rename old file to backup");
+                }
             }
 
             if (!newFile.renameTo(orig)) {
@@ -513,26 +515,14 @@ public class RealProject implements IProject {
         };
 
         try {
-            if (!tmxFile.exists()) {
-                Log.logErrorRB("CT_ERROR_CANNOT_FIND_TMX", tmxFile.getAbsolutePath());
-                // nothing to do here
-                return;
-            }
-        } catch (SecurityException se) {
-            // file probably exists, but something's wrong
-            Log.logErrorRB(se, "CT_ERROR_ACCESS_PROJECT_FILE");
-            Core.getMainWindow().displayErrorRB(se, "CT_ERROR_ACCESS_PROJECT_FILE");
-            return;
-        }
-
-        try {
             Core.getMainWindow().showStatusMessageRB("CT_LOAD_TMX");
 
             projectTMX = new ProjectTMX(m_config, tmxFile, cb);
-
-            // RFE 1001918 - backing up project's TMX upon successful read
-            FileUtil.backupFile(tmxFile);
-            FileUtil.removeOldBackups(tmxFile);
+            if (tmxFile.exists()) {
+                // RFE 1001918 - backing up project's TMX upon successful read
+                FileUtil.backupFile(tmxFile);
+                FileUtil.removeOldBackups(tmxFile);
+            }
         } catch (Exception e) {
             Log.logErrorRB(e, "CT_ERROR_LOADING_PROJECT_FILE");
             Core.getMainWindow().displayErrorRB(e, "CT_ERROR_LOADING_PROJECT_FILE");
@@ -871,13 +861,13 @@ public class RealProject implements IProject {
          * {@inheritDoc}
          */
         protected void addSegment(String id, short segmentIndex, String segmentSource,
-                String segmentTranslation, String comment, String prevSegment, String nextSegment) {
+                String segmentTranslation, String comment, String prevSegment, String nextSegment, String path) {
             // if the source string is empty, don't add it to TM
             if (segmentSource.length() == 0 || segmentSource.trim().length() == 0) {
                 return;
             }
 
-            EntryKey ek = new EntryKey(fileInfo.filePath, segmentSource, id, prevSegment, nextSegment);
+            EntryKey ek = new EntryKey(fileInfo.filePath, segmentSource, id, prevSegment, nextSegment, path);
 
             if (!StringUtil.isEmpty(segmentTranslation)) {
                 projectTMX.putFromSourceFile(ek, new TMXEntry(segmentSource, segmentTranslation, null, 0));
@@ -910,8 +900,8 @@ public class RealProject implements IProject {
         }
         
         protected String getSegmentTranslation(String id, int segmentIndex, String segmentSource,
-                String prevSegment, String nextSegment) {
-            EntryKey ek = new EntryKey(currentFile, segmentSource, id, prevSegment, nextSegment);
+                String prevSegment, String nextSegment, String path) {
+            EntryKey ek = new EntryKey(currentFile, segmentSource, id, prevSegment, nextSegment, path);
             TMXEntry tr=projectTMX.getMultipleTranslation(ek);
             if (tr==null) {
                 tr = projectTMX.getDefaultTranslation(ek.sourceText);

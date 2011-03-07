@@ -29,15 +29,16 @@ import org.omegat.filters3.xml.android.AndroidFilter;
 
 public class AndroidFilterTest extends TestFilterBase {
     public void testParse() throws Exception {
-        List<String> lines = parse(new AndroidFilter(),
-                "test/data/filters/Android/file-AndroidFilter.xml");
-        assertTrue("'MyApp' not defined'", lines.contains("MyApp"));
-        
-        assertTrue("T'est not defined'", lines.contains("T'est"));
+        List<ParsedEntry> lines = parse3(new AndroidFilter(),
+                "test/data/filters/Android/file-AndroidFilter.xml", null);
+        assertTrue("MyApp".equals(lines.get(0).source));
+        // assertTrue("Some comment".equals(lines.get(0).comment));
+        // assertTrue("app_label".equals(lines.get(0).id));
+
+        assertTrue("T'est".equals(lines.get(2).source));
     }
 
     public void testTranslate() throws Exception {
-        translateXML(new AndroidFilter(),
-                "test/data/filters/Android/file-AndroidFilter.xml");
+        translateXML(new AndroidFilter(), "test/data/filters/Android/file-AndroidFilter.xml");
     }
 }

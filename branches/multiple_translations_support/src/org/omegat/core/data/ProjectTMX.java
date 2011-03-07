@@ -57,6 +57,7 @@ public class ProjectTMX {
     protected static final String PROP_ID = "id";
     protected static final String PROP_PREV = "prev";
     protected static final String PROP_NEXT = "next";
+    protected static final String PROP_PATH = "path";
 
     /**
      * Storage for translation for current project. Will be null if default translation disabled.
@@ -82,6 +83,11 @@ public class ProjectTMX {
             // Do not even create default storage if not required. It will
             // allow to see errors.
             translationDefault = null;
+        }
+
+        if (!file.exists()) {
+            // file not exist - new project
+            return;
         }
 
         TMXReader2.readTMX(
@@ -196,6 +202,7 @@ public class ProjectTMX {
         String id = null;
         String prev = null;
         String next = null;
+        String path = null;
         for (int i = 0; i < tu.getNoteOrProp().size(); i++) {
             if (tu.getNoteOrProp().get(i) instanceof Prop) {
                 Prop p = (Prop) tu.getNoteOrProp().get(i);
@@ -207,10 +214,12 @@ public class ProjectTMX {
                     prev = p.getvalue();
                 } else if (PROP_NEXT.equals(p.getType())) {
                     next = p.getvalue();
+                } else if (PROP_PATH.equals(p.getType())) {
+                    path = p.getvalue();
                 }
             }
         }
-        return new EntryKey(file, src, id, prev, next);
+        return new EntryKey(file, src, id, prev, next, path);
     }
 
     public interface CheckOrphanedCallback {
@@ -288,6 +297,7 @@ public class ProjectTMX {
                 addProp(tu, PROP_ID, emKey.id);
                 addProp(tu, PROP_PREV, emKey.prev);
                 addProp(tu, PROP_NEXT, emKey.next);
+                addProp(tu, PROP_PATH, emKey.path);
             }
 
             if (!StringUtil.isEmpty(te.changer)) {
@@ -307,7 +317,7 @@ public class ProjectTMX {
     }
 
     private static void addProp(Tu tu, String propName, String propValue) {
-        if (StringUtil.isEmpty(propValue)) {
+        if (propValue == null) {
             return;
         }
         Prop p = new Prop();

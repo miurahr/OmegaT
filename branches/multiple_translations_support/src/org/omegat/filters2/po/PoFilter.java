@@ -275,7 +275,7 @@ public class PoFilter extends AbstractFilter {
             translation = null;
         }
         if (entryParseCallback != null) {
-            entryParseCallback.addEntry(null, source, translation, fuzzy, null, this);
+            entryParseCallback.addEntry(null, source, translation, fuzzy, null, null, this);
         } else if (entryAlignCallback != null) {
             entryAlignCallback.addTranslation(null, source, translation, fuzzy, null, this);
         }
@@ -283,7 +283,7 @@ public class PoFilter extends AbstractFilter {
 
     protected void alignHeader(String header) {
         if (entryParseCallback != null) {
-            entryParseCallback.addEntry(null, unescape(header), null, false, null, this);
+            entryParseCallback.addEntry(null, unescape(header), null, false, null, null, this);
         }
     }
 
@@ -359,7 +359,7 @@ public class PoFilter extends AbstractFilter {
         String entry = unescape(en.toString());
 
         // Do real translation
-        String translation = entryTranslateCallback.getTranslation(null, entry);
+        String translation = entryTranslateCallback.getTranslation(null, entry, null);
 
         if (translation != null) {
             return "\"" + escape(translation) + "\"";

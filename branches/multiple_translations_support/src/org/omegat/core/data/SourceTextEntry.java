@@ -37,6 +37,9 @@ package org.omegat.core.data;
 public class SourceTextEntry {
     /** Storage for full entry's identifiers, including source text. */
     private EntryKey key;
+    
+    /** Comment in source file. */
+    private String comment;
 
     public enum DUPLICATE {
         /** There is no entries with the same source. */

@@ -71,7 +71,7 @@ public abstract class ParseEntry implements IParseCallback {
          */
         for (ParseEntryQueueItem item : parseQueue) {
             addSegment(item.id, item.segmentIndex, item.segmentSource, item.segmentTranslation, item.comment,
-                    item.prevSegment, item.nextSegment);
+                    item.prevSegment, item.nextSegment, item.path);
         }
 
         /**
@@ -122,7 +122,7 @@ public abstract class ParseEntry implements IParseCallback {
      *            filter which produces entry
      */
     public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
-            IFilter filter) {
+            String path, IFilter filter) {
         if (StringUtil.isEmpty(source)) {
             // empty string - not need to save
             return;
@@ -143,15 +143,15 @@ public abstract class ParseEntry implements IParseCallback {
             Language sourceLang = m_config.getSourceLanguage();
             List<String> segments = Segmenter.segment(sourceLang, source, spaces, brules);
             if (segments.size() == 1) {
-                internalAddSegment(id, (short) 0, segments.get(0), segTranslation, comment);
+                internalAddSegment(id, (short) 0, segments.get(0), segTranslation, comment, path);
             } else {
                 for (short i = 0; i < segments.size(); i++) {
                     String onesrc = segments.get(i);
-                    internalAddSegment(id, i, onesrc, null, comment);
+                    internalAddSegment(id, i, onesrc, null, comment, path);
                 }
             }
         } else {
-            internalAddSegment(id, (short) 0, source, segTranslation, comment);
+            internalAddSegment(id, (short) 0, source, segTranslation, comment, path);
         }
         if (translation != null) {
             // Add systematically the TU as a legacy TMX
@@ -169,13 +169,14 @@ public abstract class ParseEntry implements IParseCallback {
      * Add segment to queue because we possible need to link prev/next segments.
      */
     private void internalAddSegment(String id, short segmentIndex, String segmentSource,
-            String segmentTranslation, String comment) {
+            String segmentTranslation, String comment, String path) {
         ParseEntryQueueItem item = new ParseEntryQueueItem();
         item.id = id;
         item.segmentIndex = segmentIndex;
         item.segmentSource = segmentSource;
         item.segmentTranslation = segmentTranslation;
         item.comment = comment;
+        item.path = path;
         parseQueue.add(item);
     }
     
@@ -186,8 +187,7 @@ public abstract class ParseEntry implements IParseCallback {
     public abstract void addFileTMXEntry(String source, String translation);
 
     /**
-     * Adds a segment to the project. If a translation is given, it it added to
-     * the projects TMX.
+     * Adds a segment to the project. If a translation is given, it it added to the projects TMX.
      * 
      * @param id
      *            ID of entry, if format supports it
@@ -196,17 +196,18 @@ public abstract class ParseEntry implements IParseCallback {
      * @param segmentSource
      *            Translatable source string
      * @param segmentTranslation
-     *            non fuzzy translation of the source string, if format supports
-     *            it
+     *            non fuzzy translation of the source string, if format supports it
      * @param comment
      *            entry's comment, if format supports it
      * @param prevSegment
      *            previous segment's text
      * @param nextSegment
      *            next segment's text
+     * @param path
+     *            path of segment
      */
     protected abstract void addSegment(String id, short segmentIndex, String segmentSource,
-            String segmentTranslation, String comment, String prevSegment, String nextSegment);
+            String segmentTranslation, String comment, String prevSegment, String nextSegment, String path);
 
     /**
      * Strip some chars for represent string in UI.
@@ -284,5 +285,6 @@ public abstract class ParseEntry implements IParseCallback {
         String comment;
         String prevSegment;
         String nextSegment;
+        String path;
     }
 }

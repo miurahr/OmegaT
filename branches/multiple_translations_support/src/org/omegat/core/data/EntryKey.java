@@ -36,14 +36,16 @@ public class EntryKey implements Comparable<EntryKey> {
     public final String id;
     public final String prev;
     public final String next;
+    public final String path;
 
     public EntryKey(final String file, final String sourceText, final String id, final String prev,
-            final String next) {
+            final String next, final String path) {
         this.file = file;
         this.sourceText = sourceText;
         this.id = id;
         this.prev = prev;
         this.next = next;
+        this.path = path;
     }
 
     public int hashCode() {
@@ -60,6 +62,9 @@ public class EntryKey implements Comparable<EntryKey> {
         if (next != null) {
             hash += next.hashCode();
         }
+        if (path != null) {
+            hash += path.hashCode();
+        }
         return hash;
     }
 
@@ -68,8 +73,9 @@ public class EntryKey implements Comparable<EntryKey> {
         return StringUtil.equalsWithNulls(sourceText, o.sourceText) && // source
                 StringUtil.equalsWithNulls(file, o.file) && // file
                 StringUtil.equalsWithNulls(id, o.id) && // id
-                StringUtil.equalsWithNulls(prev, o.prev) && // id
-                StringUtil.equalsWithNulls(next, o.next); // id
+                StringUtil.equalsWithNulls(prev, o.prev) && // prev
+                StringUtil.equalsWithNulls(next, o.next) && // next
+                StringUtil.equalsWithNulls(next, o.next); // path
     }
 
     public int compareTo(EntryKey o) {
@@ -85,6 +91,9 @@ public class EntryKey implements Comparable<EntryKey> {
         }
         if (c == 0) {
             c = StringUtil.compareToWithNulls(next, o.next);
+        }
+        if (c == 0) {
+            c = StringUtil.compareToWithNulls(path, o.path);
         }
         return c;
     }

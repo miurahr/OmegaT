@@ -44,6 +44,7 @@ import org.omegat.gui.editor.IPopupMenuConstructor;
 import org.omegat.gui.editor.SegmentBuilder;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.util.OStrings;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
@@ -99,20 +100,26 @@ public class MultipleTransPane extends EntryInfoPane<List<MultipleTransFoundEntr
         entries.clear();
         String o = "";
         for (MultipleTransFoundEntry e : data) {
-            if (o.length() > 0) {
-                o += "----------------------------\n";
-            }
             DisplayedEntry de = new DisplayedEntry();
             de.entry = e;
             de.start = o.length();
             if (e.key != null) {
                 o += e.entry.translation + '\n';
-                o += "(" + e.key.file + "/" + e.key.id + ")\n";
+                o += "<" + e.key.file;
+                if (e.key.id != null) {
+                    o += "/" + e.key.id;
+                }
+                o += ">\n";
+                if (e.key.prev != null && e.key.next != null) {
+                    o += "(" + StringUtil.firstN(e.key.prev, 10) + " <...> "
+                            + StringUtil.firstN(e.key.next, 10) + ")\n";
+                }
             } else {
                 o += e.entry.translation + '\n';
             }
             de.end = o.length();
             entries.add(de);
+            o += "\n";
         }
 
         setText(o);

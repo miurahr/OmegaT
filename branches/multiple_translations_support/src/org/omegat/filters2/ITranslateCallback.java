@@ -51,7 +51,9 @@ public interface ITranslateCallback {
      *            ID in source file, or null if ID not supported by format
      * @param source
      *            source entry text
+     * @param path
+     *            path of segment
      * @return translation or source if translation not exist
      */
-    String getTranslation(String id, String source);
+    String getTranslation(String id, String source, String path);
 }

@@ -446,10 +446,10 @@ public abstract class AbstractFilter implements IFilter {
      */
     protected final String processEntry(String entry) {
         if (entryParseCallback != null) {
-            entryParseCallback.addEntry(null, entry, null, false, null, this);
+            entryParseCallback.addEntry(null, entry, null, false, null, null, this);
             return entry;
         } else {
-            return entryTranslateCallback.getTranslation(null, entry);
+            return entryTranslateCallback.getTranslation(null, entry, null);
         }
     }
 
