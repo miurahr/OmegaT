@@ -407,5 +407,4 @@ public class DefaultXMLDialect implements XMLDialect {
     public Boolean getTagsAggregationEnabled() {
         return tagsAggregationEnabled;
     }
-
 }

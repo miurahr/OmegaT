@@ -80,6 +80,9 @@ class Handler extends DefaultHandler implements LexicalHandler, DeclHandler {
     private BufferedWriter mainWriter;
     /** Current writer for an external included file. */
     private BufferedWriter extWriter = null;
+    
+    /** Current path in XML. */
+    private final Stack<String> currentTagPath = new Stack<String>();
 
     /**
      * Returns current writer we should write into. If we're in main file,
@@ -459,6 +462,8 @@ class Handler extends DefaultHandler implements LexicalHandler, DeclHandler {
 
     /** Is called when the tag is started. */
     private void start(String tag, Attributes attributes) throws SAXException, TranslationException {
+        translatorTagStart(tag, attributes);
+        
         if (isOutOfTurnTag(tag)) {
             XMLOutOfTurnTag ootTag = new XMLOutOfTurnTag(tag, getShortcut(tag), attributes);
             currEntry().add(ootTag);
@@ -490,6 +495,8 @@ class Handler extends DefaultHandler implements LexicalHandler, DeclHandler {
                 translateAndFlush();
             removeTranslatableTag();
         }
+        
+        translatorTagEnd(tag);
     }
 
     /**
@@ -672,6 +679,20 @@ class Handler extends DefaultHandler implements LexicalHandler, DeclHandler {
             translatableTagName.pop(); // Remove it
     }
 
+    private void translatorTagStart(String tag, Attributes atts) {
+        currentTagPath.push(tag);
+        StringBuilder path = new StringBuilder(256);
+        for (String t : currentTagPath) {
+            path.append('/').append(t);
+        }
+        translator.tagStart(path.toString(), atts);
+    }
+
+    private void translatorTagEnd(String tag) {
+        while (!currentTagPath.pop().equals(tag)) {
+        }
+    }
+    
     /**
      * If the space-preserving flag is not set, and the attributes say it is one, set it
      *

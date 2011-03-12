@@ -28,6 +28,7 @@ package org.omegat.filters3.xml.android;
 import org.omegat.filters2.Instance;
 import org.omegat.filters3.xml.XMLFilter;
 import org.omegat.util.OStrings;
+import org.xml.sax.Attributes;
 
 /**
  * Filter for Android resources.
@@ -35,6 +36,8 @@ import org.omegat.util.OStrings;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class AndroidFilter extends XMLFilter {
+
+    private String id, idPlurals = "";
 
     public AndroidFilter() {
         super(new AndroidDialect());
@@ -60,12 +63,30 @@ public class AndroidFilter extends XMLFilter {
         return false;
     }
 
+    public void tagStart(String path, Attributes atts) {
+        if (atts != null) {
+            if ("/resources/string".equals(path)) {
+                id = atts.getValue("name");
+            } else if ("/resources/plurals".equals(path)) {
+                idPlurals = atts.getValue("name");
+            } else if ("/resources/plurals/item".equals(path)) {
+                id = idPlurals + '/' + atts.getValue("quantity");
+            }
+        }
+    }
+
     /**
      * Filter-specific chars processing.
      */
     public String translate(String entry) {
         String e = entry.replace("\\'", "'");
-        String r = super.translate(e);
+        String r = null;
+        if (entryParseCallback != null) {
+            entryParseCallback.addEntry(id, e, null, false, null, null, this);
+            r = e;
+        } else if (entryTranslateCallback != null) {
+            r = entryTranslateCallback.getTranslation(id, e, null);
+        }
         return r.replace("'", "\\'");
     }
 }
