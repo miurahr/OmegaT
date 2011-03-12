@@ -37,7 +37,7 @@ package org.omegat.core.data;
 public class SourceTextEntry {
     /** Storage for full entry's identifiers, including source text. */
     private EntryKey key;
-    
+
     /** Comment in source file. */
     private String comment;
 
@@ -68,9 +68,10 @@ public class SourceTextEntry {
      * @param entryNum
      *            the number of this entry in a project.
      */
-    public SourceTextEntry(EntryKey key, int entryNum) {
+    public SourceTextEntry(EntryKey key, int entryNum, String comment) {
         this.key = key;
         m_entryNum = entryNum;
+        this.comment = comment;
     }
 
     public EntryKey getKey() {
@@ -82,6 +83,13 @@ public class SourceTextEntry {
      */
     public String getSrcText() {
         return key.sourceText;
+    }
+
+    /**
+     * Returns comment of entry if exist in source document.
+     */
+    public String getComment() {
+        return comment;
     }
 
     /** Returns the number of this entry in a project. */

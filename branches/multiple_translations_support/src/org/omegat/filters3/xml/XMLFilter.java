@@ -245,4 +245,7 @@ public abstract class XMLFilter extends AbstractFilter implements Translator {
     
     public void tagEnd(String path) {
     }
+
+    public void comment(String comment) {
+    }
 }

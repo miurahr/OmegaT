@@ -449,6 +449,8 @@ class Handler extends DefaultHandler implements LexicalHandler, DeclHandler {
     }
 
     private void queueComment(String comment) {
+        translator.comment(comment);
+        
         currEntry().add(new Comment(comment));
     }
 
@@ -681,16 +683,21 @@ class Handler extends DefaultHandler implements LexicalHandler, DeclHandler {
 
     private void translatorTagStart(String tag, Attributes atts) {
         currentTagPath.push(tag);
+        translator.tagStart(constructCurrentPath(), atts);
+    }
+
+    private void translatorTagEnd(String tag) {
+        translator.tagEnd(constructCurrentPath());
+        while (!currentTagPath.pop().equals(tag)) {
+        }
+    }
+
+    private String constructCurrentPath() {
         StringBuilder path = new StringBuilder(256);
         for (String t : currentTagPath) {
             path.append('/').append(t);
         }
-        translator.tagStart(path.toString(), atts);
-    }
-
-    private void translatorTagEnd(String tag) {
-        while (!currentTagPath.pop().equals(tag)) {
-        }
+        return path.toString();
     }
     
     /**

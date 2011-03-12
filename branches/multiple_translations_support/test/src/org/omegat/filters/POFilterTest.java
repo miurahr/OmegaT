@@ -27,7 +27,6 @@ package org.omegat.filters;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.omegat.core.data.EntryKey;
 import org.omegat.core.data.IProject;
 import org.omegat.filters2.po.PoFilter;
 
@@ -48,12 +47,13 @@ public class POFilterTest extends TestFilterBase {
         String f = "test/data/filters/po/file-POFilter-multiple.po";
         IProject.FileInfo fi = loadSourceFiles(new PoFilter(), f);
 
-        assertMulti(fi, //
-                new EntryKey(f, "source1", null, null, null, "some context"), //
-                new EntryKey(f, "source2", null, null, null, ""), //
-                new EntryKey(f, "source3", null, null, null, ""), //
-                new EntryKey(f, "source1", null, null, null, ""), //
-                new EntryKey(f, "source1", null, null, null, "other context"));
+        checkMultiStart(fi, f);
+        checkMulti("source1", null, "some context", null, null, null);
+        checkMulti("source2", null, "", null, null, null);
+        checkMulti("source3", null, "", null, null, null);
+        checkMulti("source1", null, "", null, null, null);
+        checkMulti("source1", null, "other context", null, null, null);
+        checkMultiEnd();
     }
 
     public void testTranslate() throws Exception {

@@ -40,6 +40,7 @@ import org.omegat.core.data.EntryKey;
 import org.omegat.core.data.IProject;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.data.RealProject;
+import org.omegat.core.data.SourceTextEntry;
 import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.IAlignCallback;
@@ -231,11 +232,28 @@ public abstract class TestFilterBase extends TestCore {
         return p.loadSourceFiles(filter, file);
     }
 
-    protected void assertMulti(IProject.FileInfo fi, EntryKey... entryKeys) {
-        assertEquals(entryKeys.length, fi.entries.size());
-        for (int i = 0; i < entryKeys.length; i++) {
-            assertEquals(entryKeys[i], fi.entries.get(i).getKey());
+    protected IProject.FileInfo fi;
+    protected int fiCount;
+
+    protected void checkMultiStart(IProject.FileInfo fi, String file) {
+        this.fi = fi;
+        fiCount = 0;
+        for (SourceTextEntry ste : fi.entries) {
+            assertEquals(file, ste.getKey().file);
+            assertEquals(ste.getSrcText(), ste.getKey().sourceText);
         }
+    }
+
+    protected void checkMultiEnd() {
+        assertEquals(fiCount, fi.entries.size());
+    }
+
+    protected void checkMulti(String sourceText, String id, String path, String prev, String next,
+            String comment) {
+        assertEquals(new EntryKey(fi.filePath, sourceText, id, prev, next, path), fi.entries.get(fiCount)
+                .getKey());
+        assertEquals(comment, fi.entries.get(fiCount).getComment());
+        fiCount++;
     }
 
     /**

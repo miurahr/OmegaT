@@ -37,7 +37,7 @@ import org.xml.sax.Attributes;
  */
 public class AndroidFilter extends XMLFilter {
 
-    private String id, idPlurals = "";
+    private String id, idPlurals = "", comment, idComment;
 
     public AndroidFilter() {
         super(new AndroidDialect());
@@ -67,12 +67,27 @@ public class AndroidFilter extends XMLFilter {
         if (atts != null) {
             if ("/resources/string".equals(path)) {
                 id = atts.getValue("name");
+                idComment = comment;
             } else if ("/resources/plurals".equals(path)) {
                 idPlurals = atts.getValue("name");
             } else if ("/resources/plurals/item".equals(path)) {
                 id = idPlurals + '/' + atts.getValue("quantity");
+                idComment = comment;
             }
         }
+    }
+
+    public void tagEnd(String path) {
+        comment = null;
+        if ("/resources/string".equals(path)) {
+            idComment = null;
+        } else if ("/resources/plurals/item".equals(path)) {
+            idComment = null;
+        }
+    }
+
+    public void comment(String comment) {
+        this.comment = comment;
     }
 
     /**
@@ -82,7 +97,7 @@ public class AndroidFilter extends XMLFilter {
         String e = entry.replace("\\'", "'");
         String r = null;
         if (entryParseCallback != null) {
-            entryParseCallback.addEntry(id, e, null, false, null, null, this);
+            entryParseCallback.addEntry(id, e, null, false, idComment, null, this);
             r = e;
         } else if (entryTranslateCallback != null) {
             r = entryTranslateCallback.getTranslation(id, e, null);

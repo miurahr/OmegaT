@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.junit.Test;
-import org.omegat.core.data.EntryKey;
 import org.omegat.core.data.IProject;
 import org.omegat.filters2.text.TextFilter;
 
@@ -77,9 +76,10 @@ public class TextFilterTest extends TestFilterBase {
         String f = "test/data/filters/text/file-TextFilter-multiple.txt";
         IProject.FileInfo fi = loadSourceFiles(new TextFilter(), f);
 
-        assertMulti(fi, //
-                new EntryKey(f, "line1", null, "", "line2", null), //
-                new EntryKey(f, "line2", null, "line1", "line3", null), //
-                new EntryKey(f, "line3", null, "line2", "", null));
+        checkMultiStart(fi, f);
+        checkMulti("line1", null, null, "", "line2", null);
+        checkMulti("line2", null, null, "line1", "line3", null);
+        checkMulti("line3", null, null, "line2", "", null);
+        checkMultiEnd();
     }
 }

@@ -97,4 +97,9 @@ interface Translator {
      *            path in the XML
      */
     void tagEnd(String path);
+
+    /**
+     * Process comment.
+     */
+    void comment(String comment);
 }

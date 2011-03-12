@@ -25,7 +25,6 @@ package org.omegat.filters;
 
 import java.util.List;
 
-import org.omegat.core.data.EntryKey;
 import org.omegat.core.data.IProject;
 import org.omegat.filters3.xml.android.AndroidFilter;
 
@@ -48,11 +47,13 @@ public class AndroidFilterTest extends TestFilterBase {
         String f = "test/data/filters/Android/file-AndroidFilter.xml";
         IProject.FileInfo fi = loadSourceFiles(new AndroidFilter(), f);
 
-        assertMulti(fi, //
-                new EntryKey(f, "MyApp", "app_label", null, null, null), //
-                new EntryKey(f, "<f0>Welcome !</f0> \\nAdditional comment", "line", null, null, null), //
-                new EntryKey(f, "T'est", "apo_test", null, null, null), //
-                new EntryKey(f, "1 minute", "Nminutes/one", null, null, null), //
-                new EntryKey(f, "<x0>%d</x0> minutes", "Nminutes/other", null, null, null));
+        checkMultiStart(fi, f);
+        checkMulti("MyApp", "app_label", null, null, null, " Some comment ");
+        checkMulti("<f0>Welcome !</f0> \\nAdditional comment", "line", null, null, null,
+                " This is line for... ");
+        checkMulti("T'est", "apo_test", null, null, null, null);
+        checkMulti("1 minute", "Nminutes/one", null, null, null, " 1-minute ");
+        checkMulti("<x0>%d</x0> minutes", "Nminutes/other", null, null, null, " 2-minute or more ");
+        checkMultiEnd();
     }
 }

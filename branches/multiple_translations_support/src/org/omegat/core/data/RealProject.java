@@ -741,19 +741,19 @@ public class RealProject implements IProject {
     }
 
     public void iterateByMultipleTranslations(MultipleTranslationsIterator it) {
-        for(Map.Entry<EntryKey, TMXEntry> en:projectTMX.translationMultiple.entrySet()) {
+        for (Map.Entry<EntryKey, TMXEntry> en : projectTMX.translationMultiple.entrySet()) {
             it.iterate(en.getKey(), en.getValue());
         }
     }
 
     public void iterateByOrphanedDefaultTranslations(DefaultTranslationsIterator it) {
-        for(Map.Entry<String, TMXEntry> en:projectTMX.orphanedDefault.entrySet()) {
+        for (Map.Entry<String, TMXEntry> en : projectTMX.orphanedDefault.entrySet()) {
             it.iterate(en.getKey(), en.getValue());
         }
     }
 
     public void iterateByOrphanedMultipleTranslations(MultipleTranslationsIterator it) {
-        for(Map.Entry<EntryKey, TMXEntry> en:projectTMX.orphanedMultiple.entrySet()) {
+        for (Map.Entry<EntryKey, TMXEntry> en : projectTMX.orphanedMultiple.entrySet()) {
             it.iterate(en.getKey(), en.getValue());
         }
     }
@@ -873,7 +873,7 @@ public class RealProject implements IProject {
 //                // TODO add to temp map, then put to real
 //                projectTMX.putFromSourceFile(ek, new TMXEntry(segmentSource, segmentTranslation, null, 0));
 //            }
-            SourceTextEntry srcTextEntry = new SourceTextEntry(ek, allProjectEntries.size() + 1);
+            SourceTextEntry srcTextEntry = new SourceTextEntry(ek, allProjectEntries.size() + 1, comment);
             allProjectEntries.add(srcTextEntry);
             fileInfo.entries.add(srcTextEntry);
 
@@ -899,12 +899,12 @@ public class RealProject implements IProject {
         protected void setCurrentFileName(String fn) {
             currentFile = fn;
         }
-        
+
         protected String getSegmentTranslation(String id, int segmentIndex, String segmentSource,
                 String prevSegment, String nextSegment, String path) {
             EntryKey ek = new EntryKey(currentFile, segmentSource, id, prevSegment, nextSegment, path);
-            TMXEntry tr=projectTMX.getMultipleTranslation(ek);
-            if (tr==null) {
+            TMXEntry tr = projectTMX.getMultipleTranslation(ek);
+            if (tr == null) {
                 tr = projectTMX.getDefaultTranslation(ek.sourceText);
             }
             return tr != null ? tr.translation : segmentSource;
