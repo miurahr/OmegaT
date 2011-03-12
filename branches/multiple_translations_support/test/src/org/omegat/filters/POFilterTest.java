@@ -27,6 +27,8 @@ package org.omegat.filters;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.omegat.core.data.EntryKey;
+import org.omegat.core.data.IProject;
 import org.omegat.filters2.po.PoFilter;
 
 public class POFilterTest extends TestFilterBase {
@@ -34,19 +36,26 @@ public class POFilterTest extends TestFilterBase {
         Map<String, String> data = new TreeMap<String, String>();
         Map<String, String> tmx = new TreeMap<String, String>();
 
-        parse2(new PoFilter(), "test/data/filters/po/file-POFilter-be.po",
-                data, tmx);
+        parse2(new PoFilter(), "test/data/filters/po/file-POFilter-be.po", data, tmx);
 
         assertEquals(data.get("non-fuzzy"), "non-fuzzy translation");
         assertEquals(tmx.get("[PO-fuzzy] fuzzy"), "fuzzy translation");
-        assertEquals(tmx.get("[PO-fuzzy] Delete Account"),
-                "Supprimer le compte");
-        assertEquals(tmx.get("[PO-fuzzy] Delete Accounts"),
-                "Supprimer des comptes");
+        assertEquals(tmx.get("[PO-fuzzy] Delete Account"), "Supprimer le compte");
+        assertEquals(tmx.get("[PO-fuzzy] Delete Accounts"), "Supprimer des comptes");
+    }
+
+    public void testLoad() throws Exception {
+        ProjectPropertiesTest props = new ProjectPropertiesTest();
+        RealProjectTest p = new RealProjectTest(props);
+        IProject.FileInfo fi = p.loadSourceFiles("test/data/filters/po/file-POFilter-multiple.po");
+        assertEquals(5, fi.entries.size());
+        assertEquals(new EntryKey("test/data/filters/po/file-POFilter-multiple.po", "source1", null, null,
+                null, null), fi.entries.get(0).getKey());
     }
 
     public void testTranslate() throws Exception {
         // translateText(new PoFilter(),
         // "test/data/filters/po/file-POFilter-be.po");
     }
+
 }

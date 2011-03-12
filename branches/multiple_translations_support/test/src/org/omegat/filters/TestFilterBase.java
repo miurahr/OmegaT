@@ -28,17 +28,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
+import org.omegat.core.Core;
 import org.omegat.core.TestCore;
+import org.omegat.core.data.EntryKey;
+import org.omegat.core.data.ProjectProperties;
+import org.omegat.core.data.RealProject;
 import org.omegat.filters2.AbstractFilter;
 import org.omegat.filters2.FilterContext;
 import org.omegat.filters2.IAlignCallback;
 import org.omegat.filters2.IFilter;
 import org.omegat.filters2.IParseCallback;
 import org.omegat.filters2.ITranslateCallback;
+import org.omegat.filters2.po.PoFilter;
 import org.omegat.util.LFileCopy;
 import org.omegat.util.Language;
 import org.xml.sax.InputSource;
@@ -53,6 +60,12 @@ public abstract class TestFilterBase extends TestCore {
 
     protected File outFile = new File(System.getProperty("java.io.tmpdir"), "OmegaT filter test - "
             + getClass().getSimpleName());
+
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        Core.initializeConsole(new TreeMap<String, String>());
+    }
 
     protected List<String> parse(AbstractFilter filter, String filename) throws Exception {
         final List<String> result = new ArrayList<String>();
@@ -210,5 +223,44 @@ public abstract class TestFilterBase extends TestCore {
         boolean isFuzzy;
         String comment;
         String path;
+    }
+
+    /**
+     * ProjectProperties successor for create project without directory.
+     */
+    protected static class ProjectPropertiesTest extends ProjectProperties {
+
+    }
+
+    /**
+     * RealProject successor for load file testing only.
+     */
+    protected static class RealProjectTest extends RealProject {
+        protected FilterContext context = new FilterContext(new Language("en"), new Language("be"), false);
+
+        public RealProjectTest(ProjectProperties props) {
+            super(props);
+        }
+
+        public FileInfo loadSourceFiles(String file) throws Exception {
+            Core.setProject(this);
+
+            Set<String> existSource = new HashSet<String>();
+            Set<EntryKey> existKeys = new HashSet<EntryKey>();
+
+            LoadFilesCallback loadFilesCallback = new LoadFilesCallback(existSource, existKeys);
+
+            FileInfo fi = new FileInfo();
+            fi.filePath = file;
+
+            loadFilesCallback.setCurrentFile(fi);
+
+            new PoFilter().parseFile(new File(file), new TreeMap<String, String>(), context,
+                    loadFilesCallback);
+
+            loadFilesCallback.fileFinished();
+
+            return fi;
+        }
     }
 }

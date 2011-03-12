@@ -38,6 +38,13 @@ import org.omegat.util.StringUtil;
  * @author Maxym Mykhalchuk
  */
 public class ProjectProperties {
+
+    /**
+     * Constructor for tests only.
+     */
+    protected ProjectProperties() {
+    }
+
     /** Default constructor to initialize fields (to get no NPEs). */
     public ProjectProperties(File projectDir) {
         setProjectName(projectDir.getName());
@@ -159,32 +166,28 @@ public class ProjectProperties {
     }
 
     /**
-     * Returns The Target Language (language of the translated files) of the
-     * Project
+     * Returns The Target Language (language of the translated files) of the Project
      */
     public Language getTargetLanguage() {
         return targetLanguage;
     }
 
     /**
-     * Sets The Target Language (language of the translated files) of the
-     * Project
+     * Sets The Target Language (language of the translated files) of the Project
      */
     public void setTargetLanguage(Language targetLanguage) {
         this.targetLanguage = targetLanguage;
     }
 
     /**
-     * Sets The Target Language (language of the translated files) of the
-     * Project
+     * Sets The Target Language (language of the translated files) of the Project
      */
     public void setTargetLanguage(String targetLanguage) {
         this.targetLanguage = new Language(targetLanguage);
     }
 
     /**
-     * Returns whether The Sentence Segmenting is Enabled for this Project.
-     * Default, Yes.
+     * Returns whether The Sentence Segmenting is Enabled for this Project. Default, Yes.
      */
     public boolean isSentenceSegmentingEnabled() {
         return sentenceSegmentingOn;

@@ -93,7 +93,7 @@ public class RealProject implements IProject {
     /** Local logger. */
     private static final Logger LOGGER = Logger.getLogger(RealProject.class.getName());
 
-    private final ProjectProperties m_config;
+    protected final ProjectProperties m_config;
 
     private FileChannel lockChannel;
     private FileLock lock;
@@ -825,7 +825,7 @@ public class RealProject implements IProject {
         return Collections.unmodifiableList(projectFilesList);
     }
 
-    private class LoadFilesCallback extends ParseEntry {
+    protected class LoadFilesCallback extends ParseEntry {
         private FileInfo fileInfo;
 
         private final Set<String> existSource;
@@ -839,13 +839,13 @@ public class RealProject implements IProject {
             this.existKeys = existKeys;
         }
 
-        protected void setCurrentFile(FileInfo fi) {
+        public void setCurrentFile(FileInfo fi) {
             fileInfo = fi;
             fileTMXentries = new ArrayList<TMXEntry>();
             super.setCurrentFile(fi);
         }
 
-        protected void fileFinished() {
+        public void fileFinished() {
             super.fileFinished();
 
             if (fileTMXentries.size() > 0) {
@@ -869,9 +869,10 @@ public class RealProject implements IProject {
 
             EntryKey ek = new EntryKey(fileInfo.filePath, segmentSource, id, prevSegment, nextSegment, path);
 
-            if (!StringUtil.isEmpty(segmentTranslation)) {
-                projectTMX.putFromSourceFile(ek, new TMXEntry(segmentSource, segmentTranslation, null, 0));
-            }
+//            if (!StringUtil.isEmpty(segmentTranslation)) {
+//                // TODO add to temp map, then put to real
+//                projectTMX.putFromSourceFile(ek, new TMXEntry(segmentSource, segmentTranslation, null, 0));
+//            }
             SourceTextEntry srcTextEntry = new SourceTextEntry(ek, allProjectEntries.size() + 1);
             allProjectEntries.add(srcTextEntry);
             fileInfo.entries.add(srcTextEntry);

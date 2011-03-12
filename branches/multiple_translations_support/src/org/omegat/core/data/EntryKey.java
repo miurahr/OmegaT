@@ -75,7 +75,7 @@ public class EntryKey implements Comparable<EntryKey> {
                 StringUtil.equalsWithNulls(id, o.id) && // id
                 StringUtil.equalsWithNulls(prev, o.prev) && // prev
                 StringUtil.equalsWithNulls(next, o.next) && // next
-                StringUtil.equalsWithNulls(next, o.next); // path
+                StringUtil.equalsWithNulls(path, o.path); // path
     }
 
     public int compareTo(EntryKey o) {
