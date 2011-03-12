@@ -24,9 +24,14 @@
 
 package org.omegat.filters;
 
+import java.io.File;
+import java.util.TreeMap;
+
 import org.junit.Test;
 import org.omegat.core.data.IProject;
+import org.omegat.filters2.FilterContext;
 import org.omegat.filters3.xml.xhtml.XHTMLFilter;
+import org.omegat.util.Language;
 
 public class XHTMLFilterTest extends TestFilterBase {
     public void testParse() throws Exception {
@@ -40,11 +45,16 @@ public class XHTMLFilterTest extends TestFilterBase {
     @Test
     public void testLoad() throws Exception {
         String f = "test/data/filters/xhtml/file-XHTMLFilter.html";
-        IProject.FileInfo fi = loadSourceFiles(new XHTMLFilter(), f);
+        XHTMLFilter filter = new XHTMLFilter();
+        filter.isFileSupported(new File(f), new TreeMap<String, String>(), new FilterContext(new Language(
+                "en"), new Language("be"), false));
+        IProject.FileInfo fi = loadSourceFiles(filter, f);
 
         checkMultiStart(fi, f);
-        checkMulti("This is first line.", null, null, "", "This is second line.", null);
-        checkMulti("This is second line.", null, null, "This is first line.", "", null);
-        checkMultiEnd();
+        checkMulti("en", null, null, "", "en", null);
+        checkMulti("en", null, null, "en", "XHTML 1.0 Example", null);
+        checkMulti("XHTML 1.0 Example", null, null, "en", "Extensible HyperText Markup Language", null);
+        checkMulti("Extensible HyperText Markup Language", null, null, "XHTML 1.0 Example",
+                "http://www.w3.org/Icons/valid-xhtml10", null);
     }
 }
