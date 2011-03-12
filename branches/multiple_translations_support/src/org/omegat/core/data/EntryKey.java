@@ -97,4 +97,9 @@ public class EntryKey implements Comparable<EntryKey> {
         }
         return c;
     }
+
+    public String toString() {
+        return "[file:" + file + ", id=" + id + ", path=" + path + ", source='" + sourceText + "', prev='"
+                + prev + "', next='" + next + "']";
+    }
 }

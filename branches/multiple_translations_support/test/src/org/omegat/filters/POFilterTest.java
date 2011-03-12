@@ -50,7 +50,15 @@ public class POFilterTest extends TestFilterBase {
         IProject.FileInfo fi = p.loadSourceFiles("test/data/filters/po/file-POFilter-multiple.po");
         assertEquals(5, fi.entries.size());
         assertEquals(new EntryKey("test/data/filters/po/file-POFilter-multiple.po", "source1", null, null,
-                null, null), fi.entries.get(0).getKey());
+                null, "some context"), fi.entries.get(0).getKey());
+        assertEquals(new EntryKey("test/data/filters/po/file-POFilter-multiple.po", "source2", null, null,
+                null, ""), fi.entries.get(1).getKey());
+        assertEquals(new EntryKey("test/data/filters/po/file-POFilter-multiple.po", "source3", null, null,
+                null, ""), fi.entries.get(2).getKey());
+        assertEquals(new EntryKey("test/data/filters/po/file-POFilter-multiple.po", "source1", null, null,
+                null, ""), fi.entries.get(3).getKey());
+        assertEquals(new EntryKey("test/data/filters/po/file-POFilter-multiple.po", "source1", null, null,
+                null, "other context"), fi.entries.get(4).getKey());
     }
 
     public void testTranslate() throws Exception {

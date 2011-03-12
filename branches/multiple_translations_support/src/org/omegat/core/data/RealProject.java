@@ -915,7 +915,7 @@ public class RealProject implements IProject {
         Map<String, TMXEntry> data = new HashMap<String, TMXEntry>();
 
         public void addTranslation(String id, String source, String translation, boolean isFuzzy,
-                String comment, IFilter filter) {
+                String path, IFilter filter) {
             if (source != null && translation != null) {
                 ParseEntry.ParseEntryResult spr = new ParseEntry.ParseEntryResult();
                 String sourceS = ParseEntry.stripSomeChars(source, spr);
