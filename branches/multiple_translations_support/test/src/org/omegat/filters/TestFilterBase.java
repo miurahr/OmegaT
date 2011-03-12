@@ -37,6 +37,7 @@ import java.util.TreeMap;
 import org.omegat.core.Core;
 import org.omegat.core.TestCore;
 import org.omegat.core.data.EntryKey;
+import org.omegat.core.data.IProject;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.data.RealProject;
 import org.omegat.filters2.AbstractFilter;
@@ -45,7 +46,6 @@ import org.omegat.filters2.IAlignCallback;
 import org.omegat.filters2.IFilter;
 import org.omegat.filters2.IParseCallback;
 import org.omegat.filters2.ITranslateCallback;
-import org.omegat.filters2.po.PoFilter;
 import org.omegat.util.LFileCopy;
 import org.omegat.util.Language;
 import org.xml.sax.InputSource;
@@ -225,6 +225,19 @@ public abstract class TestFilterBase extends TestCore {
         String path;
     }
 
+    protected IProject.FileInfo loadSourceFiles(IFilter filter, String file) throws Exception {
+        ProjectPropertiesTest props = new ProjectPropertiesTest();
+        RealProjectTest p = new RealProjectTest(props);
+        return p.loadSourceFiles(filter, file);
+    }
+
+    protected void assertMulti(IProject.FileInfo fi, EntryKey... entryKeys) {
+        assertEquals(entryKeys.length, fi.entries.size());
+        for (int i = 0; i < entryKeys.length; i++) {
+            assertEquals(entryKeys[i], fi.entries.get(i).getKey());
+        }
+    }
+
     /**
      * ProjectProperties successor for create project without directory.
      */
@@ -242,7 +255,7 @@ public abstract class TestFilterBase extends TestCore {
             super(props);
         }
 
-        public FileInfo loadSourceFiles(String file) throws Exception {
+        public FileInfo loadSourceFiles(IFilter filter, String file) throws Exception {
             Core.setProject(this);
 
             Set<String> existSource = new HashSet<String>();
@@ -255,8 +268,7 @@ public abstract class TestFilterBase extends TestCore {
 
             loadFilesCallback.setCurrentFile(fi);
 
-            new PoFilter().parseFile(new File(file), new TreeMap<String, String>(), context,
-                    loadFilesCallback);
+            filter.parseFile(new File(file), new TreeMap<String, String>(), context, loadFilesCallback);
 
             loadFilesCallback.fileFinished();
 

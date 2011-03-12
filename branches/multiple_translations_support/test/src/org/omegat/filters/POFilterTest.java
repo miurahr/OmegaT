@@ -45,20 +45,15 @@ public class POFilterTest extends TestFilterBase {
     }
 
     public void testLoad() throws Exception {
-        ProjectPropertiesTest props = new ProjectPropertiesTest();
-        RealProjectTest p = new RealProjectTest(props);
-        IProject.FileInfo fi = p.loadSourceFiles("test/data/filters/po/file-POFilter-multiple.po");
-        assertEquals(5, fi.entries.size());
-        assertEquals(new EntryKey("test/data/filters/po/file-POFilter-multiple.po", "source1", null, null,
-                null, "some context"), fi.entries.get(0).getKey());
-        assertEquals(new EntryKey("test/data/filters/po/file-POFilter-multiple.po", "source2", null, null,
-                null, ""), fi.entries.get(1).getKey());
-        assertEquals(new EntryKey("test/data/filters/po/file-POFilter-multiple.po", "source3", null, null,
-                null, ""), fi.entries.get(2).getKey());
-        assertEquals(new EntryKey("test/data/filters/po/file-POFilter-multiple.po", "source1", null, null,
-                null, ""), fi.entries.get(3).getKey());
-        assertEquals(new EntryKey("test/data/filters/po/file-POFilter-multiple.po", "source1", null, null,
-                null, "other context"), fi.entries.get(4).getKey());
+        String f = "test/data/filters/po/file-POFilter-multiple.po";
+        IProject.FileInfo fi = loadSourceFiles(new PoFilter(), f);
+
+        assertMulti(fi, //
+                new EntryKey(f, "source1", null, null, null, "some context"), //
+                new EntryKey(f, "source2", null, null, null, ""), //
+                new EntryKey(f, "source3", null, null, null, ""), //
+                new EntryKey(f, "source1", null, null, null, ""), //
+                new EntryKey(f, "source1", null, null, null, "other context"));
     }
 
     public void testTranslate() throws Exception {
