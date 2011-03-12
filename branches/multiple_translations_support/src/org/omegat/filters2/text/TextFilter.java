@@ -76,6 +76,10 @@ public class TextFilter extends AbstractFilter {
     public boolean isTargetEncodingVariable() {
         return true;
     }
+    
+    protected boolean requirePrevNextFields() {
+        return true;
+    }
 
     public void processFile(BufferedReader in, BufferedWriter out) throws IOException {
         // BOM (byte order mark) bugfix
@@ -92,12 +96,6 @@ public class TextFilter extends AbstractFilter {
         } else {
             processSegEmptyLines(in, out);
         }
-        if (entryParseCallback != null) {
-            // parsing - need to link prev/next
-            entryParseCallback.linkPrevNextSegments();
-        }
-        
-        needSecondPass = true;
     }
 
     /** Process the file without segmenting it. */

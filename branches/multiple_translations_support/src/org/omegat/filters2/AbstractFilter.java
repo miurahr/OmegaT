@@ -375,6 +375,10 @@ public abstract class AbstractFilter implements IFilter {
 
         try {
             processFile(inFile, null, fc);
+            if (requirePrevNextFields()) {
+                // parsing - need to link prev/next
+                entryParseCallback.linkPrevNextSegments();
+            }
         } finally {
             entryParseCallback = null;
             processOptions = null;
@@ -410,7 +414,14 @@ public abstract class AbstractFilter implements IFilter {
     protected void alignFile(BufferedReader sourceFile, BufferedReader translatedFile) throws Exception {
     }
 
-    protected boolean needSecondPass;
+    /**
+     * Method can be overrided for return true. It means what two-pass parsing and translating will be
+     * processed and prev/next segments will be linked.
+     */
+    protected boolean requirePrevNextFields() {
+        return false;
+    }
+
     public final void translateFile(File inFile, File outFile, Map<String, String> config, FilterContext fc,
        ITranslateCallback callback) throws Exception {
         entryParseCallback = null;
@@ -419,10 +430,9 @@ public abstract class AbstractFilter implements IFilter {
         processOptions = config;
 
         try {
-            needSecondPass = false;
             entryTranslateCallback.setPass(1);
             processFile(inFile, outFile, fc);
-            if (needSecondPass) { // filter can set this var for second pass
+            if (requirePrevNextFields()) {
                 entryTranslateCallback.linkPrevNextSegments();
                 entryTranslateCallback.setPass(2);
                 processFile(inFile, outFile, fc);
