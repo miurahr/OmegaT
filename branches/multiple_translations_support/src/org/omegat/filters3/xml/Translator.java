@@ -102,4 +102,9 @@ interface Translator {
      * Process comment.
      */
     void comment(String comment);
+
+    /**
+     * Process text.
+     */
+    void text(String text);
 }

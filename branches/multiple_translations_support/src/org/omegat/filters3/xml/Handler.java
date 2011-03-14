@@ -382,6 +382,8 @@ class Handler extends DefaultHandler implements LexicalHandler, DeclHandler {
     }
 
     private void queueText(String s) {
+        translator.text(s);
+        
         // TODO: ideally, xml:space=preserved would be handled at this level, but that would suppose
         // knowing here whether we're inside a preformatted tag, etc.
         if (internalEntityStarted != null && s.equals(internalEntityStarted.getValue()))

@@ -256,6 +256,10 @@ public abstract class TestFilterBase extends TestCore {
         fiCount++;
     }
 
+    protected void skipMulti() {
+        fiCount++;
+    }
+
     /**
      * ProjectProperties successor for create project without directory.
      */
