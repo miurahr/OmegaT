@@ -12,9 +12,7 @@ public class ResXFilterTest extends TestFilterBase {
         checkMultiStart(fi, f);
         checkMulti("This is a text displayed in the UI.", "InfoExperimentStoppingMessage", null, null, null,
                 "This is a comment. It should not be displayed to the translator.");
-        checkMulti(
-                "..\\Controls\\Resources\\button-action_close_disable.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-                "CloseButtonDisabled", null, null, null, null);
+        checkMulti("One more text", "InfoExperimentStoppingMessage2", null, null, null, "Second comment");
         checkMultiEnd();
     }
 }
