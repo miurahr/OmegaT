@@ -322,6 +322,14 @@ public class MainWindowMenuHandler {
         Core.getMatcher().setActiveMatch(4);
     }
 
+    public void editMultipleDefaultActionPerformed() {
+        Core.getEditor().setAlternateTranslationForCurrentEntry(false);
+    }
+    
+    public void editMultipleAlternateActionPerformed() {
+        Core.getEditor().setAlternateTranslationForCurrentEntry(true);
+    }
+
     public void cycleSwitchCaseMenuItemActionPerformed() {
         Core.getEditor().changeCase(IEditor.CHANGE_CASE_TO.CYCLE);
     }

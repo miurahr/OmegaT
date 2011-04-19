@@ -34,6 +34,8 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -508,9 +510,8 @@ public class EditorController implements IEditor {
         editor.cancelUndo();
 
         history.insertNew(m_docSegList[displayedEntryIndex].segmentNumberInProject);
-        // update history menu items
-        mw.menu.gotoHistoryBackMenuItem.setEnabled(history.hasPrev());
-        mw.menu.gotoHistoryForwardMenuItem.setEnabled(history.hasNext());
+        
+        setMenuEnabled();
 
         showStat();
 
@@ -532,6 +533,14 @@ public class EditorController implements IEditor {
 
         // fire event about new segment activated
         CoreEvents.fireEntryActivated(ste);
+    }
+    
+    private void setMenuEnabled() {
+        // update history menu items
+        mw.menu.gotoHistoryBackMenuItem.setEnabled(history.hasPrev());
+        mw.menu.gotoHistoryForwardMenuItem.setEnabled(history.hasNext());
+        mw.menu.editMultipleDefault.setEnabled(!m_docSegList[displayedEntryIndex].isDefaultTranslation());
+        mw.menu.editMultipleAlternate.setEnabled(m_docSegList[displayedEntryIndex].isDefaultTranslation());
     }
 
     /**
@@ -1369,5 +1378,20 @@ public class EditorController implements IEditor {
             return true;
         else
             return this.entryFilterList.contains(entry);
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public void setAlternateTranslationForCurrentEntry(boolean alternate) {
+        SegmentBuilder sb = m_docSegList[displayedEntryIndex];
+
+        if (!alternate) {
+            Core.getProject().setTranslation(sb.getSourceTextEntry(), "", false);
+            sb.setDefaultTranslation(true);
+        } else {
+            sb.setDefaultTranslation(false);
+        }
+        setMenuEnabled();
     }
 }

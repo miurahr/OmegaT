@@ -79,13 +79,12 @@ public class MultipleTransPane extends EntryInfoPane<List<MultipleTransFoundEntr
 
                     miDefault.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            Core.getProject().setTranslation(sb.getSourceTextEntry(), "", false);
-                            sb.setDefaultTranslation(true);
+                            Core.getEditor().setAlternateTranslationForCurrentEntry(false);
                         }
                     });
                     miMultiple.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            sb.setDefaultTranslation(false);
+                            Core.getEditor().setAlternateTranslationForCurrentEntry(true);
                         }
                     });
                 }
