@@ -290,9 +290,10 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
         int pos = 0;
         for (int i = 0; i < result.size(); i++) {
             NearString st = result.get(i);
-            if (tmxName == null && st.proj.length() == 0 && source.equals(st.source)) {
+            if (tmxName == null && st.proj.length() == 0 && source.equals(st.source)
+                    && translation.equals(st.translation)) {
                 // the same source text already in list - don't need to add
-                // only if they are from translations
+                // only if they are from translations and has the same translation
                 return;
             }
             if (st.score < similarity) {
