@@ -38,7 +38,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.text.JTextComponent;
 
 import org.omegat.core.Core;
+import org.omegat.core.data.IProject;
 import org.omegat.core.data.SourceTextEntry;
+import org.omegat.core.data.TMXEntry;
 import org.omegat.gui.common.EntryInfoPane;
 import org.omegat.gui.editor.IPopupMenuConstructor;
 import org.omegat.gui.editor.SegmentBuilder;
@@ -133,22 +135,23 @@ public class MultipleTransPane extends EntryInfoPane<List<MultipleTransFoundEntr
     protected MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            // is there anything?
-            if (entries.isEmpty())
-                return;
+            if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) { // righ click
+                // is there anything?
+                if (entries.isEmpty())
+                    return;
 
-            // where did we click?
-            int mousepos = MultipleTransPane.this.viewToModel(e.getPoint());
+                // where did we click?
+                int mousepos = MultipleTransPane.this.viewToModel(e.getPoint());
 
-            // find clicked entry
-            for (DisplayedEntry de : entries) {
-                if (de.start <= mousepos && de.end >= mousepos) {
-                    mouseRightClick(de, e.getPoint());
-                    break;
+                // find clicked entry
+                for (DisplayedEntry de : entries) {
+                    if (de.start <= mousepos && de.end >= mousepos) {
+                        mouseRightClick(de, e.getPoint());
+                        break;
+                    }
                 }
             }
         }
-
     };
 
     private void mouseRightClick(final DisplayedEntry de, final Point clickedPoint) {
@@ -169,14 +172,39 @@ public class MultipleTransPane extends EntryInfoPane<List<MultipleTransFoundEntr
         item = popup.add(OStrings.getString("MULT_POPUP_REPLACE"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // TODO: set text in editor to translation of this entry
+                Core.getEditor().replaceEditText(de.entry.entry.translation);
             }
         });
 
         item = popup.add(OStrings.getString("MULT_POPUP_GOTO"));
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // TODO: goto this entry
+                /*
+                 * Goto segment with contains matched source. Since it enough rarely executed code, it
+                 * possible to find this segment each time.
+                 */
+                IProject project = Core.getProject();
+                List<SourceTextEntry> entries = Core.getProject().getAllEntries();
+                for (int i = 0; i < entries.size(); i++) {
+                    SourceTextEntry ste = entries.get(i);
+                    if (de.entry.sourceText != null) {
+                        if (!ste.getSrcText().equals(de.entry.sourceText)) {
+                            // source text not equals
+                            continue;
+                        }
+                        // default translation - multiple shouldn't exist for this entry
+                        TMXEntry multTrans = project.getMultipleTranslation(ste);
+                        if (multTrans != null) {
+                            continue;
+                        }
+                    } else {
+                        if (!de.entry.key.equals(ste.getKey())) {
+                            continue;
+                        }
+                    }
+                    Core.getEditor().gotoEntry(i + 1);
+                    break;
+                }
             }
         });
 
