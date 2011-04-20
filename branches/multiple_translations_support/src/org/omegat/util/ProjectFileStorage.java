@@ -86,8 +86,8 @@ public class ProjectFileStorage {
         result.setSourceLanguage(om.getProject().getSourceLang());
         result.setTargetLanguage(om.getProject().getTargetLang());
 
-        if (om.getProject().isSentenseSeg() != null) {
-            result.setSentenceSegmentingEnabled(om.getProject().isSentenseSeg());
+        if (om.getProject().isSentenceSeg() != null) {
+            result.setSentenceSegmentingEnabled(om.getProject().isSentenceSeg());
         }
         if (om.getProject().isSupportDefaultTranslations() != null) {
             result.setSupportDefaultTranslations(om.getProject().isSupportDefaultTranslations());
@@ -118,7 +118,7 @@ public class ProjectFileStorage {
                 computeRelativePath(m_root, props.getDictRoot(), OConsts.DEFAULT_DICT));
         om.getProject().setSourceLang(props.getSourceLanguage().toString());
         om.getProject().setTargetLang(props.getTargetLanguage().toString());
-        om.getProject().setSentenseSeg(props.isSentenceSegmentingEnabled());
+        om.getProject().setSentenceSeg(props.isSentenceSegmentingEnabled());
         om.getProject().setSupportDefaultTranslations(props.isSupportDefaultTranslations());
 
         Marshaller m = CONTEXT.createMarshaller();
