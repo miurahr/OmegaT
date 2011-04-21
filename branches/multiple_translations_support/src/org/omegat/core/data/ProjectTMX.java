@@ -101,7 +101,7 @@ public class ProjectTMX {
                 props.isSentenceSegmentingEnabled(), levelTwo, forceValidTMX);
         try {
             if (translationDefault != null) {
-                wr.writeComment("Вefault translations");
+                wr.writeComment("Default translations");
                 for (Map.Entry<String, TMXEntry> en : new TreeMap<String, TMXEntry>(translationDefault)
                         .entrySet()) {
                     wr.writeEntry(en.getKey(), en.getValue().translation, en.getValue(), null);
