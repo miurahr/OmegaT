@@ -25,19 +25,27 @@
 package org.omegat.util;
 
 import gen.core.tmx14.Header;
+import gen.core.tmx14.Prop;
 import gen.core.tmx14.Tu;
 import gen.core.tmx14.Tuv;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.Marshaller;
+
+import org.omegat.core.data.TMXEntry;
 
 /**
  * Helper for write TMX files, using JAXB.
@@ -48,6 +56,19 @@ public class TMXWriter2 {
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private static final String HEADER_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+
+    private final Writer wr;
+    private final Marshaller m;
+    private final String langSrc, langTar;
+    private final boolean levelTwo;
+    private boolean forceValidTMX;
+
+    /**
+     * DateFormat with format YYYYMMDDThhmmssZ able to display a date in UTC time.
+     * 
+     * SimpleDateFormat IS NOT THREAD SAFE !!!
+     */
+    private final SimpleDateFormat tmxDateFormat;
 
     /**
      * 
@@ -60,51 +81,108 @@ public class TMXWriter2 {
      * @param callback
      * @throws Exception
      */
-    public static void writeTMX(File file, final Language sourceLanguage, final Language targetLanguage,
-            boolean sentenceSegmentingEnabled, boolean levelTwo, SaveCallback callback) throws Exception {
-        Marshaller m = TMXReader2.CONTEXT.createMarshaller();
+    public TMXWriter2(File file, final Language sourceLanguage, final Language targetLanguage,
+            boolean sentenceSegmentingEnabled, boolean levelTwo, boolean forceValidTMX) throws Exception {
+        this.levelTwo = levelTwo;
+
+        m = TMXReader2.CONTEXT.createMarshaller();
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         m.setProperty(Marshaller.JAXB_FRAGMENT, true);
 
-        Writer wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), UTF8));
+        wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), UTF8));
+
+        wr.write(HEADER_XML);
+        if (levelTwo) {
+            wr.write("<!DOCTYPE tmx SYSTEM \"tmx14.dtd\">\n");
+            wr.write("<tmx version=\"1.4\">\n");
+        } else {
+            wr.write("<!DOCTYPE tmx SYSTEM \"tmx11.dtd\">\n");
+            wr.write("<tmx version=\"1.1\">\n");
+        }
+
+        m.marshal(createHeader(sourceLanguage, targetLanguage, sentenceSegmentingEnabled), wr);
+        wr.write("\n  <body>\n\n");
+
+        langSrc = sourceLanguage.toString();
+        langTar = targetLanguage.toString();
+
+        tmxDateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.ENGLISH);
+        tmxDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
+    public void close() throws IOException {
         try {
-            wr.write(HEADER_XML);
-            if (levelTwo) {
-                wr.write("<!DOCTYPE tmx SYSTEM \"tmx14.dtd\">\n");
-                wr.write("<tmx version=\"1.4\">\n");
-            } else {
-                wr.write("<!DOCTYPE tmx SYSTEM \"tmx11.dtd\">\n");
-                wr.write("<tmx version=\"1.1\">\n");
-            }
-
-            m.marshal(createHeader(sourceLanguage, targetLanguage, sentenceSegmentingEnabled), wr);
-            wr.write("\n  <body>\n\n");
-
-            String langSrc = sourceLanguage.toString();
-            String langTar = targetLanguage.toString();
-            Tu tu;
-            while ((tu = callback.getNextTu()) != null) {
-                Tuv s = tu.getTuv().get(0);
-                Tuv t = tu.getTuv().get(1);
-                if (levelTwo) {
-                    s.setXmlLang(langSrc);
-                    t.setXmlLang(langTar);
-                    s.setSeg(makeLevelTwo(s.getSeg()));
-                    t.setSeg(makeLevelTwo(t.getSeg()));
-                } else {
-                    s.setLang(langSrc);
-                    t.setLang(langTar);
-                }
-
-                m.marshal(tu, wr);
-                wr.write('\n');
-            }
-
             wr.write("\n  </body>\n");
             wr.write("</tmx>\n");
         } finally {
             wr.close();
         }
+    }
+
+    public void writeComment(String comment) throws IOException {
+        wr.write("\n<!-- " + comment + " -->\n");
+    }
+
+    /**
+     * Write one entry.
+     * 
+     * @param source
+     * @param translation
+     * @param propValues
+     *            pairs with property name and values
+     */
+    public void writeEntry(String source, String translation, TMXEntry entry, String[] propValues)
+            throws Exception {
+        Tu tu = new Tu();
+        Tuv s = new Tuv();
+        Tuv t = new Tuv();
+        tu.getTuv().add(s);
+        tu.getTuv().add(t);
+
+        if (forceValidTMX) {
+            source = StaticUtils.stripTags(source);
+            translation = StaticUtils.stripTags(translation);
+        }
+
+        if (levelTwo) {
+            source = makeLevelTwo(source);
+            translation = makeLevelTwo(translation);
+        }
+
+        s.setSeg(source);
+        t.setSeg(translation);
+
+        if (!StringUtil.isEmpty(entry.changer)) {
+            t.setChangeid(entry.changer);
+        }
+        if (entry.changeDate > 0) {
+            t.setChangedate(tmxDateFormat.format(new Date(entry.changeDate)));
+        }
+
+        if (levelTwo) {
+            s.setXmlLang(langSrc);
+            t.setXmlLang(langTar);
+        } else {
+            s.setLang(langSrc);
+            t.setLang(langTar);
+        }
+
+        // add properties
+        if (propValues != null) {
+            for (int i = 0; i < propValues.length; i++) {
+                if (propValues[i + 1] == null) {
+                    // value is null - not need to write
+                    continue;
+                }
+                Prop p = new Prop();
+                p.setType(propValues[i]);
+                p.setvalue(propValues[i + 1]);
+                tu.getNoteOrProp().add(p);
+            }
+        }
+
+        m.marshal(tu, wr);
+        wr.write('\n');
     }
 
     private static Header createHeader(final Language sourceLanguage, final Language targetLanguage,
@@ -241,15 +319,5 @@ public class TMXWriter2 {
 
         // Done, return result
         return result.toString();
-    }
-
-    /**
-     * Callback for create data for TMX.
-     * 
-     * Each Tu must contains two Tuv elements - first for source and second for target. It require for apply
-     * languages correctly. So, Tuv in result Tu should not have language.
-     */
-    public interface SaveCallback {
-        Tu getNextTu();
     }
 }

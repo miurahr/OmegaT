@@ -28,21 +28,15 @@ import gen.core.tmx14.Tu;
 import gen.core.tmx14.Tuv;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.TreeMap;
 
 import org.omegat.core.Core;
 import org.omegat.core.segmentation.Segmenter;
 import org.omegat.util.Language;
-import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.TMXReader2;
 import org.omegat.util.TMXWriter2;
@@ -103,8 +97,42 @@ public class ProjectTMX {
     public void save(File outFile, final boolean forceValidTMX, final boolean levelTwo) throws Exception {
         ProjectProperties props = Core.getProject().getProjectProperties();
 
-        TMXWriter2.writeTMX(outFile, props.getSourceLanguage(), props.getTargetLanguage(),
-                props.isSentenceSegmentingEnabled(), levelTwo, new SaveCallback(forceValidTMX));
+        TMXWriter2 wr = new TMXWriter2(outFile, props.getSourceLanguage(), props.getTargetLanguage(),
+                props.isSentenceSegmentingEnabled(), levelTwo, forceValidTMX);
+        try {
+            if (translationDefault != null) {
+                wr.writeComment("Вefault translations");
+                for (Map.Entry<String, TMXEntry> en : new TreeMap<String, TMXEntry>(translationDefault)
+                        .entrySet()) {
+                    wr.writeEntry(en.getKey(), en.getValue().translation, en.getValue(), null);
+                }
+            }
+
+            wr.writeComment("Alternative translations");
+            for (Map.Entry<EntryKey, TMXEntry> en : new TreeMap<EntryKey, TMXEntry>(translationMultiple)
+                    .entrySet()) {
+                EntryKey k = en.getKey();
+                wr.writeEntry(en.getKey().sourceText, en.getValue().translation, en.getValue(), new String[] {
+                        PROP_FILE, k.file, PROP_ID, k.id, PROP_PREV, k.prev, PROP_NEXT, k.next, PROP_PATH,
+                        k.path });
+            }
+
+            wr.writeComment("Orphaned default translations");
+            for (Map.Entry<String, TMXEntry> en : new TreeMap<String, TMXEntry>(orphanedDefault).entrySet()) {
+                wr.writeEntry(en.getKey(), en.getValue().translation, en.getValue(), null);
+            }
+
+            wr.writeComment("Orphaned alternative translations");
+            for (Map.Entry<EntryKey, TMXEntry> en : new TreeMap<EntryKey, TMXEntry>(orphanedMultiple)
+                    .entrySet()) {
+                EntryKey k = en.getKey();
+                wr.writeEntry(en.getKey().sourceText, en.getValue().translation, en.getValue(), new String[] {
+                        PROP_FILE, k.file, PROP_ID, k.id, PROP_PREV, k.prev, PROP_NEXT, k.next, PROP_PATH,
+                        k.path });
+            }
+        } finally {
+            wr.close();
+        }
     }
 
     /**
@@ -226,103 +254,5 @@ public class ProjectTMX {
         boolean existEntryInProject(EntryKey key);
 
         boolean existSourceInProject(String src);
-    }
-
-    private class SaveCallback implements TMXWriter2.SaveCallback {
-        private final boolean forceValidTMX;
-        private final Iterator<Map.Entry<String, TMXEntry>> itTD;
-        private final Iterator<Map.Entry<EntryKey, TMXEntry>> itTM;
-        private final Iterator<Map.Entry<String, TMXEntry>> itOD;
-        private final Iterator<Map.Entry<EntryKey, TMXEntry>> itOM;
-
-        /**
-         * DateFormat with format YYYYMMDDThhmmssZ able to display a date in UTC time.
-         * 
-         * SimpleDateFormat IS NOT THREAD SAFE !!!
-         */
-        private final SimpleDateFormat tmxDateFormat;
-
-        public SaveCallback(boolean forceValidTMX) {
-            this.forceValidTMX = forceValidTMX;
-
-            // we need to put entries into TreeMap for have sorted TMX
-            if (translationDefault != null) {
-                itTD = new TreeMap<String, TMXEntry>(translationDefault).entrySet().iterator();
-            } else {
-                itTD = null;
-            }
-            itTM = new TreeMap<EntryKey, TMXEntry>(translationMultiple).entrySet().iterator();
-            itOD = new TreeMap<String, TMXEntry>(orphanedDefault).entrySet().iterator();
-            itOM = new TreeMap<EntryKey, TMXEntry>(orphanedMultiple).entrySet().iterator();
-
-            tmxDateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.ENGLISH);
-            tmxDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        }
-
-        public Tu getNextTu() {
-            Tu tu = new Tu();
-            Tuv s = new Tuv();
-            Tuv t = new Tuv();
-            tu.getTuv().add(s);
-            tu.getTuv().add(t);
-
-            Map.Entry<String, TMXEntry> ed = null;
-            Map.Entry<EntryKey, TMXEntry> em = null;
-
-            // find next entry
-            if (itTD != null && itTD.hasNext()) {
-                ed = itTD.next();
-            } else if (itTM.hasNext()) {
-                em = itTM.next();
-            } else if (itOD.hasNext()) {
-                ed = itOD.next();
-            } else if (itOM.hasNext()) {
-                em = itOM.next();
-            } else {
-                return null;
-            }
-
-            TMXEntry te = null;
-            if (ed != null) {
-                s.setSeg(ed.getKey());
-                t.setSeg(ed.getValue().translation);
-                te = ed.getValue();
-            } else if (em != null) {
-                EntryKey emKey = em.getKey();
-                s.setSeg(emKey.sourceText);
-                t.setSeg(em.getValue().translation);
-                te = em.getValue();
-
-                addProp(tu, PROP_FILE, emKey.file);
-                addProp(tu, PROP_ID, emKey.id);
-                addProp(tu, PROP_PREV, emKey.prev);
-                addProp(tu, PROP_NEXT, emKey.next);
-                addProp(tu, PROP_PATH, emKey.path);
-            }
-
-            if (!StringUtil.isEmpty(te.changer)) {
-                t.setChangeid(te.changer);
-            }
-            if (te.changeDate > 0) {
-                t.setChangedate(tmxDateFormat.format(new Date(te.changeDate)));
-            }
-
-            if (forceValidTMX) {
-                s.setSeg(StaticUtils.stripTags(s.getSeg()));
-                t.setSeg(StaticUtils.stripTags(t.getSeg()));
-            }
-
-            return tu;
-        }
-    }
-
-    private static void addProp(Tu tu, String propName, String propValue) {
-        if (propValue == null) {
-            return;
-        }
-        Prop p = new Prop();
-        p.setType(propName);
-        p.setvalue(propValue);
-        tu.getNoteOrProp().add(p);
     }
 }

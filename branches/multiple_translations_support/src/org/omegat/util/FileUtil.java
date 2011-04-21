@@ -87,6 +87,19 @@ public class FileUtil {
     }
     
     /**
+     * Returns backup file name.
+     * 
+     * @param f
+     *            input file
+     * @return backup file
+     */
+    public static File getBackupFile(File f) {
+        long fileMillis = f.lastModified();
+        String str = new SimpleDateFormat("yyyyMMddHHmm").format(new Date(fileMillis));
+        return new File(f.getPath() + "." + str + ".bak");
+    }
+
+    /**
      * Create file backup with datetime suffix.
      */
     public static void backupFile(File f) throws IOException {

@@ -432,7 +432,7 @@ public class RealProject implements IProject {
         // rename existing project file in case a fatal error
         // is encountered during the write procedure - that way
         // everything won't be lost
-        File backup = new File(s + OConsts.BACKUP_EXTENSION);
+        File backup = FileUtil.getBackupFile(new File(s));
         File orig = new File(s);
         File newFile = new File(s + OConsts.NEWFILE_EXTENSION);
 

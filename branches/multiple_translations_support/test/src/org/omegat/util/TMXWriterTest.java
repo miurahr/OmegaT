@@ -23,12 +23,10 @@
  **************************************************************************/
 package org.omegat.util;
 
-import gen.core.tmx14.Tu;
-import gen.core.tmx14.Tuv;
-
 import java.io.File;
 
 import org.custommonkey.xmlunit.XMLUnit;
+import org.omegat.core.data.TMXEntry;
 import org.omegat.filters.TestFilterBase;
 
 /**
@@ -36,28 +34,10 @@ import org.omegat.filters.TestFilterBase;
  */
 public class TMXWriterTest extends TestFilterBase {
     public void testLeveL1() throws Exception {
-        TMXWriter2.writeTMX(outFile, new Language("en-US"), new Language("be-BY"), false, true,
-                new TMXWriter2.SaveCallback() {
-                    int i = 0;
-
-                    public Tu getNextTu() {
-                        if (i > 0)
-                            return null;
-                        i++;
-
-                        Tu tu = new Tu();
-                        Tuv src = new Tuv();
-                        Tuv tar = new Tuv();
-
-                        src.setSeg("source");
-                        tar.setSeg("target");
-
-                        tu.getTuv().add(src);
-                        tu.getTuv().add(tar);
-
-                        return tu;
-                    }
-                });
+        TMXWriter2 wr = new TMXWriter2(outFile, new Language("en-US"), new Language("be-BY"), false, true,
+                false);
+        wr.writeEntry("source", "target", new TMXEntry(null, null, null, 0), null);
+        wr.close();
 
         XMLUnit.setControlEntityResolver(TMXReader2.TMX_DTD_RESOLVER);
         XMLUnit.setTestEntityResolver(TMXReader2.TMX_DTD_RESOLVER);
