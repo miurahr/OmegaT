@@ -100,31 +100,24 @@ public class ProjectTMX {
         TMXWriter2 wr = new TMXWriter2(outFile, props.getSourceLanguage(), props.getTargetLanguage(),
                 props.isSentenceSegmentingEnabled(), levelTwo, forceValidTMX);
         try {
+            Map<String, TMXEntry> defaults = new TreeMap<String, TMXEntry>();
+
             if (translationDefault != null) {
-                wr.writeComment("Default translations");
-                for (Map.Entry<String, TMXEntry> en : new TreeMap<String, TMXEntry>(translationDefault)
-                        .entrySet()) {
-                    wr.writeEntry(en.getKey(), en.getValue().translation, en.getValue(), null);
-                }
+                defaults.putAll(translationDefault);
             }
+            defaults.putAll(orphanedDefault);
 
-            wr.writeComment("Alternative translations");
-            for (Map.Entry<EntryKey, TMXEntry> en : new TreeMap<EntryKey, TMXEntry>(translationMultiple)
-                    .entrySet()) {
-                EntryKey k = en.getKey();
-                wr.writeEntry(en.getKey().sourceText, en.getValue().translation, en.getValue(), new String[] {
-                        PROP_FILE, k.file, PROP_ID, k.id, PROP_PREV, k.prev, PROP_NEXT, k.next, PROP_PATH,
-                        k.path });
-            }
+            Map<EntryKey, TMXEntry> alternatives = new TreeMap<EntryKey, TMXEntry>();
+            alternatives.putAll(translationMultiple);
+            alternatives.putAll(orphanedMultiple);
 
-            wr.writeComment("Orphaned default translations");
-            for (Map.Entry<String, TMXEntry> en : new TreeMap<String, TMXEntry>(orphanedDefault).entrySet()) {
+            wr.writeComment("Default translations");
+            for (Map.Entry<String, TMXEntry> en : new TreeMap<String, TMXEntry>(defaults).entrySet()) {
                 wr.writeEntry(en.getKey(), en.getValue().translation, en.getValue(), null);
             }
 
-            wr.writeComment("Orphaned alternative translations");
-            for (Map.Entry<EntryKey, TMXEntry> en : new TreeMap<EntryKey, TMXEntry>(orphanedMultiple)
-                    .entrySet()) {
+            wr.writeComment("Alternative translations");
+            for (Map.Entry<EntryKey, TMXEntry> en : new TreeMap<EntryKey, TMXEntry>(alternatives).entrySet()) {
                 EntryKey k = en.getKey();
                 wr.writeEntry(en.getKey().sourceText, en.getValue().translation, en.getValue(), new String[] {
                         PROP_FILE, k.file, PROP_ID, k.id, PROP_PREV, k.prev, PROP_NEXT, k.next, PROP_PATH,
