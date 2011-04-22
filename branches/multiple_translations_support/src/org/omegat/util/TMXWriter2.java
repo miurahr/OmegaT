@@ -169,7 +169,7 @@ public class TMXWriter2 {
 
         // add properties
         if (propValues != null) {
-            for (int i = 0; i < propValues.length; i++) {
+            for (int i = 0; i < propValues.length; i += 2) {
                 if (propValues[i + 1] == null) {
                     // value is null - not need to write
                     continue;
