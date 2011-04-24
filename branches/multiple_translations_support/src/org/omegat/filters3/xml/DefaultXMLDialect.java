@@ -7,6 +7,7 @@
                2008 Martin Fleurke
                2009 Didier Briel
                2010 Antonio Vilei
+               2011 Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -407,4 +408,20 @@ public class DefaultXMLDialect implements XMLDialect {
     public Boolean getTagsAggregationEnabled() {
         return tagsAggregationEnabled;
     }
+    private boolean forceSpacePreserving = false;
+
+    /**
+     * {@inheritDoc}
+     */
+    public Boolean getForceSpacePreserving() {
+        return forceSpacePreserving;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setForceSpacePreserving(boolean onOff) {
+        forceSpacePreserving = onOff;
+    }
+
 }

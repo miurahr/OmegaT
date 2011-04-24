@@ -4,18 +4,45 @@ modified TMX are reloaded in memory transparently, without having to
 reload the project.
 
 ----------------------------------------------------------------------
+ OmegaT 2.2.4
+----------------------------------------------------------------------
+   2 Enhancements
+   0 Bug fix
+   2 Localisation updates
+----------------------------------------------------------------------
+2.2.4 vs. 2.2.3 update 4
+
+  Other enhancements:
+
+  - In the MS Open XML filter, a new option allows to preserve white space 
+(e.g., spaces and newlines) in all tags, even if it is not set technically 
+in the document. As it corresponds to the most usual situation (e.g., 
+preserving spaces in Excel tags), the option is on by default.
+
+  - New version of the JNA library (used to launch Hunspell), compatible 
+with Windows 64-bit
+
+  Localisation updates:
+
+  - Brazilian Portuguese localisation updated to 2.2.3 update 2 (UI, documentation)
+  - Dutch localisation updated to 2.2.4 (UI)
+
+----------------------------------------------------------------------
  OmegaT 2.2.3 update 4
 ----------------------------------------------------------------------
    0 Enhancement
-   1 Bug fix
+   2 Bug fixes
    0 Localisation update
 ----------------------------------------------------------------------
 2.2.3 update 4 vs. 2.2.3 update 3
 
   Bug fixes:
 
+  - HTML filter: PHP tags are transformed into HTML entities
+  http://sourceforge.net/support/tracker.php?aid=3175744
+
   - For three languages, the internal locale was corresponding to an 
-bsolete locale, which meant the spell checker wasn't finding the correct
+obsolete locale, which meant the spell checker wasn't finding the correct
 dictionary. The affected locales were "id", which was changed to "in", 
 "he", changed to "iw" and "yi" changed to "ji".
 
@@ -44,7 +71,7 @@ with a preceding \
 
   - Italian localisation updated to 2.2.3 update 2 (UI, documentation)
   - Czech localisation updated to 2.2.3 update 2 (UI, documentation, readme)
-  - Brazilian Portuguese  localisation updated to 2.2.3 update 2 (UI, Instant Start, readme)
+  - Brazilian Portuguese localisation updated to 2.2.3 update 2 (UI, Instant Start, readme)
 
 ----------------------------------------------------------------------
  OmegaT 2.2.3 update 2
