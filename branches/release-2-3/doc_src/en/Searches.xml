@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"file:///C:/docbook-xml-4.5/docbookx.dtd">
+<chapter id="ch09.searches">
+  <title>Searches<indexterm class="singular">
+      <primary>Searches</primary>
+    </indexterm></title>
+
+  <section id="search.window">
+    <title>Search window</title>
+
+    <figure id="text.search.window">
+      <title>Text search Window<indexterm class="singular">
+          <primary>Search window</primary>
+
+          <secondary>Example</secondary>
+        </indexterm></title>
+
+      <mediaobject>
+        <imageobject role="html">
+          <imagedata fileref="images/TextSearch.png" />
+        </imageobject>
+
+        <imageobject role="ro">
+          <imagedata fileref="images/TextSearch.png" width="40%" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <note>
+      <para>The above search finds all target segments where two or more white
+      spaces - \s\s+ - occur.</para>
+    </note>
+
+    <section>
+      <title>Searching<indexterm class="singular">
+          <primary>Shortcuts</primary>
+
+          <secondary>Ctrl+F - Search</secondary>
+        </indexterm></title>
+
+      <para><application>OmegaT</application> provides a powerful range of
+      search functions. Open the Search window with <keycombo>
+          <keycap>Ctrl</keycap>
+
+          <keycap>F</keycap>
+        </keycombo> and enter the word or phrase you wish to search for in the
+      Search for box. Alternatively, in the Editor window, select a word or
+      phrase in the editing field (target text of the current segment) and hit
+      <keycombo>
+          <keycap>Ctrl</keycap>
+
+          <keycap>F</keycap>
+        </keycombo>. The word or phrase is entered in the Search for box
+      automatically. You can have several Search windows open at the same
+      time, but close them when they are no longer needed so that they do not
+      clutter your desktop.</para>
+    </section>
+
+    <section>
+      <title>Search location</title>
+
+      <para>Searches are performed by default in both the source and target
+      sections of the project, but you can limit your search to just the
+      source or the target text . You may search in</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>the project only (default setting)</para>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>both the project and the reference translation memories in
+          /tm/ (check <emphasis>Search TMs)</emphasis></para>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>a single file or a folder containing a set of files (check
+          <emphasis>Search files)</emphasis></para>
+        </listitem>
+      </itemizedlist>
+
+      <para>When searching through files (as opposed to translation memories),
+      <application>OmegaT</application> restricts the search to files in
+      source file formats (See <ulink url="05_FilesToTranslate.xml">Files to
+      translate -&gt; File Formats</ulink>). Consequently, although OmegaT is
+      quite able to handle<filename> tmx</filename> files, it does not include
+      them in the Search files search. If you turn on <emphasis
+      role="bold"><indexterm class="singular">
+          <primary>Searches</primary>
+
+          <secondary>Advanced Options</secondary>
+        </indexterm>Advanced Options</emphasis>, you can combine the search
+      with the name of the author of the translation and time of the last
+      change made.</para>
+    </section>
+  </section>
+
+  <section id="using.wild.cards">
+    <title>Using wild cards<indexterm class="singular">
+        <primary>Searches</primary>
+
+        <secondary>Using wild cards</secondary>
+      </indexterm></title>
+
+    <para>In both exact and keyword searches, the wild card search characters
+    '*' and '?' can be used. To use wild cards, the regular expressions option
+    should not be selected, as '*' and '?' have special meaning in regular
+    expressions.</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>'*' matches zero or more characters, from the current position
+        in a given word to its end. The search term<literal> 'run*'
+        </literal>for example would match words <literal>'run', 'runs',
+        </literal>and <literal>'running'. </literal></para>
+      </listitem>
+    </itemizedlist>
+
+    <itemizedlist>
+      <listitem>
+        <para>'?' matches any single character. For instance, <literal>'run?'
+        </literal>would match<literal> the word 'runs'</literal> and
+        '<literal>runn'</literal> in the word
+        '<literal>running'.</literal></para>
+      </listitem>
+    </itemizedlist>
+
+    <para>The matches will be displayed in bold blue.</para>
+  </section>
+
+  <section id="search.methoids">
+    <title>Search methods<indexterm class="singular">
+        <primary>Searches</primary>
+
+        <secondary>Methods</secondary>
+      </indexterm></title>
+
+    <para>Select the method using the radio buttons. You can choose between
+    two methods to search:</para>
+
+    <variablelist>
+      <varlistentry>
+        <term>exact search</term>
+
+        <listitem>
+          <para>Search for segments containing the exact string you specified.
+          An exact search looks for a phrase, i.e. if several words are
+          entered, they are found only if they occur in exactly that sequence.
+          Searching for <literal>open file</literal> will thus find all
+          occurrences of the string <emphasis><literal>open
+          file</literal></emphasis>, but not <emphasis><literal>file
+          opened</literal></emphasis> or <emphasis><literal>open input
+          file</literal>.</emphasis></para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>keyword search</term>
+
+        <listitem>
+          <para>Search for segments containing all keywords you specified, in
+          any order. Select keyword search to search for any number of
+          individual full words, in any order. OmegaT displays a list of all
+          segments containing all of the words specified. Keyword searches are
+          similar to a search "with all of the words" in an Internet search
+          engine such as Google (AND logic). Using keyword search with
+          <emphasis><literal>open file</literal></emphasis> will thus find all
+          occurrences of the string <emphasis><literal>open
+          file</literal>,</emphasis> as well as <emphasis><literal>file
+          opened</literal>, <literal>open input file</literal>, <literal>file
+          may not be safe to open</literal></emphasis><literal>,
+          etc.</literal></para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>For either of these two methods you can select the following three
+    options:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis role="bold">case sensitive</emphasis>: the search will
+        be performed for the exact string specified; i.e. capitalization is
+        observed.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis role="bold">regular expressions:</emphasis> The search
+        string will be treated as a regular expression. A regular expression
+        search is a powerful way to look for instances of a string. It is
+        similar to a wild card search, but allows far more flexibility. The
+        regular expressions used in searches are those supported by Java. See
+        more in the chapter on <link linkend="ch09.regexp">Regular
+        Expressions</link>.</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis role="bold">search TMs</emphasis>: translation
+        memories in the <filename>tm</filename> folder are included in the
+        search.</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section id="search.result.display">
+    <title>Search results display</title>
+
+    <para>Pressing the search button after entering a string in the search
+    field displays all the segments in the project that include the entered
+    string. As <application>OmegaT</application> handles identical segments as
+    one single entity, only the first unique segment is shown.</para>
+
+    <para>The segments are displayed in order of appearance in the project.
+    Translated segments are displayed with the original text at the top and
+    the translated text at the bottom, untranslated segments are displayed as
+    the source only.</para>
+
+    <para>Clicking on a segment opens it in the Editor for modifications. You
+    can then switch back to the Search window for the next segment found, for
+    instance to check and, if necessary, correct the terminology.</para>
+  </section>
+</chapter>
