@@ -10,7 +10,7 @@ The creation of the documentation requires a number of tools:
 - DocBook XSL Stylesheets 1.75.2 (“dbk”)
 - DocBook XML 4.5
 - fop 0.95
-- libxml2 2.6.27
+- libxml2 2-2.7.7
 - Saxon 6-5-5
 
 For efficiency reason, the path to the DTD in the DocBook files (e.g., 01_AboutOmegaT.xml) has been changed to a local path (file:/// instead of a http:// reference). Depending on the actual configuration, it might be changed to a standard reference ("http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd") or to another local reference.
@@ -27,12 +27,12 @@ c:\docbook-xml-4.5\ent
 c:\docbook-xml-4.5\calstblx.dtd
 etc.
 
-libxml2-2.6.27 and fop-0.95 must be installed where a path can find them, usually in Program Files.
-C:\Program Files\libxml2-2.6.27.win32
+libxml2-2.7.7 and fop-0.95 must be installed where a path can find them, usually in Program Files.
+C:\Program Files\libxml2-2.7.7.win32
 C:\Program Files\fop-0.95
 
 Corresponding path:
-path=C:\Program Files\fop-0.95;C:\Program Files\libxml2-2.6.27.win32\bin
+path=C:\Program Files\fop-0.95;C:\Program Files\libxml2-2.7.7.win32\bin
 
 ***Usage***
 
