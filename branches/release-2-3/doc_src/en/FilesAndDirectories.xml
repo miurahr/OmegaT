@@ -340,7 +340,7 @@
             </row>
 
             <row>
-              <entry>filters.conf</entry>
+              <entry>filters.xml</entry>
 
               <entry>An xml file with all the data set by the file filter
               preferences</entry>
