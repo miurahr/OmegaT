@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------
  OmegaT 2.3.0
 ----------------------------------------------------------------------
-   2 Enhancements
+   3 Enhancements
    2 Bug fixes
    2 Localisation updates
 ----------------------------------------------------------------------
@@ -16,6 +16,8 @@ preserving spaces in Excel tags), the option is on by default.
 
   - New version of the JNA library (used to launch Hunspell), compatible 
 with Windows 64-bit
+
+  - New Iceni Infix file filter
 
   Bug fixes:
 
