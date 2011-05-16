@@ -442,7 +442,8 @@ public abstract class AbstractFilter implements IFilter {
             entryParseCallback.addEntry(null, entry, null, false, null, this);
             return entry;
         } else {
-            return entryTranslateCallback.getTranslation(null, entry);
+            String translation = entryTranslateCallback.getTranslation(null, entry);
+            return translation != null ? translation : entry;
         }
     }
 

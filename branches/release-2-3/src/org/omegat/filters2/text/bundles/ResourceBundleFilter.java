@@ -359,7 +359,8 @@ public class ResourceBundleFilter extends AbstractFilter {
             entryParseCallback.addEntry(key, value, null, false, null, this);
             return value;
         } else if (entryTranslateCallback != null) {
-            return entryTranslateCallback.getTranslation(key, value);
+            String trans = entryTranslateCallback.getTranslation(key, value);
+            return trans != null ? trans : value;
         } else if (entryAlignCallback != null) {
             align.put(key, value);
         }

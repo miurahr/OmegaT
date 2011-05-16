@@ -60,6 +60,7 @@ public abstract class TranslateEntry implements ITranslateCallback {
 
         StringBuffer res = new StringBuffer();
 
+        boolean translated = false;
         if (m_config.isSentenceSegmentingEnabled()) {
             List<StringBuffer> spaces = new ArrayList<StringBuffer>();
             List<Rule> brules = new ArrayList<Rule>();
@@ -68,11 +69,26 @@ public abstract class TranslateEntry implements ITranslateCallback {
             List<String> segments = Segmenter.segment(sourceLang, source, spaces, brules);
             for (int i = 0; i < segments.size(); i++) {
                 String onesrc = segments.get(i);
-                segments.set(i, getSegmentTranslation(id, i, onesrc));
+                String tr = getSegmentTranslation(id, i, onesrc);
+                if (tr == null) {
+                    tr = onesrc;
+                } else {
+                    translated = true;
+                }
+                segments.set(i, tr);
             }
             res.append(Segmenter.glue(sourceLang, targetLang, segments, spaces, brules));
         } else {
+            String tr = getSegmentTranslation(id, 0, source);
+            if (tr == null) {
+                tr = source;
+            } else {
+                translated = true;
+            }
             res.append(getSegmentTranslation(id, 0, source));
+        }
+        if (!translated) {
+            return null;
         }
 
         // replacing all occurrences of LF (\n) by either single CR (\r) or CRLF

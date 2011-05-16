@@ -37,7 +37,7 @@ public interface ITranslateCallback {
      *            ID in source file, or null if ID not supported by format
      * @param source
      *            source entry text
-     * @return translation or source if translation not exist
+     * @return translation or null if translation not exist
      */
     String getTranslation(String id, String source);
 }
