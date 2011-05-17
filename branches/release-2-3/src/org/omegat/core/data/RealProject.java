@@ -980,7 +980,7 @@ public class RealProject implements IProject {
 
         protected String getSegmentTranslation(String id, int segmentIndex, String segmentSource) {
             TransEntry tr = translations.get(segmentSource);
-            return tr != null ? tr.translation : segmentSource;
+            return tr != null ? tr.translation : null;
         }
     };
 
