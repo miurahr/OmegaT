@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------
  OmegaT 2.3.0
 ----------------------------------------------------------------------
-   5 Enhancements
+   6 Enhancements
    2 Bug fixes
    2 Localisation updates
 ----------------------------------------------------------------------
@@ -11,6 +11,9 @@
 
   - Allow blank translations in PO files
   http://sourceforge.net/support/tracker.php?aid=2974663
+
+  - TransTips to consider letter case
+  http://sourceforge.net/support/tracker.php?aid=3027339
 
   Other enhancements:
 
