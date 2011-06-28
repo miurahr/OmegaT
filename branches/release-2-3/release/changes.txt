@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------
  OmegaT 2.3.0
 ----------------------------------------------------------------------
-   7 Enhancements
+   9 Enhancements
    4 Bug fixes
    2 Localisation updates
 ----------------------------------------------------------------------
@@ -16,6 +16,9 @@
   http://sourceforge.net/support/tracker.php?aid=3027339
 
   - Ability to translate WordArt in MS Office files
+  http://sourceforge.net/support/tracker.php?aid=3311077
+
+  - Add .xliff extension to the XLIFF filter
   http://sourceforge.net/support/tracker.php?aid=3311077
 
   Other enhancements:
