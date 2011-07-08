@@ -520,8 +520,8 @@
                 <keycap>Ctrl</keycap>
 
                 <keycap>N</keycap>
-              </keycombo> or <guimenuitem>Enter</guimenuitem> or
-            <guimenuitem>Tab</guimenuitem></entry>
+              </keycombo> or <keycap>Enter</keycap> or
+            <keycap>Tab</keycap></entry>
 
             <entry>Moves to the next segment. If the current segment is the
             last segment in a file, it moves to the first segment of the next
@@ -1206,8 +1206,8 @@
               <entry><keycombo>
                   <keycap>Ctrl</keycap>
 
-                  <keycap>N, Enter</keycap>
-                </keycombo> or <guimenuitem>Return</guimenuitem></entry>
+                  <keycap>N</keycap></keycombo>, <keycap>Enter</keycap>
+                 or <keycap>Return</keycap></entry>
 
               <entry>Moves the editing field to the next segment.</entry>
             </row>
