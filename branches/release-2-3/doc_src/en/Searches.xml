@@ -115,18 +115,18 @@
     <itemizedlist>
       <listitem>
         <para>'*' matches zero or more characters, from the current position
-        in a given word to its end. The search term<literal> 'run*'
-        </literal>for example would match words <literal>'run', 'runs',
-        </literal>and <literal>'running'. </literal></para>
+        in a given word to its end. The search term<literal>'run*'</literal>
+        for example would match words <literal>'run'</literal>, 
+        <literal>'runs'</literal> and <literal>'running'</literal>.</para>
       </listitem>
     </itemizedlist>
 
     <itemizedlist>
       <listitem>
         <para>'?' matches any single character. For instance, <literal>'run?'
-        </literal>would match<literal> the word 'runs'</literal> and
-        '<literal>runn'</literal> in the word
-        '<literal>running'.</literal></para>
+        </literal>would match the word <literal>'runs'</literal> and
+        <literal>'runn'</literal> in the word
+        <literal>'running'.</literal></para>
       </listitem>
     </itemizedlist>
 
@@ -155,7 +155,7 @@
           occurrences of the string <emphasis><literal>open
           file</literal></emphasis>, but not <emphasis><literal>file
           opened</literal></emphasis> or <emphasis><literal>open input
-          file</literal>.</emphasis></para>
+          file</literal></emphasis>.</para>
         </listitem>
       </varlistentry>
 
@@ -173,8 +173,8 @@
           occurrences of the string <emphasis><literal>open
           file</literal>,</emphasis> as well as <emphasis><literal>file
           opened</literal>, <literal>open input file</literal>, <literal>file
-          may not be safe to open</literal></emphasis><literal>,
-          etc.</literal></para>
+          may not be safe to open</literal></emphasis>,
+          etc.</para>
         </listitem>
       </varlistentry>
     </variablelist>
