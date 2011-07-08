@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "../../../docbook-xml-4.5/docbookx.dtd">
-<chapter id="ch03.user.interface">
+<chapter id="chapter.user.interface">
   <title>The user interface</title>
 
   <section id="user.interface.items">
@@ -806,7 +806,7 @@
       field for search strings or keywords, flags and radio buttons for
       setting up the search and a display area containing the results of the
       search. See the chapter<emphasis> <link
-      linkend="ch03.user.interface">Searches</link> </emphasis>for more
+      linkend="chapter.user.interface">Searches</link> </emphasis>for more
       information about the search window.</para>
     </section>
 

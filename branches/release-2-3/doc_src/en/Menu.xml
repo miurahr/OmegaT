@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "../../../docbook-xml-4.5/docbookx.dtd">
-<chapter id="ch04.menu">
+<chapter id="chapter.menu">
   <title>Menu and Keyboard shortcuts</title>
 
   <section id="ch04.main.menu">
@@ -77,7 +77,7 @@
 
             <entry>Creates and opens a new project. The dialog to create a
             project is the same as to edit the project.
-            See <xref linkend="ch04.project.properties"/></entry>
+            See <xref linkend="chapter.project.properties"/></entry>
           </row>
 
           <row>
@@ -173,7 +173,7 @@
                 <keycap>E</keycap>
               </keycombo></entry>
 
-            <entry>Displays <link linkend="ch04.project.properties">Project
+            <entry>Displays <link linkend="chapter.project.properties">Project
             properties</link> dialog to edit project languages and folder
             locations.</entry>
           </row>
@@ -426,7 +426,7 @@
             order to be consistent with usual clipboard behavior. The exported
             contents are copied to the file <filename>selection.txt</filename>
             located in the User's preference files folder (see <xref
-            linkend="ch05.files.and.directories"/>).</entry>
+            linkend="chapter.files.and.directories"/>).</entry>
           </row>
 
           <row>
@@ -691,7 +691,7 @@
             tags in formatted files. Will display a list of segments with tag
             errors and possible inconsistencies. See <link
             linkend="section.tag.validation">Tag Validation</link> and 
-            <xref linkend="ch07.formatted.text"/>.</entry>
+            <xref linkend="chapter.formatted.text"/>.</entry>
           </row>
 
           <row>
@@ -782,7 +782,7 @@
           <row>
             <entry><guimenuitem>File Filters...</guimenuitem></entry>
 
-            <entry>Displays the <link linkend="ch05.file.filters">File
+            <entry>Displays the <link linkend="chapter.file.filters">File
             filters</link> dialogue to configure file handling and
             parsing.</entry>
           </row>
@@ -790,7 +790,7 @@
           <row>
             <entry><guimenuitem>Segmentation...</guimenuitem></entry>
 
-            <entry>Opens the <link linkend="ch08.segmentation">Source
+            <entry>Opens the <link linkend="chapter.segmentation">Source
             segmentation</link> dialogue to configure text
             segmentation.</entry>
           </row>
@@ -798,7 +798,7 @@
           <row>
             <entry><guimenuitem>Spell checking...</guimenuitem></entry>
 
-            <entry>Displays the <link linkend="ch12.spellchecker">Spell checker
+            <entry>Displays the <link linkend="chapter.spellchecker">Spell checker
             setup</link> window to install, configure and activate the spell
             checker.</entry>
           </row>
@@ -807,7 +807,7 @@
             <entry><guimenuitem>Editing Behavior...</guimenuitem></entry>
 
             <entry>Displays the <link
-            linkend="ch06.translation.editing">Translation editing</link> dialog to
+            linkend="chapter.translation.editing">Translation editing</link> dialog to
             configure.</entry>
           </row>
 

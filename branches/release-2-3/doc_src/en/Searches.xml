@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "../../../docbook-xml-4.5/docbookx.dtd">
-<chapter id="ch09.searches">
+<chapter id="chapter.searches">
   <title>Searches<indexterm class="singular">
       <primary>Searches</primary>
     </indexterm></title>
@@ -195,7 +195,7 @@
         search is a powerful way to look for instances of a string. It is
         similar to a wild card search, but allows far more flexibility. The
         regular expressions used in searches are those supported by Java. See
-        more in the chapter on <link linkend="ch09.regexp">Regular
+        more in the chapter on <link linkend="chapter.regexp">Regular
         Expressions</link>.</para>
       </listitem>
 
