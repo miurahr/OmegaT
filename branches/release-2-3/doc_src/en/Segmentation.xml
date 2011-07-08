@@ -191,8 +191,8 @@
     click <emphasis role="bold">Add </emphasis>in the upper half of the
     dialog. An empty line will appear at the bottom of the upper table (you
     may have to scroll down to see it). Change the name of the rule set and
-    the language pattern to the language concerned and its code (see <link
-    linkend="appendix.languages">Appendix B.1 for a list of language codes</link>).
+    the language pattern to the language concerned and its code (see <xref
+    linkend="appendix.languages"/> for a list of language codes).
     The syntax of the language pattern conforms to regular expression syntax.
     If your set of rules handles a language-country pair, we advise you to
     move it to the top using the <emphasis role="bold">Move Up</emphasis>
