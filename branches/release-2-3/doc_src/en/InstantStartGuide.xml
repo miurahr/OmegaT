@@ -570,8 +570,8 @@
       Here is an example of a segment in HTML:</para>
 
       <para><literal>&lt;p&gt;A different display font can be selected via
-      the&lt;b&gt;Display Font&lt;/b&gt;dialog. Open it via
-      the&lt;i&gt;Options&lt;/i&gt; →&lt;i&gt;Display Font...&lt;/i&gt;menu
+      the &lt;b&gt;Display Font&lt;/b&gt;dialog. Open it via
+      the &lt;i&gt;Options&lt;/i&gt; →&lt;i&gt;Display Font...&lt;/i&gt; menu
       item. The font type and size can be changed from the
       dialog.&lt;/p&gt;</literal></para>
 
