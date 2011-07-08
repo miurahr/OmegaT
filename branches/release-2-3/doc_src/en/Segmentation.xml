@@ -10,7 +10,7 @@
   segmentation”). In order to select the type of segmentation, select
   <menuchoice>
       <guimenu><indexterm class="singular">
-          <primary>Menu Project</primary>
+          <primary>Project</primary>
 
           <secondary>Properties</secondary>
         </indexterm>Project</guimenu>
@@ -24,7 +24,7 @@
   delivers better matches from previous translations. If sentence segmentation
   has been selected, you can setup the rules by selecting <menuchoice>
       <guimenu><indexterm class="singular">
-          <primary>Menu Project</primary>
+          <primary>Project</primary>
 
           <secondary>Options</secondary>
         </indexterm>Options</guimenu>
