@@ -453,14 +453,13 @@
       <para>One of the above segments is the current segment. It is the
       segment that is displayed in two parts. The upper part is in the source
       language, in bold characters with a green background color, the lower
-      part is the editing field, delimited by two markers: <indexterm
+      part is the editing field, ended by a marker: <indexterm
           class="singular">
           <primary>Segment marker</primary>
-        </indexterm>the leftmost marker is <literal>&lt;segment
-      nnnn&gt;</literal> where nnnn is a number of the segment in the project,
-      the rightmost marker is <literal>&lt;end segment&gt;.</literal> Use the
-      upper part as a reference and replace or modify the contents of the
-      editing field with your translation.</para>
+        </indexterm>the marker is <literal>&lt;segment
+      nnnn&gt;</literal> where nnnn is a number of the segment in the project.
+      Use the upper part as a reference and replace or modify the contents of 
+      the editing field with your translation.</para>
 
       <para>Depending upon the preferred editing behavior, the editing field
       for the untranslated segment may be empty, contain the source text, or
