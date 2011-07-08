@@ -86,8 +86,8 @@
 
       <para>When searching through files (as opposed to translation memories),
       <application>OmegaT</application> restricts the search to files in
-      source file formats (See <ulink url="05_FilesToTranslate.xml">Files to
-      translate -&gt; File Formats</ulink>). Consequently, although OmegaT is
+      source file formats (See <link linkend="chapter.files.to.translate">Files to
+      translate -&gt; File Formats</link>). Consequently, although OmegaT is
       quite able to handle<filename> tmx</filename> files, it does not include
       them in the Search files search. If you turn on <emphasis
       role="bold"><indexterm class="singular">

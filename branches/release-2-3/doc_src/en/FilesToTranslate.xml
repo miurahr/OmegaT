@@ -260,7 +260,7 @@
     <para>The quality of formatting of the translated file will depend on the
     quality of the round-trip conversion. Before proceeding with such
     conversions, be sure to test all options. Check the <ulink
-    url="???">OmegaT home page</ulink> for an up-to-date listing of auxiliary
+    url="http://www.omegat.org">OmegaT home page</ulink> for an up-to-date listing of auxiliary
     translation tools.</para>
   </section>
 
