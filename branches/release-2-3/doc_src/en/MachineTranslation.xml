@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "../../../docbook-xml-4.5/docbookx.dtd">
-<chapter id="chapter.google.translate">
+<chapter id="chapter.machine.translate">
   <title>Machine Translation<indexterm class="singular">
       <primary>Machine Translation</primary>
     </indexterm></title>
