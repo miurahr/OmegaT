@@ -706,7 +706,7 @@
   <section id="other.windows">
     <title>Other windows</title>
 
-    <section>
+    <section id="section.project.files">
       <title>Project files<indexterm class="singular">
           <primary>Windows and panes in OmegaT</primary>
 
@@ -789,7 +789,7 @@
       URL.</para>
     </section>
 
-    <section>
+    <section id="section.search.window">
       <title>Search window<indexterm class="singular">
           <primary>Windows and panes in OmegaT</primary>
 
@@ -806,11 +806,11 @@
       field for search strings or keywords, flags and radio buttons for
       setting up the search and a display area containing the results of the
       search. See the chapter<emphasis> <link
-      linkend="ch03.user.interface">Searches</link> f</emphasis>or more
+      linkend="ch03.user.interface">Searches</link> </emphasis>for more
       information about the search window.</para>
     </section>
 
-    <section>
+    <section id="section.tag.validation">
       <title>Tag validation<indexterm class="singular">
           <primary>Tag validation</primary>
 
