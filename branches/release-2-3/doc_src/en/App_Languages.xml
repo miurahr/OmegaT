@@ -23,9 +23,9 @@
   <table id="table.language.code.list">
     <title>ISO 639-1/639-2 Language code list</title>
     <tgroup cols="3" align='left' colsep='1' rowsep='1'>
-      <colspec align="left" colnum="1" colwidth="250" />
-      <colspec align="left" colnum="2" colwidth="120" />
-      <colspec align="left" colnum="3" colwidth="120" />
+      <colspec align="left" colnum="1" colwidth="200" />
+      <colspec align="left" colnum="2" colwidth="100" />
+      <colspec align="left" colnum="3" colwidth="100" />
       <thead>
         <row>
           <entry align="left">Language name</entry>
@@ -175,7 +175,7 @@
 	  <entry>che</entry>
 	</row>
         <row>
-	  <entry>Chichewa; Chewa; Nyanja</entry>
+	  <entry>Chichewa, Chewa, Nyanja</entry>
 	  <entry>ny</entry>
 	  <entry>nya</entry>
 	</row>
@@ -220,7 +220,7 @@
 	  <entry>dan</entry>
 	</row>
         <row>
-	  <entry>Divehi; Dhivehi; Maldivian;</entry>
+	  <entry>Divehi, Dhivehi, Maldivian</entry>
 	  <entry>dv</entry>
 	  <entry>div</entry>
 	</row>
@@ -275,7 +275,7 @@
 	  <entry>fra</entry>
 	</row>
         <row>
-	  <entry>Fula; Fulah; Pulaar; Pular</entry>
+	  <entry>Fula, Fulah, Pulaar, Pular</entry>
 	  <entry>ff</entry>
 	  <entry>ful</entry>
 	</row>
@@ -310,7 +310,7 @@
 	  <entry>guj</entry>
 	</row>
         <row>
-	  <entry>Haitian; Haitian Creole</entry>
+	  <entry>Haitian, Haitian Creole</entry>
 	  <entry>ht</entry>
 	  <entry>hat</entry>
 	</row>
@@ -741,7 +741,7 @@
 	  <entry>srp</entry>
 	</row>
         <row>
-	  <entry>Scottish Gaelic; Gaelic</entry>
+	  <entry>Scottish Gaelic, Gaelic</entry>
 	  <entry>gd</entry>
 	  <entry>gla</entry>
 	</row>
@@ -776,7 +776,7 @@
 	  <entry>sot</entry>
 	</row>
         <row>
-	  <entry>Spanish; Castilian</entry>
+	  <entry>Spanish, Castilian</entry>
 	  <entry>es</entry>
 	  <entry>spa</entry>
 	</row>
