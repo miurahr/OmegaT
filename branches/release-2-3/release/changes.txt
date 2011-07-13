@@ -9,7 +9,7 @@
 
   Localisation updates:  
 
-  - Dutch localisation updated to 2.2.4 (UI)
+  - Dutch localisation updated to 2.3 (UI)
 
 ----------------------------------------------------------------------
  OmegaT 2.3.0
