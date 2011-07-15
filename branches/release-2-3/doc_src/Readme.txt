@@ -75,7 +75,18 @@ If you use Macports, the build.xml settings are:
 
 and the docbook-utf8.xsl settings are:
 
-    <xsl:import href="file:///opt/local/share/xsl/docbook-xsl/html/docbook.xsl"/> 
+    <xsl:import href="file:///opt/local/share/xsl/docbook-xsl/html/docbook.xsl"/>
+
+The DocBook 4.5 DTD is located here:
+/opt/local/var/macports/software/docbook-xml-4.5/4.5_0/opt/local/share/xml/docbook/4.5/
+
+Copy the /4.5/ folder to the folder that is three folders "higher" than the DocBook documentation source files in your folder tree and rename it /docbook-xml-4.5/.
+
+So, if you have your DocBook documentation source files in:
+/path/to/omegat/branches/release-2-3/doc_src/hu/
+
+The /docbook-xml-4.5/ folder should be copied inside /branches/:
+/path/to/omegat/branches/docbook-xml-4.5/
 
 
 ***Usage***
