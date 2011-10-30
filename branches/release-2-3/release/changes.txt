@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------
    0 Enhancement
    1 Bug fix
-   0 Localisation update
+   1 Localisation update
 ----------------------------------------------------------------------
 2.3.0 update 4 vs. 2.3.0 update 3
 
@@ -11,6 +11,9 @@
 
   - When several dictionaries were used, words written in uppercase in 
 the dictionaries could fail to be recognised
+
+  Localisation updates:  
+  - Slovenian localisation updated to 2.3 (UI)
 
 ----------------------------------------------------------------------
  OmegaT 2.3.0 update 3
