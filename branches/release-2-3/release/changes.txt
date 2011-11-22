@@ -9,6 +9,9 @@
 
   Bug fixes:
 
+  - Java 7 compilation encoding errors
+  http://sourceforge.net/support/tracker.php?aid=3440901
+
   - When several dictionaries were used, words written in uppercase in 
 the dictionaries could fail to be recognised
 
