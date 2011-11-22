@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------
    0 Enhancement
    2 Bug fixes
-   1 Localisation update
+   2 Localisation updates
 ----------------------------------------------------------------------
 2.3.0 update 4 vs. 2.3.0 update 3
 
@@ -17,6 +17,7 @@ the dictionaries could fail to be recognised
 
   Localisation updates:  
   - Slovenian localisation updated to 2.3 (UI)
+  - Dutch localisation updated to 2.3 (backported from 2.5.0 update 3) (documentation)
 
 ----------------------------------------------------------------------
  OmegaT 2.3.0 update 3
