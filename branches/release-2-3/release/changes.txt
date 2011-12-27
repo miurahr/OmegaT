@@ -2,7 +2,7 @@
  OmegaT 2.3.0 update 4
 ----------------------------------------------------------------------
    1 Enhancement
-   3 Bug fixes
+   4 Bug fixes
    2 Localisation updates
 ----------------------------------------------------------------------
 2.3.0 update 4 vs. 2.3.0 update 3
@@ -23,6 +23,9 @@ the dictionaries could fail to be recognised
 
   - NetBSD and DragonFky not recognized as UNIX
   http://sourceforge.net/support/tracker.php?aid=3451034
+
+  - Some Open XML files could not be loaded, because they used
+backslashes instead of slashes in the zip container
 
   Localisation updates:  
   - Slovenian localisation updated to 2.3 (UI)
