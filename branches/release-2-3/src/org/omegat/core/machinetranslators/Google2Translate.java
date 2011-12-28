@@ -25,7 +25,8 @@
 
 package org.omegat.core.machinetranslators;
 
-import java.net.URLEncoder;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,16 +70,19 @@ public class Google2Translate extends BaseTranslate {
         else if ((tLang.getLanguage().compareToIgnoreCase("zh-hk") == 0))
             targetLang = "ZH-TW"; // Google doesn't recognize ZH-HK
 
-        StringBuffer queryString = new StringBuffer();
-        
         String googleKey = System.getProperty("google.api.key");
-        
-        queryString.append("key=" + googleKey);
-        queryString.append("&source=" + sLang.getLanguageCode());
-        queryString.append("&target=" +  targetLang);
-        queryString.append("&q=" + URLEncoder.encode(trText, "utf-8"));
-        
-        String v = WikiGet.getURL(GT_URL + "?" + queryString.toString());
+
+        Map<String, String> params = new TreeMap<String, String>();
+
+        params.put("key", googleKey);
+        params.put("source", sLang.getLanguageCode());
+        params.put("target", targetLang);
+        params.put("q", trText);
+
+        Map<String, String> headers = new TreeMap<String, String>();
+        headers.put("X-HTTP-Method-Override", "GET");
+
+        String v = WikiGet.post(GT_URL, params, headers);
 
         while (true) {
             Matcher m = RE_UNICODE.matcher(v);
