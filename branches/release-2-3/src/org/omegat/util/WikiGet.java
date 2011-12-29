@@ -5,6 +5,7 @@
 
  Copyright (C) 2007 Kim Bruning
                2010 Alex Buloichik, Didier Briel, Rashid Umarov
+               2011 Alex Buloichik
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
