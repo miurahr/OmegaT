@@ -1492,11 +1492,11 @@
       </indexterm>
 
       <tgroup cold="3" cols="3" colsep="1">
-        <colspec align="left" colnum="1"/>
+        <colspec align="left" colname="1" colnum="1" colwidth="100"/>
 
-        <colspec align="right" colnum="1" colwidth="150"/>
+        <colspec align="left" colname="2" colnum="2" colwidth="100"/>
 
-        <colspec align="right" colnum="1"/>
+        <colspec align="left" colname="3" colnum="3" />
 
         <thead>
           <row>
@@ -1510,7 +1510,7 @@
 
         <tbody>
           <row>
-            <entry>Project Menu</entry>
+            <entry align="center" nameend="3" namest="1">Project Menu</entry>
           </row>
 
           <row>
@@ -1602,7 +1602,7 @@
           </row>
 
           <row>
-            <entry>Edit Menu</entry>
+             <entry align="center" nameend="3" namest="1">Edit Menu</entry>
           </row>
 
           <row>
@@ -1766,7 +1766,7 @@
           </row>
 
           <row>
-            <entry>Go To Menu</entry>
+            <entry align="center" nameend="3" namest="1">Go To Menu</entry>
           </row>
 
           <row>
@@ -1818,7 +1818,7 @@
           </row>
 
           <row>
-            <entry>View Menu</entry>
+            <entry align="center" nameend="3" namest="1">View Menu</entry>
           </row>
 
           <row>
@@ -1878,7 +1878,7 @@
           </row>
 
           <row>
-            <entry>Tools Menu</entry>
+            <entry align="center" nameend="3" namest="1">Tools Menu</entry>
           </row>
 
           <row>
@@ -1906,7 +1906,7 @@
           </row>
 
           <row>
-            <entry>Options Menu</entry>
+            <entry align="center" nameend="3" namest="1">Options Menu</entry>
           </row>
 
           <row>
@@ -2038,7 +2038,7 @@
           </row>
 
           <row>
-            <entry>Help Menu</entry>
+            <entry align="center" nameend="3" namest="1">Help Menu</entry>
           </row>
 
           <row>
