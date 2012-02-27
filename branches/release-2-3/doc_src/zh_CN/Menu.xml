@@ -12,7 +12,7 @@
       <primary>快捷键</primary> <secondary>主菜单</secondary>
     </indexterm>
 
-    <para>OmegaT 的所有功能均可通过编辑器窗口顶部的菜单栏来调用。多数功能也可以通过 &lt;a0&gt;键盘快捷方式&lt;/a0&gt;调用。快捷键通过按 <keycap>Ctrl</keycap> 和字母键来激活。某些快捷键还包含其他按键。为了增强可读性，本手册中这些字母以大写形式出现。<keycap>Ctrl</keycap> 在 Windows 系统中使用， UNIX 和类 UNIX 操作系统使用 <keycap>Ctrl</keycap> 或 <keycap>Control</keycap> 键。Mac 用户应该使用 <keycombo> <keycap>cmd</keycap> <keycap>key</keycap> </keycombo> 来代替它。&quot;Cmd&quot; 键就是在苹果键盘上印有 &quot;command&quot; 或“苹果”符号的那个键。</para>
+    <para>OmegaT 的所有功能均可通过编辑器窗口顶部的菜单栏来调用。多数功能也可以通过键盘快捷方式调用。快捷键通过按 <keycap>Ctrl</keycap> 和字母键来激活。某些快捷键还包含其他按键。为了增强可读性，本手册中这些字母以大写形式出现。<keycap>Ctrl</keycap> 在 Windows 系统中使用， UNIX 和类 UNIX 操作系统使用 <keycap>Ctrl</keycap> 或 <keycap>Control</keycap> 键。Mac 用户应该使用 <keycombo> <keycap>cmd</keycap> <keycap>键</keycap> </keycombo> 来代替它。&quot;Cmd&quot; 键就是在苹果键盘上印有 &quot;command&quot; 或“苹果”符号的那个键。</para>
 
     <table colsep="1" id="table.main.menu">
       <title>主菜单</title>
@@ -73,8 +73,8 @@
             <entry>打开之前创建的项目。</entry>
           </row>
 
-          <row>
-            <entry><guimenuitem>导入源文件……</guimenuitem></entry>
+            <row>
+              <entry><guimenuitem>导入源文件</guimenuitem></entry>
 
             <entry/>
 
@@ -1119,5 +1119,678 @@
         </tgroup>
       </table>
     </section>
+  </section>
+
+  <section id="ch04.shortcuts.customization">
+    <title><indexterm class="singular">
+        <primary>快捷键</primary> <secondary>自定义</secondary>
+      </indexterm>自定义快捷键</title>
+
+    <para>在主菜单中的大部分菜单项可设置新的快捷键。缺省情况下，只有最常用的菜单项才分配了快捷键。通过 OmegaT 首选项文件夹（请参阅<link linkend="user.files.location">用户文件位置</link>）中的快捷键定义文件，您可改变已分配的快捷键或添加新的快捷键。</para>
+
+    <para>快捷键定义文件名称必须为 <filename>MainMenuShortcuts.properties</filename>，同时每行最多包含一个快捷键的定义。可接受空行，而注释行应以 &quot;//&quot; 开头。在 &quot;//&quot; 后的所有内容将被忽略。</para>
+
+    <para>修改 <filename>MainMenuShortcuts.properties</filename> 文件后，必须重新运行 <application>OmegaT</application> 才能让新的快捷键生效。</para>
+
+    <para>快捷键定义的语法如下：<code>&lt;menu item code&gt;=&lt;shortcut&gt;</code>，其中<emphasis>&lt;menu item code&gt;</emphasis>是取自<link linkend="menu.item.codes">Menu Item Codes</link>中的代码，而<emphasis>&lt;shortcut&gt;</emphasis>是由用户定义的按键组合<footnote>
+        <para>按键（快捷键）的全部语法的定义在来自 Oracle Java 1.6 文档（页面底部）：<ulink url="http://docs.oracle.com/javase/6/docs/api/javax/swing/KeyStroke.html">Java 1.6 快捷键</ulink></para>
+      </footnote>.</para>
+
+    <para>&lt;shortcut&gt; 必须为下面的形式：<code>0 或多个 &lt;modifier&gt; 后跟着 0 或 1 个 &lt;event&gt; 后跟着 &lt;key&gt;</code>，其中：<itemizedlist>
+        <listitem>
+          <para><code>&lt;modifier&gt;</code> 可以为：<emphasis>shift</emphasis>, <emphasis>control</emphasis>, <emphasis>ctrl</emphasis>, <emphasis>meta</emphasis><footnote>
+              <para>在 Mac 系统中，必须使用 <emphasis>meta</emphasis> 修饰符来指定 <emphasis>command</emphasis> 键。</para>
+            </footnote>, <emphasis>alt</emphasis>,
+          <emphasis>altGraph</emphasis></para>
+        </listitem>
+
+        <listitem>
+          <para><code>&lt;event&gt;</code> 可以为：<emphasis>typed</emphasis>, <emphasis>pressed</emphasis>, <emphasis>released</emphasis></para>
+        </listitem>
+
+        <listitem>
+          <para>而 <code>&lt;key&gt;</code> 可以为您键盘上有效的任何键。<footnote>
+              <para>可用的按键事件在来自 Oracle 的 Java 1.6 文档中列出：<ulink url="http://docs.oracle.com/javase/6/docs/api/java/awt/event/KeyEvent.html">Java 1.6 按键事件说明</ulink></para>
+            </footnote>.</para>
+        </listitem>
+      </itemizedlist></para>
+
+    <para>例如，缺省的 OmegaT 快捷键<footnote>
+        <para>缺省的 OmegaT 快捷键设置可从 Sourceforge 获取：<ulink url="http://omegat.svn.sourceforge.net/viewvc/omegat/trunk/src/org/omegat/gui/main/MainMenuShortcuts.properties">缺省的 OmegaT 快捷键</ulink></para>
+
+        <para>在 Mac 系统中缺省的 OmegaT 快捷键同样可从 Sourceforge 获取，其中把所有的 &quot;ctrl&quot; 都被替换为 &quot;meta&quot;：<ulink url="http://omegat.svn.sourceforge.net/viewvc/omegat/trunk/src/org/omegat/gui/main/MainMenuShortcuts.mac.properties">Mac 系统上缺省的 OmegaT 快捷键</ulink></para>
+      </footnote>，其中可以看到：</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><code>projectOpenMenuItem=ctrl O</code></para>
+      </listitem>
+
+      <listitem>
+        <para><code>editCreateGlossaryEntryMenuItem=ctrl shift G</code></para>
+      </listitem>
+    </itemizedlist>
+
+    <para>第一个是<guimenuitem>打开项目</guimenuitem>的快捷键，第二个为<guimenuitem>创建词汇表条目</guimenuitem>。</para>
+
+    <para>如果想用<keycombo> <keycap>Shift</keycap> <keycap>Ctrl</keycap> <keycap>O</keycap> </keycombo>来打开项目，请对 <filename>MainMenuShortcuts.properties</filename> 修改成像这样：<code> projectOpenMenuItem=shift ctrl O</code>.</para>
+
+    <para>如果您想在 Mac 系统上添加 <keycombo> <keycap>Shift</keycap> <keycap>Command</keycap> <keycap>S</keycap> </keycombo> 快捷键来执行<menuchoice> <guimenu>工具</guimenu> <guimenuitem>统计</guimenuitem> </menuchoice>，请添加下列行到 <filename>MainMenuShortcuts.properties</filename>：<code> toolsShowStatisticsStandardMenuItem=shift meta S</code>，然后保存文件并重新启动 <application>OmegaT</application>。现在新的快捷键应该出现在了修改的菜单项旁边。不会和系统快捷键冲突的话，现在在 OmegaT 中应该有效了。</para>
+
+    <table id="menu.item.codes">
+      <title>菜单项代码</title>
+
+      <indexterm class="singular">
+        <primary>快捷键</primary> <secondary>自定义</secondary>
+      </indexterm>
+
+      <tgroup cold="3" cols="3" colsep="1">
+        <colspec align="left" colname="1" colnum="1" colwidth="100"/>
+
+        <colspec align="left" colname="2" colnum="2" colwidth="100"/>
+
+        <colspec align="left" colname="3" colnum="3"/>
+
+        <thead>
+          <row>
+            <entry>菜单项</entry>
+
+            <entry>缺省快捷键</entry>
+
+            <entry>菜单项代码</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry align="center" nameend="3" namest="1">项目菜单</entry>
+          </row>
+
+          <row>
+            <entry>新建</entry>
+
+            <entry/>
+
+            <entry>projectNewMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>打开</entry>
+
+            <entry>Ctrl+O</entry>
+
+            <entry>projectOpenMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>导入源文件</entry>
+
+            <entry/>
+
+            <entry>projectImportMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>从 MediaWiki 导入……</entry>
+
+            <entry/>
+
+            <entry>projectWikiImportMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>重新载入</entry>
+
+            <entry>F5</entry>
+
+            <entry>projectReloadMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>关闭</entry>
+
+            <entry>Ctrl+Shift+W</entry>
+
+            <entry>projectCloseMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>保存</entry>
+
+            <entry>Ctrl+S</entry>
+
+            <entry>projectSaveMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>创建已译文档</entry>
+
+            <entry>Ctrl+D</entry>
+
+            <entry>projectCompileMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>属性……</entry>
+
+            <entry>Ctrl+E</entry>
+
+            <entry>projectEditMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>项目文件……</entry>
+
+            <entry>Ctrl+L</entry>
+
+            <entry>viewFileListMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>退出</entry>
+
+            <entry>Ctrl+Q</entry>
+
+            <entry>projectExitMenuItem</entry>
+          </row>
+
+          <row>
+            <entry align="center" nameend="3" namest="1">Edit Menu</entry>
+          </row>
+
+          <row>
+            <entry>取消上一个动作</entry>
+
+            <entry>Ctrl+Z</entry>
+
+            <entry>editUndoMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>重做上一个动作</entry>
+
+            <entry>Ctrl+Y</entry>
+
+            <entry>editRedoMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>用匹配替代</entry>
+
+            <entry>Ctrl+R</entry>
+
+            <entry>editOverwriteTranslationMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>插入匹配</entry>
+
+            <entry>Ctrl+I</entry>
+
+            <entry>editInsertTranslationMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>使用机器翻译替代</entry>
+
+            <entry>Ctrl+M</entry>
+
+            <entry>editOverwriteMachineTranslationMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>用源文本替代</entry>
+
+            <entry>Shift+Ctrl+R</entry>
+
+            <entry>editOverwriteSourceMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>插入源文本</entry>
+
+            <entry>Shift+Ctrl+I</entry>
+
+            <entry>editInsertSourceMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>插入源标签</entry>
+
+            <entry>Shift+Ctrl+T</entry>
+
+            <entry>editTagPainterMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>导出选中部分</entry>
+
+            <entry>Shift+Ctrl+C</entry>
+
+            <entry>editExportSelectionMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>创建词汇表条目</entry>
+
+            <entry>Shift+Ctrl+G</entry>
+
+            <entry>editCreateGlossaryEntryMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>在项目中搜索……</entry>
+
+            <entry>Ctrl+F</entry>
+
+            <entry>editFindInProjectMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>选择第一个匹配</entry>
+
+            <entry>Ctrl+1</entry>
+
+            <entry>editSelectFuzzy1MenuItem</entry>
+          </row>
+
+          <row>
+            <entry>选择第二个匹配</entry>
+
+            <entry>Ctrl+2</entry>
+
+            <entry>editSelectFuzzy2MenuItem</entry>
+          </row>
+
+          <row>
+            <entry>选择第三个匹配</entry>
+
+            <entry>Ctrl+3</entry>
+
+            <entry>editSelectFuzzy3MenuItem</entry>
+          </row>
+
+          <row>
+            <entry>选择第四个匹配</entry>
+
+            <entry>Ctrl+4</entry>
+
+            <entry>editSelectFuzzy4MenuItem</entry>
+          </row>
+
+          <row>
+            <entry>选择第五个匹配</entry>
+
+            <entry>Ctrl+5</entry>
+
+            <entry>editSelectFuzzy5MenuItem</entry>
+          </row>
+
+          <row>
+            <entry>用作默认翻译</entry>
+
+            <entry/>
+
+            <entry>editMultipleDefault</entry>
+          </row>
+
+          <row>
+            <entry>创建可选翻译</entry>
+
+            <entry/>
+
+            <entry>editMultipleAlternate</entry>
+          </row>
+
+          <row>
+            <entry>小写</entry>
+
+            <entry/>
+
+            <entry>lowerCaseMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>大写</entry>
+
+            <entry/>
+
+            <entry>upperCaseMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>首字母大写</entry>
+
+            <entry/>
+
+            <entry>titleCaseMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>切换大小写状态为……</entry>
+
+            <entry>Shift+F3</entry>
+
+            <entry>cycleSwitchCaseMenuItem</entry>
+          </row>
+
+          <row>
+            <entry align="center" nameend="3" namest="1">前往菜单</entry>
+          </row>
+
+          <row>
+            <entry>下一未译片段</entry>
+
+            <entry>Ctrl+U</entry>
+
+            <entry>gotoNextUntranslatedMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>下一片段</entry>
+
+            <entry>Ctrl+N 或 Enter 或 Tab</entry>
+
+            <entry>gotoNextSegmentMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>上一片段</entry>
+
+            <entry>Ctrl+P 或 Ctrl+Enter 或 Ctrl+Tab</entry>
+
+            <entry>gotoPreviousSegmentMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>片段序号……</entry>
+
+            <entry>Ctrl+J</entry>
+
+            <entry>gotoSegmentMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>后一笔记</entry>
+
+            <entry/>
+
+            <entry>gotoNextNoteMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>上一笔记</entry>
+
+            <entry/>
+
+            <entry>gotoPreviousNoteMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>在历史中回退</entry>
+
+            <entry>Ctrl+Shift+P</entry>
+
+            <entry>gotoHistoryForwardMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>在历史中前进</entry>
+
+            <entry>Ctrl+Shift+N</entry>
+
+            <entry>gotoHistoryBackMenuItem</entry>
+          </row>
+
+          <row>
+            <entry align="center" nameend="3" namest="1">查看菜单</entry>
+          </row>
+
+          <row>
+            <entry>标记已译片段</entry>
+
+            <entry/>
+
+            <entry>viewMarkTranslatedSegmentsCheckBoxMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>标记未译片段</entry>
+
+            <entry/>
+
+            <entry>viewMarkUntranslatedSegmentsCheckBoxMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>显示源片段</entry>
+
+            <entry/>
+
+            <entry>viewDisplaySegmentSourceCheckBoxMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>标记非独特片段</entry>
+
+            <entry/>
+
+            <entry>viewMarkNonUniqueSegmentsCheckBoxMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>修改信息/不显示</entry>
+
+            <entry/>
+
+            <entry>viewDisplayModificationInfoNoneRadioButtonMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>修改信息/显示选中部分</entry>
+
+            <entry/>
+
+            <entry>viewDisplayModificationInfoSelectedRadioButtonMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>修改信息/显示所有</entry>
+
+            <entry/>
+
+            <entry>viewDisplayModificationInfoAllRadioButtonMenuItem</entry>
+          </row>
+
+          <row>
+            <entry align="center" nameend="3" namest="1">工具菜单</entry>
+          </row>
+
+          <row>
+            <entry>检验标签</entry>
+
+            <entry>Ctrl +T</entry>
+
+            <entry>toolsValidateTagsMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>移除标签</entry>
+
+            <entry/>
+
+            <entry>toolsRemoveTagsCheckBoxMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>统计(&amp;S)</entry>
+
+            <entry/>
+
+            <entry>toolsShowStatisticsStandardMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>匹配统计(&amp;M)</entry>
+
+            <entry/>
+
+            <entry>toolsShowStatisticsMatchesMenuItem</entry>
+          </row>
+
+          <row>
+            <entry align="center" nameend="3" namest="1">选项菜单</entry>
+          </row>
+
+          <row>
+            <entry>使用 Tab 前进</entry>
+
+            <entry/>
+
+            <entry>optionsTabAdvanceCheckBoxMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>退出前总是确认</entry>
+
+            <entry/>
+
+            <entry>optionsAlwaysConfirmQuitCheckBoxMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>机器翻译</entry>
+
+            <entry/>
+
+            <entry/>
+          </row>
+
+          <row>
+            <entry>翻译提示/启用翻译提示</entry>
+
+            <entry/>
+
+            <entry>optionsTransTipsEnableMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>翻译提示/精确匹配</entry>
+
+            <entry/>
+
+            <entry>optionsTransTipsExactMatchMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>字体……</entry>
+
+            <entry/>
+
+            <entry>optionsFontSelectionMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>文件过滤器……</entry>
+
+            <entry/>
+
+            <entry>optionsSetupFileFiltersMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>分割规则……</entry>
+
+            <entry/>
+
+            <entry>optionsSentsegMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>拼写检查……</entry>
+
+            <entry/>
+
+            <entry>optionsSpellCheckMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>编辑行为……</entry>
+
+            <entry/>
+
+            <entry>optionsWorkflowMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>标签验证……</entry>
+
+            <entry/>
+
+            <entry>optionsTagValidationMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>团队……</entry>
+
+            <entry/>
+
+            <entry>optionsTeamMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>外部 TMX ……</entry>
+
+            <entry/>
+
+            <entry>optionsExtTMXMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>查看……</entry>
+
+            <entry/>
+
+            <entry>optionsViewOptionsMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>登录代理服务器……</entry>
+
+            <entry/>
+
+            <entry>optionsViewOptionsMenuLoginItem</entry>
+          </row>
+
+          <row>
+            <entry>恢复主窗口</entry>
+
+            <entry/>
+
+            <entry>optionsRestoreGUIMenuItem</entry>
+          </row>
+
+          <row>
+            <entry align="center" nameend="3" namest="1">帮助菜单</entry>
+          </row>
+
+          <row>
+            <entry>用户手册……</entry>
+
+            <entry>F1</entry>
+
+            <entry>helpContentsMenuItem</entry>
+          </row>
+
+          <row>
+            <entry>关于……</entry>
+
+            <entry/>
+
+            <entry>helpAboutMenuItem</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
   </section>
 </chapter>
