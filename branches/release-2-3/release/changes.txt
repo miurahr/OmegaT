@@ -9,7 +9,8 @@
 
   Other enhancements:
 
-  - Italian segmentation rules
+  - Segmentation rules for Italian
+  http://sourceforge.net/support/tracker.php?aid=3497206
 
   Bug fixes:
 
