@@ -3,8 +3,8 @@
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
    
       <title>Chapter&nbsp;5.&nbsp;菜单和键盘快捷键</title>
-      <link rel="stylesheet" type="text/css" href="OmegaT.css">
-      <meta name="generator" content="DocBook XSL Stylesheets V1.76.1">
+      <link rel="stylesheet" href="OmegaT.css" type="text/css">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
       <link rel="home" href="index.html" title="OmegaT - 用户向导">
       <link rel="up" href="index.html" title="OmegaT - 用户向导">
       <link rel="prev" href="chapter.user.interface.html" title="Chapter&nbsp;4.&nbsp;用户界面">
@@ -37,550 +37,498 @@
          <div class="toc">
             <dl>
                <dt><span class="section"><a href="chapter.menu.html#ch04.main.menu">1. 主菜单</a></span></dt>
+               <dt><span class="section"><a href="chapter.menu.html#submenu.Project">2. 项目</a></span></dt>
+               <dt><span class="section"><a href="chapter.menu.html#d0e3166">3. 编辑</a></span></dt>
+               <dt><span class="section"><a href="chapter.menu.html#submenu.GoTo">4. 前往</a></span></dt>
+               <dt><span class="section"><a href="chapter.menu.html#submenu.View">5. 查看</a></span></dt>
+               <dt><span class="section"><a href="chapter.menu.html#submenu.Tools">6. 工具</a></span></dt>
+               <dt><span class="section"><a href="chapter.menu.html#submenu.Options">7. 选项</a></span></dt>
+               <dt><span class="section"><a href="chapter.menu.html#submenu.Help">8. 帮助</a></span></dt>
+               <dt><span class="section"><a href="chapter.menu.html#keyboard.shortcuts">9. 键盘快捷键</a></span></dt>
                <dd>
                   <dl>
-                     <dt><span class="section"><a href="chapter.menu.html#submenu.Project">1.1. 项目</a></span></dt>
-                     <dt><span class="section"><a href="chapter.menu.html#submenu.Edit">1.2. 编辑</a></span></dt>
-                     <dt><span class="section"><a href="chapter.menu.html#submenu.GoTo">1.3. 前往</a></span></dt>
-                     <dt><span class="section"><a href="chapter.menu.html#submenu.View">1.4. 查看</a></span></dt>
-                     <dt><span class="section"><a href="chapter.menu.html#submenu.Tools">1.5. 工具</a></span></dt>
-                     <dt><span class="section"><a href="chapter.menu.html#submenu.Options">1.6. 选项</a></span></dt>
-                     <dt><span class="section"><a href="chapter.menu.html#submenu.Help">1.7. 帮助</a></span></dt>
+                     <dt><span class="section"><a href="chapter.menu.html#d0e3844">9.1. 项目管理</a></span></dt>
+                     <dt><span class="section"><a href="chapter.menu.html#keyboard.editing">9.2. 编辑</a></span></dt>
+                     <dt><span class="section"><a href="chapter.menu.html#keyboard.moving.around">9.3. 来回移动</a></span></dt>
+                     <dt><span class="section"><a href="chapter.menu.html#keyboard.other">9.4. 其它</a></span></dt>
                   </dl>
                </dd>
-               <dt><span class="section"><a href="chapter.menu.html#keyboard.shortcuts">2. 键盘快捷键</a></span></dt>
-               <dd>
-                  <dl>
-                     <dt><span class="section"><a href="chapter.menu.html#d0e3930">2.1. 项目管理</a></span></dt>
-                     <dt><span class="section"><a href="chapter.menu.html#keyboard.editing">2.2. 编辑</a></span></dt>
-                     <dt><span class="section"><a href="chapter.menu.html#keyboard.moving.around">2.3. 来回移动</a></span></dt>
-                     <dt><span class="section"><a href="chapter.menu.html#keyboard.other">2.4. 其它</a></span></dt>
-                  </dl>
-               </dd>
-               <dt><span class="section"><a href="chapter.menu.html#ch04.shortcuts.customization">3. 自定义快捷键</a></span></dt>
+               <dt><span class="section"><a href="chapter.menu.html#ch04.shortcuts.customization">10. 自定义快捷键</a></span></dt>
             </dl>
          </div>
          <div class="section" title="1.&nbsp;主菜单">
             <div class="titlepage">
                <div>
                   <div>
-                     <h2 class="title" style="clear: both"><a name="ch04.main.menu"></a>1.&nbsp;<a class="indexterm" name="d0e2940"></a>主菜单
+                     <h2 class="title" style="clear: both"><a name="ch04.main.menu"></a>1.&nbsp;<a class="indexterm" name="d0e2963"></a>主菜单
                      </h2>
                   </div>
                </div>
-            </div><a class="indexterm" name="d0e2944"></a><p>OmegaT 的所有功能均可通过编辑器窗口顶部的菜单栏来调用。多数功能也可以通过 &lt;a0&gt;键盘快捷方式&lt;/a0&gt;调用。快捷键通过按 <span class="keycap"><strong>Ctrl</strong></span> 和字母键来激活。某些快捷键还包含其他按键。为了增强可读性，本手册中这些字母以大写形式出现。<span class="keycap"><strong>Ctrl</strong></span> 在 Windows 系统中使用， UNIX 和类 UNIX 操作系统使用 <span class="keycap"><strong>Ctrl</strong></span> 或 <span class="keycap"><strong>Control</strong></span> 键。Mac 用户应该使用 <span class="keycap"><strong>cmd</strong></span>+<span class="keycap"><strong>键</strong></span> 来代替它。"Cmd" 键就是在苹果键盘上印有 "command" 或“苹果”符号的那个键。
+            </div><a class="indexterm" name="d0e2967"></a><p>OmegaT 的所有功能均可通过编辑器窗口顶部的菜单栏来调用。多数功能也可以通过键盘快捷方式调用。快捷键通过按 <span class="keycap"><strong>Ctrl</strong></span> 和字母键来激活。某些快捷键还包含其他按键。为了增强可读性，本手册中这些字母以大写形式出现。<span class="keycap"><strong>Ctrl</strong></span> 在 Windows 系统中使用， UNIX 和类 UNIX 操作系统使用 <span class="keycap"><strong>Ctrl</strong></span> 或 <span class="keycap"><strong>Control</strong></span> 键。Mac 用户应该使用 <span class="keycap"><strong>cmd</strong></span>+<span class="keycap"><strong>键</strong></span> 来代替它。"Cmd" 键就是在苹果键盘上印有 "command" 或“苹果”符号的那个键。
             </p>
-            <p>使用了插件后，可能出现新的菜单项。</p>
             <div class="table"><a name="table.main.menu"></a><p class="title"><b>Table&nbsp;5.1.&nbsp;主菜单</b></p>
                <div class="table-contents">
                   <table summary="主菜单" border="1">
                      <colgroup>
-                        <col align="left">
-                        <col align="left">
-                        <col align="left">
-                        <col align="left">
-                        <col align="left">
-                        <col align="left">
-                        <col align="left">
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
+                        <col>
                      </colgroup>
                      <tbody>
                         <tr>
-                           <td align="left"><a class="link" href="chapter.menu.html#project.menu.table" title="Table&nbsp;5.2.&nbsp;项目菜单"><span class="guimenuitem">项目</span></a></td>
-                           <td align="left"><a class="link" href="chapter.menu.html#edit.menu.table" title="Table&nbsp;5.4.&nbsp;编辑菜单"><span class="guimenuitem">编辑</span></a></td>
-                           <td align="left"><a class="link" href="chapter.menu.html#goto.menu.table" title="Table&nbsp;5.5.&nbsp;前往菜单"><span class="guimenuitem">前往</span></a></td>
-                           <td align="left"><a class="link" href="chapter.menu.html#view.menu.table" title="Table&nbsp;5.6.&nbsp;查看菜单"><span class="guimenuitem">查看</span></a></td>
-                           <td align="left"><a class="link" href="chapter.menu.html#tools.menu.table" title="Table&nbsp;5.7.&nbsp;工具菜单"><span class="guimenuitem">工具</span></a></td>
-                           <td align="left"><a class="link" href="chapter.menu.html#options.menu.table" title="Table&nbsp;5.8.&nbsp;选项菜单"><span class="guimenuitem">选项</span></a></td>
-                           <td align="left"><a class="link" href="chapter.menu.html#help.menu.table" title="Table&nbsp;5.9.&nbsp;帮助菜单"><span class="guimenuitem">帮助</span></a></td>
+                           <td><span class="guimenuitem">项目</span></td>
+                           <td><span class="guimenuitem">编辑</span></td>
+                           <td><span class="guimenuitem">前往</span></td>
+                           <td><span class="guimenuitem">查看</span></td>
+                           <td><span class="guimenuitem">工具</span></td>
+                           <td><span class="guimenuitem">选项</span></td>
+                           <td><span class="guimenuitem">帮助</span></td>
                         </tr>
                      </tbody>
                   </table>
                </div>
-            </div><br class="table-break"><div class="section" title="1.1.&nbsp;项目">
-               <div class="titlepage">
-                  <div>
-                     <div>
-                        <h3 class="title"><a name="submenu.Project"></a>1.1.&nbsp;项目<a class="indexterm" name="d0e3015"></a></h3>
-                     </div>
-                  </div>
-               </div>
-               <div class="table"><a name="project.menu.table"></a><p class="title"><b>Table&nbsp;5.2.&nbsp;项目菜单</b></p>
-                  <div class="table-contents">
-                     <table summary="项目菜单" border="1">
-                        <colgroup>
-                           <col width="100" align="left">
-                           <col width="100" align="left">
-                           <col>
-                        </colgroup>
-                        <tbody>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">新建</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>创建并打开一个新项目。创建项目的对话框与编辑项目属性的相同。请参阅<a class="xref" href="chapter.project.properties.html" title="Chapter&nbsp;6.&nbsp;项目属性">Chapter&nbsp;6, <i>项目属性</i></a></td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">打开</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>O</strong></span></td>
-                              <td>打开之前创建的项目。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">导入源文件……</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>将选中的文件复制到<code class="filename">源</code>目录，并重新加载项目以载入新文件。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">从 MediaWiki 导入……</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>根据输入的 URL 从 MediaWiki 页面导入单元。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">重新载入</span></td>
-                              <td align="left"><span class="keycap"><strong>F5</strong></span></td>
-                              <td>重新载入项目以使源文件的外部修改生效，并保留之前的翻译记忆、术语表内容和项目设置。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">关闭</span></td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>W</strong></span></td>
-                              <td>保存翻译并关闭项目。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">保存</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>S</strong></span></td>
-                              <td>将内部的翻译记忆保存到硬盘。OmegaT 每十分钟保存一次翻译，且在关闭项目或退出前自动保存。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">创建已译文档</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>D</strong></span></td>
-                              <td>根据您对文档文本的翻译创建目标文档。创建的目标文档放置在<code class="filename">目标</code>文件夹中。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">属性……</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>E</strong></span></td>
-                              <td>显示<a class="link" href="chapter.project.properties.html" title="Chapter&nbsp;6.&nbsp;项目属性">项目属性</a>对话框以便编辑项目语言和文件夹位置。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">项目文件……</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>L</strong></span></td>
-                              <td>关闭或打开<a class="link" href="chapter.user.interface.html#section.project.files" title="3.1.&nbsp;项目文件">项目文件窗口</a>（取决于它处于打开或关闭状态）。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">退出</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Q</strong></span></td>
-                              <td>保存项目并退出 <span class="application">OmegaT</span>。如果您未手动保存项目，系统将会让您确认是否真要要退出。
-                              </td>
-                           </tr>
-                        </tbody>
-                     </table>
-                  </div>
-               </div><br class="table-break"></div>
-            <div class="section" title="1.2.&nbsp;编辑">
-               <div class="titlepage">
-                  <div>
-                     <div>
-                        <h3 class="title"><a name="submenu.Edit"></a>1.2.&nbsp;编辑<a class="indexterm" name="d0e3162"></a></h3>
-                     </div>
-                  </div>
-               </div>
-               <p>注意：在多数程序中可以找到的（复制/剪切/粘贴）条目没有出现在这个菜单中，但是您可以通过系统快捷键使用。例如：</p>
-               <div class="table"><a name="d0e3169"></a><p class="title"><b>Table&nbsp;5.3.&nbsp;复制/剪切/粘贴快捷键</b></p>
-                  <div class="table-contents">
-                     <table summary="复制/剪切/粘贴快捷键" border="1">
-                        <colgroup>
-                           <col width="100" align="left">
-                           <col width="100" align="left">
-                           <col>
-                        </colgroup>
-                        <tbody>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">复制</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>C</strong></span></td>
-                              <td>复制选中的文本到剪贴板。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">剪切</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>X</strong></span></td>
-                              <td>将选中的文本复制到剪贴板并删除选中文本。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">粘贴</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>V</strong></span></td>
-                              <td>将剪贴板中的文本粘贴到光标位置。</td>
-                           </tr>
-                        </tbody>
-                     </table>
-                  </div>
-               </div><br class="table-break"><p>该菜单本身包括下列条目：</p>
-               <div class="table"><a name="edit.menu.table"></a><p class="title"><b>Table&nbsp;5.4.&nbsp;编辑菜单</b></p>
-                  <div class="table-contents">
-                     <table summary="编辑菜单" border="1">
-                        <colgroup>
-                           <col width="100" align="left">
-                           <col width="100" align="left">
-                           <col>
-                        </colgroup>
-                        <tbody>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">取消上一个动作</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Z</strong></span></td>
-                              <td>恢复上一个编辑动作发生之前的状态。一旦所修改的片段生效，该操作将会失效。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">重做上一个动作</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Y</strong></span></td>
-                              <td>恢复上一个编辑动作取消之前的状态。一旦所修改的片段生效，该操作将会失效。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">用匹配替代</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>R</strong></span></td>
-                              <td>使用当前选中的模糊匹配覆盖整个目标片段（默认选中第1个匹配）。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">插入匹配</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>I</strong></span></td>
-                              <td>将当前选中的模糊匹配插入到光标位置。如果已选中了目标片段的某个部分，则此功能会覆盖那部分。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">使用机器翻译替代</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>M</strong></span></td>
-                              <td>使用选择的机器翻译服务提供的译文取代目标片段。如果未激活机器翻译服务（请参阅下面的<span class="guimenu">选项</span>），将不会有任何动作。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">用源文本替代</span></td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>R</strong></span></td>
-                              <td>使用源片段覆盖整个目标片段。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">插入源文本</span></td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>I</strong></span></td>
-                              <td>在光标位置插入源段落内容。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">插入源标签</span></td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>T</strong></span></td>
-                              <td><a class="indexterm" name="d0e3326"></a>在光标位置插入源标签。原文中的所有标签都将被插入到当前片段，不论它们当前是否存在。标签内的文本被替换为空格：<code class="literal">&lt;f0&gt;&lt;f1&gt;This is text&lt;/f0&gt;&lt;/f1&gt;</code> thus will be copied as <code class="literal">&lt;f0&gt;&lt;f1&gt;&nbsp;&lt;/f0&gt;&lt;/f1&gt;</code></td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">导出选中部分</span></td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>C</strong></span></td>
-                              <td>将当前选中内容导出至文本文件进行处理。如果未选中文本，将导出当前的源片段至该文件。当用户退出 <span class="application">OmegaT</span> 时，为了与通常的剪贴板行为一致，该文件不会清空。导出的内容被复制到位于用户首选项文件文件夹（请参阅<a class="xref" href="chapter.files.and.directories.html" title="Chapter&nbsp;8.&nbsp;OmegaT 文件和目录">Chapter&nbsp;8, <i><span class="application">OmegaT</span> 文件和目录</i></a>）的 <code class="filename">selection.txt</code> 文件中。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">创建词汇表条目</span></td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>G</strong></span></td>
-                              <td>打开新的<a class="link" href="chapter.glossaries.html" title="Chapter&nbsp;19.&nbsp;词汇表">词汇表条目窗口</a>。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">在项目中搜索……</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>F</strong></span></td>
-                              <td>打开新<a class="link" href="chapter.user.interface.html#section.search.window" title="3.2.&nbsp;搜索窗口">搜索窗口</a>。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenu">切换大小写状态为</span> → <span class="guimenuitem">小写形式/大写形式/首字符大写形式</span></td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>F3</strong></span></td>
-                              <td>将目标片段中突出显示的文本之大小写状态修改为选定选项（小写、 大写或首字符大写）。可使用 Shift+F3 <a class="indexterm" name="d0e3406"></a>在三种选择之间循环切换。如果未选中文本， <span class="application">OmegaT</span> 将选中包含了紧挨着光标右边字母的单词。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">选择第 #N 号模糊匹配</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>#N</strong></span></td>
-                              <td>(#N 为 1 至 5 之间的数字) - 选择在匹配查看器中列出的第 N 个模糊匹配项，并将其替代或插入该段中。<a class="xref" href="chapter.user.interface.html#match.viewer" title="2.2.&nbsp;匹配查看器">Section&nbsp;2.2, “匹配查看器”</a> 描述了关于颜色代码的细节。
-                              </td>
-                           </tr>
-                        </tbody>
-                     </table>
-                  </div>
-               </div><br class="table-break"></div>
-            <div class="section" title="1.3.&nbsp;前往">
-               <div class="titlepage">
-                  <div>
-                     <div>
-                        <h3 class="title"><a name="submenu.GoTo"></a>1.3.&nbsp;前往<a class="indexterm" name="d0e3432"></a></h3>
-                     </div>
-                  </div>
-               </div>
-               <div class="table"><a name="goto.menu.table"></a><p class="title"><b>Table&nbsp;5.5.&nbsp;前往菜单</b></p>
-                  <div class="table-contents">
-                     <table summary="前往菜单" border="1">
-                        <colgroup>
-                           <col width="100" align="left">
-                           <col width="100" align="left">
-                           <col>
-                        </colgroup>
-                        <tbody>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">下一未译片段</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>U</strong></span></td>
-                              <td>移动到翻译记忆中无相同内容的下一个片段。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">下一片段</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>N</strong></span> 或 <span class="keycap"><strong>Enter</strong></span> (或 <span class="keycap"><strong>Tab</strong></span>)
-                              </td>
-                              <td>移动到下一片段。如果当前片段是文件中的最后一个片段，将移动到下个文件的第一个片段。通过设置<span class="guimenu">选项</span> → <span class="guimenuitem">使用 Tab 前移</span>可使用 <span class="keycap"><strong>Tab</strong></span> 移动到下一个片段。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">上一片段</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>P</strong></span> 或 <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Enter</strong></span> (或 <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Tab</strong></span>)
-                              </td>
-                              <td>移动到上一片段。如果当前片段是文件中的第一个片段，将移动到前个文件的最后一个片段。通过设置<span class="guimenu">选项</span> → <span class="guimenuitem">使用 Tab 前移</span>可使用<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Tab</strong></span>移动到上一个片段。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">片段序号……</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>J</strong></span></td>
-                              <td>跳到输入的片段序号。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">在历史中前进</span></td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>N</strong></span></td>
-                              <td><span class="application">OmegaT</span> 会记住访问过的片段。使用该命令您可在项目历史中前进。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">在历史中回退</span></td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>P</strong></span></td>
-                              <td><span class="application">OmegaT</span> 会记住访问过的片段。使用该命令您可在项目历史中后退。
-                              </td>
-                           </tr>
-                        </tbody>
-                     </table>
-                  </div>
-               </div><br class="table-break"></div>
-            <div class="section" title="1.4.&nbsp;查看">
-               <div class="titlepage">
-                  <div>
-                     <div>
-                        <h3 class="title"><a name="submenu.View"></a>1.4.&nbsp;查看<a class="indexterm" name="d0e3568"></a></h3>
-                     </div>
-                  </div>
-               </div>
-               <div class="table"><a name="view.menu.table"></a><p class="title"><b>Table&nbsp;5.6.&nbsp;查看菜单</b></p>
-                  <div class="table-contents">
-                     <table summary="查看菜单" border="1">
-                        <colgroup>
-                           <col width="100" align="left">
-                           <col width="100" align="left">
-                           <col>
-                        </colgroup>
-                        <tbody>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">标记已译片段</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>如果选上该选项，已译片段的已译文本将会以黄色背景显示。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">标记未译片段</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>如果选上该选项，未译的源文本将会以紫色背景显示。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">显示源片段</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>如果选上该选项，所有片段中的源文本将会以绿色背景显示。如果同时对未译片段进行标记，那么只有已译片段的源文本才以这种方式显示。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">标记非独特片段</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>如果选上该选项，非独特片段将使用</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenu">修改信息</span> → <span class="guimenuitem">不显示/显示所有/显示选中部分</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>设置显示修改信息选项为<span class="emphasis"><em>显示选中部分</em></span>来显示上次修改当前片段的时间和作者。设置为<span class="emphasis"><em>显示所有</em></span>来显示所有片段的这些信息或<span class="emphasis"><em>不显示</em></span>来关闭该选项。
-                              </td>
-                           </tr>
-                        </tbody>
-                     </table>
-                  </div>
-               </div><br class="table-break"></div>
-            <div class="section" title="1.5.&nbsp;工具">
-               <div class="titlepage">
-                  <div>
-                     <div>
-                        <h3 class="title"><a name="submenu.Tools"></a>1.5.&nbsp;工具<a class="indexterm" name="d0e3631"></a></h3>
-                     </div>
-                  </div>
-               </div>
-               <div class="table"><a name="tools.menu.table"></a><p class="title"><b>Table&nbsp;5.7.&nbsp;工具菜单</b></p>
-                  <div class="table-contents"><a class="indexterm" name="d0e3639"></a><a class="indexterm" name="d0e3644"></a><a class="indexterm" name="d0e3649"></a><table summary="工具菜单" border="1">
-                        <colgroup>
-                           <col width="100" align="left">
-                           <col width="100" align="left">
-                           <col>
-                        </colgroup>
-                        <tbody>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">检验标签</span></td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>T</strong></span></td>
-                              <td>检查格式化文件中的丢失或者错误放置的标签。将会显示一份含有错误和可能不一致标签的片段清单。请参阅<a class="link" href="chapter.user.interface.html#section.tag.validation" title="3.3.&nbsp;标签验证">标签检验</a>和<a class="xref" href="chapter.formatted.text.html" title="Chapter&nbsp;12.&nbsp;处理格式化文本">Chapter&nbsp;12, <i>处理格式化文本</i></a>。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">移除标签</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>启用该选项后，会从源片段中移除所有的格式化标签。<a class="link" href="chapter.user.interface.html#section.tag.validation" title="3.3.&nbsp;标签验证">标签检验</a>和<a class="xref" href="chapter.formatted.text.html" title="Chapter&nbsp;12.&nbsp;处理格式化文本">Chapter&nbsp;12, <i>处理格式化文本</i></a>。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">统计(&amp;S)</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>打开新的窗口并在其中显示项目的统计数据，即整个项目和项目中每个文件的统计数据。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">匹配统计(&amp;M)</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>显示当前项目的匹配统计：对于片段、单词和字符的重复、精确匹配、模糊匹配和无匹配的数目。</td>
-                           </tr>
-                        </tbody>
-                     </table>
-                  </div>
-               </div><br class="table-break"></div>
-            <div class="section" title="1.6.&nbsp;选项">
-               <div class="titlepage">
-                  <div>
-                     <div>
-                        <h3 class="title"><a name="submenu.Options"></a>1.6.&nbsp;<a class="indexterm" name="d0e3703"></a>选项
-                        </h3>
-                     </div>
-                  </div>
-               </div>
-               <div class="table"><a name="options.menu.table"></a><p class="title"><b>Table&nbsp;5.8.&nbsp;选项菜单</b></p>
-                  <div class="table-contents">
-                     <table summary="选项菜单" border="1">
-                        <colgroup>
-                           <col width="100" align="left">
-                           <col width="100" align="left">
-                           <col>
-                        </colgroup>
-                        <tbody>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">使用 Tab 前进</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>设置片段检验键为 <span class="guimenuitem">Tab</span> 代替默认的 <span class="guimenuitem">Enter</span>。该选项对于一些中文、日文、韩文字符输入系统非常有用。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">退出前总是确认</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>程序在关闭前必须得到确认。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">机器翻译</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>允许您激活/取消激活程序提供的机器翻译工具。激活后，使用 <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>M</strong></span> 可将翻译建议插入到当前片段的目标部分。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">翻译提示</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>可以让您激活/取消激活<span class="emphasis"><em>翻译提示</em></span>功能，并设置<span class="emphasis"><em>精确匹配</em></span>选项。<span class="emphasis"><em>翻译提示</em></span>激活了在原文中突出显示的单词上的右键菜单功能，这样在此单词上点击时将出现含有词汇表条目的弹出菜单。接着可以点击喜欢的翻译来将其插入目标片段的当前位置。选中<span class="emphasis"><em>翻译提示/精确匹配</em></span>时只检查完整的单词，否则也会匹配部分单词。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">字体……</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>显示对话框来以修改文本显示字体。感觉窗口尺寸变化非常缓慢的旧款计算机的用户可以尝试改变字体。请参阅<a class="xref" href="chapter.font.html" title="Chapter&nbsp;11.&nbsp;字体设置">Chapter&nbsp;11, <i>字体设置</i></a>。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">文件过滤器……</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>显示<a class="link" href="chapter.file.filters.html" title="Chapter&nbsp;7.&nbsp;文件过滤器">文件过滤器</a>对话框来设置文件的分析和处理。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">分割规则……</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>打开<a class="link" href="chapter.segmentation.html" title="Chapter&nbsp;15.&nbsp;源片段">源片段分割设置</a>对话框来配置文本片段分割设置。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">拼写检查……</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>显示<a class="link" href="chapter.spellchecker.html" title="Chapter&nbsp;21.&nbsp;拼写检查">拼写检查工具设置</a>窗口以安装、配置和激活拼写检查器。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">编辑行为……</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>显示<a class="link" href="chapter.translation.editing.html" title="Chapter&nbsp;10.&nbsp;编辑行为">翻译编辑</a>对话框以进行配置。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">标签验证……</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>对于程序员：您可以配置标签验证器选项以同时检查程序 (%...) 变量。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">团队……</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>在这里输入您的名字，它将被附加到您翻译的所有片段中。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">查看……</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>包含了粗体显示所有源片段和标记首个非独特片段的选项。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">登录代理服务器……</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>如果使用代理访问您的项目，请输入用户名和密码。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">恢复主窗口</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>将 OmegaT 窗口的组件恢复到缺省状态。在对一个或多个组件进行了分离、移动、隐藏操作之后，无法对它们进行还原时可以使用这个功能。它还可用于在更新 OmegaT 后不正确显示窗格时。</td>
-                           </tr>
-                        </tbody>
-                     </table>
-                  </div>
-               </div><br class="table-break"></div>
-            <div class="section" title="1.7.&nbsp;帮助">
-               <div class="titlepage">
-                  <div>
-                     <div>
-                        <h3 class="title"><a name="submenu.Help"></a>1.7.&nbsp;帮助<a class="indexterm" name="d0e3853"></a></h3>
-                     </div>
-                  </div>
-               </div>
-               <div class="table"><a name="help.menu.table"></a><p class="title"><b>Table&nbsp;5.9.&nbsp;帮助菜单</b></p>
-                  <div class="table-contents">
-                     <table summary="帮助菜单" border="1">
-                        <colgroup>
-                           <col width="100" align="left">
-                           <col width="100" align="left">
-                           <col>
-                        </colgroup>
-                        <tbody>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">用户手册……</span></td>
-                              <td align="left"><span class="keycap"><strong>F1</strong></span></td>
-                              <td>在独立的窗口中使用帮助浏览器打开本手册。</td>
-                           </tr>
-                           <tr>
-                              <td align="left"><span class="guimenuitem">关于……</span></td>
-                              <td align="left">&nbsp;</td>
-                              <td>显示版权、制作人员和授权信息。</td>
-                           </tr>
-                        </tbody>
-                     </table>
-                  </div>
-               </div><br class="table-break"></div>
-         </div>
-         <div class="section" title="2.&nbsp;键盘快捷键">
+            </div><br class="table-break"></div>
+         <div class="section" title="2.&nbsp;项目">
             <div class="titlepage">
                <div>
                   <div>
-                     <h2 class="title" style="clear: both"><a name="keyboard.shortcuts"></a>2.&nbsp;键盘快捷键<a class="indexterm" name="d0e3884"></a></h2>
+                     <h2 class="title" style="clear: both"><a name="submenu.Project"></a>2.&nbsp;项目<a class="indexterm" name="d0e3022"></a></h2>
+                  </div>
+               </div>
+            </div>
+            <div class="table"><a name="d0e3027"></a><p class="title"><b>Table&nbsp;5.2.&nbsp;项目菜单</b></p>
+               <div class="table-contents">
+                  <table summary="项目菜单" border="1">
+                     <colgroup>
+                        <col width="100" align="left">
+                        <col width="100" align="left">
+                        <col>
+                     </colgroup>
+                     <tbody>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">新建</span></td>
+                           <td align="left">&nbsp;</td>
+                           <td>创建并打开一个新项目。创建项目的对话框与编辑项目属性的相同。请参阅<a class="xref" href="chapter.project.properties.html" title="Chapter&nbsp;6.&nbsp;项目属性">Chapter&nbsp;6, <i>项目属性</i></a></td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">打开</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>O</strong></span></td>
+                           <td>打开之前创建的项目。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">导入源文件</span></td>
+                           <td align="left">&nbsp;</td>
+                           <td>将选中的文件复制到<code class="filename">源</code>目录，并重新加载项目以载入新文件。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">从 MediaWiki 导入……</span></td>
+                           <td align="left">&nbsp;</td>
+                           <td>根据输入的 URL 从 MediaWiki 页面导入单元。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">重新载入</span></td>
+                           <td align="left"><span class="keycap"><strong>F5</strong></span></td>
+                           <td>重新载入项目以使源文件的外部修改生效，并保留之前的翻译记忆、术语表内容和项目设置。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">关闭</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>W</strong></span></td>
+                           <td>保存翻译并关闭项目。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">保存</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>S</strong></span></td>
+                           <td>将内部的翻译记忆保存到硬盘。OmegaT 每十分钟保存一次翻译，且在关闭项目或退出前自动保存。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">创建已译文档</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>D</strong></span></td>
+                           <td>根据您对文档文本的翻译创建目标文档。创建的目标文档放置在<code class="filename">目标</code>文件夹中。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">属性……</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>E</strong></span></td>
+                           <td>显示<a class="link" href="chapter.project.properties.html" title="Chapter&nbsp;6.&nbsp;项目属性">项目属性</a>对话框以便编辑项目语言和文件夹位置。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">项目文件……</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>L</strong></span></td>
+                           <td>关闭或打开<a class="link" href="chapter.user.interface.html#section.project.files" title="3.1.&nbsp;项目文件">项目文件窗口</a>（取决于它处于打开或关闭状态）。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">退出</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Q</strong></span></td>
+                           <td>保存项目并退出 <span class="application">OmegaT</span>。如果您未手动保存项目，系统将会让您确认是否真要要退出。
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div><br class="table-break"></div>
+         <div class="section" title="3.&nbsp;编辑">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="d0e3166"></a>3.&nbsp;编辑<a class="indexterm" name="d0e3169"></a></h2>
+                  </div>
+               </div>
+            </div>
+            <p>注意：在多数程序中可以找到的（复制/剪切/粘贴）条目没有出现在这个菜单中，但是您可以通过系统快捷键使用。例如：</p>
+            <div class="table"><a name="d0e3176"></a><p class="title"><b>Table&nbsp;5.3.&nbsp;复制/剪切/粘贴快捷键</b></p>
+               <div class="table-contents">
+                  <table summary="复制/剪切/粘贴快捷键" border="1">
+                     <colgroup>
+                        <col width="100" align="left">
+                        <col width="100" align="left">
+                        <col>
+                     </colgroup>
+                     <tbody>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">复制</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>C</strong></span></td>
+                           <td>复制选中的文本到剪贴板。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">剪切</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>X</strong></span></td>
+                           <td>将选中的文本复制到剪贴板并删除选中文本。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">粘贴</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>V</strong></span></td>
+                           <td>将剪贴板中的文本粘贴到光标位置。</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div><br class="table-break"><p>该菜单本身包括下列条目：</p>
+            <div class="table"><a name="d0e3221"></a><p class="title"><b>Table&nbsp;5.4.&nbsp;编辑菜单</b></p>
+               <div class="table-contents">
+                  <table summary="编辑菜单" border="1">
+                     <colgroup>
+                        <col width="100" align="left">
+                        <col width="100" align="left">
+                        <col>
+                     </colgroup>
+                     <tbody>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">取消上一个动作</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Z</strong></span></td>
+                           <td>恢复上一个编辑动作发生之前的状态。一旦所修改的片段生效，该操作将会失效。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">重做上一个动作</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Y</strong></span></td>
+                           <td>恢复上一个编辑动作取消之前的状态。一旦所修改的片段生效，该操作将会失效。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">用匹配替代</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>R</strong></span></td>
+                           <td>使用当前选中的模糊匹配覆盖整个目标片段（默认选中第1个匹配）。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">插入匹配</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>I</strong></span></td>
+                           <td>将当前选中的模糊匹配插入到光标位置。如果已选中了目标片段的某个部分，则此功能会覆盖那部分。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">使用机器翻译替代</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>M</strong></span></td>
+                           <td>使用选择的机器翻译服务提供的译文取代目标片段。如果未激活机器翻译服务（参阅下面的 菜单 &gt; 选项），将不会有任何动作。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">用源文本替代</span></td>
+                           <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>R</strong></span></td>
+                           <td>使用源片段覆盖整个目标片段。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">插入源文本</span></td>
+                           <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>I</strong></span></td>
+                           <td>在光标位置插入源段落内容。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">插入源标签</span></td>
+                           <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>T</strong></span></td>
+                           <td><a class="indexterm" name="d0e3329"></a>在光标位置插入源标签。原文中的所有标签都将被插入到当前片段，不论它们当前是否存在。标签内的文本被替换为空格：<code class="literal">&lt;f0&gt;&lt;f1&gt;This is text&lt;/f0&gt;&lt;/f1&gt;</code> thus will be copied as <code class="literal">&lt;f0&gt;&lt;f1&gt;one_space&lt;/f0&gt;&lt;/f1&gt;</code></td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">导出选中部分</span></td>
+                           <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>C</strong></span></td>
+                           <td>将当前选中内容导出至文本文件进行处理。如果未选中文本，将导出当前的源片段至该文件。当用户退出 <span class="application">OmegaT</span> 时，为了与通常的剪贴板行为一致，该文件不会清空。导出的内容被复制到位于用户首选项文件文件夹（请参阅<a class="xref" href="chapter.files.and.directories.html" title="Chapter&nbsp;8.&nbsp;OmegaT 文件和目录">Chapter&nbsp;8, <i><span class="application">OmegaT</span> 文件和目录</i></a>）的 <code class="filename">selection.txt</code> 文件中。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">在项目中搜索……</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>F</strong></span></td>
+                           <td>打开新<a class="link" href="chapter.user.interface.html#section.search.window" title="3.2.&nbsp;搜索窗口">搜索窗口</a>。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">切换大小写状态为……</span></td>
+                           <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>F3</strong></span>（查阅文本）
+                           </td>
+                           <td>将目标片段中突出显示的文本之大小写状态修改为选定选项（小写、 大写或首字符大写）。可使用 Shift+F3 <a class="indexterm" name="d0e3390"></a>在三种选择之间循环切换。如果未选中文本， <span class="application">OmegaT</span> 将选中包含了紧挨着光标右边字母的单词。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">选择第 #N 号模糊匹配</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>#N</strong></span></td>
+                           <td>(#N 为 1 至 5 之间的数字) - 选择在匹配查看器中列出的第 N 个模糊匹配项，并将其替代或插入该段中。<a class="xref" href="chapter.user.interface.html#match.viewer" title="2.2.&nbsp;匹配查看器">Section&nbsp;2.2, “匹配查看器”</a> 描述了关于颜色代码的细节。
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div><br class="table-break"></div>
+         <div class="section" title="4.&nbsp;前往">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="submenu.GoTo"></a>4.&nbsp;前往<a class="indexterm" name="d0e3416"></a></h2>
+                  </div>
+               </div>
+            </div>
+            <div class="table"><a name="d0e3421"></a><p class="title"><b>Table&nbsp;5.5.&nbsp;前往菜单</b></p>
+               <div class="table-contents">
+                  <table summary="前往菜单" border="1">
+                     <colgroup>
+                        <col width="100" align="left">
+                        <col width="100" align="left">
+                        <col>
+                     </colgroup>
+                     <tbody>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">下一未译片段</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>U</strong></span></td>
+                           <td>移动到翻译记忆中无相同内容的下一个片段。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">下一片段</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>N</strong></span> 或 <span class="keycap"><strong>Enter</strong></span> or <span class="keycap"><strong>Tab</strong></span></td>
+                           <td>移动到下一片段。如果当前片段是文件中的最后一个片段，将移动到下个文件的第一个片段。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">前一片段</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>P</strong></span> 或 <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Enter</strong></span> 或 <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Tab</strong></span></td>
+                           <td>移动到前一片段。如果当前片段是文件中的第一个片段，将移动到前个文件的最后一个片段。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">片段序号……</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>J</strong></span></td>
+                           <td>通过输入片段序号打开片段。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">在编辑历史中回退……</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>P</strong></span></td>
+                           <td>通过该命令一次可以返回一个片段，在稍后可使用下面的<span class="guimenuitem">在编辑历史中前进……</span>命令返回当前片段。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">在编辑历史中前进……</span></td>
+                           <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>N</strong></span></td>
+                           <td><span class="application">OmegaT</span> 会记住执行过的片段。使用该命令可以前进到某片段，即您使用<span class="guimenuitem">在编辑历史中回退……</span>命令之前所处片段。
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div><br class="table-break"></div>
+         <div class="section" title="5.&nbsp;查看">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="submenu.View"></a>5.&nbsp;查看<a class="indexterm" name="d0e3533"></a></h2>
+                  </div>
+               </div>
+            </div>
+            <div class="table"><a name="d0e3538"></a><p class="title"><b>Table&nbsp;5.6.&nbsp;查看菜单</b></p>
+               <div class="table-contents">
+                  <table summary="查看菜单" border="1">
+                     <colgroup>
+                        <col width="100" align="left">
+                        <col>
+                     </colgroup>
+                     <tbody>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">标记已译片段</span></td>
+                           <td>如果选上该选项，已译片段将会标记为黄色。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">标记未译片段</span></td>
+                           <td>如果选上该选项，未译片段将会标记为紫色。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">显示源片段</span></td>
+                           <td>如果选上该选项，将会显示源片段并标记为绿色。如果未选上，将不会显示源片段。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">显示修改信息</span></td>
+                           <td>设置显示修改信息选项来<span class="emphasis"><em>选择</em></span>是否显示上次修改当前片段的时间和作者。可设置为<span class="emphasis"><em>所有</em></span>来显示所有片段的这些信息或<span class="emphasis"><em>不显示</em></span>来关闭该选项。
+                           </td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div><br class="table-break"></div>
+         <div class="section" title="6.&nbsp;工具">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="submenu.Tools"></a>6.&nbsp;工具<a class="indexterm" name="d0e3580"></a></h2>
+                  </div>
+               </div>
+            </div>
+            <div class="table"><a name="d0e3585"></a><p class="title"><b>Table&nbsp;5.7.&nbsp;工具菜单</b></p>
+               <div class="table-contents"><a class="indexterm" name="d0e3588"></a><a class="indexterm" name="d0e3593"></a><a class="indexterm" name="d0e3598"></a><table summary="工具菜单" border="1">
+                     <colgroup>
+                        <col width="100" align="left">
+                        <col>
+                     </colgroup>
+                     <tbody>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">检验标签</span></td>
+                           <td><span class="guimenu">Ctrl+T</span>：检查格式化文件中的丢失或者错误放置的标签。将会显示一份含有错误和可能不一致标签的片段清单。请参阅<a class="link" href="chapter.user.interface.html#section.tag.validation" title="3.3.&nbsp;标签验证">检验标签</a>和<a class="xref" href="chapter.formatted.text.html" title="Chapter&nbsp;12.&nbsp;处理格式化文本">Chapter&nbsp;12, <i>处理格式化文本</i></a>。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">统计(&amp;S)</span></td>
+                           <td>打开新的窗口并在其中显示项目的统计数据，即整个项目和项目中每个文件的统计数据。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">匹配统计(&amp;M)</span></td>
+                           <td>显示当前项目的匹配统计：对于片段、单词和字符的重复、精确匹配、模糊匹配和无匹配的数目。</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div><br class="table-break"></div>
+         <div class="section" title="7.&nbsp;选项">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="submenu.Options"></a>7.&nbsp;<a class="indexterm" name="d0e3633"></a>选项
+                     </h2>
+                  </div>
+               </div>
+            </div>
+            <div class="table"><a name="d0e3639"></a><p class="title"><b>Table&nbsp;5.8.&nbsp;选项菜单</b></p>
+               <div class="table-contents">
+                  <table summary="选项菜单" border="1">
+                     <colgroup>
+                        <col width="100" align="left">
+                        <col>
+                     </colgroup>
+                     <tbody>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">使用 Tab 前进</span></td>
+                           <td>设置片段检验键为 <span class="guimenuitem">Tab</span> 代替默认的 <span class="guimenuitem">Enter</span>。该选项对于一些中文、日文、韩文字符输入系统非常有用。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">退出前总是确认</span></td>
+                           <td>程序在关闭前必须得到确认。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">机器翻译</span></td>
+                           <td>允许您激活/取消激活程序提供的机器翻译工具。激活后，使用 <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>M</strong></span> 可将翻译建议插入到当前片段的目标部分。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">翻译提示</span></td>
+                           <td>可以让您激活/取消激活<span class="emphasis"><em>翻译提示</em></span>功能，并设置<span class="emphasis"><em>精确匹配</em></span>选项。<span class="emphasis"><em>翻译提示</em></span>激活了在原文中突出显示的单词上的右键菜单功能，这样在此单词上点击时将出现含有词汇表条目的弹出菜单。接着可以点击喜欢的翻译来将其插入目标片段的当前位置。选中<span class="emphasis"><em>翻译提示/精确匹配</em></span>时只检查完整的单词，否则也会匹配部分单词。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">字体……</span></td>
+                           <td>显示对话框来以修改文本显示字体。感觉窗口尺寸变化非常缓慢的旧款计算机的用户可以尝试改变字体。请参阅<a class="xref" href="chapter.font.html" title="Chapter&nbsp;11.&nbsp;字体设置">Chapter&nbsp;11, <i>字体设置</i></a>。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">文件过滤器……</span></td>
+                           <td>显示<a class="link" href="chapter.file.filters.html" title="Chapter&nbsp;7.&nbsp;文件过滤器">文件过滤器</a>对话框来设置文件的分析和处理。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">分割规则……</span></td>
+                           <td>打开<a class="link" href="chapter.segmentation.html" title="Chapter&nbsp;15.&nbsp;源片段">源片段分割设置</a>对话框来配置文本片段分割设置。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">拼写检查……</span></td>
+                           <td>显示<a class="link" href="chapter.spellchecker.html" title="Chapter&nbsp;21.&nbsp;拼写检查">拼写检查工具设置</a>窗口以安装、配置和激活拼写检查器。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">编辑行为……</span></td>
+                           <td>显示<a class="link" href="chapter.translation.editing.html" title="Chapter&nbsp;10.&nbsp;编辑行为">翻译编辑</a>对话框以进行配置。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">标签验证……</span></td>
+                           <td>对于程序员：您可以配置标签验证器选项以同时检查程序 (%...) 变量。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">团队……</span></td>
+                           <td>在这里输入您的名字，它将被附加到您翻译的所有片段中。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">查看……</span></td>
+                           <td>包含了粗体显示所有源片段和标记首个非独特片段的选项。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">登录代理服务器……</span></td>
+                           <td>如果使用代理访问您的项目，请输入用户名和密码。</td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">恢复主窗口</span></td>
+                           <td>将 OmegaT 窗口的组件恢复到缺省状态。在对一个或多个组件进行了分离、移动、隐藏操作之后，无法对它们进行还原时可以使用这个功能。它还可用于在更新 OmegaT 后不正确显示窗格时。</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div><br class="table-break"></div>
+         <div class="section" title="8.&nbsp;帮助">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="submenu.Help"></a>8.&nbsp;帮助<a class="indexterm" name="d0e3770"></a></h2>
+                  </div>
+               </div>
+            </div>
+            <div class="table"><a name="d0e3775"></a><p class="title"><b>Table&nbsp;5.9.&nbsp;帮助菜单</b></p>
+               <div class="table-contents">
+                  <table summary="帮助菜单" border="1">
+                     <colgroup>
+                        <col width="100" align="left">
+                        <col>
+                     </colgroup>
+                     <tbody>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">用户手册……</span></td>
+                           <td><span class="keycap"><strong>F1：</strong></span>在独立的窗口中使用帮助浏览器打开本手册。
+                           </td>
+                        </tr>
+                        <tr>
+                           <td align="left"><span class="guimenuitem">关于……</span></td>
+                           <td>显示版权、制作人员和授权信息。</td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div><br class="table-break"></div>
+         <div class="section" title="9.&nbsp;键盘快捷键">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title" style="clear: both"><a name="keyboard.shortcuts"></a>9.&nbsp;键盘快捷键<a class="indexterm" name="d0e3798"></a></h2>
                   </div>
                </div>
             </div>
@@ -588,7 +536,7 @@
             </p>
             <p>快捷键通过按 <span class="keycap"><strong>Ctrl</strong></span> 和字母键来激活。某些快捷键还包含其他按键。为了增强可读性，本手册中这些字母以大写形式出现。
             </p>
-            <p>Ctrl 键在 Windows 系统中使用，UNIX 和类 UNIX 操作系统使用 <span class="keycap"><strong>Ctrl</strong></span> / <span class="keycap"><strong>Control 键</strong></span>。Mac 用户应该转为使用 <span class="guimenuitem">Cmd 键。</span><span class="guimenuitem">Cmd</span> 键就是在苹果键盘上印有“command”或苹果符号的那个键。
+            <p>Ctrl 键在 Windows 系统中使用，UNIX 和类 UNIX 操作系统使用 <span class="keycap"><strong>Ctrl</strong></span> / <span class="keycap"><strong>Control 键</strong></span>。Mac 应该转为使用 <span class="guimenuitem">cmd+key。</span><span class="guimenuitem">Cmd</span> 键就是在苹果键盘上印有 "command" 或“苹果”符号的那个键。
             </p>
             <div class="itemizedlist">
                <ul class="itemizedlist" type="disc">
@@ -625,15 +573,15 @@
                   </li>
                </ul>
             </div>
-            <div class="section" title="2.1.&nbsp;项目管理">
+            <div class="section" title="9.1.&nbsp;项目管理">
                <div class="titlepage">
                   <div>
                      <div>
-                        <h3 class="title"><a name="d0e3930"></a>2.1.&nbsp;<a class="indexterm" name="d0e3932"></a>项目管理<a class="indexterm" name="d0e3938"></a></h3>
+                        <h3 class="title"><a name="d0e3844"></a>9.1.&nbsp;<a class="indexterm" name="d0e3846"></a>项目管理<a class="indexterm" name="d0e3852"></a></h3>
                      </div>
                   </div>
                </div>
-               <div class="table"><a name="d0e3943"></a><p class="title"><b>Table&nbsp;5.10.&nbsp;项目管理快捷键</b></p>
+               <div class="table"><a name="d0e3857"></a><p class="title"><b>Table&nbsp;5.10.&nbsp;项目管理快捷键</b></p>
                   <div class="table-contents">
                      <table summary="项目管理快捷键" border="1">
                         <colgroup>
@@ -646,16 +594,6 @@
                               <td align="left">打开项目</td>
                               <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>O</strong></span></td>
                               <td>打开对话框以打开一个现有的项目。</td>
-                           </tr>
-                           <tr>
-                              <td align="left">重新载入</td>
-                              <td align="left"><span class="keycap"><strong>F5</strong></span></td>
-                              <td>重新载入当前项目以使对项目设置的改变生效。</td>
-                           </tr>
-                           <tr>
-                              <td align="left">项目文件清单</td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>L</strong></span></td>
-                              <td>显示项目文件列表</td>
                            </tr>
                            <tr>
                               <td align="left">保存</td>
@@ -682,15 +620,15 @@
                      </table>
                   </div>
                </div><br class="table-break"></div>
-            <div class="section" title="2.2.&nbsp;编辑">
+            <div class="section" title="9.2.&nbsp;编辑">
                <div class="titlepage">
                   <div>
                      <div>
-                        <h3 class="title"><a name="keyboard.editing"></a>2.2.&nbsp;<a class="indexterm" name="d0e4031"></a>编辑<a class="indexterm" name="d0e4037"></a></h3>
+                        <h3 class="title"><a name="keyboard.editing"></a>9.2.&nbsp;<a class="indexterm" name="d0e3926"></a>编辑<a class="indexterm" name="d0e3932"></a></h3>
                      </div>
                   </div>
                </div>
-               <div class="table"><a name="d0e4042"></a><p class="title"><b>Table&nbsp;5.11.&nbsp;编辑快捷键</b></p>
+               <div class="table"><a name="d0e3937"></a><p class="title"><b>Table&nbsp;5.11.&nbsp;编辑快捷键</b></p>
                   <div class="table-contents">
                      <table summary="编辑快捷键" border="1">
                         <colgroup>
@@ -726,17 +664,17 @@
                            </tr>
                            <tr>
                               <td align="left">用源文本替代</td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>R</strong></span></td>
+                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Shift+R</strong></span></td>
                               <td>用源文本内容替换当前的目标片段。</td>
                            </tr>
                            <tr>
                               <td align="left">插入源文本</td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>I</strong></span></td>
+                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Shift+I</strong></span></td>
                               <td>在目标片段的当前位置插入源文本内容</td>
                            </tr>
                            <tr>
                               <td align="left">插入源标签</td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>T</strong></span></td>
+                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Shift+T</strong></span></td>
                               <td>在目标片段的当前位置插入源标签</td>
                            </tr>
                            <tr>
@@ -747,35 +685,22 @@
                            <tr>
                               <td align="left">使用机器翻译替代</td>
                               <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>M</strong></span></td>
-                              <td>使用原文的机器翻译的译文取代目标片段。如果未激活机器翻译服务（请参阅<span class="guimenu">选项</span> → <span class="guimenuitem">机器翻译</span>），将不会有任何动作。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left">创建词汇表条目</td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>G</strong></span></td>
-                              <td>打开新的<a class="link" href="chapter.glossaries.html" title="Chapter&nbsp;19.&nbsp;词汇表">词汇表条目窗口</a>。
-                              </td>
-                           </tr>
-                           <tr>
-                              <td align="left">切换大小写状态</td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>F3</strong></span></td>
-                              <td>将目标片段中突出显示的文本之大小写状态修改为选定选项（小写、 大写或首字符大写）。如果未选中文本，<span class="application">OmegaT</span> 会选中包含了紧挨着光标右边字母的单词。
-                              </td>
+                              <td>使用原文的机器翻译的译文取代目标片段。如果未激活机器翻译服务（参阅下面的 菜单 &gt; 选项 &gt; 机器翻译），将不会有任何动作。</td>
                            </tr>
                         </tbody>
                      </table>
                   </div>
                </div><br class="table-break"></div>
-            <div class="section" title="2.3.&nbsp;来回移动">
+            <div class="section" title="9.3.&nbsp;来回移动">
                <div class="titlepage">
                   <div>
                      <div>
-                        <h3 class="title"><a name="keyboard.moving.around"></a>2.3.&nbsp;<a class="indexterm" name="d0e4203"></a>来回移动
+                        <h3 class="title"><a name="keyboard.moving.around"></a>9.3.&nbsp;<a class="indexterm" name="d0e4056"></a>来回移动
                         </h3>
                      </div>
                   </div>
                </div>
-               <div class="table"><a name="d0e4209"></a><p class="title"><b>Table&nbsp;5.12.&nbsp;来回移动快捷键</b></p>
+               <div class="table"><a name="d0e4062"></a><p class="title"><b>Table&nbsp;5.12.&nbsp;来回移动快捷键</b></p>
                   <div class="table-contents">
                      <table summary="来回移动快捷键" border="1">
                         <colgroup>
@@ -791,13 +716,13 @@
                            </tr>
                            <tr>
                               <td align="left">下一片段</td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>N</strong></span>或<span class="keycap"><strong>Enter</strong></span>, <span class="keycap"><strong>Return</strong></span> 或 <span class="keycap"><strong>Tab</strong></span></td>
-                              <td>将编辑字段转到下一段。</td>
+                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>N</strong></span>，<span class="keycap"><strong>Enter</strong></span> 或 <span class="keycap"><strong>Return</strong></span></td>
+                              <td>移动编辑区域到下一个片段。</td>
                            </tr>
                            <tr>
-                              <td align="left">上一片段</td>
-                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>P</strong></span>或<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Enter</strong></span>或<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Return</strong></span>或 <span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Tab</strong></span></td>
-                              <td>将编辑区域转移到上一个片段</td>
+                              <td align="left">前一片段</td>
+                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>P</strong></span></td>
+                              <td>将编辑区域转移到前一个片段</td>
                            </tr>
                            <tr>
                               <td align="left">片段序号……</td>
@@ -805,29 +730,29 @@
                               <td>移动到所输入序号的片段</td>
                            </tr>
                            <tr>
-                              <td align="left">在历史中回退……</td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>P</strong></span></td>
-                              <td>在历史中回退……</td>
+                              <td align="left">在编辑历史中回退……</td>
+                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Shift+P</strong></span></td>
+                              <td>在编辑历史中回退……</td>
                            </tr>
                            <tr>
-                              <td align="left">在历史中前进……</td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>N</strong></span></td>
-                              <td>在历史中前进……</td>
+                              <td align="left">在编辑历史中前进……</td>
+                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>Shift+N</strong></span></td>
+                              <td>在编辑历史中前进……</td>
                            </tr>
                         </tbody>
                      </table>
                   </div>
                </div><br class="table-break"></div>
-            <div class="section" title="2.4.&nbsp;其它">
+            <div class="section" title="9.4.&nbsp;其它">
                <div class="titlepage">
                   <div>
                      <div>
-                        <h3 class="title"><a name="keyboard.other"></a>2.4.&nbsp;<a class="indexterm" name="d0e4315"></a>其它
+                        <h3 class="title"><a name="keyboard.other"></a>9.4.&nbsp;<a class="indexterm" name="d0e4143"></a>其它
                         </h3>
                      </div>
                   </div>
                </div>
-               <div class="table"><a name="d0e4321"></a><p class="title"><b>Table&nbsp;5.13.&nbsp;其他快捷键</b></p>
+               <div class="table"><a name="d0e4149"></a><p class="title"><b>Table&nbsp;5.13.&nbsp;其他快捷键</b></p>
                   <div class="table-contents">
                      <table summary="其他快捷键" border="1">
                         <colgroup>
@@ -837,13 +762,18 @@
                         </colgroup>
                         <tbody>
                            <tr>
+                              <td align="left">项目文件清单</td>
+                              <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>L</strong></span></td>
+                              <td>显示项目文件列表</td>
+                           </tr>
+                           <tr>
                               <td align="left">检验标签</td>
                               <td align="left"><span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>T</strong></span></td>
                               <td>打开标签验证窗口</td>
                            </tr>
                            <tr>
                               <td align="left">导出选中部分</td>
-                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl</strong></span>+<span class="keycap"><strong>C</strong></span></td>
+                              <td align="left"><span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Ctrl+C</strong></span></td>
                               <td>输出当前选中内容，如果未选中的话输出当前源片段。该文本被导出到纯文本文件。</td>
                            </tr>
                            <tr>
@@ -862,11 +792,11 @@
                   </div>
                </div><br class="table-break"></div>
          </div>
-         <div class="section" title="3.&nbsp;自定义快捷键">
+         <div class="section" title="10.&nbsp;自定义快捷键">
             <div class="titlepage">
                <div>
                   <div>
-                     <h2 class="title" style="clear: both"><a name="ch04.shortcuts.customization"></a>3.&nbsp;<a class="indexterm" name="d0e4376"></a>自定义快捷键
+                     <h2 class="title" style="clear: both"><a name="ch04.shortcuts.customization"></a>10.&nbsp;<a class="indexterm" name="d0e4213"></a>自定义快捷键
                      </h2>
                   </div>
                </div>
@@ -877,26 +807,26 @@
             </p>
             <p>修改 <code class="filename">MainMenuShortcuts.properties</code> 文件后，必须重新运行 <span class="application">OmegaT</span> 才能让新的快捷键生效。
             </p>
-            <p>快捷键定义的语法如下：<code class="code">&lt;menu item code&gt;=&lt;shortcut&gt;</code>，其中<span class="emphasis"><em>&lt;menu item code&gt;</em></span>是取自<a class="link" href="chapter.menu.html#menu.item.codes" title="Table&nbsp;5.14.&nbsp;菜单项代码">Menu Item Codes</a>中的代码，而<span class="emphasis"><em>&lt;shortcut&gt;</em></span>是由用户定义的按键组合<sup>[<a name="d0e4414" href="#ftn.d0e4414" class="footnote">1</a>]</sup>.
+            <p>快捷键定义的语法如下：<code class="code">&lt;menu item code&gt;=&lt;shortcut&gt;</code>，其中<span class="emphasis"><em>&lt;menu item code&gt;</em></span>是取自<a class="link" href="chapter.menu.html#menu.item.codes" title="Table&nbsp;5.14.&nbsp;菜单项代码">Menu Item Codes</a>中的代码，而<span class="emphasis"><em>&lt;shortcut&gt;</em></span>是由用户定义的按键组合<sup>[<a name="d0e4251" href="#ftn.d0e4251" class="footnote">1</a>]</sup>.
             </p>
             <p>&lt;shortcut&gt; 必须为下面的形式：<code class="code">0 或多个 &lt;modifier&gt; 后跟着 0 或 1 个 &lt;event&gt; 后跟着 &lt;key&gt;</code>，其中：
             </p>
             <div class="itemizedlist">
                <ul class="itemizedlist" type="disc">
                   <li class="listitem">
-                     <p><code class="code">&lt;modifier&gt;</code> 可以为：<span class="emphasis"><em>shift</em></span>, <span class="emphasis"><em>control</em></span>, <span class="emphasis"><em>ctrl</em></span>, <span class="emphasis"><em>meta</em></span><sup>[<a name="d0e4442" href="#ftn.d0e4442" class="footnote">2</a>]</sup>, <span class="emphasis"><em>alt</em></span>,
+                     <p><code class="code">&lt;modifier&gt;</code> 可以为：<span class="emphasis"><em>shift</em></span>, <span class="emphasis"><em>control</em></span>, <span class="emphasis"><em>ctrl</em></span>, <span class="emphasis"><em>meta</em></span><sup>[<a name="d0e4279" href="#ftn.d0e4279" class="footnote">2</a>]</sup>, <span class="emphasis"><em>alt</em></span>,
                                   <span class="emphasis"><em>altGraph</em></span></p>
                   </li>
                   <li class="listitem">
                      <p><code class="code">&lt;event&gt;</code> 可以为：<span class="emphasis"><em>typed</em></span>, <span class="emphasis"><em>pressed</em></span>, <span class="emphasis"><em>released</em></span></p>
                   </li>
                   <li class="listitem">
-                     <p>而 <code class="code">&lt;key&gt;</code> 可以为您键盘上有效的任何键。<sup>[<a name="d0e4476" href="#ftn.d0e4476" class="footnote">3</a>]</sup>.
+                     <p>而 <code class="code">&lt;key&gt;</code> 可以为您键盘上有效的任何键。<sup>[<a name="d0e4313" href="#ftn.d0e4313" class="footnote">3</a>]</sup>.
                      </p>
                   </li>
                </ul>
             </div>
-            <p>例如，缺省的 OmegaT 快捷键<sup>[<a name="d0e4484" href="#ftn.d0e4484" class="footnote">4</a>]</sup>，其中可以看到：
+            <p>例如，缺省的 OmegaT 快捷键<sup>[<a name="d0e4321" href="#ftn.d0e4321" class="footnote">4</a>]</sup>，其中可以看到：
             </p>
             <div class="itemizedlist">
                <ul class="itemizedlist" type="disc">
@@ -915,11 +845,11 @@
             <p>如果您想在 Mac 系统上添加 <span class="keycap"><strong>Shift</strong></span>+<span class="keycap"><strong>Command</strong></span>+<span class="keycap"><strong>S</strong></span> 快捷键来执行<span class="guimenu">工具</span> → <span class="guimenuitem">统计</span>，请添加下列行到 <code class="filename">MainMenuShortcuts.properties</code>：<code class="code"> toolsShowStatisticsStandardMenuItem=shift meta S</code>，然后保存文件并重新启动 <span class="application">OmegaT</span>。现在新的快捷键应该出现在了修改的菜单项旁边。不会和系统快捷键冲突的话，现在在 OmegaT 中应该有效了。
             </p>
             <div class="table"><a name="menu.item.codes"></a><p class="title"><b>Table&nbsp;5.14.&nbsp;菜单项代码</b></p>
-               <div class="table-contents"><a class="indexterm" name="d0e4555"></a><table summary="菜单项代码" border="1">
+               <div class="table-contents"><a class="indexterm" name="d0e4392"></a><table summary="菜单项代码" border="1">
                      <colgroup>
-                        <col width="100" align="left" class="1">
-                        <col width="100" align="left" class="2">
-                        <col align="left" class="3">
+                        <col width="100" align="left">
+                        <col width="100" align="left">
+                        <col align="left">
                      </colgroup>
                      <thead>
                         <tr>
@@ -943,7 +873,7 @@
                            <td align="left">projectOpenMenuItem</td>
                         </tr>
                         <tr>
-                           <td align="left">导入源文件……</td>
+                           <td align="left">导入源文件</td>
                            <td align="left">&nbsp;</td>
                            <td align="left">projectImportMenuItem</td>
                         </tr>
@@ -1306,17 +1236,17 @@
             </div><br class="table-break"></div>
          <div class="footnotes"><br><hr width="100" align="left">
             <div class="footnote">
-               <p><sup>[<a id="ftn.d0e4414" href="#d0e4414" class="para">1</a>] </sup>按键（快捷键）的全部语法的定义在来自 Oracle Java 1.6 文档（页面底部）：<a class="ulink" href="http://docs.oracle.com/javase/6/docs/api/javax/swing/KeyStroke.html" target="_top">Java 1.6 快捷键</a></p>
+               <p><sup>[<a name="ftn.d0e4251" href="#d0e4251" class="para">1</a>] </sup>按键（快捷键）的全部语法的定义在来自 Oracle Java 1.6 文档（页面底部）：<a class="ulink" href="http://docs.oracle.com/javase/6/docs/api/javax/swing/KeyStroke.html" target="_top">Java 1.6 快捷键</a></p>
             </div>
             <div class="footnote">
-               <p><sup>[<a id="ftn.d0e4442" href="#d0e4442" class="para">2</a>] </sup>在 Mac 系统中，必须使用 <span class="emphasis"><em>meta</em></span> 修饰符来指定 <span class="emphasis"><em>command</em></span> 键。
+               <p><sup>[<a name="ftn.d0e4279" href="#d0e4279" class="para">2</a>] </sup>在 Mac 系统中，必须使用 <span class="emphasis"><em>meta</em></span> 修饰符来指定 <span class="emphasis"><em>command</em></span> 键。
                </p>
             </div>
             <div class="footnote">
-               <p><sup>[<a id="ftn.d0e4476" href="#d0e4476" class="para">3</a>] </sup>可用的按键事件在来自 Oracle 的 Java 1.6 文档中列出：<a class="ulink" href="http://docs.oracle.com/javase/6/docs/api/java/awt/event/KeyEvent.html" target="_top">Java 1.6 按键事件说明</a></p>
+               <p><sup>[<a name="ftn.d0e4313" href="#d0e4313" class="para">3</a>] </sup>可用的按键事件在来自 Oracle 的 Java 1.6 文档中列出：<a class="ulink" href="http://docs.oracle.com/javase/6/docs/api/java/awt/event/KeyEvent.html" target="_top">Java 1.6 按键事件说明</a></p>
             </div>
             <div class="footnote">
-               <p><sup>[<a id="ftn.d0e4484" href="#d0e4484" class="para">4</a>] </sup>缺省的 OmegaT 快捷键设置可从 Sourceforge 获取：<a class="ulink" href="http://omegat.svn.sourceforge.net/viewvc/omegat/trunk/src/org/omegat/gui/main/MainMenuShortcuts.properties" target="_top">缺省的 OmegaT 快捷键</a></p>
+               <p><sup>[<a name="ftn.d0e4321" href="#d0e4321" class="para">4</a>] </sup>缺省的 OmegaT 快捷键设置可从 Sourceforge 获取：<a class="ulink" href="http://omegat.svn.sourceforge.net/viewvc/omegat/trunk/src/org/omegat/gui/main/MainMenuShortcuts.properties" target="_top">缺省的 OmegaT 快捷键</a></p>
                <p>在 Mac 系统中缺省的 OmegaT 快捷键同样可从 Sourceforge 获取，其中把所有的 "ctrl" 都被替换为 "meta"：<a class="ulink" href="http://omegat.svn.sourceforge.net/viewvc/omegat/trunk/src/org/omegat/gui/main/MainMenuShortcuts.mac.properties" target="_top">Mac 系统上缺省的 OmegaT 快捷键</a></p>
             </div>
          </div>
