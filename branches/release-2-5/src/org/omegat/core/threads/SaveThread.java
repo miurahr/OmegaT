@@ -5,6 +5,7 @@
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
                2008 Alex Buloichik
+               2012 Didier Briel
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -32,6 +33,7 @@ import java.util.logging.Logger;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.IProject;
+import org.omegat.util.Preferences;
 
 /**
  * An independent stream to save project, created in order not to freese UI
@@ -39,11 +41,14 @@ import org.omegat.core.data.IProject;
  * 
  * @author Keith Godfrey
  * @author Alex Buloichik (alex73mail@gmail.com)
+ * @author Didier Briel
  */
 public class SaveThread extends Thread implements IAutoSave {
     private static final Logger LOGGER = Logger.getLogger(SaveThread.class.getName());
 
-    private static final int SAVE_DURATION = 10 * 60 * 1000; // 10 minutes;
+    private static final int SAVE_DURATION = (new Integer(Preferences.getPreferenceDefault(
+                        Preferences.AUTO_SAVE_INTERVAL,          // Preferences are in seconds,
+                        Preferences.AUTO_SAVE_DEFAULT)) * 1000); // save duration is in milliseconds
 
     private boolean needToSaveNow;
     private boolean enabled;
@@ -64,6 +69,7 @@ public class SaveThread extends Thread implements IAutoSave {
         notify();
     }
 
+    @Override
     public void run() {
         try {
             while (true) {
