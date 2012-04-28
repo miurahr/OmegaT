@@ -1,0 +1,1007 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"../../../docbook-xml-4.5/docbookx.dtd">
+<chapter id="chapter.user.interface">
+  <title>The user interface</title>
+
+  <section id="user.interface.items">
+    <title>User interface items</title>
+
+    <section id="windows.you.will.use.frequently">
+      <title>Frequently used windows<indexterm class="singular">
+          <primary>Windows and panes in OmegaT</primary>
+        </indexterm></title>
+
+      <variablelist>
+        <varlistentry>
+          <term><application>OmegaT</application> main window</term>
+
+          <listitem>
+            <para>contains the main menu, status bar and several panes:</para>
+
+            <itemizedlist>
+              <listitem>
+                <para>Editor - where you type and edit the translation</para>
+              </listitem>
+
+              <listitem>
+                <para>Match Viewer - displays the most similar segments from
+                translation memories</para>
+              </listitem>
+
+              <listitem>
+                <para>Glossary Viewer - displays terminology</para>
+              </listitem>
+
+              <listitem>
+                <para>Dictionary Viewer - displays information provided by
+                dictionaries</para>
+              </listitem>
+
+              <listitem>
+                <para>Machine Translation - displays the translation, provided
+                by MT services, like Google Translate</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><indexterm class="singular">
+              <primary>Shortcuts</primary>
+
+              <secondary>Ctrl+L - Project files window</secondary>
+            </indexterm>Project Files window</term>
+
+          <listitem>
+            <para>The list of your translatable files (open with <keycombo>
+                <keycap>Ctrl</keycap>
+
+                <keycap>L</keycap>
+              </keycombo>, close with <keycap>Esc</keycap>)</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><indexterm class="singular">
+              <primary>Shortcuts</primary>
+
+              <secondary>Ctrl+F - Search window</secondary>
+            </indexterm>Search window</term>
+
+          <listitem>
+            <para>Used to search for specific segments in the project (open
+            with <keycombo>
+                <keycap>Ctrl</keycap>
+
+                <keycap>F</keycap>
+              </keycombo>, close with <keycap>Esc</keycap>)</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </section>
+
+    <section id="windows.you.may.use.now.and.then">
+      <title>Less frequently used</title>
+
+      <variablelist>
+        <varlistentry>
+          <term><indexterm class="singular">
+              <primary>Shortcuts</primary>
+
+              <secondary>Ctrl+T - Tag validation window</secondary>
+            </indexterm>Tag Validation window</term>
+
+          <listitem>
+            <para>Used to check for tag mistakes in translations (open with
+            <keycombo>
+                <keycap>Ctrl</keycap>
+
+                <keycap>T</keycap>
+              </keycombo> close with <keycap>Esc</keycap>)</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><indexterm class="singular">
+              <primary>Shortcuts</primary>
+
+              <secondary>F1 - Help</secondary>
+            </indexterm>Help browser</term>
+
+          <listitem>
+            <para>Used to read the user manual (open with <keycap>F1</keycap>,
+            close with <keycap>Esc)</keycap></para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Match statistics window</term>
+
+          <listitem>
+            <para>Used to open the window with the statistics of the project,
+            select <menuchoice>
+                <guimenu><indexterm class="singular">
+                    <primary>Menu Tools</primary>
+
+                    <secondary>Match statistics</secondary>
+                  </indexterm>Tools</guimenu>
+
+                <guimenuitem>Match statistics.</guimenuitem>
+              </menuchoice></para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </section>
+
+    <section id="dialogs.to.change.settings">
+      <title>Project settings dialogs <indexterm class="singular">
+          <primary>Project</primary>
+
+          <secondary>Project Settings</secondary>
+        </indexterm></title>
+
+      <para>The dialogs below are used to change OmegaT project settings. Each
+      is described in detail in a separate section; the information below
+      summarizes their use and how they are invoked:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><indexterm class="singular">
+              <primary>Shortcuts</primary>
+
+              <secondary>Ctrl+E - Project properties</secondary>
+            </indexterm><indexterm class="singular">
+              <primary>Menu Project</primary>
+
+              <secondary>Properties</secondary>
+            </indexterm>Project Properties</term>
+
+          <listitem>
+            <para>Used to modify the project folders and languages, (access
+            via <menuchoice>
+                <shortcut>
+                  <keycombo>
+                    <keycap>Ctrl</keycap>
+
+                    <keycap>E</keycap>
+                  </keycombo>
+                </shortcut>
+
+                <guimenu>Project</guimenu>
+
+                <guimenuitem>properties...</guimenuitem>
+              </menuchoice>, close via <keycap>Esc)</keycap></para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><indexterm class="singular">
+              <primary>Project Settings</primary>
+
+              <secondary>Font</secondary>
+            </indexterm>Font<indexterm class="singular">
+              <primary>Menu Options</primary>
+
+              <secondary>Font</secondary>
+            </indexterm></term>
+
+          <listitem>
+            <para>Used to modify the font <application>used by
+            OmegaT</application> to display source, translation, matches and
+            glossary terms, (access via <menuchoice>
+                <guimenu>Options</guimenu>
+
+                <guimenuitem>Font...</guimenuitem>
+              </menuchoice>, close via
+            <keycap>Esc</keycap><keycap>)</keycap></para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><indexterm class="singular">
+              <primary>Project Settings</primary>
+
+              <secondary>File filters</secondary>
+            </indexterm>File filters<indexterm class="singular">
+              <primary>Menu Options</primary>
+
+              <secondary>File filters</secondary>
+            </indexterm></term>
+
+          <listitem>
+            <para>Used to adjust the handling of supported file formats
+            (access via <menuchoice>
+                <guimenu>Options</guimenu>
+
+                <guimenuitem>File Filters...</guimenuitem>
+              </menuchoice>, close via <keycap>Esc</keycap>)</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><indexterm class="singular">
+              <primary>Project Settings</primary>
+
+              <secondary>Segmentation</secondary>
+            </indexterm>Segmentation<indexterm class="singular">
+              <primary>Menu Options</primary>
+
+              <secondary>Segmentation</secondary>
+            </indexterm></term>
+
+          <listitem>
+            <para>Used to change the way your text is segmented into sentences
+            (access via <menuchoice>
+                <guimenu>Options</guimenu>
+
+                <guimenuitem>Segmentation</guimenuitem>
+              </menuchoice>, close via <keycap>Esc</keycap>)</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><indexterm class="singular">
+              <primary>Project Settings</primary>
+
+              <secondary>Editing Behavior</secondary>
+            </indexterm>Editing Behavior<indexterm class="singular">
+              <primary>Menu Options</primary>
+
+              <secondary>Editing Behavior</secondary>
+            </indexterm></term>
+
+          <listitem>
+            <para>Used to change how <application>OmegaT</application> behaves
+            when you iterate between the segments (access via <menuchoice>
+                <guimenu>Options</guimenu>
+
+                <guimenuitem>Behavior...</guimenuitem>
+              </menuchoice>, close via <keycap>Esc</keycap>)</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </section>
+  </section>
+
+  <section id="OmegaT.main.window">
+    <title><application>OmegaT</application> main window<indexterm
+        class="singular">
+        <primary>Windows and panes in OmegaT</primary>
+
+        <secondary>Main window</secondary>
+
+        <tertiary>- figure</tertiary>
+      </indexterm><indexterm class="singular">
+        <primary>Windows and panes in OmegaT</primary>
+
+        <secondary>Main window</secondary>
+      </indexterm></title>
+
+    <figure>
+      <title>OmegaT panes</title>
+
+      <mediaobject>
+        <imageobject role="html">
+          <imagedata fileref="images/OmegaT_panes.png" />
+        </imageobject>
+
+        <imageobject role="fo">
+          <imagedata fileref="images/OmegaT_panes.png" width="80%" />
+        </imageobject>
+      </mediaobject>
+    </figure>
+
+    <para>The main window consists of several panes, the main menu and a
+    status bar. You can change the position of any pane or even undock it to a
+    separate window by clicking and dragging the pane by its name. Depending
+    on the pane status, different signs can appear at its top right
+    corner:</para>
+
+    <table>
+      <title>Pane widgets<indexterm class="singular">
+          <primary>Windows and panes in OmegaT</primary>
+
+          <secondary>Pane widgets</secondary>
+        </indexterm></title>
+
+      <tgroup cols="2">
+        <colspec align="left" colnum="1" colwidth="60" />
+
+        <tbody>
+          <row>
+            <entry><inlinemediaobject>
+                <imageobject role="html">
+                  <imagedata fileref="images/Minimize.gif" width="60%" />
+                </imageobject>
+
+                <imageobject role="fo">
+                  <imagedata fileref="images/Minimize.gif" width="40%" />
+                </imageobject>
+              </inlinemediaobject></entry>
+
+            <entry>minimizes the pane, so that only its name is shown at the
+            bottom of the window.</entry>
+          </row>
+
+          <row>
+            <entry><inlinemediaobject>
+                <imageobject role="html">
+                  <imagedata fileref="images/Maximize.gif" width="60%" />
+                </imageobject>
+
+                <imageobject role="fo">
+                  <imagedata fileref="images/Maximize.gif" width="40%" />
+                </imageobject>
+              </inlinemediaobject></entry>
+
+            <entry>maximizes the pane</entry>
+          </row>
+
+          <row>
+            <entry><inlinemediaobject>
+                <imageobject role="html">
+                  <imagedata fileref="images/undock.gif" width="60%" />
+                </imageobject>
+
+                <imageobject role="fo">
+                  <imagedata fileref="images/undock.gif" width="40%" />
+                </imageobject>
+              </inlinemediaobject></entry>
+
+            <entry>undocks the pane from the main window.</entry>
+          </row>
+
+          <row>
+            <entry><inlinemediaobject>
+                <imageobject role="html">
+                  <imagedata fileref="images/dock.gif" width="60%" />
+                </imageobject>
+
+                <imageobject role="fo">
+                  <imagedata fileref="images/dock.gif" width="40%" />
+                </imageobject>
+              </inlinemediaobject></entry>
+
+            <entry>puts the pane back within the main window.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+
+    <para>You can overlap panes if desired. When this is done the panes
+    display a tab at the top. The separators between the panes can be dragged
+    to resize panes. Should you lose track of your changes to the user
+    interface, you can use <guimenuitem><indexterm class="singular">
+        <primary>OmegaT windows</primary>
+
+        <seealso>Windows and panes in OmegaT</seealso>
+      </indexterm> <indexterm class="singular">
+        <primary>OmegaT windows</primary>
+
+        <secondary>Restoring to factory setup</secondary>
+      </indexterm>Options → Restore the main window</guimenuitem> any time to
+    return to the original layout.</para>
+
+    <para>The counters in the lower right corner keep track of the progress of
+    the translation (numbers in the left hand column refer to the figure
+    above):</para>
+
+    <table>
+      <title>Main Window - counters<indexterm class="singular">
+          <primary>Windows and panes in OmegaT</primary>
+
+          <secondary>Counters</secondary>
+        </indexterm></title>
+
+      <tgroup cols="2">
+        <colspec align="left" colnum="1" colwidth="60" />
+
+        <tbody>
+          <row>
+            <entry>33/33</entry>
+
+            <entry>number of segments - translated vs total for the current
+            file</entry>
+          </row>
+
+          <row>
+            <entry>2780/2780</entry>
+
+            <entry>number of unique segments - translated vs total in the
+            project</entry>
+          </row>
+
+          <row>
+            <entry>3760</entry>
+
+            <entry>total number of segments (including repeats) in the
+            project</entry>
+          </row>
+
+          <row>
+            <entry>126/127</entry>
+
+            <entry>number of source and target characters in the current
+            segment</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+
+    <para>From a practical point of view, the most important pair of numbers
+    is the second pair: it tells, how much you have done so far, in relation
+    to the total or second number. The project in the example is evidently
+    finished, as all the unique segments have been translated.</para>
+
+    <section id="editor.pane">
+      <title>Editor pane<indexterm class="singular">
+          <primary>Windows and panes in OmegaT</primary>
+
+          <secondary>Editor pane</secondary>
+        </indexterm></title>
+
+      <para>This is where you type and edit your translation. The Editor pane
+      displays the text of the partially translated document: the text already
+      translated is displayed in translation while the untranslated text is
+      displayed in the original language. The displayed text is split into
+      segments and you may scroll through the document and double-click on any
+      segment to open and edit it. In the above case, the segments already
+      translated are shown in yellow, but this may be changed to suit your
+      preferences (see <xref linkend="submenu.View" />).</para>
+
+      <para>One of the above segments is the current segment. It is the
+      segment that is displayed in two parts. The upper part is in the source
+      language, in bold characters with a green background color, the lower
+      part is the editing field, ended by a marker: <indexterm
+          class="singular">
+          <primary>Segment marker</primary>
+        </indexterm>the marker is <literal>&lt;segment
+      nnnn&gt;</literal> where nnnn is a number of the segment in the project.
+      Use the upper part as a reference and replace or modify the contents of 
+      the editing field with your translation.</para>
+
+      <para>Depending upon the preferred editing behavior, the editing field
+      for the untranslated segment may be empty, contain the source text, or
+      contain the translation of the string most similar to the one to be
+      translated. When you move to another segment, the translation is
+      validated and stored. If you want the translation to be the same as the
+      source, simply make the editing field empty by removing all the text
+      (select all with <keycap>Ctrl+A</keycap> and delete with
+      <keycap>Del</keycap>). OmegaT is able to store translations that are
+      identical to the source. This is useful for documents that contain trade
+      marks, names or other proper nouns, or parts in a third language that do
+      not require translation. See <emphasis>Translation editing</emphasis>
+      for more details.</para>
+
+      <para>If you right click on the Editor pane, a pop-up menu opens,
+      offering<emphasis role="bold"> Cut, Copy, Paste</emphasis> (i.e. same
+      functions as <keycombo>
+          <keycap>Ctrl</keycap>
+
+          <keycap>X</keycap>
+        </keycombo>, <keycombo>
+          <keycap>Ctrl</keycap>
+
+          <keycap>C</keycap>
+        </keycombo> and <keycombo>
+          <keycap>Ctrl</keycap>
+
+          <keycap>V</keycap>
+        </keycombo>) and the <emphasis role="bold">GoTo segment</emphasis>
+      functions.</para>
+    </section>
+
+    <section id="match.viewer">
+      <title>Match viewer</title>
+
+      <para><figure id="matches.pane">
+          <title><indexterm class="singular">
+              <primary>Matches</primary>
+
+              <secondary>Matches pane - figure</secondary>
+            </indexterm><indexterm class="singular">
+              <primary>Windows and panes in OmegaT</primary>
+
+              <secondary>Matches pane - figure</secondary>
+            </indexterm>Matches pane</title>
+
+          <mediaobject>
+            <imageobject role="html">
+              <imagedata fileref="images/MatchesPane.png" />
+            </imageobject>
+
+            <imageobject role="fo">
+              <imagedata fileref="images/MatchesPane.png" width="80%" />
+            </imageobject>
+          </mediaobject>
+        </figure></para>
+
+      <para>The match viewer shows the most similar segments from translation
+      memories, both from internal project translation memory created in real
+      time as you translate your project and from ancillary translation
+      memories you have imported from your earlier jobs, or received from your
+      client or translation agency.</para>
+
+      <para>When you move to the next segment, the first fuzzy match (the one
+      with the best matching percentage) is automatically selected. You may
+      select a different match by pressing <guimenuitem>Ctrl+2, 3, 4, or
+      5</guimenuitem>.<indexterm>
+          <primary>Shortcuts</primary>
+
+          <secondary>Ctrl+N - Selecting the match</secondary>
+        </indexterm> Of course, pressing <keycombo>
+          <keycap>Ctrl</keycap>
+
+          <keycap>5</keycap>
+        </keycombo> will have no effect, if there is no match #5. To use the
+      selected match in your translation, use
+      <guimenuitem>Ctrl+R</guimenuitem><indexterm class="singular">
+          <primary>Shortcuts</primary>
+
+          <secondary>Ctrl+R - Replace text</secondary>
+        </indexterm> to replace the target field with the match or use
+      <guimenuitem>Ctrl+I <indexterm class="singular">
+          <primary>Shortcuts</primary>
+
+          <secondary>Ctrl+I - Insert text</secondary>
+        </indexterm></guimenuitem> to insert it at the cursor position.</para>
+
+      <para>The matching percentage is roughly equivalent to taking the number
+      of common words in the matched and the matching segment and dividing by
+      the number of words in the longer of the two. The selected fuzzy match
+      is highlighted in bold, words that are missing in the segment you are
+      translating are colored blue and words adjacent to the missing parts
+      green. In the above example the source segment is <emphasis
+      role="bold">Duration of exposure &lt;15 min</emphasis>. The top match is
+      60%, because 3 out of 5 words match. The line with the matching
+      percentage also includes the name of the translation memory <indexterm
+          class="singular">
+          <primary>Translation memories</primary>
+
+          <secondary>Matches</secondary>
+        </indexterm> containing the match. If there's no file name displayed,
+      the source is the internal project translation memory. Orphan
+      segments<indexterm class="singular">
+          <primary>Translation memories</primary>
+
+          <secondary>Orphan segments</secondary>
+        </indexterm> (the match #4) describe segments in the default project
+      translation memory that have no corresponding source segment.</para>
+
+      <para>There are actually three match estimates available (60/60/54 in
+      the case of the top match above). They are defined as follows:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>match percentage when the tokenizer plugin is used</para>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>default OmegaT match - number of matched words - with numerals
+          and tags ignored - divided by the total word count</para>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>OmegaT match, including numbers, tags</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>Glossary<indexterm class="singular">
+          <primary>Windows and panes in OmegaT</primary>
+
+          <secondary>Glossary pane</secondary>
+        </indexterm></title>
+
+      <para>The Glossary pane allows you to access your own collection of
+      expressions and specialist terminology which you have built up in your
+      glossary files. It shows translation of terms found in the current
+      segment, but only for reference purposes: there is no feature for
+      inserting the translation or replacing the term with these.</para>
+
+      <para><figure id="glossary.pane">
+          <title><indexterm class="singular">
+              <primary>Glossaries</primary>
+
+              <secondary>Glossary window - figure</secondary>
+            </indexterm>Glossary pane</title>
+
+          <mediaobject>
+            <imageobject role="html">
+              <imagedata fileref="images/Glossary_pane.png" />
+            </imageobject>
+
+            <imageobject role="fo">
+              <imagedata fileref="images/Glossary_pane.png" width="60%" />
+            </imageobject>
+          </mediaobject>
+        </figure></para>
+
+      <para>The source segment in the above example was “I<emphasis>n most
+      translation jobs it is considered important to have the translated
+      document look similar to the original</emphasis>.”, and two words in it,
+      document and translation were found in the glossary file.
+      <application>OmegaT</application> also supports multi-word terms:</para>
+
+      <figure id="multiword.pane">
+        <title><indexterm class="singular">
+            <primary>Glossaries</primary>
+
+            <secondary>multi-word entry in the glossary - figure</secondary>
+          </indexterm>multi-word entry in the glossary</title>
+
+        <mediaobject>
+          <imageobject role="html">
+            <imagedata fileref="images/MultiTerm_Glossary.png" />
+          </imageobject>
+
+          <imageobject role="fo">
+            <imagedata fileref="images/MultiTerm_Glossary.png" width="80%" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>If you have TransTip option activated <guimenuitem>Options →
+      Transtip</guimenuitem>), you can right click on the highlighted word in
+      the source segment to open a drop-down menu with the alternative
+      translations, as offered by your glossary. Selecting one of them will
+      insert it at the current position into the target segment. You can also
+      highlight your preferred alternative in the glossary pane and insert it
+      into the target by right clicking on the selection.</para>
+    </section>
+
+    <section id="dictionaries">
+      <title>Dictionary viewer<indexterm class="singular">
+          <primary>Windows and panes in OmegaT</primary>
+
+          <secondary>Dictionary pane</secondary>
+        </indexterm></title>
+
+      <para>Dictionaries are the electronic equivalents of printed
+      dictionaries like Merriam Webster, Duden, Larousse etc., that you may
+      have on your desk.</para>
+    </section>
+
+    <section id="Google.Translate">
+      <title>Machine Translation<indexterm class="singular">
+          <primary>Windows and panes in OmegaT</primary>
+
+          <secondary>Machine Translation</secondary>
+        </indexterm></title>
+
+      <para>The machine translation pane, when opened, contains the
+      suggestions by machine translation tools for the current segment. Press
+      <keysym>Ctrl+M </keysym>to replace the translation of the current
+      segment with the suggested translation.</para>
+    </section>
+
+    <section>
+      <title id="main.menu">Main menu</title>
+
+      <para>The main menu provides access to all
+      <application>OmegaT</application> functions. See the<emphasis> Main
+      Menu</emphasis> appendix for a full description of all menus and menu
+      items. The most frequently used functions are accessible with keyboard
+      shortcuts, so once you become accustomed to them, you will no longer
+      need to browse through the menus while translating.</para>
+    </section>
+
+    <section id="status.bar">
+      <title>Status bar</title>
+
+      <para>The status bar displays work-flow related messages at the bottom
+      of the main window. This bar gives the user feedback on specific
+      operations that are in progress. It also displays the number of fuzzy
+      and glossary matches for the current segment.</para>
+    </section>
+  </section>
+
+  <section id="other.windows">
+    <title>Other windows</title>
+
+    <section id="section.project.files">
+      <title>Project files<indexterm class="singular">
+          <primary>Windows and panes in OmegaT</primary>
+
+          <secondary>Project files</secondary>
+        </indexterm></title>
+
+      <para>The Project Files window lists the project files and displays
+      other project information. It is displayed automatically when OmegaT
+      loads a project. Use <guimenuitem>Ctrl+L<indexterm class="singular">
+          <primary>Shortcuts</primary>
+
+          <secondary>Ctrl+L - Project files list</secondary>
+        </indexterm></guimenuitem> to open and <keycap>Esc</keycap> to close
+      it. The Project Files Window displays the following information:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>the list of all translatable files in the project. These are
+          the files present in the Source files folder in a format that OmegaT
+          is able to recognize. Clicking on any file will open it for
+          translation</para>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>the file currently available in the Editor pane is highlighted
+          with a blue background. Pressing <keycap>Enter</keycap> will move
+          the Editor pane to the top of the file selected</para>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>the number of segments in each file is shown next to the file
+          name</para>
+        </listitem>
+      </itemizedlist>
+
+      <itemizedlist>
+        <listitem>
+          <para>the total number of segments, the number of unique segments in
+          the whole project, and the number of unique segments already
+          translated are shown at the bottom</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>The set of <emphasis role="bold">Unique </emphasis>segments is
+      computed by taking all the segments and removing all duplicate segments.
+      (The definition of “unique” is case-sensitive: "Run" and "run" are
+      treated as being different)</para>
+
+      <para>The difference between "Number of segments" and "Number of unique
+      segments" provides an approximate idea of the number of repetitions in
+      the text. Note however that the numbers do not indicate how relevant the
+      repetitions are: they could mean relatively long sentences repeated a
+      number of times (in which case you are fortunate) or it could describe a
+      table of keywords (not so fortunate). The
+      <filename>project_stats.txt</filename> located in the omegat folder of
+      your project contains more detailed segment information, broken down by
+      file.</para>
+
+      <para>Modifying the segmentation rules may have the effect of modifying
+      the number of segments/unique segments. This, however, should generally
+      be avoided once you have started translating the project. See the
+      chapter <emphasis>Segmentation rules</emphasis> for more
+      information.</para>
+
+      <para><emphasis role="bold"><indexterm class="singular">
+          <primary>Source files</primary>
+
+          <secondary>Adding files to the project</secondary>
+        </indexterm>Adding files to the project: </emphasis>You can add source
+      files to the project by clicking on the "<guimenuitem>Import Source
+      Files..."</guimenuitem> button. This copies the selected files to the
+      <filename>source</filename> folder and reloads the project to import the
+      new files. You can also add source files from Internet pages, written in
+      MediaWiki, by clicking on<guimenuitem> "Import from
+      MediaWiki"</guimenuitem> button and providing the corresponding
+      URL.</para>
+    </section>
+
+    <section id="section.search.window">
+      <title>Search window<indexterm class="singular">
+          <primary>Windows and panes in OmegaT</primary>
+
+          <secondary>Search pane</secondary>
+        </indexterm></title>
+
+      <para>You can use the search window to find specific segments in a
+      project. You can also have several search windows open simultaneously.
+      To open a new search window, use <keycombo>
+          <keycap>Ctrl</keycap>
+
+          <keycap>F</keycap>
+        </keycombo> in the Main window. The search window consists of a text
+      field for search strings or keywords, flags and radio buttons for
+      setting up the search and a display area containing the results of the
+      search. See the chapter<emphasis> <link
+      linkend="chapter.user.interface">Searches</link> </emphasis>for more
+      information about the search window.</para>
+    </section>
+
+    <section id="section.tag.validation">
+      <title>Tag validation<indexterm class="singular">
+          <primary>Tag validation</primary>
+
+          <seealso>Shortcuts, Tags</seealso>
+        </indexterm><indexterm class="singular">
+          <primary>Windows and panes in OmegaT</primary>
+
+          <secondary>Tag validation</secondary>
+
+          <seealso>Tags</seealso>
+        </indexterm></title>
+
+      <para>The tag validation window detects and lists any tag errors and
+      inconsistencies in the translation. Open the window with
+      <guimenuitem>Ctrl+T. </guimenuitem>The window features a 3 column table
+      with a link to the segment and its source and target contents:</para>
+
+      <para><figure id="tag.validator.window">
+          <title><indexterm class="singular">
+              <primary>Tag validation</primary>
+
+              <secondary>Window - figure</secondary>
+
+              <seealso>Tags</seealso>
+            </indexterm>Tag validation window</title>
+
+          <mediaobject>
+            <imageobject role="html">
+              <imagedata fileref="images/TagValidator.png" />
+            </imageobject>
+
+            <imageobject role="fo">
+              <imagedata fileref="images/TagValidator.png" width="60%" />
+            </imageobject>
+          </mediaobject>
+        </figure></para>
+
+      <para>Tags are highlighted in bold blue for easy comparison between the
+      original and the translated contents. Click on the link to jump to the
+      segment in the Editor pane. Correct the error if necessary and press
+      <guimenuitem>Ctrl+T</guimenuitem> to return to the tag validation window
+      to correct other errors. In the first and third case above tags are
+      paired incorrectly, and in the second case the &lt; sign is missing from
+      the starting tag.</para>
+
+      <para>Tag errors are cases in which the tags in the translation do not
+      correspond in order and number to the original segment. Some tag
+      scenarios flagged in the tag validation window are necessary and are
+      benign, others will cause problems when the translated document is
+      created. Tags generally represent some kind of formatting in the
+      original text. Simplifying the original text formatting in the source
+      file before commencing translation greatly contributes to reducing the
+      number of tags.</para>
+    </section>
+
+    <section>
+      <title>Match statistics<indexterm class="singular">
+          <primary>Match Statistics</primary>
+
+          <seealso>Menu Tools</seealso>
+        </indexterm></title>
+
+      <para>Statistics are accessed via<guimenuitem>Tools/Match
+      Statistics.</guimenuitem> The evaluation is rather CPU intensive and can
+      be time-consuming, so a progress bar is shown during the calculation. As
+      far as categories are concerned, the de facto industry standard of
+      classifying matches into the following groups is used:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Exact match</para>
+        </listitem>
+
+        <listitem>
+          <para>95%-100%</para>
+        </listitem>
+
+        <listitem>
+          <para>85%-94%</para>
+        </listitem>
+
+        <listitem>
+          <para>75%-84%</para>
+        </listitem>
+
+        <listitem>
+          <para>50%-74%</para>
+        </listitem>
+
+        <listitem>
+          <para>No match</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>The word counts are identical to the numbers, provided in the
+      Project Files window, and are based strictly on OmegaT's method of
+      counting, with a few differences in terminology to account for concept
+      differences. This information is computed for segments, words and for
+      characters (without and including spaces). Note that these totals are a
+      good (or as-good-as-it-can-be) approximation of the work involved in the
+      project and thus can serve as a basis for your cost and price
+      calculations.</para>
+
+      <screenshot>
+        <screeninfo>match statistics</screeninfo>
+
+        <mediaobject>
+          <imageobject role="html">
+            <imagedata fileref="images/MatchStatistics.png" />
+          </imageobject>
+
+          <imageobject role="fo">
+            <imagedata fileref="images/MatchStatistics.png" width="60%" />
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Spaces between segments are not taken into account in the last
+      column. Repetitions stand for identical segments present several times
+      in the text. The first segment and its contents will be classified as
+      "no match", and the rest of them as a repetition of the first. If the
+      translation for several identical source segments already exists in the
+      translation memory of the project, these segments, together with other,
+      already translated unique segments, will be classified as an "Exact
+      match". The number of unique segments, if needed, is provided in the
+      standard statistics window, regardless of whether they have been
+      translated or not.</para>
+
+      <para>The rest of the categories (50-100%) involves untranslated
+      segments with a fuzzy match. Fuzzy matches can come from the
+      <filename>/tm</filename> folder as well - and not just from the internal
+      translation memory in <filename>/omegaT,</filename> as is the case for
+      repetitions and exact matches. The only difference with matches from the
+      <filename>project_save</filename> translation memory is that external
+      TMs cannot give exact matches, only 100%. If one does not wish to use
+      external TMs for counting, one will either have to empty the /tm folder
+      or change the project setup (temporarily) so that the value for /tm
+      points to a different location.</para>
+
+      <para>The Match Statistics are tab-separated and you can use
+      <guimenuitem>Ctrl+A <indexterm class="singular">
+          <primary>Shortcuts</primary>
+
+          <secondary>Ctrl+A - Select All</secondary>
+        </indexterm></guimenuitem><guimenuitem>, Ctrl+C <indexterm
+          class="singular">
+          <primary>Shortcuts</primary>
+
+          <secondary>Ctrl+C - copy text</secondary>
+        </indexterm></guimenuitem>, <guimenuitem>Ctrl+V <indexterm
+          class="singular">
+          <primary>Shortcuts</primary>
+
+          <secondary>Ctrl+V - Paste text</secondary>
+        </indexterm></guimenuitem> to copy/paste them, for instance into a
+      spreadsheet or into your cost-accounting application. Once computed, the
+      data also available in
+      <filename>omegat/project_stats_match.txt.</filename> Note that the file
+      is time-stamped, as the calculation (contrary to the standard
+      statistics) is not instantaneous and can thus quickly become
+      obsolete.</para>
+    </section>
+
+    <section>
+      <title>Help browser<indexterm class="singular">
+          <primary>Menu Help</primary>
+
+          <secondary>Help browser</secondary>
+        </indexterm></title>
+
+      <para>The help browser (which displays this manual) can be opened by
+      pressing <keycap><indexterm class="singular">
+          <primary>Shortcuts</primary>
+
+          <secondary>F1 - Help</secondary>
+        </indexterm>F1</keycap> or navigating to <guimenuitem><indexterm
+          class="singular">
+          <primary>Menu Help</primary>
+
+          <secondary>User Manual...</secondary>
+        </indexterm>Help → User Manual...</guimenuitem> in the main menu. In
+      the window, the manual and two buttons are displayed: Back and Contents.
+      The user manual is an HTML document with links to different chapters.
+      Clicking on a link as you would do in a web browser brings the desired
+      page to the front.</para>
+
+      <para>The user manual is located in the docs subfolder under the OmegaT
+      installation folder, so you may can, for instance, view the English
+      documentation by opening the <filename>docs/en/index.html
+      </filename>file in your browser. Opening the user manual in this way
+      also enables you to follow external links, as the built-in help browser
+      does not accept external Internet links.</para>
+    </section>
+  </section>
+</chapter>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<project name="OmegaT-WebStart" default="pack" basedir=".">
+	<property name="root" value="../.." />
+
+	<!-- Build WebStart pack -->
+	<target name="pack" depends="clean" description="Build WebStart pack">
+		<property file="../../../webstart.properties" />
+
+		<mkdir dir="${root}/build/webstart" />
+		<copy todir="${root}/build/webstart">
+			<fileset dir="." includes="*.jnlp" />
+			<!-- Replace @@HTTP_BASE@@ placeholder -->
+			<filterset begintoken="@@" endtoken="@@">
+				<filter token="HTTP_BASE" value="${webstart.codebase}" />
+			</filterset>
+		</copy>
+
+		<copy todir="${root}/build/webstart">
+			<fileset dir="${root}/lib" includes="*.jar" />
+			<fileset dir="${root}/lib-mnemonics/dist" includes="**/*.jar" />
+			<fileset dir="${root}/dist" includes="OmegaT.jar" />
+		</copy>
+
+		<jar jarfile="${root}/build/webstart/docs.jar" basedir="${root}" includes="docs/**" />
+
+		<jar jarfile="${root}/build/webstart/hunspell-linux64.jar" basedir="${root}/native" includes="libhunspell-linux64.so" />
+		<jar jarfile="${root}/build/webstart/hunspell-linux32.jar" basedir="${root}/native" includes="libhunspell-linux32.so" />
+		<jar jarfile="${root}/build/webstart/hunspell-macos64.jar" basedir="${root}/native" includes="libhunspell-macos64.dylib" />
+		<jar jarfile="${root}/build/webstart/hunspell-macos32.jar" basedir="${root}/native" includes="libhunspell-macos32.dylib" />
+		<jar jarfile="${root}/build/webstart/hunspell-win64.jar" basedir="${root}/native" includes="hunspell-win64.dll" />
+		<jar jarfile="${root}/build/webstart/hunspell-win32.jar" basedir="${root}/native" includes="hunspell-win32.dll" />
+
+		<signjar keystore="${signkey.keystore}" alias="${signkey.alias}" storepass="${signkey.storepass}" keypass="${signkey.keypass}">
+			<fileset dir="${root}/build/webstart/" includes="*.jar" />
+		</signjar>
+
+		<mkdir dir="${root}/dist2" />
+		<zip destfile="${root}/dist2/OmegaT-WebStart.zip" basedir="${root}/build/webstart" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${root}/build/webstart" failonerror="false" />
+	</target>
+</project>

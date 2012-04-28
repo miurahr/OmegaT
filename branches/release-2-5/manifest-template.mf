@@ -1,0 +1,113 @@
+Manifest-Version: 1.0
+Main-Class: org.omegat.Main
+License: GNU Public License version 2 or later
+Specification-Version: 1
+Implementation-Version: @version@
+Class-Path: lib/lib-mnemonics.jar lib/htmlparser.jar lib/MRJAdapter.jar lib/vldocking_2.1.4.jar lib/jna.jar lib/swing-layout-1.0.jar lib/jmyspell-core-1.0.0-beta-2.jar lib/activation.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/jsr173_1.0_api.jar lib/swing-worker-1.2.jar lib/sjsxp-1.0.2.jar
+OmegaT-Plugin: true
+
+Name: org.omegat.filters3.xml.android.AndroidFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.text.TextFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.latex.LatexFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.po.PoFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.rc.RcFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.mozdtd.MozillaDTDFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.text.bundles.ResourceBundleFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.xhtml.XHTMLFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.helpandmanual.HelpAndManualFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.camtasiawindows.CamtasiaWindowsFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.html2.HTMLFilter2
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.hhc.HHCFilter2
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.text.ini.INIFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.text.dokuwiki.DokuWikiFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.text.magento.MagentoFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.docbook.DocBookFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.opendoc.OpenDocFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.openxml.OpenXMLFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.xliff.XLIFFFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.subtitles.SrtFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters2.xtagqxp.XtagFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.resx.ResXFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.wix.WiXFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.typo3.Typo3Filter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.l10nmgr.L10nmgrFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.svg.SvgFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.infix.InfixFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.flash.FlashFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.filters3.xml.txml.TXMLFilter
+OmegaT-Plugin: filter
+
+Name: org.omegat.core.matching.Tokenizer
+OmegaT-Plugin: tokenizer
+
+Name: org.omegat.gui.glossary.TransTipsMarker
+OmegaT-Plugin: Marker
+
+Name: org.omegat.core.spellchecker.SpellCheckerMarker
+OmegaT-Plugin: Marker
+
+Name: org.omegat.core.machinetranslators.Google2Translate
+OmegaT-Plugin: MachineTranslator
+
+Name: org.omegat.core.machinetranslators.BelazarTranslate
+OmegaT-Plugin: MachineTranslator
+
+Name: org.omegat.core.machinetranslators.ApertiumTranslate
+OmegaT-Plugin: MachineTranslator
+
