@@ -18,12 +18,12 @@
   segment will be automatically displayed in the Glossary viewer.</para>
 
   <para>You define its location and name in the project properties dialog. The
-  extension must be <filename>.txt </filename>(if not, it will be added). The
+  extension must be <filename>.txt</filename> (if not, it will be added). The
   location of the file must be within the <filename>/glossary
-  </filename>folder, but it can be in a deeper directory (e.g.,
+  </filename> folder, but it can be in a deeper directory (e.g.,
   <filename>glossary/sub/glossary.txt</filename>). The file does not need to
   exist when setting it, it will be created (if necessary) when adding a
-  glossary entry. If the file already exists, not attempt is done to verify
+  glossary entry. If the file already exists, no attempt is done to verify
   the format or the character set of the file: the new entries will always be
   in tab-separated format and UTF-8. As the existing content will not be
   touched, damaged to an existing file would be limited.</para>
@@ -95,7 +95,7 @@
         <para>Note that in the above case, this is just half (or even less) of
         the story, as the target language (Slovenian) uses declension. So the
         inserted "pojavni meni" has to be changed to "pojavcnem meniju". In
-        other words, tzping the term correctly without bothering with
+        other words, typing the term correctly without bothering with
         highlighting and rightclicking is probably faster.</para>
       </footnote></para>
   </section>
@@ -161,7 +161,7 @@
 
     <para>The project setting allows one can enter a name for a writeable
     glossary file (see beginning of this chapter). Adding new entries is done
-    by using the keyboard shortcut <keycap>Ctrl+Shift+G .</keycap> A dialog
+    by using the keyboard shortcut <keycap>Ctrl+Shift+G</keycap>. A dialog
     opens, allowing you to enter the source term, target term and any comments
     you may have:</para>
 
@@ -177,7 +177,7 @@
 
     <para>The contents of glossary files are kept in memory and are loaded
     when the project is opened or reloaded. Updating a glossary file is thus
-    rather simple: press <keycap>Ctrl+Shift+G </keycap> and enter the new
+    rather simple: press <keycap>Ctrl+Shift+G</keycap> and enter the new
     term, its translation and any comments you may have (ensuring you press
     tab between the fields) and save the file. The contents of the glossary
     pane will be updated accordingly</para>
