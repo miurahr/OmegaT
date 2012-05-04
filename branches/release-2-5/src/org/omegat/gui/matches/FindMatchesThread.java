@@ -68,6 +68,8 @@ import org.omegat.util.Token;
  */
 public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
     private static final Logger LOGGER = Logger.getLogger(FindMatchesThread.class.getName());
+    
+    private static final int PENALTY_FOR_FUZZY = 20;
 
     /** Current project. */
     private final IProject project;
@@ -135,7 +137,7 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
                         // skip original==original entry comparison
                         return;
                     }
-                    processEntry(null, source, trans.translation, null);
+                    processEntry(null, source, trans.translation, false, null);
                     return;
                 }
             });
@@ -147,7 +149,7 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
                     // skip original==original entry comparison
                     return;
                 }
-                processEntry(source, source.sourceText, trans.translation, null);
+                processEntry(source, source.sourceText, trans.translation, false, null);
                 return;
             }
         });
@@ -157,7 +159,7 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
         project.iterateByOrphanedDefaultTranslations(new DefaultTranslationsIterator() {
             public void iterate(String source, TMXEntry trans) {
                 checkEntryChanged();
-                processEntry(null, source, trans.translation, orphanedFileName);
+                processEntry(null, source, trans.translation, false, orphanedFileName);
                 return;
             }
         });
@@ -168,7 +170,7 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
                     // skip original==original entry comparison
                     return;
                 }
-                processEntry(source, source.sourceText, trans.translation, orphanedFileName);
+                processEntry(source, source.sourceText, trans.translation, false, orphanedFileName);
                 return;
             }
         });
@@ -177,7 +179,16 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
         for (Map.Entry<String, ExternalTMX> en : memories.entrySet()) {
             for (TMXEntry tmen : en.getValue().getEntries()) {
                 checkEntryChanged();
-                processEntry(null, tmen.source, tmen.translation, en.getKey());
+                processEntry(null, tmen.source, tmen.translation, false, en.getKey());
+            }
+        }
+        
+        // travel by all entries for check source file translations
+        for (SourceTextEntry ste : project.getAllEntries()) {
+            checkEntryChanged();
+            if (ste.getSourceTranslation() != null) {
+                processEntry(ste.getKey(), ste.getSrcText(), ste.getSourceTranslation(),
+                        ste.isSourceTranslationFuzzy(), ste.getKey().file);
             }
         }
 
@@ -204,12 +215,17 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
      * @param candEntry
      *            entry to compare
      */
-    protected void processEntry(final EntryKey key, final String source, final String translation,
+    protected void processEntry(final EntryKey key, final String source, final String translation, final boolean fuzzy,
             final String tmxName) {
         Token[] candTokens = tok.tokenizeWords(source, ITokenizer.StemmingMode.MATCHING);
 
         // First percent value - with stemming if possible
         int similarityStem = FuzzyMatcher.calcSimilarity(distance, strTokensStem, candTokens);
+        
+        if (fuzzy) {
+            // penalty for fuzzy
+            similarityStem -= PENALTY_FOR_FUZZY;
+        }
 
         // check if we have chance by first percentage only
         if (!haveChanceToAdd(similarityStem, Integer.MAX_VALUE, Integer.MAX_VALUE)) {
@@ -234,7 +250,7 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
             return;
         }
 
-        addNearString(key, source, translation, similarityStem, similarityNoStem, simAdjusted, null, tmxName);
+        addNearString(key, source, translation, fuzzy, similarityStem, similarityNoStem, simAdjusted, null, tmxName);
     }
 
     /**
@@ -284,7 +300,7 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
      * Add near string into result list. Near strings sorted by "similarity,simAdjusted"
      */
     protected void addNearString(final EntryKey key, final String source, final String translation,
-            final int similarity, final int similarityNoStem, final int simAdjusted,
+            final boolean fuzzy, final int similarity, final int similarityNoStem, final int simAdjusted,
             final byte[] similarityData, final String tmxName) {
         // find position for new data
         int pos = 0;
@@ -323,7 +339,7 @@ public class FindMatchesThread extends EntryInfoSearchThread<List<NearString>> {
             pos = i + 1;
         }
 
-        result.add(pos, new NearString(key, source, translation, similarity, similarityNoStem, simAdjusted,
+        result.add(pos, new NearString(key, source, translation, fuzzy, similarity, similarityNoStem, simAdjusted,
                 similarityData, tmxName));
         if (result.size() > OConsts.MAX_NEAR_STRINGS) {
             result.remove(result.size() - 1);

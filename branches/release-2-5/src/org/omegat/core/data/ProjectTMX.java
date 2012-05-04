@@ -76,10 +76,8 @@ public class ProjectTMX {
      */
     final Map<EntryKey, TMXEntry> orphanedMultiple;
 
-    public ProjectTMX(ProjectProperties props, File file, CheckOrphanedCallback callback,
-            Map<EntryKey, TMXEntry> sourceTranslations) throws Exception {
+    public ProjectTMX(ProjectProperties props, File file, CheckOrphanedCallback callback) throws Exception {
         translationMultiple = new HashMap<EntryKey, TMXEntry>();
-        translationMultiple.putAll(sourceTranslations);
         orphanedMultiple = new HashMap<EntryKey, TMXEntry>();
         orphanedDefault = new HashMap<String, TMXEntry>();
         if (props.isSupportDefaultTranslations()) {
