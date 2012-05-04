@@ -104,6 +104,16 @@ public class ProjectTMX {
                 new Loader(callback, props.getSourceLanguage(), props.getTargetLanguage(), props
                         .isSentenceSegmentingEnabled()));
     }
+    
+    /**
+     * Constructor for tests.
+     */
+    ProjectTMX() {
+        translationMultiple = new HashMap<EntryKey, TMXEntry>();
+        translationDefault = new HashMap<String, TMXEntry>();
+        orphanedMultiple = new HashMap<EntryKey, TMXEntry>();
+        orphanedDefault = new HashMap<String, TMXEntry>();
+    }
 
     public void save(ProjectProperties props, File outFile, final boolean forceValidTMX,
             final boolean levelTwo, final boolean useOrphaned) throws Exception {
