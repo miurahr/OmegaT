@@ -504,8 +504,8 @@
 
               <entry/>
 
-              <entry>If there's several alternative translations available
-              active segment, you can label the alternative selected as the
+              <entry>If there are several alternative translations available
+              for the active segment, you can label the alternative selected as the
               default translation. The entry will be greyed, if there's just
               one translation available.</entry>
             </row>
@@ -516,7 +516,7 @@
 
               <entry/>
 
-              <entry>The one and the same segment may, dependingon the
+              <entry>The one and the same segment may, depending on the
               context, require different translations. Select this menu item,
               if the current translation does not apply and enter the
               alternative translation.</entry>
