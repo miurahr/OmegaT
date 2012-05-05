@@ -15,10 +15,10 @@ mandloc "Mandatory locations" -> javaloc jarfileloc ;
 
 # Location of the Java runtime environment
 
-javaloc :horizontal "Java runtime environment" -> @infile("java")="../jre/bin/java" javaloc_help ;
+javaloc :horizontal "Java runtime environment" -> @infile("java")="/opt/omegat/jre/bin/java" javaloc_help ;
 javaloc_help :dialog "Help" -> javaloc_m javaloc_hc ;
 javaloc_m :horizontal ->  javaloc_t ;
-javaloc_t "The current default assumes that you have used the linux-install.sh \n installation script and are using a local version of the JRE (i.e. \n you have installed OmegaT with JRE).\n If you are using a system-wide version of Java that is in your \n execution path, replace ../jre/bin/java with java.\n If you are using a system-wide version of Java that is NOT in your \n execution path, replace ../jre/bin/java with the full path of your \n java executable (in quotes). " -> @ ;
+javaloc_t "The current default assumes that you have used the linux-install.sh \n installation script and are using a local version of the JRE (i.e. \n you have installed OmegaT with JRE).\n If you are using a system-wide version of Java that is in your \n execution path, replace /opt/omegat/jre/bin/java with java.\n If you are using a system-wide version of Java that is NOT in your \n execution path, replace /opt/omegat/jre/bin/java with the full path of your \n java executable (in quotes). " -> @ ;
 javaloc_hc :horizontal -> @close="Close";
 
 
