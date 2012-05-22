@@ -38,6 +38,7 @@ import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.data.TMXEntry;
+import org.omegat.core.segmentation.SRX;
 import org.omegat.core.spellchecker.ISpellChecker;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.gui.dialogs.AboutDialog;
@@ -630,16 +631,19 @@ public class MainWindowMenuHandler {
      * Displays the segmentation setup dialog to allow customizing the segmentation rules in detail.
      */
     public void optionsSentsegMenuItemActionPerformed() {
-        SegmentationCustomizer segment_window = new SegmentationCustomizer(mainWindow, false, null);
+        SegmentationCustomizer segment_window = new SegmentationCustomizer(mainWindow, false, SRX.getDefault(),
+                Preferences.getSRX(), null);
         segment_window.setVisible(true);
 
-        if (segment_window.getReturnStatus() == SegmentationCustomizer.RET_OK
-                && Core.getProject().isProjectLoaded() && Core.getProject().getSRX()==null) {
-            // asking to reload a project
-            int res = JOptionPane.showConfirmDialog(mainWindow, OStrings.getString("MW_REOPEN_QUESTION"),
-                    OStrings.getString("MW_REOPEN_TITLE"), JOptionPane.YES_NO_OPTION);
-            if (res == JOptionPane.YES_OPTION)
-                ProjectUICommands.projectReload();
+        if (segment_window.getReturnStatus() == SegmentationCustomizer.RET_OK) {
+            Preferences.setSRX(segment_window.getSRX());
+            if (Core.getProject().isProjectLoaded() && Core.getProject().getProjectProperties().getProjectSRX() == null) {
+                // asking to reload a project
+                int res = JOptionPane.showConfirmDialog(mainWindow, OStrings.getString("MW_REOPEN_QUESTION"),
+                        OStrings.getString("MW_REOPEN_TITLE"), JOptionPane.YES_NO_OPTION);
+                if (res == JOptionPane.YES_OPTION)
+                    ProjectUICommands.projectReload();
+            }
         }
     }
 

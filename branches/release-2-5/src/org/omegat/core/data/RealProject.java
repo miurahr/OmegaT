@@ -185,6 +185,12 @@ public class RealProject implements IProject {
 
             saveProjectProperties();
 
+            // set project specific segmentation rules if they exist
+            Segmenter.srx = m_config.getProjectSRX();
+            if (Segmenter.srx == null) {
+                Segmenter.srx = Preferences.getSRX();
+            }
+
             loadTM();
 
             allProjectEntries = Collections.unmodifiableList(allProjectEntries);
@@ -223,11 +229,9 @@ public class RealProject implements IProject {
             }
 
             // set project specific segmentation rules if they exist
-            if (SRX.projectConfigFileExists(m_config.getProjectInternal())) {
-                this.srx = SRX.getProjectSRX(m_config.getProjectInternal());
-                Segmenter.srx = this.srx;
-            } else {
-                Segmenter.srx = SRX.getSRX();
+            Segmenter.srx = m_config.getProjectSRX();
+            if (Segmenter.srx == null) {
+                Segmenter.srx = Preferences.getSRX();
             }
 
             loadSourceFiles(existSource, existKeys);
@@ -1136,25 +1140,5 @@ public class RealProject implements IProject {
             return FilterMaster.getInstance();
         }
         return this.filterMaster;
-    }
-
-    public SRX getSRX() {
-        return this.srx;
-    }
-
-    public void setSRX(SRX srx) {
-        if (srx == null) {
-            if (this.srx != null) {
-                this.srx.deleteConfig();
-            }
-            Segmenter.srx = SRX.getSRX();
-        } else {
-            Segmenter.srx = srx;
-        }
-        this.srx = srx;
-    }
-
-    public String getSegmentationConfigDir() {
-        return this.m_config.getProjectInternal();
     }
 }
