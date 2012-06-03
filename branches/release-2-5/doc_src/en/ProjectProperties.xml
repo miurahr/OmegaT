@@ -164,8 +164,8 @@
         used for later hits during the translation process. Mistranslated
         segments can of course be corrected later manually. If the
         Autopropagation checkbox is not checked, the segments with alternative
-        translations are left untranslated until the customer has decided
-        which of the alternatives is to be used. . </para>
+        translations are left untranslated until the user has decided
+        which of the alternatives is to be used.</para>
       </listitem>
     </itemizedlist>
 

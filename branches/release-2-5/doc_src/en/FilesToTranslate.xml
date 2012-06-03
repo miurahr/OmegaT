@@ -109,7 +109,7 @@
 
           <secondary>PO as bilingual files</secondary>
         </indexterm> can contain both the source and the target text. Seen
-      from this point of view, they are plane text files<emphasis>
+      from this point of view, they are plain text files<emphasis>
       plus</emphasis> translation memories. If for a given source segment, if
       there is no existing translation in the project tzranslation memory
       (project_save.tmx). the translation is saved in the project_save.tmx as
