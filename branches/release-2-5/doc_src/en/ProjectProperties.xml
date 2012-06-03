@@ -162,7 +162,7 @@
         translated segment will be assumed as the default translation and its
         target text will be automatically used for later hits during the
         translation process. Mistranslated segments can of course be corrected
-        later manually using<guimenuitem> Create Alternative
+        later manually using<guimenuitem>Create Alternative
         Translation</guimenuitem>. If the Auto-propagation checkbox is not
         checked, the segments with alternative translations are left
         untranslated until the user has decided which translation is to be
