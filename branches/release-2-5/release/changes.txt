@@ -19,7 +19,7 @@ regardless of the choice of the user
 
   - Recognize single quotes in ENTITY of DTD file filter
   http://sourceforge.net/support/tracker.php?aid=3520305
-(It was already implemented in 2.3 update 8, but has not been ported
+(It was already implemented in 2.3 update 8, but had not been ported
 to 2.5.)
 
 ----------------------------------------------------------------------
