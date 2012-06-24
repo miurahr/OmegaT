@@ -202,26 +202,32 @@
       </listitem>
 
       <listitem>
-        <para>Google Translate does not work: have you applied <ulink
+        <para>Google Translate V2 does not work: have you applied <ulink
         url="https://developers.google.com/translate/v2/faq">Translate API
         service</ulink>? Note that Google Translate service is not free of
         charge. see chapter <link
         linkend="chapter.installing.and.running">Installing and Running</link>
-        (runtime parameters) for more on that. </para>
+        (runtime parameters) for more on that.</para>
       </listitem>
 
       <listitem>
-        <para>"Google Translate returned HTTP response code: 403 ...": check
-        that the 38-characters key, entered in the pinfo.list file, is
+        <para>"Google Translate returned with HTTP response code: 403 ...":
+        check that the 38-characters key, entered in the pinfo.list file, is
         correct. Check that <ulink
         url="https://developers.google.com/translate/v2/faq">Translate API
         service </ulink>has been activated.</para>
       </listitem>
 
       <listitem>
-        <para>Google Translate does not work: - with the Google API key
+        <para>Google Translate V2 does not work: - with the Google API key
         entered as requested. Check in Options &gt; Machine Translate, that
-        Google Translate V2 is checked. </para>
+        Google Translate V2 is checked.</para>
+      </listitem>
+
+      <listitem>
+        <para>Google Translate V2 reports "Bad request" - check the source and
+        target languages for your project. Having no languages defined elicits
+        this kind or a response. </para>
       </listitem>
     </itemizedlist>
   </section>
