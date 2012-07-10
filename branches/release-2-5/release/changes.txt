@@ -3,7 +3,7 @@
 ----------------------------------------------------------------------
    3 Enhancements
    5 Bug fixes
-   1 Localisation update
+   2 Localisation updates
 ----------------------------------------------------------------------
 2.5.5 vs. 2.5.4 update 1
 
@@ -42,7 +42,7 @@ the Editor is in RTL mode.
   Localisation updates:
 
   - Russian localisation updated to 2.5.4 update 1 (UI, Instant Start)
-
+  - Japanese localization updated to 2.5.5 (UI)
 ----------------------------------------------------------------------
  OmegaT 2.5.4 update 1
 ----------------------------------------------------------------------
