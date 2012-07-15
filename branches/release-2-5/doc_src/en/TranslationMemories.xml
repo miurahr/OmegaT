@@ -283,9 +283,9 @@
         </indexterm>TMX files can generally contain translation units with
       several candidate languages. If for a given source segment there is no
       entry for the selected target language, all other target segments are
-      loaded, regardless of the languag. For instance, if the language pair of
-      the project is DE-FR, it can be still be of some help to see hits in the
-      DE-EN translation, if there's none in the DE-FR pair. </para>
+      loaded, regardless of the language. For instance, if the language pair
+      of the project is DE-FR, it can be still be of some help to see hits in
+      the DE-EN translation, if there's none in the DE-FR pair.</para>
     </section>
 
     <section>
