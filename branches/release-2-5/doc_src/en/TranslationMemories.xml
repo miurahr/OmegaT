@@ -122,6 +122,14 @@
             behavior</link> chapter) <menuchoice>
                 <guimenu>.</guimenu>
               </menuchoice></para>
+
+            <para>It may happen, that translation memories, available in
+            the<filename> tm</filename> subfolder, contain segments with
+            identical source text, but differing targets. TMX files are read
+            sorted by their names and segments within a given TMX file line by
+            line. The last segment with the identical source text will thus
+            prevail (Note: of course it makes more sense to avoid this to
+            happen in the first place).</para>
           </listitem>
         </varlistentry>
 

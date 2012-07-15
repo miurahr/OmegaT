@@ -109,7 +109,7 @@
     <section>
       <title>Subfolder dictionary</title>
 
-      <para>Initially empty, this folder with contain dictionaries you have
+      <para>Initially empty, this folder will contain dictionaries you have
       added to the project. See <link linkend="chapter.dictionaries">chapter
       Dictionaries</link> for more on this subject.</para>
     </section>
