@@ -114,13 +114,21 @@
         numbers in the fuzzy matches according to the source contents. There
         are a number of restrictions:</para>
 
-        <para>- The source segment and the fuzzy matches must contain the same
-        number of candidate numbers</para>
-
-        <para>- The numbers must be exactly the same between matches.</para>
-
-        <para>- Only integers and simple floats (using the period as a decimal
-        character, e.g. 5.4, but not 5,4 or 54E-01) are considered.</para>
+        <itemizedlist>
+          <listitem>
+            <para>The source segment and the fuzzy matches must contain the same
+            list of numbers</para>
+          </listitem>
+        
+          <listitem>
+            <para>The numbers must be exactly the same between the source and the target matches.</para>
+          </listitem>
+        
+          <listitem>
+            <para>Only integers and simple floats (using the period as a decimal
+            character, e.g. 5.4, but not 5,4 or 54E-01) are considered.</para>
+          </listitem>
+        </itemizedlist>
       </listitem>
     </varlistentry>
   </variablelist>
