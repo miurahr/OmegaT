@@ -2,7 +2,7 @@
  OmegaT 2.5.5 update 1
 ----------------------------------------------------------------------
    1 Enhancement
-   1 Bug fix
+   2 Bug fixes
    1 Localisation update
 ----------------------------------------------------------------------
 2.5.5 update 1 vs. 2.5.5
@@ -14,6 +14,9 @@
   http://sourceforge.net/support/tracker.php?aid=3542912
 
   Bug fixes:
+
+  - Project specific filter settings not saved
+  http://sourceforge.net/support/tracker.php?aid=3546645
 
   PowerPoint documents (.pptx and .pptm) could not be opened with Java 1.7
 
