@@ -35,6 +35,7 @@ import org.jdesktop.swingworker.SwingWorker;
 import org.omegat.core.Core;
 import org.omegat.core.data.ProjectFactory;
 import org.omegat.core.data.ProjectProperties;
+import org.omegat.filters2.master.FilterMaster;
 import org.omegat.gui.dialogs.NewProjectFileChooser;
 import org.omegat.gui.dialogs.ProjectPropertiesDialog;
 import org.omegat.util.Log;
@@ -280,6 +281,8 @@ public class ProjectUICommands {
         if (newProps == null) {
             return;
         }
+        FilterMaster.saveConfig(newProps.getProjectFilters(), newProps.getProjectInternal());
+
         int res = JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
                 OStrings.getString("MW_REOPEN_QUESTION"), OStrings.getString("MW_REOPEN_TITLE"),
                 JOptionPane.YES_NO_OPTION);
