@@ -274,7 +274,7 @@ Code has been contributed by
   Thomas Cordonnier
   Martin Fleurke  
   Wildrich Fourie
-  Philipp Hall
+  Phillip Hall
   Jean-Christophe Helary
   Thomas Huriaux
   Hans-Peter Jacobs
