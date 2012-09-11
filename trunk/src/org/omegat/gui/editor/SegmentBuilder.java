@@ -30,8 +30,6 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -47,7 +45,6 @@ import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
-import org.omegat.util.PatternConsts;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
@@ -587,57 +584,7 @@ public class SegmentBuilder {
      */
     private void insertTextWithTags(String text, boolean isSource) throws BadLocationException {
         AttributeSet normal = attrs(isSource, false, false, false);
-        int start = offset;
-        int end = start + text.length();
         insert(text, normal);
-        formatText(text, start, end, isSource);
-    }
-
-    /**
-     * formats source or target segment to highlight placeholders, tags, non-breakable spaces etc.
-     * @param text the text to format
-     * @param start start position in editor
-     * @param end end position in editor
-     * @param isSource is the text a source segment or not
-     */
-    public void formatText(String text, int start, int end, boolean isSource) {
-        if (controller.currentOrientation != Document3.ORIENTATION.ALL_LTR) {
-            //workaround for the issue that in RTL-embedded text, the formatting somehow
-            //splits up the text, and the first parts then can get rendered confusingly.
-            //E.g. "Blah %s, Blah." gets formatted, and thus split into "blah |<em>%s</em>|, Blah."
-            //and that is shown partly in RTL as " Blah|<em>%s</em>|, Blah.".
-            //Note the first space is displayed to the left of the word.
-            //To prevent this, the formatting is not done when the editor is in RTL.
-            return;
-        }
-        //first remove any formatting
-        AttributeSet attrNormal = attrs(isSource, false, false, false);
-        doc.setCharacterAttributes(start, end-start, attrNormal, true);
-        //format placeholders
-        AttributeSet attrPlaceholder = attrs(isSource, true, false, false);
-        Pattern placeholderPattern = PatternConsts.getPlaceholderPattern();
-        Matcher placeholderMatch = placeholderPattern.matcher(text);
-        while (placeholderMatch.find()) {
-            doc.setCharacterAttributes(start+placeholderMatch.start(), placeholderMatch.end()-placeholderMatch.start(), attrPlaceholder, true);
-        }
-        //format text-to-remove
-        AttributeSet attrRemove = attrs(isSource, false, true, false);
-        Pattern removePattern = PatternConsts.getRemovePattern();
-        if (removePattern != null) {
-            Matcher removeMatcher = removePattern.matcher(text);
-            while (removeMatcher.find()) {
-                doc.setCharacterAttributes(start+removeMatcher.start(), removeMatcher.end()-removeMatcher.start(), attrRemove, true);
-            }
-        }
-        //format non-breakable spaces
-        AttributeSet attrNBSP = attrs(isSource, false, false, true);
-        Pattern nbspPattern = PatternConsts.NBSP;
-        if (nbspPattern != null) {
-            Matcher nbspMatcher = nbspPattern.matcher(text);
-            while (nbspMatcher.find()) {
-                doc.setCharacterAttributes(start+nbspMatcher.start(), nbspMatcher.end()-nbspMatcher.start(), attrNBSP, true);
-            }
-        }
     }
 
     /**

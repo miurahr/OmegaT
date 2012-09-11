@@ -204,8 +204,6 @@ public class EditorTextArea3 extends JEditorPane {
     protected void processKeyEvent(KeyEvent e) {
         int keyEvent = e.getID();
         if (keyEvent == KeyEvent.KEY_RELEASED) {
-            // key released. Only now the translation start/end positions have been updated according to keydown events
-            reformatTranslation();
             super.processKeyEvent(e);
             return;
         } else if (keyEvent == KeyEvent.KEY_TYPED) {
@@ -342,30 +340,6 @@ public class EditorTextArea3 extends JEditorPane {
             }
         }
     }
-
-    /**
-     * Formats placeholders in translation
-     */
-    private void reformatTranslation() {
-        Document3 doc = getOmDocument();
-        String trans = doc.extractTranslation();
-
-        if (trans != null) {
-            //prevent the formatting to become an undoable thing, by removing the undomanager temporary
-            getOmDocument().removeUndoableEditListener(undoManager);
-
-            int start = doc.getTranslationStart();
-            int end = doc.getTranslationEnd();
-
-            int ae = controller.displayedEntryIndex;
-            SegmentBuilder sb = controller.m_docSegList[ae];
-            sb.formatText(trans, start, end, false);
-
-            //enable undo manager again.
-            getOmDocument().addUndoableEditListener(undoManager);
-        }
-    }
-
 
     /**
      * Checks whether the selection & caret is inside editable text, and changes
