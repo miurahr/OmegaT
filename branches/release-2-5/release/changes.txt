@@ -1,6 +1,6 @@
  OmegaT 2.5.5 update 3
 ----------------------------------------------------------------------
-   1 Enhancement
+   2 Enhancements
    1 Bug fix
    1 Localisation update
 ----------------------------------------------------------------------
@@ -9,6 +9,8 @@
    Other enhancements:
 
   - New file filter for Visio (*.vxd) files
+
+  - Linux Kaptain: the launch dialog closes automatically on launching
 
   Bug fixes:
 
