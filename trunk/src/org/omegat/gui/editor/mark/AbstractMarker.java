@@ -48,7 +48,7 @@ public abstract class AbstractMarker implements IMarker {
         }
 
         Matcher match;
-        if (isActive || Core.getEditor().getSettings().isDisplaySegmentSources()) {
+        if (isActive || Core.getEditor().getSettings().isDisplaySegmentSources() || translationText == null) {
             match = pattern.matcher(sourceText);
             while (match.find()) {
                 Mark m = new Mark(Mark.ENTRY_PART.SOURCE, match.start(), match.end());
