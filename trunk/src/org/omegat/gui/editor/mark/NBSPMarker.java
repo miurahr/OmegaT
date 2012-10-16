@@ -12,7 +12,7 @@ import org.omegat.util.gui.Styles;
  */
 public class NBSPMarker extends AbstractMarker {
     public NBSPMarker() throws Exception {
-        PAINTER = new javax.swing.text.DefaultHighlighter.DefaultHighlightPainter(Styles.COLOR_NBSP);
+        PAINTER = new TransparentHighlightPainter(Styles.COLOR_NBSP, 0.5F);
         toolTip = OStrings.getString("MARKER_NBSP");
         pattern = PatternConsts.NBSP;
     }

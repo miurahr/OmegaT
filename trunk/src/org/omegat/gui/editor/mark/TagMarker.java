@@ -14,7 +14,8 @@ import org.omegat.util.gui.Styles;
 public class TagMarker extends AbstractMarker {
 
     public TagMarker() throws Exception {
-        PAINTER = new javax.swing.text.DefaultHighlighter.DefaultHighlightPainter(Styles.COLOR_PLACEHOLDER);
+        //PAINTER = new javax.swing.text.DefaultHighlighter.DefaultHighlightPainter(Styles.COLOR_PLACEHOLDER);
+        PAINTER = new TransparentHighlightPainter(Styles.COLOR_PLACEHOLDER, 0.2F);
         toolTip = OStrings.getString("MARKER_TAG");
         pattern = PatternConsts.getPlaceholderPattern();
     }

@@ -14,7 +14,8 @@ import org.omegat.util.gui.Styles;
 public class RemoveTagMarker extends AbstractMarker {
 
     public RemoveTagMarker() throws Exception {
-        PAINTER = new javax.swing.text.DefaultHighlighter.DefaultHighlightPainter(Styles.COLOR_REMOVETEXT_TARGET);
+        //PAINTER = new javax.swing.text.DefaultHighlighter.DefaultHighlightPainter(Styles.COLOR_REMOVETEXT_TARGET);
+        PAINTER = new TransparentHighlightPainter(Styles.COLOR_REMOVETEXT_TARGET, 0.2F);
         toolTip = OStrings.getString("MARKER_REMOVETAG");
         pattern = PatternConsts.getRemovePattern();
     }
