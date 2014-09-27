@@ -317,6 +317,132 @@ public class StaticUtils {
     }
 
     /**
+     * List files in subdirectories.
+     */
+    private static void listFiles(File dir, List<File> result) {
+        File[] files=dir.listFiles();
+        if (files == null) {
+            return;
+        }
+
+        for (File f : files) {
+            if (f.isDirectory()) {
+                listFiles(f, result);
+            }else {
+                result.add(f);
+            }
+        }
+    }
+
+    public static List<String> buildRelativeFilesList(File rootDir, List<String> includes,
+            List<String> excludes) {
+        List<File> files = new ArrayList<File>();
+        listFiles(rootDir, files);
+        Pattern[] includesMasks;
+        if (includes != null) {
+            includesMasks = new Pattern[includes.size()];
+            for (int i = 0; i < includes.size(); i++) {
+                includesMasks[i] = compileFileMask(includes.get(i));
+            }
+        } else {
+            includesMasks = new Pattern[0];
+        }
+        Pattern[] excludesMasks;
+        if (excludes != null) {
+            excludesMasks = new Pattern[excludes.size()];
+            for (int i = 0; i < excludes.size(); i++) {
+                excludesMasks[i] = compileFileMask(excludes.get(i));
+            }
+        } else {
+            excludesMasks = new Pattern[0];
+        }
+        String prefix = rootDir.getAbsolutePath().replace('\\', '/');
+        List<String> result = new ArrayList<String>();
+        for (File f : files) {
+            String fn = f.getAbsolutePath().replace('\\', '/');
+            if (fn.startsWith(prefix)) {
+                // file path should starts from '/' for checking.
+                fn = fn.substring(prefix.length());
+            }
+            boolean add = false;
+            // check include masks
+            for (Pattern p : includesMasks) {
+                if (p.matcher(fn).matches()) {
+                    add = true;
+                    break;
+                }
+            }
+            if (!add) {
+                add = true;
+                // check exclude masks
+                for (Pattern p : excludesMasks) {
+                    if (p.matcher(fn).matches()) {
+                        add = false;
+                        break;
+                    }
+                }
+            }
+            if (add) {
+                result.add(fn);
+            }
+        }
+        // Get the local collator and set its strength to PRIMARY
+        final Collator localCollator = Collator.getInstance(Locale.getDefault());
+        localCollator.setStrength(Collator.PRIMARY);
+        Collections.sort(result, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return localCollator.compare(o1, o2);
+            }
+        });
+        return result;
+    }
+
+    public static boolean checkFileInclude(String filePath, List<String> includes, List<String> excludes) {
+        if (!filePath.startsWith("/")) {
+            // file path should starts from '/' for checking.
+            filePath = '/' + filePath;
+        }
+        Pattern[] includesMasks;
+        if (includes != null) {
+            includesMasks = new Pattern[includes.size()];
+            for (int i = 0; i < includes.size(); i++) {
+                includesMasks[i] = compileFileMask(includes.get(i));
+            }
+        } else {
+            includesMasks = new Pattern[0];
+        }
+        Pattern[] excludesMasks;
+        if (excludes != null) {
+            excludesMasks = new Pattern[excludes.size()];
+            for (int i = 0; i < excludes.size(); i++) {
+                excludesMasks[i] = compileFileMask(excludes.get(i));
+            }
+        } else {
+            excludesMasks = new Pattern[0];
+        }
+        boolean add = false;
+        // check include masks
+        for (Pattern p : includesMasks) {
+            if (p.matcher(filePath).matches()) {
+                add = true;
+                break;
+            }
+        }
+        if (!add) {
+            add = true;
+            // check exclude masks
+            for (Pattern p : excludesMasks) {
+                if (p.matcher(filePath).matches()) {
+                    add = false;
+                    break;
+                }
+            }
+        }
+        return add;
+    }
+
+    /**
      * Remove files by masks.
      */
     public static void removeFilesByMasks(List<String> lst, List<String> excludeMasks) {
@@ -394,6 +520,7 @@ public class StaticUtils {
         });
     }
 
+    @Deprecated
     private static void internalBuildFileList(List<String> lst, File rootDir, boolean recursive) {
         // read all files in current directory, recurse into subdirs
         // append files to supplied list
