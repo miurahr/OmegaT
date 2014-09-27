@@ -115,7 +115,6 @@ public class ProjectUICommands {
                     // create project
                     try {
                         ProjectFactory.createProject(newProps);
-                        Core.getProject().saveProjectProperties();
                     } catch (Exception ex) {
                         Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
                         Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
@@ -263,7 +262,7 @@ public class ProjectUICommands {
                 final IRemoteRepository repository;
                 // check for team-project
                 try {
-                    if (Core.getParams().containsKey("no-team")) {
+                    if (Core.getParams().containsKey("no-team") || true) { // TODO
                         // disable team functionality
                         repository = null;
                     } else if (SVNRemoteRepository.isSVNDirectory(projectRootFolder)) {
@@ -291,7 +290,7 @@ public class ProjectUICommands {
                             new RepositoryUtils.AskCredentials() {
                                 public void callRepository() throws Exception {
                                     Core.getMainWindow().showStatusMessageRB("TEAM_SYNCHRONIZE");
-                                    repository.updateFullProject();
+                                 //   repository.updateFullProject(); // TODO
                                     Core.getMainWindow().showStatusMessageRB(null);
                                 }
                             }.execute(repository);
@@ -510,7 +509,6 @@ public class ProjectUICommands {
                 ProjectFactory.closeProject();
 
                 ProjectFactory.loadProject(newProps, repo, true);
-                Core.getProject().saveProjectProperties();
                 return null;
             }
 
@@ -530,7 +528,7 @@ public class ProjectUICommands {
 
         new SwingWorker<Object, Void>() {
             protected Object doInBackground() throws Exception {
-                Core.getProject().saveProject(false);
+                Core.getProject().saveProject(true);
                 Core.getProject().compileProject(".*");
                 return null;
             }
