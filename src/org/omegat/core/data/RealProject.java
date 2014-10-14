@@ -774,63 +774,65 @@ public class RealProject implements IProject {
      */
     private void rebaseAndCommitProject() throws Exception {
         Log.logInfoRB("TEAM_REBASE_START");
-        RebaseAndCommit.rebaseAndCommit(remoteRepositoryProvider, m_config.getProjectRootDir(),
-                m_config.getProjectInternalRelative() + OConsts.STATUS_EXTENSION,
-                new RebaseAndCommit.IRebase() {
-                    ProjectTMX baseTMX, headTMX;
+        String tmxPath = m_config.getProjectInternalRelative() + OConsts.STATUS_EXTENSION;
+        if (remoteRepositoryProvider.isUnderMapping(tmxPath)) {
+            RebaseAndCommit.rebaseAndCommit(remoteRepositoryProvider, m_config.getProjectRootDir(), tmxPath,
+                    new RebaseAndCommit.IRebase() {
+                        ProjectTMX baseTMX, headTMX;
 
-                    @Override
-                    public void parseBaseFile(File file) throws Exception {
-                        baseTMX = new ProjectTMX(m_config.getSourceLanguage(), m_config.getTargetLanguage(),
-                                m_config.isSentenceSegmentingEnabled(), file, null);
-                    }
-
-                    @Override
-                    public void parseHeadFile(File file) throws Exception {
-                        headTMX = new ProjectTMX(m_config.getSourceLanguage(), m_config.getTargetLanguage(),
-                                m_config.isSentenceSegmentingEnabled(), file, null);
-                    }
-
-                    @Override
-                    public void rebaseAndSave(File out) throws Exception {
-                        // Do 3-way merge of:
-                        // Base: baseTMX
-                        // File 1: projectTMX (mine)
-                        // File 2: headTMX (theirs)
-                        synchronized (projectTMX) { // TODO we shouldn't lock for so long time
-                            StmProperties props = new StmProperties()
-                                    .setBaseTmxName(OStrings.getString("TMX_MERGE_BASE"))
-                                    .setTmx1Name(OStrings.getString("TMX_MERGE_MINE"))
-                                    .setTmx2Name(OStrings.getString("TMX_MERGE_THEIRS"))
-                                    .setLanguageResource(OStrings.getResourceBundle())
-                                    .setParentWindow(Core.getMainWindow().getApplicationFrame())
-                                    // More than this number of conflicts will trigger List View by default.
-                                    .setListViewThreshold(5);
-                            ProjectTMX mergedTMX = SuperTmxMerge.merge(baseTMX, projectTMX, headTMX, m_config
-                                    .getSourceLanguage().getLanguage(), m_config.getTargetLanguage()
-                                    .getLanguage(), props);
-                            projectTMX.replaceContent(mergedTMX);
+                        @Override
+                        public void parseBaseFile(File file) throws Exception {
+                            baseTMX = new ProjectTMX(m_config.getSourceLanguage(), m_config
+                                    .getTargetLanguage(), m_config.isSentenceSegmentingEnabled(), file, null);
                         }
 
-                        projectTMX.exportTMX(m_config, out, false, false, true);
-                    }
+                        @Override
+                        public void parseHeadFile(File file) throws Exception {
+                            headTMX = new ProjectTMX(m_config.getSourceLanguage(), m_config
+                                    .getTargetLanguage(), m_config.isSentenceSegmentingEnabled(), file, null);
+                        }
 
-                    @Override
-                    public String getCommentForCommit() {
-                        final String author = Preferences.getPreferenceDefault(Preferences.TEAM_AUTHOR,
-                                System.getProperty("user.name"));
-                        return "Translated by " + author;
-                    }
-                });
+                        @Override
+                        public void rebaseAndSave(File out) throws Exception {
+                            // Do 3-way merge of:
+                            // Base: baseTMX
+                            // File 1: projectTMX (mine)
+                            // File 2: headTMX (theirs)
+                            synchronized (projectTMX) { // TODO we shouldn't lock for so long time
+                                StmProperties props = new StmProperties()
+                                        .setBaseTmxName(OStrings.getString("TMX_MERGE_BASE"))
+                                        .setTmx1Name(OStrings.getString("TMX_MERGE_MINE"))
+                                        .setTmx2Name(OStrings.getString("TMX_MERGE_THEIRS"))
+                                        .setLanguageResource(OStrings.getResourceBundle())
+                                        .setParentWindow(Core.getMainWindow().getApplicationFrame())
+                                        // More than this number of conflicts will trigger List View by
+                                        // default.
+                                        .setListViewThreshold(5);
+                                ProjectTMX mergedTMX = SuperTmxMerge.merge(baseTMX, projectTMX, headTMX,
+                                        m_config.getSourceLanguage().getLanguage(), m_config
+                                                .getTargetLanguage().getLanguage(), props);
+                                projectTMX.replaceContent(mergedTMX);
+                            }
 
-        ProjectTMX newTMX = new ProjectTMX(m_config.getSourceLanguage(), m_config.getTargetLanguage(),
-                m_config.isSentenceSegmentingEnabled(), new File(m_config.getProjectInternalDir()
-                        , OConsts.STATUS_EXTENSION), null);
-        projectTMX.replaceContent(newTMX);
+                            projectTMX.exportTMX(m_config, out, false, false, true);
+                        }
+
+                        @Override
+                        public String getCommentForCommit() {
+                            final String author = Preferences.getPreferenceDefault(Preferences.TEAM_AUTHOR,
+                                    System.getProperty("user.name"));
+                            return "Translated by " + author;
+                        }
+                    });
+            ProjectTMX newTMX = new ProjectTMX(m_config.getSourceLanguage(), m_config.getTargetLanguage(),
+                    m_config.isSentenceSegmentingEnabled(), new File(m_config.getProjectInternalDir(),
+                            OConsts.STATUS_EXTENSION), null);
+            projectTMX.replaceContent(newTMX);
+        }
 
         final String glossaryPath = m_config.getGlossaryRootRelative() + "/" + OConsts.DEFAULT_W_GLOSSARY;
         final File glossaryFile = new File(m_config.getProjectRootDir(), glossaryPath);
-        if (glossaryFile.exists()) {
+        if (glossaryFile.exists() && remoteRepositoryProvider.isUnderMapping(glossaryPath)) {
             final List<GlossaryEntry> glossaryEntries = GlossaryReaderTSV.read(glossaryFile, true);
             RebaseAndCommit.rebaseAndCommit(remoteRepositoryProvider, m_config.getProjectRootDir(),
                     glossaryPath, new RebaseAndCommit.IRebase() {
