@@ -909,7 +909,7 @@ public class RealProject implements IProject {
                 // RFE 1001918 - backing up project's TMX upon successful read
                 // TODO check for repositories
                 FileUtil.backupFile(file);
-                FileUtil.removeOldBackups(file);
+                FileUtil.removeOldBackups(file, OConsts.MAX_BACKUPS);
             }
         } catch (SAXParseException ex) {
             Log.logErrorRB(ex, "TMXR_FATAL_ERROR_WHILE_PARSING", ex.getLineNumber(), ex.getColumnNumber());
