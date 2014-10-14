@@ -207,7 +207,7 @@ public class ProjectFileStorage {
         om.getProject().setRemoveTags(props.isRemoveTags());
         om.getProject().setExternalCommand(props.getExternalCommand());
 
-        if (!props.getRepositories().isEmpty()) {
+        if (props.getRepositories() != null && !props.getRepositories().isEmpty()) {
             om.getProject().setRepositories(new Repositories());
             om.getProject().getRepositories().getRepository().addAll(props.getRepositories());
         }
