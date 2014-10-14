@@ -48,7 +48,21 @@ public class RebaseAndCommit {
     public static void rebaseAndCommit(RemoteRepositoryProvider provider, File projectDir, String path,
             IRebase rebaser) throws Exception {
 
-        final String currentBaseVersion = readVersion(projectDir, path);
+        if (!provider.isUnderMapping(path)) {
+            throw new RuntimeException("Path is not under mapping: " + path);
+        }
+
+        Log.logDebug(LOGGER, "Rebase and commit '" + path + "'");
+
+        final String currentBaseVersion;
+        String savedVersion = readVersion(projectDir, path);
+        if (savedVersion != null) {
+            currentBaseVersion = savedVersion;
+        } else {
+            // version wasn't stored - assume latest. TODO Probably need to ask ?
+            provider.switchToVersion(path, null);
+            currentBaseVersion = provider.getVersion(path);
+        }
 
         final boolean fileChangedLocally;
         {
@@ -124,12 +138,15 @@ public class RebaseAndCommit {
      */
     private synchronized static String readVersion(File projectRoot, String path) throws Exception {
         Properties p = new Properties();
-        FileInputStream in = new FileInputStream(new File(projectRoot, RemoteRepositoryProvider.REPO_SUBDIR
-                + "versions.properties"));
-        try {
-            p.load(in);
-        } finally {
-            in.close();
+        File versionsFile = new File(projectRoot, RemoteRepositoryProvider.REPO_SUBDIR
+                + "versions.properties");
+        if (versionsFile.exists()) {
+            FileInputStream in = new FileInputStream(versionsFile);
+            try {
+                p.load(in);
+            } finally {
+                in.close();
+            }
         }
         return p.getProperty(path);
     }
@@ -142,11 +159,13 @@ public class RebaseAndCommit {
         Properties p = new Properties();
         File f = new File(projectRoot, RemoteRepositoryProvider.REPO_SUBDIR + "versions.properties");
         File fNew = new File(projectRoot, RemoteRepositoryProvider.REPO_SUBDIR + "versions.properties.new");
-        FileInputStream in = new FileInputStream(f);
-        try {
-            p.load(in);
-        } finally {
-            in.close();
+        if (f.exists()) {
+            FileInputStream in = new FileInputStream(f);
+            try {
+                p.load(in);
+            } finally {
+                in.close();
+            }
         }
         p.setProperty(path, newVersion);
         FileOutputStream out = new FileOutputStream(fNew);
