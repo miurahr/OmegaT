@@ -136,6 +136,13 @@ public class RemoteRepositoryProvider {
     }
 
     /**
+     * Checks if path is under mapping.
+     */
+    public boolean isUnderMapping(String path) {
+        return getMappings(path).size() > 0;
+    }
+
+    /**
      * Switch all repositories into latest version.
      */
     public void switchAllToLatest() throws Exception {

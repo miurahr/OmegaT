@@ -160,6 +160,9 @@ public class SVNRemoteRepository2 implements IRemoteRepository2 {
                 SVNCommitInfo info = ourClientManager.getCommitClient().doCommit(forCommit, false, comment,
                         null, null, false, false, SVNDepth.INFINITY);
                 Log.logDebug(LOGGER, "SVN committed into new revision {0}", info.getNewRevision());
+                if (info.getNewRevision() < 0) {
+                    throw new Exception("SVN commit returns -1");
+                }
                 Log.logInfoRB("SVN_FINISH", "commit");
                 return Long.toString(info.getNewRevision());
             } catch (SVNAuthenticationException ex) {
