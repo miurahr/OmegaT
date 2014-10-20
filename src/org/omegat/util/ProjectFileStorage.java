@@ -98,6 +98,8 @@ public class ProjectFileStorage {
             result.getSourceRootExcludes().addAll(Arrays.asList(ProjectProperties.DEFAULT_EXCLUDES));
         }
         result.setTMRoot(computeAbsolutePath(m_root, om.getProject().getTmDir(), OConsts.DEFAULT_TM));
+        result.setTMRootRelative(computeRelative(om.getProject().getTmDir(), OConsts.DEFAULT_TM));
+
         result.setGlossaryRoot(computeAbsolutePath(m_root, om.getProject().getGlossaryDir(),
                 OConsts.DEFAULT_GLOSSARY));
         result.setGlossaryRootRelative(computeRelative(om.getProject().getGlossaryDir(),
