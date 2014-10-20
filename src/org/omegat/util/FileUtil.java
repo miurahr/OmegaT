@@ -437,4 +437,27 @@ public class FileUtil {
     }
 
     private static int TEMP_DIR_ATTEMPTS = 10000;
+
+    /**
+     * Checks if path starts with a system root.
+     */
+    public static boolean isDirRelative(String dir) {
+        for (File root : File.listRoots()) {
+            try // Under Windows and Java 1.4, there is an exception if
+            { // using getCanonicalPath on a non-existent drive letter
+              // [1875331] Relative paths not working under
+              // Windows/Java 1.4
+                String platformRelativePath = dir.replace('/', File.separatorChar);
+                // If a plaform-dependent form of relativePath is not
+                // used, startWith will always fail under Windows,
+                // because Windows uses C:\, while the path is stored as
+                // C:/ in omegat.project
+                if (platformRelativePath.toUpperCase().startsWith(root.getCanonicalPath().toUpperCase())) {
+                    return true;
+                }
+            } catch (IOException e) {
+            }
+        }
+        return false;
+    }
 }
