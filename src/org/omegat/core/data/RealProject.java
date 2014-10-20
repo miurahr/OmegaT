@@ -320,7 +320,8 @@ public class RealProject implements IProject {
                 // copy files from repository to project
                 remoteRepositoryProvider.switchAllToLatest();
                 for (String dir : new String[] { m_config.getSourceRootRelative(),
-                        m_config.getGlossaryRootRelative(), m_config.getDictRootRelative() }) {
+                        m_config.getGlossaryRootRelative(), m_config.getTMRootRelative(),
+                        m_config.getDictRootRelative() }) {
                     if (dir.startsWith("/") || dir.contains("..")) {
                         continue;
                     }
