@@ -3,7 +3,7 @@
           with fuzzy matching, translation memory, keyword search, 
           glossaries, and translation leveraging into updated projects.
 
- Copyright (C) 2015 Aaron Madlon-Kay
+ Copyright (C) 2015 Aaron Madlon-Kay, Alex Buloichik
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -38,6 +38,7 @@ import junit.framework.TestCase;
 
 /**
  * @author Aaron Madlon-Kay
+ * @author Alex Buloichik
  */
 public class FileUtilTest extends TestCase {
 
@@ -189,5 +190,25 @@ public class FileUtilTest extends TestCase {
         }
         stream.close();
         return sb.toString();
+    }
+
+    public void testRelative() throws Exception {
+        assertFalse(FileUtil.isRelative("C:\\zz"));
+        assertFalse(FileUtil.isRelative("z:/zz"));
+        assertFalse(FileUtil.isRelative("c:\\zz"));
+        assertFalse(FileUtil.isRelative("z:/zz"));
+        assertTrue(FileUtil.isRelative("1:/zz"));
+        assertFalse(FileUtil.isRelative("/zz"));
+        assertFalse(FileUtil.isRelative("\\zz"));
+        assertTrue(FileUtil.isRelative("zz/"));
+    }
+
+    public void testAbsoluteForSystem() throws Exception {
+        assertEquals("C:/zzz", FileUtil.absoluteForSystem("C:\\zzz", Platform.OsType.WIN64));
+        assertEquals("/zzz", FileUtil.absoluteForSystem("C:\\zzz", Platform.OsType.LINUX64));
+        assertEquals("/zzz", FileUtil.absoluteForSystem("C:\\zzz", Platform.OsType.MAC64));
+        assertEquals("/zzz", FileUtil.absoluteForSystem("\\zzz", Platform.OsType.WIN64));
+        assertEquals("/zzz", FileUtil.absoluteForSystem("\\zzz", Platform.OsType.LINUX64));
+        assertEquals("/zzz", FileUtil.absoluteForSystem("\\zzz", Platform.OsType.MAC64));
     }
 }
