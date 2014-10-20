@@ -199,6 +199,14 @@ public class ProjectProperties {
         return tmRoot;
     }
 
+    public String getTMRootRelative() {
+        return tmRootRelative;
+    }
+
+    public void setTMRootRelative(String tmRootRelative) {
+        this.tmRootRelative = tmRootRelative;
+    }
+
     /** Sets The Translation Memory (TMX) Files Directory */
     public void setTMRoot(String tmRoot) {
         if (!StringUtil.isEmpty(tmRoot)) {
@@ -549,6 +557,7 @@ public class ProjectProperties {
     private String writeableGlossaryFile;
     private String writeableGlossaryFileRelative;
     private String tmRoot;
+    private String tmRootRelative;
     private String dictRoot;
     private String dictRootRelative;
     private List<RepositoryDefinition> repositories;
