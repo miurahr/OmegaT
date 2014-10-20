@@ -51,6 +51,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.omegat.gui.help.HelpFrame;
 
@@ -484,4 +486,37 @@ public class FileUtil {
     }
 
     private static int TEMP_DIR_ATTEMPTS = 10000;
+
+    private static final Pattern RE_ABSOLUTE_WINDOWS = Pattern.compile("[A-Za-z]\\:(/.*)");
+    private static final Pattern RE_ABSOLUTE_LINUX = Pattern.compile("/.*");
+
+    /**
+     * Checks if path starts with possible root on the Linux, MacOS, Windows.
+     */
+    public static boolean isRelative(String path) {
+        path = path.replace('\\', '/');
+        if (RE_ABSOLUTE_LINUX.matcher(path).matches()) {
+            return false;
+        } else if (RE_ABSOLUTE_WINDOWS.matcher(path).matches()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Converts Windows absolute path into current system's absolute path. It required for conversion like
+     * 'C:\zzz' into '/zzz' for be real absolute in Linux.
+     */
+    public static String absoluteForSystem(String path, Platform.OsType currentOsType) {
+        path = path.replace('\\', '/');
+        Matcher m = RE_ABSOLUTE_WINDOWS.matcher(path);
+        if (m.matches()) {
+            if (currentOsType != Platform.OsType.WIN32 && currentOsType != Platform.OsType.WIN64) {
+                // Windows' absolute file on non-Windows system
+                return m.group(1);
+            }
+        }
+        return path;
+    }
 }
