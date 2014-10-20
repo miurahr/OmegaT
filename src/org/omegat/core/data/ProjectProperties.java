@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.omegat.core.segmentation.SRX;
 import org.omegat.filters2.master.PluginUtils;
+import org.omegat.util.FileUtil;
 import org.omegat.util.Language;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -308,6 +309,11 @@ public class ProjectProperties {
 
     public void setSourceRootRelative(String sourceRootRelative) {
         this.sourceRootRelative = sourceRootRelative;
+        sourceDir = new ProjectDir(sourceRootRelative, OConsts.DEFAULT_SOURCE);
+    }
+
+    public ProjectDir getSourceDir() {
+        return sourceDir;
     }
 
     public List<String> getSourceRootExcludes() {
@@ -576,4 +582,45 @@ public class ProjectProperties {
     private Filters projectFilters;
     
     private String externalCommand;
+
+    protected File projectRootDir;
+    protected ProjectDir sourceDir;
+
+    /**
+     * Class for support directories functionality, like relative path, etc.
+     */
+    public class ProjectDir {
+        protected final File dir;
+        /** Null if directory not under project root. Or relative directory with '/' at the end. */
+        protected String underRoot;
+
+        public ProjectDir(String path, String defaultPath) {
+            if (OConsts.DEFAULT_FOLDER_MARKER.equals(path)) {
+                path = defaultPath;
+            }
+            underRoot = null;
+            if (FileUtil.isDirRelative(path)) {
+                dir = new File(projectRootDir, path);
+                if (!path.contains("..")) {
+                    underRoot = path.replace(File.separatorChar, '/');
+                    if (!underRoot.endsWith("/")) {
+                        underRoot += '/';
+                    }
+                }
+            } else {
+                dir = new File(path);
+            }
+        }
+
+        public File getDirectory() {
+            return dir;
+        }
+
+        /**
+         * Returns path under project root with '/' at the end, or null if directory outside of project.
+         */
+        public String getUnderRoot() {
+            return underRoot;
+        }
+    }
 }
