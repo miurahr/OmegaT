@@ -108,22 +108,14 @@ public class ProjectFileStorage {
         // Compute glossary file location
         String glossaryFile = om.getProject().getGlossaryFile();
         String glossaryDir = null;
-        if (glossaryFile != null) {
-            glossaryDir = new File(glossaryFile).getParent();
-        } else {
-            glossaryDir = result.getGlossaryRoot();
-        }
         glossaryDir = computeAbsolutePath(m_root, glossaryDir, OConsts.DEFAULT_GLOSSARY);
         if (glossaryFile == null) {
             glossaryFile = OConsts.DEFAULT_FOLDER_MARKER;
         }
         if (glossaryFile.equalsIgnoreCase(OConsts.DEFAULT_FOLDER_MARKER)) {
             glossaryFile = result.computeDefaultWriteableGlossaryFile();
-        } else {
-            result.setWriteableGlossary(glossaryFile);
-            glossaryFile = glossaryDir + new File(glossaryFile).getName();
         }
-        result.setWriteableGlossaryFileRelative(computeRelative(glossaryDir, OConsts.DEFAULT_GLOSSARY));
+        result.setWriteableGlossary(glossaryFile);
 
         result.setDictRoot(computeAbsolutePath(m_root, om.getProject().getDictionaryDir(),
                 OConsts.DEFAULT_DICT));
