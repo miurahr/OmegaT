@@ -453,11 +453,11 @@ public class FileUtil {
                 // because Windows uses C:\, while the path is stored as
                 // C:/ in omegat.project
                 if (platformRelativePath.toUpperCase().startsWith(root.getCanonicalPath().toUpperCase())) {
-                    return true;
+                    return false;
                 }
             } catch (IOException e) {
             }
         }
-        return false;
+        return true;
     }
 }
