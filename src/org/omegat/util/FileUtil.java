@@ -348,7 +348,34 @@ public class FileUtil {
         }
         return fileAbs.substring(rootAbs.length());
     }
-    
+
+    /**
+     * Compute relative path or returns origin.
+     */
+    public static String computeRelativeOrAbsolutePath(File rootDir, File path) throws IOException {
+        if (isRelativePath(rootDir, path)) {
+            return computeRelativePath(rootDir, path);
+        } else {
+            return path.getAbsolutePath();
+        }
+    }
+
+    /**
+     * Compute is path relative to root.
+     */
+    public static boolean isRelativePath(File rootDir, File path) throws IOException {
+        String rootAbs = rootDir.getAbsolutePath().replace('\\', '/') + '/';
+        String pathAbs = path.getAbsolutePath().replace('\\', '/');
+
+        switch (Platform.getOsType()) {
+        case WIN32:
+        case WIN64:
+            return pathAbs.toUpperCase().startsWith(rootAbs.toUpperCase());
+        default:
+            return pathAbs.startsWith(rootAbs);
+        }
+    }
+
     /**
      * Load a text file from the root of help.
      * @param The name of the text file

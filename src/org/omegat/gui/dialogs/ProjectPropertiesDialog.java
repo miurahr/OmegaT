@@ -68,6 +68,7 @@ import org.apache.lucene.util.Version;
 import org.omegat.core.Core;
 import org.omegat.core.data.CommandVarExpansion;
 import org.omegat.core.data.ProjectProperties;
+import org.omegat.core.data.ProjectPropertiesWrite;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
@@ -110,7 +111,7 @@ import org.openide.awt.Mnemonics;
  */
 @SuppressWarnings("serial")
 public class ProjectPropertiesDialog extends JDialog {
-    private ProjectProperties projectProperties;
+    private ProjectPropertiesWrite projectProperties;
 
     public enum Mode {
         /** This dialog is used to create a new project. */
@@ -167,7 +168,7 @@ public class ProjectPropertiesDialog extends JDialog {
     public ProjectPropertiesDialog(final ProjectProperties projectProperties, String projFileName,
             Mode dialogTypeValue) {
         super(Core.getMainWindow().getApplicationFrame(), true);
-        this.projectProperties = projectProperties;
+        this.projectProperties = new ProjectPropertiesWrite(projectProperties);
         this.srx = projectProperties.getProjectSRX();
         this.dialogType = dialogTypeValue;
         filters = FilterMaster.loadConfig(projectProperties.getProjectInternal());
@@ -1199,8 +1200,7 @@ public class ProjectPropertiesDialog extends JDialog {
 
         projectProperties.setProjectSRX(srx);
         projectProperties.setProjectFilters(filters);
-        projectProperties.getSourceRootExcludes().clear();
-        projectProperties.getSourceRootExcludes().addAll(srcExcludes);
+        projectProperties.setSourceRootExcludes(srcExcludes);
 
         m_dialogCancelled = false;
         setVisible(false);
