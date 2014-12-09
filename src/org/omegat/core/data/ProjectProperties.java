@@ -245,7 +245,11 @@ public class ProjectProperties {
 
     /** Returns The Project Root Directory */
     public String getProjectRoot() {
-        return projectRootDir.getPath();
+        String p = projectRootDir.getPath().replace('\\', '/');
+        if (!p.endsWith("/")) {
+            p += '/';
+        }
+        return p;
     }
 
     public File getProjectRootDir() {
