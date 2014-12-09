@@ -43,6 +43,6 @@
 	<classpathentry kind="lib" path="lib/trilead-ssh2-1.0.0-build217.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.jgit-3.4.1.201406201815-r.jar"/>
 	<classpathentry kind="lib" path="lib/sequence-library-1.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/svnkit-1.8.6.jar"/>
+	<classpathentry kind="lib" path="lib/svnkit-1.8.6.jar" sourcepath="lib/sources/org.tmatesoft.svn_1.8.6.src.zip"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
