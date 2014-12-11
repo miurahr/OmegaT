@@ -26,6 +26,7 @@
 
 package org.omegat.util;
 
+
 /**
  * A class to retrieve some platform information.
  * 
@@ -75,5 +76,9 @@ public final class Platform {
 
     public static final boolean isWebStart() {
         return System.getProperty("javawebstart.version") != null;
+    }
+
+    public static String getEOL() {
+        return System.getProperty("line.separator");
     }
 }
