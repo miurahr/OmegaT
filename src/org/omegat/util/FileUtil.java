@@ -57,6 +57,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
 import org.omegat.gui.help.HelpFrame;
 
 /**
@@ -239,6 +240,72 @@ public class FileUtil {
                 in.close();
             } catch (IOException ex) {
             }
+        }
+    }
+
+    /**
+     * Copy file and create output directory if need. EOL will be converted into target-specific or into
+     * platform-specific if target doesn't exist.
+     */
+    public static void copyFileWithEolConversion(File inFile, File outFile, String eolConversionCharset)
+            throws IOException {
+        File dir = outFile.getParentFile();
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        String eol;
+        if (outFile.exists()) {
+            // file exist - read EOL from file
+            eol = getEOL(outFile, eolConversionCharset);
+        } else {
+            // file not exist - use system-dependent
+            eol = Platform.getEOL();
+        }
+        if (eol == null) {
+            // EOL wasn't detected - just copy
+            copyFile(inFile, outFile);
+            return;
+        }
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(inFile),
+                eolConversionCharset));
+        try {
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),
+                    eolConversionCharset));
+            try {
+                String s;
+                while ((s = in.readLine()) != null) {
+                    // copy using known EOL
+                    out.write(s);
+                    out.write(eol);
+                }
+            } finally {
+                IOUtils.closeQuietly(out);
+            }
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+    }
+
+    public static String getEOL(File file, String eolConversionCharset) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),
+                eolConversionCharset));
+        try {
+            while (true) {
+                int ch = in.read();
+                if (ch < 0) {
+                    return null;
+                }
+                if (ch == '\n' || ch == '\r') {
+                    String r = Character.toString((char) ch);
+                    int ch2 = in.read();
+                    if (ch2 == '\n' || ch2 == '\r') {
+                        r += Character.toString((char) ch2);
+                    }
+                    return r;
+                }
+            }
+        } finally {
+            IOUtils.closeQuietly(in);
         }
     }
 
