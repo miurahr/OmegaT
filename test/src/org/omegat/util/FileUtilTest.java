@@ -25,6 +25,10 @@
 
 package org.omegat.util;
 
+import java.io.File;
+
+import org.apache.commons.io.FileUtils;
+
 import junit.framework.TestCase;
 
 /**
@@ -49,5 +53,42 @@ public class FileUtilTest extends TestCase {
         assertEquals("/zzz", FileUtil.absoluteForSystem("\\zzz", Platform.OsType.WIN64));
         assertEquals("/zzz", FileUtil.absoluteForSystem("\\zzz", Platform.OsType.LINUX64));
         assertEquals("/zzz", FileUtil.absoluteForSystem("\\zzz", Platform.OsType.MAC64));
+    }
+
+    public void testEOL() throws Exception {
+        File dir = new File("build/testdata/");
+        dir.mkdirs();
+
+        File in = new File(dir, "in.eol");
+        File out = new File(dir, "out.eol");
+
+        byte[] eoln = "12\n34\n56\n".getBytes("UTF-8");
+        byte[] eolr = "12\r34\r56\r".getBytes("UTF-8");
+        byte[] eolrn = "12\r\n34\r\n56\r\n".getBytes("UTF-8");
+        byte[][] eols = new byte[][] { eoln, eolr, eolrn };
+
+        FileUtils.writeByteArrayToFile(out, eoln);
+        assertEquals("\n", FileUtil.getEOL(out, "UTF-8"));
+        for (byte[] eolfrom : eols) {
+            FileUtils.writeByteArrayToFile(in, eolfrom);
+            FileUtil.copyFileWithEolConversion(in, out, "UTF-8");
+            assertEquals("\n", FileUtil.getEOL(out, "UTF-8"));
+        }
+
+        FileUtils.writeByteArrayToFile(out, eolr);
+        assertEquals("\r", FileUtil.getEOL(out, "UTF-8"));
+        for (byte[] eolfrom : eols) {
+            FileUtils.writeByteArrayToFile(in, eolfrom);
+            FileUtil.copyFileWithEolConversion(in, out, "UTF-8");
+            assertEquals("\r", FileUtil.getEOL(out, "UTF-8"));
+        }
+
+        FileUtils.writeByteArrayToFile(out, eolrn);
+        assertEquals("\r\n", FileUtil.getEOL(out, "UTF-8"));
+        for (byte[] eolfrom : eols) {
+            FileUtils.writeByteArrayToFile(in, eolfrom);
+            FileUtil.copyFileWithEolConversion(in, out, "UTF-8");
+            assertEquals("\r\n", FileUtil.getEOL(out, "UTF-8"));
+        }
     }
 }

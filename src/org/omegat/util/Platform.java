@@ -26,6 +26,7 @@
 
 package org.omegat.util;
 
+
 /**
  * A class to retrieve some platform information.
  * 
@@ -83,5 +84,9 @@ public final class Platform {
     public static boolean isMacOSX() {
         OsType os = getOsType();
         return os == OsType.MAC32 || os == OsType.MAC64;
+    }
+
+    public static String getEOL() {
+        return System.getProperty("line.separator");
     }
 }
