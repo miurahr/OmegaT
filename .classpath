@@ -44,5 +44,6 @@
 	<classpathentry kind="lib" path="lib/org.eclipse.jgit-3.4.1.201406201815-r.jar"/>
 	<classpathentry kind="lib" path="lib/sequence-library-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/svnkit-1.8.6.jar" sourcepath="lib/sources/org.tmatesoft.svn_1.8.6.src.zip"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.4.jar" sourcepath="lib/sources/commons-io-2.4-sources.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
