@@ -35,9 +35,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.omegat.util.OConsts;
 import org.omegat.util.StringUtil;
 
@@ -49,6 +52,32 @@ import org.omegat.util.StringUtil;
  * @author Alex Buloichik <alex73mail@gmail.com>
  */
 public class GlossaryReaderTSV {
+    /**
+     * Get charset of glossary file.
+     */
+    public static String getCharset(File file) throws IOException {
+        BOMInputStream in = new BOMInputStream(new FileInputStream(file));
+        try {
+            if (in.hasBOM()) {
+                return in.getBOMCharsetName();
+            } else {
+                String fname_lower = file.getName().toLowerCase();
+                if (fname_lower.endsWith(OConsts.EXT_TSV_DEF)) {
+                    return Charset.defaultCharset().name();
+                } else if (fname_lower.endsWith(OConsts.EXT_TSV_UTF8)) {
+                    return "UTF-8";
+                } else if (fname_lower.endsWith(OConsts.EXT_TSV_TXT)) {
+                    String encoding = isUTF16LE(file) ? OConsts.UTF16LE : OConsts.UTF8;
+                    return encoding;
+                } else {
+                    return Charset.defaultCharset().name();
+                }
+            }
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+    }
+
     public static List<GlossaryEntry> read(final File file, boolean priorityGlossary) throws IOException {
         InputStreamReader reader;
         String fname_lower = file.getName().toLowerCase();
