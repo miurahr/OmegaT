@@ -132,7 +132,7 @@ public abstract class TmxComplianceBase extends TestCase {
         final ProjectTMX tmx = new ProjectTMX(props.getSourceLanguage(), props.getTargetLanguage(), props.isSentenceSegmentingEnabled(), new File("test/data/tmx/TMXComplianceKit/" + fileTMX),
                 orphanedCallback);
         if (tmxPatch != null) {
-            tmx.defaults.putAll(tmxPatch);
+            tmx.applyDefaults(tmxPatch);
         }
 
         FilterContext fc = new FilterContext(props);
@@ -194,9 +194,7 @@ public abstract class TmxComplianceBase extends TestCase {
 
         ProjectTMX tmx = new ProjectTMX(props.getSourceLanguage(), props.getTargetLanguage(), props.isSentenceSegmentingEnabled(), outFile, orphanedCallback);
 
-        for (Map.Entry<String, TMXEntry> en : callback.data.entrySet()) {
-            tmx.defaults.put(en.getKey(), en.getValue());
-        }
+        tmx.applyDefaults(callback.data);
 
         tmx.exportTMX(props, outFile, false, false, true);
     }

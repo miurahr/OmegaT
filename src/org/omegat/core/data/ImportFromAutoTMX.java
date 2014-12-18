@@ -175,6 +175,6 @@ public class ImportFromAutoTMX {
         } else {
             newTrEntry = new TMXEntry(trans, defaultTranslation, externalLinked);
         }
-        project.projectTMX.setTranslation(entry, newTrEntry, defaultTranslation);
+        project.projectTMXbuffer.setTranslation(entry, newTrEntry, defaultTranslation);
     }
 }

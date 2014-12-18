@@ -61,7 +61,7 @@ public class AutoTmxTest extends TestCase {
         Core.initializeConsole(new HashMap<String, String>());
 
         p = new RealProject(props);
-        p.projectTMX = new ProjectTMX(props.getSourceLanguage(), props.getTargetLanguage(), false, new File(
+        p.projectTMXbase = new ProjectTMX(props.getSourceLanguage(), props.getTargetLanguage(), false, new File(
                 "test/data/autotmx/project1.tmx"), new ProjectTMX.CheckOrphanedCallback() {
             public boolean existSourceInProject(String src) {
                 return true;

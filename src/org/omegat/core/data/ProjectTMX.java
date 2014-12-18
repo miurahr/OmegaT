@@ -28,12 +28,10 @@ package org.omegat.core.data;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Logger;
 
 import org.omegat.core.segmentation.Segmenter;
 import org.omegat.util.FileUtil;
@@ -54,8 +52,6 @@ import org.omegat.util.TMXWriter2;
  * @author Aaron Madlon-Kay
  */
 public class ProjectTMX {
-    private static final Logger LOGGER = Logger.getLogger(ProjectTMX.class.getName());
-
     protected static final String PROP_FILE = "file";
     protected static final String PROP_ID = "id";
     protected static final String PROP_PREV = "prev";
@@ -70,16 +66,16 @@ public class ProjectTMX {
      * 
      * It must be used with synchronization around ProjectTMX.
      */
-    Map<String, TMXEntry> defaults;
+    private Map<String, TMXEntry> defaults;
 
     /**
      * Storage for alternative translations for current project.
      * 
      * It must be used with synchronization around ProjectTMX.
      */
-    Map<EntryKey, TMXEntry> alternatives;
-    
-    final CheckOrphanedCallback checkOrphanedCallback;
+    private Map<EntryKey, TMXEntry> alternatives;
+
+    private final CheckOrphanedCallback checkOrphanedCallback;
 
     public ProjectTMX(Language sourceLanguage, Language targetLanguage, boolean isSentenceSegmentingEnabled, File file, CheckOrphanedCallback callback) throws Exception {
         this.checkOrphanedCallback = callback;
@@ -109,13 +105,6 @@ public class ProjectTMX {
         alternatives = new HashMap<EntryKey, TMXEntry>();
         defaults = new HashMap<String, TMXEntry>();
         checkOrphanedCallback = null;
-    }
-
-    /**
-     * Check TMX for empty.
-     */
-    public boolean isEmpty() {
-        return defaults.isEmpty() && alternatives.isEmpty();
     }
 
     /**
@@ -242,9 +231,33 @@ public class ProjectTMX {
         }
     }
 
+    public void setDefault(String source, TMXEntry entry) {
+        synchronized (this) {
+            if (entry == null) {
+                defaults.remove(source);
+            } else {
+                defaults.put(source, entry);
+            }
+        }
+    }
+
+    public void setAlternative(EntryKey key, TMXEntry entry) {
+        if (entry != null && entry.defaultTranslation) {
+            throw new IllegalArgumentException("Default/alternative must be the same");
+        }
+        synchronized (this) {
+            if (entry == null) {
+                alternatives.remove(key);
+            } else {
+                alternatives.put(key, entry);
+            }
+        }
+    }
+
     /**
      * Set new translation.
      */
+    @Deprecated
     public void setTranslation(SourceTextEntry ste, TMXEntry te, boolean isDefault) {
         synchronized (this) {
             if (te == null) {
@@ -363,17 +376,22 @@ public class ProjectTMX {
     }
 
     /**
-     * Returns the collection of TMX entries that have a default translation
+     * Returns the collection of TMX entries that have a default translation. Result map is copy of real map.
      */
-    public Collection<TMXEntry> getDefaults() {
-        return defaults.values();
+    public Map<String, TMXEntry> getDefaults() {
+        synchronized (this) {
+            return new HashMap<String, TMXEntry>(defaults);
+        }
     }
+
     /**
-     * Returns the collection of TMX entries that have an alternative translation
-     * @return
+     * Returns the collection of TMX entries that have an alternative translation. Result map is copy of real
+     * map.
      */
-    public Collection<TMXEntry> getAlternatives() {
-        return alternatives.values();
+    public Map<EntryKey, TMXEntry> getAlternatives() {
+        synchronized (this) {
+            return new HashMap<EntryKey, TMXEntry>(alternatives);
+        }
     }
 
     public interface CheckOrphanedCallback {
@@ -386,6 +404,28 @@ public class ProjectTMX {
         synchronized (this) {
             defaults = tmx.defaults;
             alternatives = tmx.alternatives;
+        }
+    }
+
+    public void applyDefaults(Map<String, TMXEntry> newDefaults) {
+        synchronized (this) {
+            defaults.putAll(newDefaults);
+            for (Map.Entry<String, TMXEntry> en : newDefaults.entrySet()) {
+                if (en.getValue() == null) {
+                    defaults.remove(en.getKey());
+                }
+            }
+        }
+    }
+
+    public void applyAlternatives(Map<EntryKey, TMXEntry> newAlternatives) {
+        synchronized (this) {
+            alternatives.putAll(newAlternatives);
+            for (Map.Entry<EntryKey, TMXEntry> en : newAlternatives.entrySet()) {
+                if (en.getValue() == null) {
+                    alternatives.remove(en.getKey());
+                }
+            }
         }
     }
 }

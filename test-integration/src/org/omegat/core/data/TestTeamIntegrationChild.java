@@ -539,12 +539,9 @@ public class TestTeamIntegrationChild {
                             }
                         }
                     });
-            synchronized (projectTMX) {
-                ProjectTMX mergedTMX = SuperTmxMerge
-                        .merge(baseTMX, projectTMX, headTMX, m_config.getSourceLanguage().getLanguage(),
-                                m_config.getTargetLanguage().getLanguage(), props);
-                projectTMX.replaceContent(mergedTMX);
-            }
+            ProjectTMX mergedTMX = SuperTmxMerge.merge(baseTMX, projectTMXbase, headTMX, m_config
+                    .getSourceLanguage().getLanguage(), m_config.getTargetLanguage().getLanguage(), props);
+            projectTMXbase.replaceContent(mergedTMX);
             commitDetails.append('\n');
             commitDetails.append(props.getReport().toString());
         }
@@ -554,10 +551,10 @@ public class TestTeamIntegrationChild {
             this.baseTMX = baseTMX;
             this.headTMX = headTMX;
             String s = "info";
-            for (TMXEntry e : baseTMX.getDefaults()) {
+            for (TMXEntry e : baseTMX.getDefaults().values()) {
                 use(e);
             }
-            for (TMXEntry e : headTMX.getDefaults()) {
+            for (TMXEntry e : headTMX.getDefaults().values()) {
                 TMXEntry eb = baseTMX.getDefaultTranslation(e.source);
                 if (CONCURRENT_NAME.equals(e.source)) { // concurrent
                     if (v(eb) > v(e)) {
@@ -575,7 +572,7 @@ public class TestTeamIntegrationChild {
                     use(e);
                 }
             }
-            for (TMXEntry e : projectTMX.getDefaults()) {
+            for (TMXEntry e : projectTMXbase.getDefaults().values()) {
                 TMXEntry em = mergedTMX.getDefaultTranslation(e.source);
                 if (CONCURRENT_NAME.equals(e.source)) { // concurrent
                     if (v(e) > v(em)) {
@@ -591,7 +588,7 @@ public class TestTeamIntegrationChild {
                 }
             }
 
-            projectTMX.replaceContent(mergedTMX);
+            projectTMXbase.replaceContent(mergedTMX);
         }
 
         void use(TMXEntry en) {

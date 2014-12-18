@@ -360,8 +360,12 @@ public class Searcher {
                 }
                 for (Map.Entry<Language, ProjectTMX> tmEn : m_project.getOtherTargetLanguageTMs().entrySet()) {
                     final Language langTM = tmEn.getKey();
-                    if (!searchEntriesAlternative(tmEn.getValue().getDefaults(), langTM.getLanguage())) return;
-                    if (!searchEntriesAlternative(tmEn.getValue().getAlternatives(), langTM.getLanguage())) return;
+                    if (!searchEntriesAlternative(tmEn.getValue().getDefaults().values(),
+                            langTM.getLanguage()))
+                        return;
+                    if (!searchEntriesAlternative(tmEn.getValue().getAlternatives().values(),
+                            langTM.getLanguage()))
+                        return;
                     checkStop.checkInterrupted();
                 }
             }
@@ -424,6 +428,9 @@ public class Searcher {
 
     private boolean searchEntriesAlternative(Collection<TMXEntry> tmEn, final String tmxID) {
         for (TMXEntry tm : tmEn) {
+            if (tm == null) {
+                continue;
+            }
             // stop searching if the max. nr of hits has been
             // reached
             if (m_numFinds >= expression.numberOfResults) {

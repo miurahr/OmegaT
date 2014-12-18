@@ -95,7 +95,6 @@ import org.omegat.util.RuntimePreferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.TMXReader2;
-import org.omegat.util.TMXWriter2;
 import org.omegat.util.gui.UIThreadsUtil;
 import org.xml.sax.SAXParseException;
 
@@ -163,7 +162,10 @@ public class RealProject implements IProject {
      */
     private Map<Language, ProjectTMX> otherTargetLangTMs = new TreeMap<Language, ProjectTMX>();
 
-    protected ProjectTMX projectTMX;
+    /** Buffer for changes. */
+    protected ProjectTMXBuffer projectTMXbuffer;
+    /** Real TMX behind buffer. */
+    protected ProjectTMX projectTMXbase;
 
     /**
      * True if project loaded successfully.
@@ -391,7 +393,7 @@ public class RealProject implements IProject {
             allProjectEntries.clear();
             projectFilesList.clear();
             transMemories.clear();
-            projectTMX = null;
+            projectTMXbase = null;
 
             // Well, that cleared up some, GC to the rescue!
             System.gc();
@@ -541,17 +543,17 @@ public class RealProject implements IProject {
             String fname = m_config.getProjectRoot() + m_config.getProjectName() + OConsts.OMEGAT_TMX
                     + OConsts.TMX_EXTENSION;
 
-            projectTMX.exportTMX(m_config, new File(fname), false, false, false);
+            projectTMXbase.exportTMX(m_config, new File(fname), false, false, false);
 
             // build TMX level 1 compliant file
             fname = m_config.getProjectRoot() + m_config.getProjectName() + OConsts.LEVEL1_TMX
                     + OConsts.TMX_EXTENSION;
-            projectTMX.exportTMX(m_config, new File(fname), true, false, false);
+            projectTMXbase.exportTMX(m_config, new File(fname), true, false, false);
 
             // build three-quarter-assed TMX level 2 file
             fname = m_config.getProjectRoot() + m_config.getProjectName() + OConsts.LEVEL2_TMX
                     + OConsts.TMX_EXTENSION;
-            projectTMX.exportTMX(m_config, new File(fname), false, true, false);
+            projectTMXbase.exportTMX(m_config, new File(fname), false, true, false);
         } catch (Exception e) {
             Log.logErrorRB("CT_ERROR_CREATING_TMX");
             Log.log(e);
@@ -704,7 +706,8 @@ public class RealProject implements IProject {
                 try {
                     saveProjectProperties();
 
-                    projectTMX.save(m_config, m_config.getProjectInternal() + OConsts.STATUS_EXTENSION, isProjectModified());
+                    projectTMXbuffer.applyToBase();
+                    projectTMXbase.save(m_config, m_config.getProjectInternal() + OConsts.STATUS_EXTENSION, isProjectModified());
 
                     if (remoteRepositoryProvider != null && doTeamSync) {
                         Core.getMainWindow().showStatusMessageRB("TEAM_SYNCHRONIZE");
@@ -803,7 +806,7 @@ public class RealProject implements IProject {
                         @Override
                         public void rebaseAndSave(File out) throws Exception {
                             mergeTMX(baseTMX, headTMX, commitDetails);
-                            projectTMX.exportTMX(m_config, out, false, false, true);
+                            projectTMXbase.exportTMX(m_config, out, false, false, true);
                         }
 
                         @Override
@@ -819,7 +822,7 @@ public class RealProject implements IProject {
             ProjectTMX newTMX = new ProjectTMX(m_config.getSourceLanguage(), m_config.getTargetLanguage(),
                     m_config.isSentenceSegmentingEnabled(), new File(m_config.getProjectInternalDir(),
                             OConsts.STATUS_EXTENSION), null);
-            projectTMX.replaceContent(newTMX);
+            projectTMXbase.replaceContent(newTMX);
         }
 
         final String glossaryPath = m_config.getWritableGlossaryFile().getUnderRoot();
@@ -891,11 +894,9 @@ public class RealProject implements IProject {
                 .setParentWindow(Core.getMainWindow().getApplicationFrame())
                 // More than this number of conflicts will trigger List View by default.
                 .setListViewThreshold(5);
-        synchronized (projectTMX) {
-            ProjectTMX mergedTMX = SuperTmxMerge.merge(baseTMX, projectTMX, headTMX, m_config
-                    .getSourceLanguage().getLanguage(), m_config.getTargetLanguage().getLanguage(), props);
-            projectTMX.replaceContent(mergedTMX);
-        }
+        ProjectTMX mergedTMX = SuperTmxMerge.merge(baseTMX, projectTMXbase, headTMX, m_config
+                .getSourceLanguage().getLanguage(), m_config.getTargetLanguage().getLanguage(), props);
+        projectTMXbase.replaceContent(mergedTMX);
         Log.logDebug(LOGGER, "Merge report: {0}", props.getReport());
         commitDetails.append('\n');
         commitDetails.append(props.getReport().toString());
@@ -933,7 +934,9 @@ public class RealProject implements IProject {
         try {
             Core.getMainWindow().showStatusMessageRB("CT_LOAD_TMX");
 
-            projectTMX = new ProjectTMX(m_config.getSourceLanguage(), m_config.getTargetLanguage(), m_config.isSentenceSegmentingEnabled(), file, checkOrphanedCallback);
+            projectTMXbase = new ProjectTMX(m_config.getSourceLanguage(), m_config.getTargetLanguage(),
+                    m_config.isSentenceSegmentingEnabled(), file, checkOrphanedCallback);
+            projectTMXbuffer = new ProjectTMXBuffer(projectTMXbase);
             if (file.exists()) {
                 // RFE 1001918 - backing up project's TMX upon successful read
                 // TODO check for repositories
@@ -1071,11 +1074,11 @@ public class RealProject implements IProject {
                 // project with default translations
                 if (m_config.isSupportDefaultTranslations()) {
                     // can we import as default translation ?
-                    TMXEntry enDefault = projectTMX.getDefaultTranslation(ste.getSrcText());
+                    TMXEntry enDefault = projectTMXbuffer.getDefaultTranslation(ste.getSrcText());
                     if (enDefault == null) {
                         // default not exist yet - yes, we can
                         prepare.translation = ste.getSourceTranslation();
-                        projectTMX.setTranslation(ste, new TMXEntry(prepare, true, null), true);
+                        projectTMXbuffer.setTranslation(ste, new TMXEntry(prepare, true, null), true);
                         allowToImport.put(ste.getSrcText(), ste.getSourceTranslation());
                     } else {
                         // default translation already exist - did we just
@@ -1086,16 +1089,16 @@ public class RealProject implements IProject {
                             // we just imported default and it doesn't equals to
                             // current - import as alternative
                             prepare.translation = ste.getSourceTranslation();
-                            projectTMX.setTranslation(ste, new TMXEntry(prepare, false, null), false);
+                            projectTMXbuffer.setTranslation(ste, new TMXEntry(prepare, false, null), false);
                         }
                     }
                 } else { // project without default translations
                     // can we import as alternative translation ?
-                    TMXEntry en = projectTMX.getMultipleTranslation(ste.getKey());
+                    TMXEntry en = projectTMXbuffer.getMultipleTranslation(ste.getKey());
                     if (en == null) {
                         // not exist yet - yes, we can
                         prepare.translation = ste.getSourceTranslation();
-                        projectTMX.setTranslation(ste, new TMXEntry(prepare, false, null), false);
+                        projectTMXbuffer.setTranslation(ste, new TMXEntry(prepare, false, null), false);
                     }
                 }
             }
@@ -1192,9 +1195,7 @@ public class RealProject implements IProject {
      * Append new translation from auto TMX.
      */
     void appendFromAutoTMX(ExternalTMX tmx, boolean isEnforcedTMX) {
-        synchronized (projectTMX) {
-            importHandler.process(tmx, isEnforcedTMX);
-        }
+        importHandler.process(tmx, isEnforcedTMX);
     }
 
     /**
@@ -1205,9 +1206,9 @@ public class RealProject implements IProject {
     }
 
     public TMXEntry getTranslationInfo(SourceTextEntry ste) {
-        TMXEntry r = projectTMX.getMultipleTranslation(ste.getKey());
+        TMXEntry r = projectTMXbuffer.getMultipleTranslation(ste.getKey());
         if (r == null) {
-            r = projectTMX.getDefaultTranslation(ste.getSrcText());
+            r = projectTMXbuffer.getDefaultTranslation(ste.getSrcText());
         }
         if (r == null) {
             r = EMPTY_TRANSLATION;
@@ -1235,8 +1236,8 @@ public class RealProject implements IProject {
             throw new IllegalArgumentException("RealProject.setTranslation(tr) can't be null");
         }
 
-        TMXEntry prevTrEntry = defaultTranslation ? projectTMX.getDefaultTranslation(entry.getSrcText())
-                : projectTMX.getMultipleTranslation(entry.getKey());
+        TMXEntry prevTrEntry = defaultTranslation ? projectTMXbuffer.getDefaultTranslation(entry.getSrcText())
+                : projectTMXbuffer.getMultipleTranslation(entry.getKey());
 
         trans.changer = Preferences.getPreferenceDefault(Preferences.TEAM_AUTHOR,
                 System.getProperty("user.name"));
@@ -1269,7 +1270,7 @@ public class RealProject implements IProject {
 
         m_modifiedFlag = true;
 
-        projectTMX.setTranslation(entry, newTrEntry, defaultTranslation);
+        projectTMXbuffer.setTranslation(entry, newTrEntry, defaultTranslation);
 
         /**
          * Calculate how to statistics should be changed.
@@ -1286,47 +1287,40 @@ public class RealProject implements IProject {
             throw new IllegalArgumentException("RealProject.setNote(tr) can't be null");
         }
 
-        TMXEntry prevTrEntry = oldTE.defaultTranslation ? projectTMX
-                .getDefaultTranslation(entry.getSrcText()) : projectTMX
-                .getMultipleTranslation(entry.getKey());
+        TMXEntry prevTrEntry = oldTE.defaultTranslation ? projectTMXbuffer.getDefaultTranslation(entry
+                .getSrcText()) : projectTMXbuffer.getMultipleTranslation(entry.getKey());
         if (prevTrEntry != null) {
             PrepareTMXEntry en = new PrepareTMXEntry(prevTrEntry);
             en.note = note;
-            projectTMX.setTranslation(entry, new TMXEntry(en, prevTrEntry.defaultTranslation,
+            projectTMXbuffer.setTranslation(entry, new TMXEntry(en, prevTrEntry.defaultTranslation,
                     prevTrEntry.linked), prevTrEntry.defaultTranslation);
         } else {
             PrepareTMXEntry en = new PrepareTMXEntry();
             en.source = entry.getSrcText();
             en.note = note;
             en.translation = null;
-            projectTMX.setTranslation(entry, new TMXEntry(en, true, null), true);
+            projectTMXbuffer.setTranslation(entry, new TMXEntry(en, true, null), true);
         }
 
         m_modifiedFlag = true;
     }
 
     public void iterateByDefaultTranslations(DefaultTranslationsIterator it) {
-        Map.Entry<String, TMXEntry>[] entries;
-        synchronized (projectTMX) {
-            Set<Map.Entry<String, TMXEntry>> set = projectTMX.defaults.entrySet();
-            entries = set.toArray(new Map.Entry[set.size()]);
-        }
-        for (Map.Entry<String, TMXEntry> en : entries) {
-            it.iterate(en.getKey(), en.getValue());
+        for (Map.Entry<String, TMXEntry> en : projectTMXbuffer.getDefaults().entrySet()) {
+            if (en.getValue() != null) {
+                it.iterate(en.getKey(), en.getValue());
+            }
         }
     }
 
     public void iterateByMultipleTranslations(MultipleTranslationsIterator it) {
-        Map.Entry<EntryKey, TMXEntry>[] entries;
-        synchronized (projectTMX) {
-            Set<Map.Entry<EntryKey, TMXEntry>> set = projectTMX.alternatives.entrySet();
-            entries = set.toArray(new Map.Entry[set.size()]);
-        }
-        for (Map.Entry<EntryKey, TMXEntry> en : entries) {
-            it.iterate(en.getKey(), en.getValue());
+        for (Map.Entry<EntryKey, TMXEntry> en : projectTMXbuffer.getAlternatives().entrySet()) {
+            if (en.getValue() != null) {
+                it.iterate(en.getKey(), en.getValue());
+            }
         }
     }
-    
+
     public boolean isOrphaned(String source) {
         return !checkOrphanedCallback.existSourceInProject(source);
     }
@@ -1566,9 +1560,9 @@ public class RealProject implements IProject {
         protected String getSegmentTranslation(String id, int segmentIndex, String segmentSource,
                 String prevSegment, String nextSegment, String path) {
             EntryKey ek = new EntryKey(currentFile, segmentSource, id, prevSegment, nextSegment, path);
-            TMXEntry tr = projectTMX.getMultipleTranslation(ek);
+            TMXEntry tr = projectTMXbuffer.getMultipleTranslation(ek);
             if (tr == null) {
-                tr = projectTMX.getDefaultTranslation(ek.sourceText);
+                tr = projectTMXbuffer.getDefaultTranslation(ek.sourceText);
             }
             return tr != null ? tr.translation : null;
         }

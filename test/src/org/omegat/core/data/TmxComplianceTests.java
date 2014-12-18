@@ -209,7 +209,7 @@ public class TmxComplianceTests extends TmxComplianceBase {
         ProjectTMX tmx = new ProjectTMX(props.getSourceLanguage(), props.getTargetLanguage(), props.isSentenceSegmentingEnabled(), outFile, orphanedCallback);
 
         for (int i = 0; i < sources.size(); i++) {
-            tmx.defaults.put(sources.get(i), createTMXEntry(sources.get(i), translations.get(i), true));
+            tmx.setDefault(sources.get(i), createTMXEntry(sources.get(i), translations.get(i), true));
         }
 
         tmx.exportTMX(props, outFile, false, false, true);
@@ -342,7 +342,7 @@ public class TmxComplianceTests extends TmxComplianceBase {
         ProjectTMX tmx = new ProjectTMX(props.getSourceLanguage(), props.getTargetLanguage(), props.isSentenceSegmentingEnabled(), outFile, orphanedCallback);
 
         for (int i = 0; i < sources.size(); i++) {
-            tmx.defaults.put(sources.get(i), createTMXEntry(sources.get(i), translations.get(i), true));
+            tmx.setDefault(sources.get(i), createTMXEntry(sources.get(i), translations.get(i), true));
         }
 
         tmx.exportTMX(props, outFile, false, true, true);

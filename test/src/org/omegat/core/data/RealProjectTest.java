@@ -203,11 +203,11 @@ public class RealProjectTest extends TestCase {
     protected static class RealProjectWithTMXAccess extends RealProject {
         public RealProjectWithTMXAccess(ProjectProperties props) {
             super(props);
-            projectTMX = new ProjectTMX();
+            projectTMXbase = new ProjectTMX();
         }
 
         public ProjectTMX getTMX() {
-            return projectTMX;
+            return projectTMXbase;
         }
 
         public List<FileInfo> getProjectFilesList() {

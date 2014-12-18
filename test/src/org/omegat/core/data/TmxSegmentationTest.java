@@ -57,9 +57,9 @@ public class TmxSegmentationTest extends TestCase {
                     }
                 });
 
-        Assert.assertEquals(2, tmx.defaults.size());
-        Assert.assertEquals("Ceci est un test.", tmx.defaults.get("This is test.").translation);
-        Assert.assertEquals("Juste un test.", tmx.defaults.get("Just a test.").translation);
+        Assert.assertEquals(2, tmx.getDefaults().size());
+        Assert.assertEquals("Ceci est un test.", tmx.getDefaults().get("This is test.").translation);
+        Assert.assertEquals("Juste un test.", tmx.getDefaults().get("Just a test.").translation);
     }
 
     @Test
