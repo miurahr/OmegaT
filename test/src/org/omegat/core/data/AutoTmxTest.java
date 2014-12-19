@@ -71,6 +71,7 @@ public class AutoTmxTest extends TestCase {
                 return true;
             }
         });
+        p.projectTMXbuffer = new ProjectTMXBuffer(p.projectTMXbase);
         SourceTextEntry ste10, ste11, ste12;
         p.allProjectEntries.add(ste10 = createSTE("10", "Edit"));
         p.allProjectEntries.add(ste11 = createSTE("11", "Edit"));

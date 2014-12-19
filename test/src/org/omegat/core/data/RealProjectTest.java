@@ -42,7 +42,7 @@ import org.omegat.tokenizer.DefaultTokenizer;
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
 public class RealProjectTest extends TestCase {
-    ProjectTMX tmx;
+    ProjectTMXBuffer tmx;
     RealProjectWithTMXAccess project;
     IProject.FileInfo fi;
 
@@ -204,10 +204,11 @@ public class RealProjectTest extends TestCase {
         public RealProjectWithTMXAccess(ProjectProperties props) {
             super(props);
             projectTMXbase = new ProjectTMX();
+            projectTMXbuffer = new ProjectTMXBuffer(projectTMXbase);
         }
 
-        public ProjectTMX getTMX() {
-            return projectTMXbase;
+        public ProjectTMXBuffer getTMX() {
+            return projectTMXbuffer;
         }
 
         public List<FileInfo> getProjectFilesList() {

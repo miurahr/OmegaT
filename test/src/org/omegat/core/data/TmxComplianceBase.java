@@ -148,7 +148,7 @@ public abstract class TmxComplianceBase extends TestCase {
             }
             @Override
             String getCurrentFile() {
-                return null;
+                return "test";
             }
         };
         filter.translateFile(new File("test/data/tmx/TMXComplianceKit/" + fileTextIn), outFile, config, fc,
