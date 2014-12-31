@@ -42,13 +42,8 @@ import org.omegat.core.Core;
 import org.omegat.core.KnownException;
 import org.omegat.core.data.ProjectFactory;
 import org.omegat.core.data.ProjectProperties;
-import org.omegat.core.team.GITRemoteRepository;
-import org.omegat.core.team.IRemoteRepository;
-import org.omegat.core.team.RepositoryUtils;
-import org.omegat.core.team.SVNRemoteRepository;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.gui.dialogs.NewProjectFileChooser;
-import org.omegat.gui.dialogs.NewTeamProject;
 import org.omegat.gui.dialogs.ProjectPropertiesDialog;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
@@ -56,7 +51,6 @@ import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.ProjectFileStorage;
 import org.omegat.util.RecentProjects;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.OmegaTFileChooser;
 import org.omegat.util.gui.OpenProjectFileChooser;
 import org.omegat.util.gui.UIThreadsUtil;
@@ -128,94 +122,6 @@ public class ProjectUICommands {
         }.execute();
     }
 
-    public static void projectTeamCreate() {
-        UIThreadsUtil.mustBeSwingThread();
-
-        if (Core.getProject().isProjectLoaded()) {
-            return;
-        }
-        new SwingWorker<Object, Void>() {
-            protected Object doInBackground() throws Exception {
-                Core.getMainWindow().showStatusMessageRB(null);
-
-                final NewTeamProject dialog = new NewTeamProject(Core.getMainWindow().getApplicationFrame(), true);
-                DockingUI.displayCentered(dialog);
-                dialog.setVisible(true);
-
-                IMainWindow mainWindow = Core.getMainWindow();
-                Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
-                Cursor oldCursor = mainWindow.getCursor();
-                mainWindow.setCursor(hourglassCursor);
-
-                final IRemoteRepository repository;
-                File localDirectory = new File(dialog.txtDirectory.getText());
-                try {
-                    if (!dialog.ok) {
-                        Core.getMainWindow().showStatusMessageRB("TEAM_CANCELLED");
-                        mainWindow.setCursor(oldCursor);
-                        return null;
-                    }
-                    if (dialog.repoType != null) {
-                        repository = dialog.repoType.getConstructor(File.class).newInstance(localDirectory);
-                        repository.setCredentials(dialog.credentials);
-                    } else {
-                        mainWindow.setCursor(oldCursor);
-                        return null;
-                    }
-
-                    //do checkoutFullProject. This can throw IRemoteRepository.AuthenticationException,
-                    //so we wrap it in a AskCredentials object that will show credentials dialog.
-                    new RepositoryUtils.AskCredentials() {
-                        public void callRepository() throws Exception {
-                            Core.getMainWindow().showStatusMessageRB("TEAM_CHECKOUT");
-                            repository.checkoutFullProject(dialog.txtRepositoryURL.getText());
-                            Core.getMainWindow().showStatusMessageRB(null);
-                        }
-                    }.execute(repository);
-                } catch (IRemoteRepository.BadRepositoryException bre) {
-                    Object[] args = { bre.getMessage() };
-                    Core.getMainWindow().showErrorDialogRB("TEAM_BADREPOSITORY_ERROR", args, "TF_ERROR");
-                    mainWindow.setCursor(oldCursor);
-                    return null;
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    Core.getMainWindow().displayErrorRB(ex, "TEAM_CHECKOUT_ERROR");
-                    mainWindow.setCursor(oldCursor);
-                    return null;
-                } finally {
-                    if (dialog.credentials != null) {
-                        dialog.credentials.clear();
-                    }
-                }
-
-                try {
-                    ProjectProperties props = ProjectFileStorage.loadProjectProperties(localDirectory);
-                    //empty directories might not exist in VCS. Some project folders can be empty. Let's try to make them if needed.
-                    File[] projectFolders = {new File(props.getGlossaryRoot()), new File(props.getTMRoot()), new File(props.getTMAutoRoot()),new File(props.getDictRoot()), new File(props.getTargetRoot())};
-                    for (File f : projectFolders) {
-                        try {
-                            if (!f.exists()) {
-                                f.mkdir();
-                            }
-                        } catch (Exception e) {
-                            Log.logErrorRB(e, "TEAM_MISSING_FOLDER", new Object[] {f.getName()});
-                        };
-                    }
-                    //load project
-                    ProjectFactory.loadProject(props, repository, true);
-                } catch (Exception ex) {
-                    Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
-                    Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
-                }
-                
-                RecentProjects.add(localDirectory.getAbsolutePath());
-                
-                mainWindow.setCursor(oldCursor);
-                return null;
-            }
-        }.execute();
-    }
-
     /**
      * Open project.
      * 
@@ -251,6 +157,7 @@ public class ProjectUICommands {
                 mainWindow.setCursor(hourglassCursor);
 
                 try {
+                    // convert old projects if need
                     ConvertProject.convert(projectRootFolder);
                 } catch (Exception ex) {
                     Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_CONVERT_PROJECT");
@@ -270,61 +177,6 @@ public class ProjectUICommands {
                     return null;
                 }
 
-                final IRemoteRepository repository;
-                // check for team-project
-                try {
-                    if (Core.getParams().containsKey("no-team") || true) { // TODO
-                        // disable team functionality
-                        repository = null;
-                    } else if (SVNRemoteRepository.isSVNDirectory(projectRootFolder)) {
-                        // SVN selected
-                        repository = new SVNRemoteRepository(projectRootFolder);
-                    } else if (GITRemoteRepository.isGITDirectory(projectRootFolder)) {
-                        repository = new GITRemoteRepository(projectRootFolder);
-                    } else {
-                        repository = null;
-                    }
-                } catch (Exception e) {
-                    return null;
-                }
-
-                if (repository != null) {
-                    boolean onlineMode = true;
-                    try {
-                        File tmxFile = new File(props.getProjectInternal() + OConsts.STATUS_EXTENSION);
-                        File GlossaryFile = new File(props.getWriteableGlossary());
-                        if (repository.isChanged(tmxFile) || repository.isChanged(GlossaryFile)) {
-                            Log.logWarningRB("TEAM_NOCHECKOUT");
-                            Core.getMainWindow().showErrorDialogRB("TEAM_NOCHECKOUT", null,
-                                    "TEAM_NOCHECKOUT_TITLE");
-                        } else {
-                            new RepositoryUtils.AskCredentials() {
-                                public void callRepository() throws Exception {
-                                    Core.getMainWindow().showStatusMessageRB("TEAM_SYNCHRONIZE");
-                                 //   repository.updateFullProject(); // TODO
-                                    Core.getMainWindow().showStatusMessageRB(null);
-                                }
-                            }.execute(repository);
-                        }
-                    } catch (IRemoteRepository.NetworkException ex) {
-                        onlineMode = false;
-                        Log.logInfoRB("VCS_OFFLINE");
-                        Core.getMainWindow().displayWarningRB("VCS_OFFLINE");
-                    } catch (Exception ex) {
-                        Log.logErrorRB(ex, "TEAM_CHECKOUT_ERROR", ex.getMessage());
-                        Core.getMainWindow().displayErrorRB(ex, "TEAM_CHECKOUT_ERROR", ex.getMessage());
-                        mainWindow.setCursor(oldCursor);
-                        return null;
-                    }
-                    try {
-                        ProjectFactory.loadProject(props, repository, onlineMode);
-                    } catch (Exception ex) {
-                        Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
-                        Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_READ_PROJECT_FILE");
-                        mainWindow.setCursor(oldCursor);
-                        return null;
-                    }
-                } else {
                     try {
                         boolean needToSaveProperties = false;
                         while (!props.isProjectValid()) {
@@ -344,7 +196,7 @@ public class ProjectUICommands {
                             }
                         }
 
-                        ProjectFactory.loadProject(props, repository, true);
+                        ProjectFactory.loadProject(props, true);
                         if (needToSaveProperties) {
                             Core.getProject().saveProjectProperties();
                         }
@@ -354,7 +206,6 @@ public class ProjectUICommands {
                         mainWindow.setCursor(oldCursor);
                         return null;
                     }
-                }
 
 				RecentProjects.add(projectRootFolder.getAbsolutePath());
 
@@ -391,12 +242,11 @@ public class ProjectUICommands {
                 Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
                 Cursor oldCursor = mainWindow.getCursor();
                 mainWindow.setCursor(hourglassCursor);
-                IRemoteRepository repository = Core.getProject().getRepository();
 
                 Core.getProject().saveProject();
                 ProjectFactory.closeProject();
 
-                ProjectFactory.loadProject(props, repository, true);
+                ProjectFactory.loadProject(props, true);
                 mainWindow.setCursor(oldCursor);
                 return null;
             }
@@ -494,8 +344,7 @@ public class ProjectUICommands {
         // displaying the dialog to change paths and other properties
         ProjectPropertiesDialog prj = new ProjectPropertiesDialog(Core.getProject().getProjectProperties(),
                 Core.getProject().getProjectProperties().getProjectName(),
-                Core.getProject().getRepository() == null ? ProjectPropertiesDialog.Mode.EDIT_PROJECT
-                        : ProjectPropertiesDialog.Mode.EDIT_TEAM_PROJECT);
+                ProjectPropertiesDialog.Mode.EDIT_PROJECT);
         prj.setVisible(true);
         final ProjectProperties newProps = prj.getResult();
         prj.dispose();
@@ -516,10 +365,9 @@ public class ProjectUICommands {
 
             protected Object doInBackground() throws Exception {
                 Core.getProject().saveProject();
-                IRemoteRepository repo = Core.getProject().getRepository();
                 ProjectFactory.closeProject();
 
-                ProjectFactory.loadProject(newProps, repo, true);
+                ProjectFactory.loadProject(newProps, true);
                 return null;
             }
 
