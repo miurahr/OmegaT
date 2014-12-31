@@ -69,7 +69,6 @@ import org.omegat.core.segmentation.Segmenter;
 import org.omegat.core.statistics.CalcStandardStatistics;
 import org.omegat.core.statistics.Statistics;
 import org.omegat.core.statistics.StatisticsInfo;
-import org.omegat.core.team.IRemoteRepository;
 import org.omegat.core.team2.RebaseAndCommit;
 import org.omegat.core.team2.RemoteRepositoryProvider;
 import org.omegat.core.threads.CommandMonitor;
@@ -95,7 +94,6 @@ import org.omegat.util.RuntimePreferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.TMXReader2;
-import org.omegat.util.TMXWriter2;
 import org.omegat.util.gui.UIThreadsUtil;
 import org.xml.sax.SAXParseException;
 
@@ -198,10 +196,6 @@ public class RealProject implements IProject {
      *            true if project need to be created
      */
     public RealProject(final ProjectProperties props) {
-        this(props, null);
-    }
-
-    public RealProject(final ProjectProperties props, IRemoteRepository repository) {
         PrepareTMXEntry empty = new PrepareTMXEntry();
         empty.source = "";
         EMPTY_TRANSLATION = new TMXEntry(empty, true, null);
@@ -224,10 +218,6 @@ public class RealProject implements IProject {
         targetTokenizer = createTokenizer(Core.getParams().get(ITokenizer.CLI_PARAM_TARGET), props.getTargetTokenizer());
         configTokenizer(Core.getParams().get(ITokenizer.CLI_PARAM_TARGET_BEHAVIOR), targetTokenizer);
         Log.log("Target tokenizer: " + targetTokenizer.getClass().getName() + " (" + targetTokenizer.getBehavior() + ")");
-    }
-    
-    public IRemoteRepository getRepository() {
-        return null;
     }
 
     public void saveProjectProperties() throws Exception {
@@ -802,6 +792,7 @@ public class RealProject implements IProject {
 
                         @Override
                         public void rebaseAndSave(File out) throws Exception {
+                            Core.getEditor().waitForCommit(10);
                             mergeTMX(baseTMX, headTMX, commitDetails);
                             projectTMX.exportTMX(m_config, out, false, false, true);
                         }
