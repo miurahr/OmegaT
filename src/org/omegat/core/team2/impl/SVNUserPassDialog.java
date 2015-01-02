@@ -25,19 +25,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **************************************************************************/
 
-package org.omegat.gui.dialogs;
+package org.omegat.core.team2.impl;
 
+import org.omegat.gui.dialogs.*;
 import javax.swing.JLabel;
 
 import org.omegat.util.OStrings;
-import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
 
 /**
  *
  * @author alex
  */
-public class TeamUserPassDialog extends javax.swing.JDialog {
+public class SVNUserPassDialog extends javax.swing.JDialog {
     /** A return status code - returned if Cancel button has been pressed */
     public static final int RET_CANCEL = 0;
     /** A return status code - returned if OK button has been pressed */
@@ -46,7 +46,7 @@ public class TeamUserPassDialog extends javax.swing.JDialog {
     /**
      * Creates new form TeamUserPassDialog
      */
-    public TeamUserPassDialog(java.awt.Frame parent) {
+    public SVNUserPassDialog(java.awt.Frame parent) {
         super(parent, true);
 
         StaticUIUtils.setEscapeClosable(this);
@@ -57,7 +57,6 @@ public class TeamUserPassDialog extends javax.swing.JDialog {
 
         invalidate();
         pack();
-        DockingUI.displayCentered(this);
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */
@@ -80,11 +79,10 @@ public class TeamUserPassDialog extends javax.swing.JDialog {
         userText = new javax.swing.JTextField();
         passwordLabel = new javax.swing.JLabel();
         passwordField = new javax.swing.JPasswordField();
+        cbSavePlainPassword = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-        cbReadOnly = new javax.swing.JCheckBox();
-        cbForceSavePlainPassword = new javax.swing.JCheckBox();
 
         setTitle(OStrings.getString("TEAM_USERPASS_TITLE")); // NOI18N
         setMinimumSize(new java.awt.Dimension(250, 200));
@@ -110,7 +108,6 @@ public class TeamUserPassDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         getContentPane().add(descriptionTextArea, gridBagConstraints);
 
-        userLabel.setLabelFor(userText);
         org.openide.awt.Mnemonics.setLocalizedText(userLabel, OStrings.getString("LOGIN_USER")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -129,7 +126,6 @@ public class TeamUserPassDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         getContentPane().add(userText, gridBagConstraints);
 
-        passwordLabel.setLabelFor(passwordField);
         org.openide.awt.Mnemonics.setLocalizedText(passwordLabel, OStrings.getString("LOGIN_PASSWORD")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -147,6 +143,16 @@ public class TeamUserPassDialog extends javax.swing.JDialog {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         getContentPane().add(passwordField, gridBagConstraints);
+
+        org.openide.awt.Mnemonics.setLocalizedText(cbSavePlainPassword, OStrings.getString("SVN_SAVE_PLAINPASSWORD")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 50;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        getContentPane().add(cbSavePlainPassword, gridBagConstraints);
 
         org.openide.awt.Mnemonics.setLocalizedText(okButton, OStrings.getString("BUTTON_OK")); // NOI18N
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -171,28 +177,8 @@ public class TeamUserPassDialog extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         getContentPane().add(jPanel1, gridBagConstraints);
 
-        org.openide.awt.Mnemonics.setLocalizedText(cbReadOnly, OStrings.getString("VCS_READONLY")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        getContentPane().add(cbReadOnly, gridBagConstraints);
-
-        org.openide.awt.Mnemonics.setLocalizedText(cbForceSavePlainPassword, OStrings.getString("VCS_SAVE_PLAINPASSWORD_FORCE")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        getContentPane().add(cbForceSavePlainPassword, gridBagConstraints);
-
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
@@ -215,8 +201,7 @@ public class TeamUserPassDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
-    public javax.swing.JCheckBox cbForceSavePlainPassword;
-    public javax.swing.JCheckBox cbReadOnly;
+    public javax.swing.JCheckBox cbSavePlainPassword;
     public javax.swing.JTextArea descriptionTextArea;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton okButton;
