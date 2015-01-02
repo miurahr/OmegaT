@@ -134,6 +134,21 @@ public class FileUtil {
     }
 
     /**
+     * Move one file to another.
+     */
+    public static void move(File f1, File f2) throws Exception {
+        if (f1.equals(f2)) {
+            return;
+        }
+        if (f2.exists()) {
+            if (!f2.delete()) {
+                throw new IOException("Unable to delete " + f2);
+            }
+        }
+        rename(f1, f2);
+    }
+
+    /**
      * Writes a text into a UTF-8 text file in the script directory.
      * 
      * @param textToWrite
