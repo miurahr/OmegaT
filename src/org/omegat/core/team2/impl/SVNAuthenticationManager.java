@@ -49,7 +49,7 @@ import org.tmatesoft.svn.core.io.SVNRepository;
 
 /**
  * Authentication manager for SVN. See details about authentication at the
- * http://wiki.svnkit.com/Authentication.
+ * http://wiki.svnkit.com/Authentication. Authentication manager created for each repository instance.
  * 
  * Only username+password authentication supported. Proxy not supported for https:// repositories.
  * 
@@ -62,6 +62,12 @@ public class SVNAuthenticationManager implements ISVNAuthenticationManager {
     static final String KEY_PASSWORD_PREFIX = "login.password.";
 
     private static final Logger LOGGER = Logger.getLogger(SVNAuthenticationManager.class.getName());
+
+    private final String repoUrl;
+
+    public SVNAuthenticationManager(String repoUrl) {
+        this.repoUrl = repoUrl;
+    }
 
     @Override
     public void acknowledgeAuthentication(boolean accepted, String kind, String realm,
@@ -112,11 +118,11 @@ public class SVNAuthenticationManager implements ISVNAuthenticationManager {
         String pass = new String(userPassDialog.passwordField.getPassword());
 
         if (userPassDialog.cbSavePlainPassword.isSelected()) {
-            TeamSettings.set(KEY_USERNAME_PREFIX + url.toString(), user);
-            TeamSettings.set(KEY_PASSWORD_PREFIX + url.toString(), pass);
+            TeamSettings.set(KEY_USERNAME_PREFIX + repoUrl, user);
+            TeamSettings.set(KEY_PASSWORD_PREFIX + repoUrl, pass);
         } else {
-            TeamSettings.set(KEY_USERNAME_PREFIX + url.toString(), null);
-            TeamSettings.set(KEY_PASSWORD_PREFIX + url.toString(), null);
+            TeamSettings.set(KEY_USERNAME_PREFIX + repoUrl, null);
+            TeamSettings.set(KEY_PASSWORD_PREFIX + repoUrl, null);
         }
 
         if (ISVNAuthenticationManager.PASSWORD.equals(kind)) {
@@ -132,8 +138,8 @@ public class SVNAuthenticationManager implements ISVNAuthenticationManager {
     @Override
     public SVNAuthentication getFirstAuthentication(String kind, String realm, SVNURL url)
             throws SVNException {
-        String user = TeamSettings.get(KEY_USERNAME_PREFIX + url.toString());
-        String pass = TeamSettings.get(KEY_PASSWORD_PREFIX + url.toString());
+        String user = TeamSettings.get(KEY_USERNAME_PREFIX + repoUrl);
+        String pass = TeamSettings.get(KEY_PASSWORD_PREFIX + repoUrl);
         if (user != null && pass != null) {
             if (ISVNAuthenticationManager.PASSWORD.equals(kind)) {
                 return new SVNPasswordAuthentication(user, pass, false, url, false);
