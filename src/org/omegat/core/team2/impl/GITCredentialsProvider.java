@@ -48,6 +48,8 @@ import org.omegat.util.gui.DockingUI;
  * 
  * GIT supports protocols: file://, ssh:// git:// http://.
  * 
+ * See JGit Authentication Explained : http://www.codeaffine.com/2014/12/09/jgit-authentication/
+ * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Aaron Madlon-Kay
  */
