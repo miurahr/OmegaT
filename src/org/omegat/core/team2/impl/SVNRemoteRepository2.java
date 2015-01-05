@@ -68,7 +68,7 @@ public class SVNRemoteRepository2 implements IRemoteRepository2 {
         config = repo;
         baseDirectory = dir;
         ISVNOptions options = SVNWCUtil.createDefaultOptions(true);
-        ISVNAuthenticationManager authManager = new SVNAuthenticationManager();
+        ISVNAuthenticationManager authManager = new SVNAuthenticationManager(repo.getUrl());
         ourClientManager = SVNClientManager.newInstance(options, authManager);
         if (baseDirectory.exists()) {
             ourClientManager.getWCClient().doCleanup(baseDirectory);
