@@ -52,40 +52,20 @@ import org.omegat.util.StringUtil;
  * @author Aaron Madlon-Kay
  */
 public class GlossaryReaderTSV {
-    /**
-     * Get charset of glossary file.
-     */
-    public static String getCharset(File file) throws IOException {
-        BOMInputStream in = new BOMInputStream(new FileInputStream(file));
-        try {
-            if (in.hasBOM()) {
-                return in.getBOMCharsetName();
-            } else {
-                String fname_lower = file.getName().toLowerCase();
-                if (fname_lower.endsWith(OConsts.EXT_TSV_DEF)) {
-                    return Charset.defaultCharset().name();
-                } else if (fname_lower.endsWith(OConsts.EXT_TSV_UTF8)) {
-                    return "UTF-8";
-                } else if (fname_lower.endsWith(OConsts.EXT_TSV_TXT)) {
-                    String encoding = isUTF16LE(file) ? OConsts.UTF16LE : OConsts.UTF8;
-                    return encoding;
-                } else {
-                    return Charset.defaultCharset().name();
-                }
-            }
-        } finally {
-            IOUtils.closeQuietly(in);
+    public static String getFileEncoding(final File file) throws IOException {
+        String fname_lower = file.getName().toLowerCase();
+        if (fname_lower.endsWith(OConsts.EXT_TSV_DEF) || fname_lower.endsWith(OConsts.EXT_TSV_TXT)) {
+            return EncodingDetector.detectEncodingDefault(file, Charset.defaultCharset().name());
+        } else if (fname_lower.endsWith(OConsts.EXT_TSV_UTF8)) {
+            return OConsts.UTF8;
+        } else {
+            return null;
         }
     }
 
     public static List<GlossaryEntry> read(final File file, boolean priorityGlossary) throws IOException {
-        String encoding;
-        String fname_lower = file.getName().toLowerCase();
-        if (fname_lower.endsWith(OConsts.EXT_TSV_DEF) || fname_lower.endsWith(OConsts.EXT_TSV_TXT)) {
-            encoding = EncodingDetector.detectEncodingDefault(file, Charset.defaultCharset().name());
-        } else if (fname_lower.endsWith(OConsts.EXT_TSV_UTF8)) {
-            encoding = OConsts.UTF8;
-        } else {
+        String encoding = getFileEncoding(file);
+        if (encoding == null) {
             return null;
         }
         InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);
@@ -131,15 +111,10 @@ public class GlossaryReaderTSV {
      * @param newEntry the entry to append.
      * @throws IOException
      */
-    public static void append(final File file, GlossaryEntry newEntry) throws IOException {
+    public static synchronized void append(final File file, GlossaryEntry newEntry) throws IOException {
         String encoding = OConsts.UTF8;
         if (!file.exists()) {
-            File parentFile = file.getParentFile();
-            if (parentFile != null) {
-                if (!parentFile.exists()) {
-                    parentFile.mkdirs();
-                }
-            }
+            file.getParentFile().mkdirs();
             file.createNewFile();
         } else {
             encoding = EncodingDetector.detectEncodingDefault(file, OConsts.UTF8);
