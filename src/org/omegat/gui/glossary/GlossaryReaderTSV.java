@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -64,11 +63,9 @@ public class GlossaryReaderTSV {
                 String fname_lower = file.getName().toLowerCase();
                 if (fname_lower.endsWith(OConsts.EXT_TSV_DEF)) {
                     return Charset.defaultCharset().name();
-                } else if (fname_lower.endsWith(OConsts.EXT_TSV_UTF8)) {
-                    return "UTF-8";
-                } else if (fname_lower.endsWith(OConsts.EXT_TSV_TXT)) {
-                    String encoding = isUTF16LE(file) ? OConsts.UTF16LE : OConsts.UTF8;
-                    return encoding;
+                } else if (fname_lower.endsWith(OConsts.EXT_TSV_UTF8)
+                        || fname_lower.endsWith(OConsts.EXT_TSV_TXT)) {
+                    return OConsts.UTF8;
                 } else {
                     return Charset.defaultCharset().name();
                 }
@@ -79,24 +76,15 @@ public class GlossaryReaderTSV {
     }
 
     public static List<GlossaryEntry> read(final File file, boolean priorityGlossary) throws IOException {
-        InputStreamReader reader;
-        String fname_lower = file.getName().toLowerCase();
-        if (fname_lower.endsWith(OConsts.EXT_TSV_DEF)) {
-            reader = new InputStreamReader(new FileInputStream(file));
-        } else if (fname_lower.endsWith(OConsts.EXT_TSV_UTF8)) {
-            InputStream fis = new FileInputStream(file);
-            reader = new InputStreamReader(fis, OConsts.UTF8);
-        } else if (fname_lower.endsWith(OConsts.EXT_TSV_TXT)) {
-            String encoding = isUTF16LE(file) ? OConsts.UTF16LE : OConsts.UTF8;
-            InputStream fis = new FileInputStream(file);
-            reader = new InputStreamReader(fis, encoding);
-        } else {
-            return null;
-        }
-
         List<GlossaryEntry> result = new ArrayList<GlossaryEntry>();
-        BufferedReader in = new BufferedReader(reader);
+
+        String encoding = getCharset(file);
+        BOMInputStream fis = new BOMInputStream(new FileInputStream(file));
         try {
+            InputStreamReader reader = new InputStreamReader(new FileInputStream(file), encoding);
+
+            BufferedReader in = new BufferedReader(reader);
+
             // BOM (byte order mark) bugfix
             in.mark(1);
             int ch = in.read();
@@ -122,7 +110,7 @@ public class GlossaryReaderTSV {
                 result.add(new GlossaryEntry(tokens[0], tokens[1], comment, priorityGlossary));
             }
         } finally {
-            in.close();
+            fis.close();
         }
 
         return result;
@@ -136,18 +124,11 @@ public class GlossaryReaderTSV {
      * @throws IOException
      */
     public static void append(final File file, GlossaryEntry newEntry) throws IOException {
-        String encoding = OConsts.UTF8;
         if (!file.exists()) {
-            File parentFile = file.getParentFile();
-            if (parentFile != null) {
-                if (!parentFile.exists()) {
-                    parentFile.mkdirs();
-                }
-            }
+            file.getParentFile().mkdirs();
             file.createNewFile();
-        } else if (isUTF16LE(file)) {
-            encoding = OConsts.UTF16LE;
         }
+        String encoding = getCharset(file);
         Writer wr = new OutputStreamWriter(new FileOutputStream(file, true), encoding);
         wr.append(newEntry.getSrcText()).append('\t').append(newEntry.getLocText());
         if (!StringUtil.isEmpty(newEntry.getCommentText())) {
@@ -155,24 +136,5 @@ public class GlossaryReaderTSV {
         }
         wr.append(System.getProperty("line.separator"));
         wr.close();
-    }
-
-    private static boolean isUTF16LE(final File file) throws IOException {
-        FileInputStream stream = null;
-        boolean ret = false;
-        try {
-            stream = new FileInputStream(file);
-            byte[] bytes = new byte[2];
-
-            // BOM (byte order mark) detection
-            if (stream.read(bytes, 0, 2) == 2 && bytes[0] == (byte) 0xFF && bytes[1] == (byte) 0xFE) {
-                ret = true;
-            }
-        } finally {
-            if (stream != null) {
-                stream.close();
-            }
-        }
-        return ret;
     }
 }
