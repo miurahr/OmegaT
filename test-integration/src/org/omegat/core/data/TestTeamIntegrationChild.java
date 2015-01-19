@@ -259,9 +259,6 @@ public class TestTeamIntegrationChild {
         public void windowDeactivated() {
         }
 
-        public void waitForCommit(int timeoutSeconds) {
-        }
-
         public void undo() {
         }
 
