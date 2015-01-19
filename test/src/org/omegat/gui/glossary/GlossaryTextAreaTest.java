@@ -225,10 +225,6 @@ public class GlossaryTextAreaTest extends TestCore {
 
             public void registerUntranslated() {
             }
-            
-            @Override
-            public void waitForCommit(int timeoutSeconds) {   
-            }
         });
     }
 }
