@@ -54,7 +54,7 @@ public class GlossaryReaderTSV {
     /**
      * Get charset of glossary file.
      */
-    public static String getCharset(File file) throws IOException {
+    public static synchronized String getCharset(File file) throws IOException {
         BOMInputStream in = new BOMInputStream(new FileInputStream(file));
         try {
             if (in.hasBOM()) {
@@ -75,7 +75,7 @@ public class GlossaryReaderTSV {
         }
     }
 
-    public static List<GlossaryEntry> read(final File file, boolean priorityGlossary) throws IOException {
+    public static synchronized List<GlossaryEntry> read(final File file, boolean priorityGlossary) throws IOException {
         List<GlossaryEntry> result = new ArrayList<GlossaryEntry>();
 
         String encoding = getCharset(file);
@@ -123,7 +123,7 @@ public class GlossaryReaderTSV {
      * @param newEntry the entry to append.
      * @throws IOException
      */
-    public static void append(final File file, GlossaryEntry newEntry) throws IOException {
+    public static synchronized void append(final File file, GlossaryEntry newEntry) throws IOException {
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             file.createNewFile();
