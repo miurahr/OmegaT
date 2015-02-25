@@ -65,6 +65,7 @@ import org.madlonkay.supertmxmerge.SuperTmxMerge;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.KnownException;
+import org.omegat.core.data.TMXEntry.ExternalLinked;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.segmentation.Segmenter;
 import org.omegat.core.statistics.CalcStandardStatistics;
@@ -794,7 +795,6 @@ public class RealProject implements IProject {
 
                         @Override
                         public void rebaseAndSave(File out) throws Exception {
-                            Core.getEditor().waitForCommit(10);
                             mergeTMX(baseTMX, headTMX, commitDetails);
                             projectTMX.exportTMX(m_config, out, false, false, true);
                         }
@@ -884,11 +884,9 @@ public class RealProject implements IProject {
                 .setParentWindow(Core.getMainWindow().getApplicationFrame())
                 // More than this number of conflicts will trigger List View by default.
                 .setListViewThreshold(5);
-        synchronized (projectTMX) {
-            ProjectTMX mergedTMX = SuperTmxMerge.merge(baseTMX, projectTMX, headTMX, m_config
-                    .getSourceLanguage().getLanguage(), m_config.getTargetLanguage().getLanguage(), props);
-            projectTMX.replaceContent(mergedTMX);
-        }
+        ProjectTMX mergedTMX = SuperTmxMerge.merge(baseTMX, projectTMX, headTMX, m_config.getSourceLanguage()
+                .getLanguage(), m_config.getTargetLanguage().getLanguage(), props);
+        projectTMX.replaceContent(mergedTMX);
         Log.logDebug(LOGGER, "Merge report: {0}", props.getReport());
         commitDetails.append('\n');
         commitDetails.append(props.getReport().toString());
@@ -1202,6 +1200,28 @@ public class RealProject implements IProject {
         return r;
     }
 
+    public AllTranslations getAllTranslations(SourceTextEntry ste) {
+        AllTranslations r = new AllTranslations();
+        synchronized (projectTMX) {
+            r.defaultTranslation = projectTMX.getDefaultTranslation(ste.getSrcText());
+            r.alternativeTranslation = projectTMX.getMultipleTranslation(ste.getKey());
+            if (r.alternativeTranslation != null) {
+                r.currentTranslation = r.alternativeTranslation;
+            } else if (r.defaultTranslation != null) {
+                r.currentTranslation = r.defaultTranslation;
+            } else {
+                r.currentTranslation = EMPTY_TRANSLATION;
+            }
+            if (r.defaultTranslation == null) {
+                r.defaultTranslation = EMPTY_TRANSLATION;
+            }
+            if (r.alternativeTranslation == null) {
+                r.alternativeTranslation = EMPTY_TRANSLATION;
+            }
+        }
+        return r;
+    }
+
     /**
      * Returns the active Project's Properties.
      */
@@ -1223,6 +1243,42 @@ public class RealProject implements IProject {
         }
     }
     
+    @Override
+    public void setTranslation(SourceTextEntry entry, PrepareTMXEntry trans, boolean defaultTranslation,
+            ExternalLinked externalLinked, AllTranslations previous) throws OptimisticLockingFail {
+        if (trans == null) {
+            throw new IllegalArgumentException("RealProject.setTranslation(tr) can't be null");
+        }
+
+        synchronized (projectTMX) {
+            AllTranslations current = getAllTranslations(entry);
+            boolean wasAlternative = current.alternativeTranslation.isTranslated();
+            if (defaultTranslation) {
+                if (!current.defaultTranslation.equals(previous.defaultTranslation)) {
+                    throw new OptimisticLockingFail(previous.getDefaultTranslation().translation,
+                            current.getDefaultTranslation().translation, current);
+                }
+                if (wasAlternative) {
+                    // alternative -> default
+                    if (!current.alternativeTranslation.equals(previous.alternativeTranslation)) {
+                        throw new OptimisticLockingFail(previous.getAlternativeTranslation().translation,
+                                current.getAlternativeTranslation().translation, current);
+                    }
+                    // remove alternative
+                    setTranslation(entry, new PrepareTMXEntry(), false, null);
+                }
+            } else {
+                // new is alternative translation
+                if (!current.alternativeTranslation.equals(previous.alternativeTranslation)) {
+                    throw new OptimisticLockingFail(previous.getAlternativeTranslation().translation,
+                            current.getAlternativeTranslation().translation, current);
+                }
+            }
+
+            setTranslation(entry, trans, defaultTranslation, externalLinked);
+        }
+    }
+
     @Override
     public void setTranslation(final SourceTextEntry entry, final PrepareTMXEntry trans, boolean defaultTranslation, TMXEntry.ExternalLinked externalLinked) {
         if (trans == null) {
