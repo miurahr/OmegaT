@@ -34,7 +34,6 @@ import java.util.Map;
 import org.omegat.core.data.TMXEntry.ExternalLinked;
 import org.omegat.core.segmentation.SRX;
 import org.omegat.core.statistics.StatisticsInfo;
-import org.omegat.core.team.IRemoteRepository;
 import org.omegat.filters2.TranslationException;
 import org.omegat.filters2.master.FilterMaster;
 import org.omegat.tokenizer.ITokenizer;
@@ -51,10 +50,6 @@ public class NotLoadedProject implements IProject {
     }
 
     public void closeProject() {
-    }
-    
-    public IRemoteRepository getRepository() {
-        return null;
     }
 
     public void decreaseTranslated() {
