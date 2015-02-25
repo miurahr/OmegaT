@@ -157,7 +157,7 @@ public class SegmentBuilder {
      *            document
      * @return OmElementSegment
      */
-    public void createSegmentElement(final boolean isActive) {
+    public void createSegmentElement(final boolean isActive, TMXEntry trans) {
         UIThreadsUtil.mustBeSwingThread();
 
         displayVersion = globalVersions.incrementAndGet();
@@ -177,7 +177,6 @@ public class SegmentBuilder {
                     offset = doc.getLength();
                 }
 
-                TMXEntry trans = Core.getProject().getTranslationInfo(ste);
                 defaultTranslation = trans.defaultTranslation;
                 if (!Core.getProject().getProjectProperties().isSupportDefaultTranslations()) {
                     defaultTranslation = false;
