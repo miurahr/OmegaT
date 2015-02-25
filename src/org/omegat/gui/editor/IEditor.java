@@ -363,9 +363,4 @@ public interface IEditor {
      * Register translation to be identical to source.
      */
     void registerIdenticalTranslation();
-
-    /**
-     * Wait for the user to commit the current translation.
-     */
-    void waitForCommit(int timeoutSeconds);
 }
