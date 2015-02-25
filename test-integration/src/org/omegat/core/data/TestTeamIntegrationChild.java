@@ -51,8 +51,6 @@ import org.omegat.core.CoreEvents;
 import org.omegat.core.TestCoreInitializer;
 import org.omegat.core.data.IProject.DefaultTranslationsIterator;
 import org.omegat.core.events.IProjectEventListener;
-import org.omegat.core.team.IRemoteRepository;
-import org.omegat.core.team2.IRemoteRepository2;
 import org.omegat.core.team2.RemoteRepositoryProvider;
 import org.omegat.core.threads.IAutoSave;
 import org.omegat.gui.editor.EditorSettings;
@@ -62,7 +60,6 @@ import org.omegat.gui.editor.IPopupMenuConstructor;
 import org.omegat.gui.editor.mark.Mark;
 import org.omegat.gui.main.IMainMenu;
 import org.omegat.gui.main.IMainWindow;
-import org.omegat.util.FileUtil;
 import org.omegat.util.Language;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -160,7 +157,7 @@ public class TestTeamIntegrationChild {
             Core.getProject().closeProject();
 
             // load again and check
-            ProjectFactory.loadProject(projectProperties, null, true);
+            ProjectFactory.loadProject(projectProperties, true);
             checkAll();
 
             System.exit(200);
