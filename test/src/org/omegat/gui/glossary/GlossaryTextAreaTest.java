@@ -238,10 +238,6 @@ public class GlossaryTextAreaTest extends TestCore {
             }
             
             @Override
-            public void waitForCommit(int timeoutSeconds) {   
-            }
-
-            @Override
             public IAutoCompleter getAutoCompleter() {
                 return null;
             }
