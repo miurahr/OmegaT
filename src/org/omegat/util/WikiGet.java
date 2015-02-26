@@ -40,6 +40,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * Import pages from MediaWiki
  * 
@@ -183,6 +185,34 @@ public class WikiGet {
             page.append(new String(b, 0, n, "UTF-8"));
         }
         return page.toString();
+    }
+
+    /**
+     * Obtain byte array context from remote URL.
+     * 
+     * @param target
+     *            String representation of well-formed URL.
+     * @return byte array or null if status is not 200 OK
+     * @throws IOException
+     */
+    public static byte[] getURLasByteArray(String target) throws IOException {
+        URL url = new URL(target);
+        byte[] result;
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        try {
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                return null;
+            }
+            InputStream in = conn.getInputStream();
+            try {
+                result = IOUtils.toByteArray(in);
+            } finally {
+                IOUtils.closeQuietly(in);
+            }
+        } finally {
+            IOUtils.close(conn);
+        }
+        return result;
     }
 
     /**
