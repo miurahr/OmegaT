@@ -38,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import org.omegat.convert.ConvertProject;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.KnownException;
@@ -273,6 +274,15 @@ public class ProjectUICommands {
                 Cursor hourglassCursor = new Cursor(Cursor.WAIT_CURSOR);
                 Cursor oldCursor = mainWindow.getCursor();
                 mainWindow.setCursor(hourglassCursor);
+
+                try {
+                    ConvertProject.convert(projectRootFolder);
+                } catch (Exception ex) {
+                    Log.logErrorRB(ex, "PP_ERROR_UNABLE_TO_CONVERT_PROJECT");
+                    Core.getMainWindow().displayErrorRB(ex, "PP_ERROR_UNABLE_TO_CONVERT_PROJECT");
+                    mainWindow.setCursor(oldCursor);
+                    return null;
+                }
 
                 // check if project okay
                 ProjectProperties props;
