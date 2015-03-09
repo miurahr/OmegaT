@@ -59,6 +59,8 @@ import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -279,6 +281,10 @@ public class EditorController implements IEditor {
         pane.setMinimumSize(new Dimension(100, 100));
 
         scrollPane = new JScrollPane(editor);
+        Border b = UIManager.getBorder("OmegaT.dockablePanelBorder");
+        if (b != null) {
+            scrollPane.setBorder(b);
+        }
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         pane.setLayout(new BorderLayout());

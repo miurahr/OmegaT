@@ -38,6 +38,9 @@ import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.UIManager;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.plaf.ColorUIResource;
 
 import org.omegat.core.Core;
@@ -46,6 +49,7 @@ import org.omegat.util.OStrings;
 import com.vlsolutions.swing.docking.AutoHidePolicy;
 import com.vlsolutions.swing.docking.AutoHidePolicy.ExpandMode;
 import com.vlsolutions.swing.docking.ui.DockingUISettings;
+
 import java.awt.Font;
 
 /**
@@ -149,6 +153,22 @@ public class DockingUI {
                 UIManager.put("InternalFrame.inactiveTitleForeground", res);
             }
         }
+        
+        // AMK test
+        //UIManager.put("DockView.singleDockableBorder", new MatteBorder(1, 1, 1, 1, Color.GRAY));
+        UIManager.put("DockView.singleDockableBorder", new EmptyBorder(10, 10, 10, 10));
+        Font niceFont = new Font("Helvetica Neue", defaultFont.getStyle(), defaultFont.getSize());
+        //UIManager.put("DockViewTitleBar.border", new MatteBorder(1, 1, 0, 1, Color.GRAY));
+        UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, true, true, false, false));
+        //UIManager.put("DockView.tabbedDockableBorder", new EmptyBorder(0, 0, 0, 0));
+        UIManager.put("DockViewTitleBar.titleFont", niceFont);
+        UIManager.put("JTabbedPaneSmartIcon.font", niceFont);
+        UIManager.put("AutoHideButton.font", niceFont);
+        //UIManager.put("AutoHideButton.expandBorderTop", new EmptyBorder(0, 0, 0, 0));
+        //UIManager.put("AutoHideButton.expandBorderLeft", new EmptyBorder(0, 0, 0, 0));
+        UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, false, false, true, true));
+        //UIManager.put("AutoHideButton.expandBorderRight", new EmptyBorder(0, 0, 0, 0));
+        UIManager.put("OmegaT.dockablePanelBorder", new MatteBorder(1, 1, 1, 1, Color.GRAY));
     }
 
     /**
