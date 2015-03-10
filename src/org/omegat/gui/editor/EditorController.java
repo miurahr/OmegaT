@@ -53,6 +53,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.JViewport;
@@ -61,6 +62,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.MatteBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -307,7 +309,7 @@ public class EditorController implements IEditor {
     private void updateState(SHOW_TYPE showType) {
         UIThreadsUtil.mustBeSwingThread();
 
-        Component data = null;
+        JComponent data = null;
         String title = null;
 
         switch (showType) {
@@ -344,6 +346,8 @@ public class EditorController implements IEditor {
         pane.setToolTipText(title);
 
         if (scrollPane.getViewport().getView() != data) {
+            int size = data.getFont().getSize() / 2;
+            data.setBorder(new MatteBorder(size, size, size, size, data.getBackground()));
             scrollPane.setViewportView(data);
         }
     }

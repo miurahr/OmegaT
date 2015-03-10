@@ -64,7 +64,7 @@ public class DockableScrollPane extends JScrollPane implements Dockable {
         if (view instanceof JTextComponent) {
             JTextComponent c = (JTextComponent) view;
             int size = c.getFont().getSize() / 2;
-            setViewportBorder(new MatteBorder(size, size, size, size, c.getBackground()));
+            c.setBorder(new MatteBorder(size, size, size, size, c.getBackground()));
         }
         Border b = UIManager.getBorder("OmegaT.dockablePanelBorder");
         if (b != null) {
