@@ -191,7 +191,7 @@ public class DockingUI {
         UIManager.put("AutoHideButtonPanelUI", "org.omegat.util.gui.AutoHideButtonPanelUI");
         UIManager.put("InternalFrame.activeTitleBackground", new Color(0xF6F6F7));
         UIManager.put("AutoHideButton.background", UIManager.getColor("Label.background"));
-        UIManager.put("OmegaTStatusArea.color", new Color(0x575757));
+        UIManager.put("OmegaTStatusArea.border", new MatteBorder(1, 1, 1, 1, new Color(0x575757)));
         
         UIManager.put("DockViewTitleBar.maximize", getIcon("appbar.arrow.expand.png"));
         UIManager.put("DockViewTitleBar.restore", getIcon("appbar.arrow.collapsed.png"));

@@ -123,12 +123,10 @@ public class MainWindowUI {
 
         mainWindow.statusLabel.setFont(mainWindow.statusLabel.getFont().deriveFont(11));
 
-        Color color = UIManager.getColor("OmegaTStatusArea.color");
-        if (color == null) {
-            color = UIManager.getColor("Label.foreground");
+        Border border = UIManager.getBorder("OmegaTStatusArea.border");
+        if (border == null) {
+            border = new MatteBorder(1, 1, 1, 1, Color.BLACK);
         }
-        Border border = new MatteBorder(1, 1, 1, 1, color);
-        
         
         final STATUS_BAR_MODE progressMode = STATUS_BAR_MODE.valueOf(
                 Preferences.getPreferenceEnumDefault(Preferences.SB_PROGRESS_MODE,
@@ -144,7 +142,6 @@ public class MainWindowUI {
         mainWindow.progressLabel.setToolTipText(OStrings.getString(tooltipText));
 
         mainWindow.progressLabel.setBorder(border);
-        mainWindow.progressLabel.setForeground(color);
         mainWindow.progressLabel.setHorizontalTextPosition(SwingConstants.CENTER);
         mainWindow.progressLabel.addMouseListener(new MouseAdapter() {
             @Override
@@ -176,7 +173,6 @@ public class MainWindowUI {
         mainWindow.lengthLabel.setToolTipText(OStrings.getString("MW_SEGMENT_LENGTH_TOOLTIP"));
         mainWindow.lengthLabel.setAlignmentX(1.0F);
         mainWindow.lengthLabel.setBorder(border);
-        mainWindow.lengthLabel.setForeground(color);
         mainWindow.lengthLabel.setFocusable(false);
 
         JPanel statusPanel2 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
