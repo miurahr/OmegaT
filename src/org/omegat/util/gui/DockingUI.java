@@ -192,6 +192,11 @@ public class DockingUI {
         UIManager.put("InternalFrame.activeTitleBackground", new Color(0xF6F6F7));
         UIManager.put("AutoHideButton.background", UIManager.getColor("Label.background"));
         UIManager.put("OmegaTStatusArea.color", new Color(0x575757));
+        
+        UIManager.put("DockViewTitleBar.maximize", getIcon("appbar.arrow.expand.png"));
+        UIManager.put("DockViewTitleBar.restore", getIcon("appbar.arrow.collapsed.png"));
+        UIManager.put("DockViewTitleBar.hide", getIcon("appbar.download.png"));
+        UIManager.put("DockViewTitleBar.float", getIcon("appbar.new.window.png"));
     }
 
     /**
@@ -202,7 +207,7 @@ public class DockingUI {
      * @return icon instance
      */
     private static ImageIcon getIcon(final String iconName) {
-        return ResourcesUtil.getIcon("/org/omegat/gui/resources/" + iconName);
+        return new ImageIcon(ResourcesUtil.getImage("/org/omegat/gui/resources/" + iconName));
     }
 
     /**

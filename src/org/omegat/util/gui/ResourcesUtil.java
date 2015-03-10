@@ -25,9 +25,9 @@
 
 package org.omegat.util.gui;
 
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.net.URL;
-
-import javax.swing.ImageIcon;
 
 /**
  * Utils for load resources from classpath.
@@ -41,8 +41,8 @@ public class ResourcesUtil {
      * @param resourceName
      *            resource name
      */
-    public static ImageIcon getIcon(final String resourceName) {
+    public static Image getImage(final String resourceName) {
         URL resourceURL = ResourcesUtil.class.getResource(resourceName);
-        return new ImageIcon(resourceURL);
+        return Toolkit.getDefaultToolkit().getImage(resourceURL);
     }
 }
