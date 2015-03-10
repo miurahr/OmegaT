@@ -181,6 +181,7 @@ public class DockingUI {
         UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, borderColor, false, false, true, true));
         //UIManager.put("AutoHideButton.expandBorderRight", new EmptyBorder(0, 0, 0, 0));
         UIManager.put("OmegaTDockablePanel.border", new MatteBorder(1, 1, 1, 1, borderColor));
+        //UIManager.put("OmegaTBorder.color", borderColor);
         //UIManager.put("Panel.background", new Color(0xEFEFF4));
         //UIManager.put("AutoHideButtonPanel.bottomBorder", new EmptyBorder(0, 10, 0, 10));
         UIManager.put("AutoHideButtonPanel.bottomBorder", new CompoundBorder(
@@ -190,6 +191,7 @@ public class DockingUI {
         UIManager.put("AutoHideButtonPanelUI", "org.omegat.util.gui.AutoHideButtonPanelUI");
         UIManager.put("InternalFrame.activeTitleBackground", new Color(0xF6F6F7));
         UIManager.put("AutoHideButton.background", UIManager.getColor("Label.background"));
+        UIManager.put("OmegaTStatusArea.color", new Color(0x575757));
     }
 
     /**
