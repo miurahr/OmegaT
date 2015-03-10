@@ -155,20 +155,22 @@ public class DockingUI {
         }
         
         // AMK test
+        Color borderColor = new Color(0x9B9B9B);
         //UIManager.put("DockView.singleDockableBorder", new MatteBorder(1, 1, 1, 1, Color.GRAY));
-        UIManager.put("DockView.singleDockableBorder", new EmptyBorder(10, 10, 10, 10));
+        UIManager.put("DockView.singleDockableBorder", new EmptyBorder(5, 5, 5, 5));
         Font niceFont = new Font("Helvetica Neue", defaultFont.getStyle(), defaultFont.getSize());
         //UIManager.put("DockViewTitleBar.border", new MatteBorder(1, 1, 0, 1, Color.GRAY));
-        UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, true, true, false, false));
+        UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, borderColor, true, true, false, false));
         //UIManager.put("DockView.tabbedDockableBorder", new EmptyBorder(0, 0, 0, 0));
         UIManager.put("DockViewTitleBar.titleFont", niceFont);
         UIManager.put("JTabbedPaneSmartIcon.font", niceFont);
         UIManager.put("AutoHideButton.font", niceFont);
         //UIManager.put("AutoHideButton.expandBorderTop", new EmptyBorder(0, 0, 0, 0));
         //UIManager.put("AutoHideButton.expandBorderLeft", new EmptyBorder(0, 0, 0, 0));
-        UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, false, false, true, true));
+        UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, borderColor, false, false, true, true));
         //UIManager.put("AutoHideButton.expandBorderRight", new EmptyBorder(0, 0, 0, 0));
-        UIManager.put("OmegaT.dockablePanelBorder", new MatteBorder(1, 1, 1, 1, Color.GRAY));
+        UIManager.put("OmegaT.dockablePanelBorder", new MatteBorder(1, 1, 1, 1, borderColor));
+        //UIManager.put("Panel.background", new Color(0xEFEFF4));
     }
 
     /**

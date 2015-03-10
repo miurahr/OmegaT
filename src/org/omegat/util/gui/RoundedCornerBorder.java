@@ -8,7 +8,6 @@ import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Area;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
@@ -17,18 +16,20 @@ import javax.swing.border.AbstractBorder;
 @SuppressWarnings("serial")
 class RoundedCornerBorder extends AbstractBorder {
     private final int radius;
+    private final Color color;
     private final boolean upperLeft;
     private final boolean upperRight;
     private final boolean lowerLeft;
     private final boolean lowerRight;
     
     public RoundedCornerBorder() {
-        this(-1, true, true, true, true);
+        this(-1, Color.GRAY, true, true, true, true);
     }
     
-    public RoundedCornerBorder(int radius, boolean upperLeft, boolean upperRight,
+    public RoundedCornerBorder(int radius, Color color, boolean upperLeft, boolean upperRight,
             boolean lowerLeft, boolean lowerRight) {
         this.radius = radius;
+        this.color = color;
         this.upperLeft = upperLeft;
         this.upperRight = upperRight;
         this.lowerLeft = lowerLeft;
@@ -100,7 +101,7 @@ class RoundedCornerBorder extends AbstractBorder {
             g2.setColor(background);
             g2.fill(corners);
         }
-        g2.setColor(Color.GRAY);
+        g2.setColor(color);
         g2.draw(shape);
     }
     
