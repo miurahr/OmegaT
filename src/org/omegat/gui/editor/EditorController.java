@@ -283,7 +283,7 @@ public class EditorController implements IEditor {
         pane.setMinimumSize(new Dimension(100, 100));
 
         scrollPane = new JScrollPane(editor);
-        Border b = UIManager.getBorder("OmegaT.dockablePanelBorder");
+        Border b = UIManager.getBorder("OmegaTDockablePanel.border");
         if (b != null) {
             scrollPane.setBorder(b);
         }
