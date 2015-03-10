@@ -171,6 +171,12 @@ public class DockingUI {
         //UIManager.put("AutoHideButton.expandBorderRight", new EmptyBorder(0, 0, 0, 0));
         UIManager.put("OmegaTDockablePanel.border", new MatteBorder(1, 1, 1, 1, borderColor));
         //UIManager.put("Panel.background", new Color(0xEFEFF4));
+        //UIManager.put("AutoHideButtonPanel.bottomBorder", new EmptyBorder(0, 10, 0, 10));
+        UIManager.put("AutoHideButtonPanel.bottomBorder", new CompoundBorder(
+                new MatteBorder(1, 0, 0, 0, borderColor),
+                new EmptyBorder(0, 10, 0, 10)));
+        UIManager.put("OmegaTMainWindow.backgroundBottom", new Color(0xDEDEDE));
+        UIManager.put("AutoHideButtonPanelUI", "org.omegat.util.gui.AutoHideButtonPanelUI");
     }
 
     /**

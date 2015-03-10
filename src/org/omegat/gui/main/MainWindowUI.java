@@ -47,6 +47,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import org.omegat.core.Core;
 import org.omegat.gui.editor.EditorController;
@@ -175,6 +176,12 @@ public class MainWindowUI {
         statusPanel.add(mainWindow.statusLabel, BorderLayout.CENTER);
         statusPanel.add(statusPanel2, BorderLayout.EAST);
 
+        Color color = UIManager.getColor("OmegaTMainWindow.backgroundBottom");
+        if (color != null) {
+            statusPanel.setBackground(color);
+            statusPanel2.setBackground(color);
+        }
+        
         return statusPanel;
     }
 
