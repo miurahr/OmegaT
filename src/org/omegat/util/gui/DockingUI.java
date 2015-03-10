@@ -193,10 +193,27 @@ public class DockingUI {
         UIManager.put("AutoHideButton.background", UIManager.getColor("Label.background"));
         UIManager.put("OmegaTStatusArea.border", new MatteBorder(1, 1, 1, 1, new Color(0x575757)));
         
-        UIManager.put("DockViewTitleBar.maximize", getIcon("appbar.arrow.expand.png"));
-        UIManager.put("DockViewTitleBar.restore", getIcon("appbar.arrow.collapsed.png"));
-        UIManager.put("DockViewTitleBar.hide", getIcon("appbar.download.png"));
-        UIManager.put("DockViewTitleBar.float", getIcon("appbar.new.window.png"));
+        
+        UIManager.put("DockViewTitleBar.maximize", getIcon("appbar.arrow.expand.inactive.png"));
+        UIManager.put("DockViewTitleBar.maximize.rollover", getIcon("appbar.arrow.expand.png"));
+        UIManager.put("DockViewTitleBar.maximize.pressed", getIcon("appbar.arrow.expand.pressed.png"));
+        UIManager.put("DockViewTitleBar.restore", getIcon("appbar.arrow.collapsed.inactive.png"));
+        UIManager.put("DockViewTitleBar.restore.rollover", getIcon("appbar.arrow.collapsed.png"));
+        UIManager.put("DockViewTitleBar.restore.pressed", getIcon("appbar.arrow.collapsed.pressed.png"));
+        UIManager.put("DockViewTitleBar.hide", getIcon("appbar.download.inactive.png"));
+        UIManager.put("DockViewTitleBar.hide.rollover", getIcon("appbar.download.png"));
+        UIManager.put("DockViewTitleBar.hide.pressed", getIcon("appbar.download.pressed.png"));
+        UIManager.put("DockViewTitleBar.float", getIcon("appbar.new.window.inactive.png"));
+        UIManager.put("DockViewTitleBar.float.rollover", getIcon("appbar.new.window.png"));
+        UIManager.put("DockViewTitleBar.float.pressed", getIcon("appbar.new.window.pressed.png"));
+        UIManager.put("DockViewTitleBar.dock", getIcon("appbar.upload.inactive.png"));
+        UIManager.put("DockViewTitleBar.dock.rollover", getIcon("appbar.upload.png"));
+        UIManager.put("DockViewTitleBar.dock.pressed", getIcon("appbar.upload.pressed.png"));
+        UIManager.put("DockViewTitleBar.attach", getIcon("appbar.dock.window.inactive.png"));
+        UIManager.put("DockViewTitleBar.attach.rollover", getIcon("appbar.dock.window.png"));
+        UIManager.put("DockViewTitleBar.attach.pressed", getIcon("appbar.dock.window.pressed.png"));
+        
+        UIManager.put("DragControler.detachCursor", getIcon("appbar.upload.png").getImage());
     }
 
     /**
