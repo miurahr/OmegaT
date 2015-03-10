@@ -119,7 +119,7 @@ public class MainWindowUI {
         mainWindow.progressLabel = new JLabel();
         mainWindow.lengthLabel = new JLabel();
 
-        mainWindow.statusLabel.setFont(new Font("MS Sans Serif", 0, 11));
+        mainWindow.statusLabel.setFont(mainWindow.statusLabel.getFont().deriveFont(11));
 
         final STATUS_BAR_MODE progressMode = STATUS_BAR_MODE.valueOf(
                 Preferences.getPreferenceEnumDefault(Preferences.SB_PROGRESS_MODE,

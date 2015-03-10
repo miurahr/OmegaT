@@ -165,6 +165,17 @@ public class DockingUI {
         UIManager.put("DockViewTitleBar.titleFont", niceFont);
         UIManager.put("JTabbedPaneSmartIcon.font", niceFont);
         UIManager.put("AutoHideButton.font", niceFont);
+        UIManager.put("Panel.font", niceFont);
+        UIManager.put("Label.font", niceFont);
+        UIManager.put("Button.font", niceFont);
+        UIManager.put("CheckBox.font", niceFont);
+        UIManager.put("CheckBoxMenuItem.font", niceFont);
+        UIManager.put("ColorChooser.font", niceFont);
+        UIManager.put("ComboBox.font", niceFont);
+        UIManager.put("List.font", niceFont);
+        UIManager.put("RadioButton.font", niceFont);
+        UIManager.put("RadioButtonMenuItem.font", niceFont);
+        UIManager.put("Spinner.font", niceFont);
         //UIManager.put("AutoHideButton.expandBorderTop", new EmptyBorder(0, 0, 0, 0));
         //UIManager.put("AutoHideButton.expandBorderLeft", new EmptyBorder(0, 0, 0, 0));
         UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, borderColor, false, false, true, true));
