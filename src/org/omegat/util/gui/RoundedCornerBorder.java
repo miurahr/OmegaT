@@ -52,10 +52,10 @@ class RoundedCornerBorder extends AbstractBorder {
         // Upper left
         Area clip = new Area(new Rectangle2D.Float(x, y, width / 2, height / 2));
         if (!upperLeft && !upperRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(x + 1, y, width, 1)));
+            clip.subtract(new Area(new Rectangle2D.Float(x + 1, y, width, 2)));
         }
         if (!upperLeft && !lowerLeft) {
-            clip.subtract(new Area(new Rectangle2D.Float(x, y + 1, 1, height)));
+            clip.subtract(new Area(new Rectangle2D.Float(x, y + 1, 2, height)));
         }
         g2.setClip(clip);
         drawCorner(g2, upperLeft ? background : null, corners, upperLeft ? round : rect);
@@ -63,10 +63,10 @@ class RoundedCornerBorder extends AbstractBorder {
         // Upper right
         clip = new Area(new Rectangle2D.Float(x + width / 2, y, width, height / 2));
         if (!upperLeft && !upperRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(x, y, width - 1, 1)));
+            clip.subtract(new Area(new Rectangle2D.Float(x, y, width - 1, 2)));
         }
         if (!upperRight && !lowerRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(width - 1, y + 1, 1, height)));
+            clip.subtract(new Area(new Rectangle2D.Float(width - 2, y + 1, 2, height)));
         }
         g2.setClip(clip);
         drawCorner(g2, upperRight ? background : null, corners, upperRight ? round : rect);
@@ -74,10 +74,10 @@ class RoundedCornerBorder extends AbstractBorder {
         // Lower left
         clip = new Area(new Rectangle2D.Float(x, y + height / 2, width / 2, height));
         if (!lowerLeft && !lowerRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(x + 1, height - 1, width, 1)));
+            clip.subtract(new Area(new Rectangle2D.Float(x + 1, height - 2, width, 2)));
         }
-        if (!upperLeft && !lowerRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(x, y, 1, height - 1)));
+        if (!upperLeft && !lowerLeft) {
+            clip.subtract(new Area(new Rectangle2D.Float(x, y, 2, height - 1)));
         }
         g2.setClip(clip);
         drawCorner(g2, lowerLeft ? background : null, corners, lowerLeft ? round : rect);
@@ -85,10 +85,10 @@ class RoundedCornerBorder extends AbstractBorder {
         // Lower right
         clip = new Area(new Rectangle2D.Float(x + width / 2, y + height / 2, width, height));
         if (!lowerLeft && !lowerRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(x, height - 1, width - 1, 1)));
+            clip.subtract(new Area(new Rectangle2D.Float(x, height - 2, width - 1, 2)));
         }
         if (!upperRight && !lowerRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(width - 1, y, 1, height - 2)));
+            clip.subtract(new Area(new Rectangle2D.Float(width - 2, y, 2, height - 2)));
         }
         g2.setClip(clip);
         drawCorner(g2, lowerRight ? background : null, corners, lowerRight ? round : rect);
