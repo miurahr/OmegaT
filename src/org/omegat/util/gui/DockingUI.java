@@ -233,6 +233,10 @@ public class DockingUI {
         UIManager.put("DockViewTitleBar.menu.dock", getIcon("appbar.upload.png"));
         UIManager.put("DockViewTitleBar.menu.float", getIcon("appbar.new.window.png"));
         UIManager.put("DockViewTitleBar.menu.attach", getIcon("appbar.dock.window.png"));
+
+        UIManager.put("DockTabbedPane.menu.hide", getIcon("appbar.download.png"));
+        UIManager.put("DockTabbedPane.menu.maximize", getIcon("appbar.arrow.expand.png"));
+        UIManager.put("DockTabbedPane.menu.float", getIcon("appbar.new.window.png"));
         
         UIManager.put("DragControler.detachCursor", getIcon("appbar.upload.png").getImage());
     }
