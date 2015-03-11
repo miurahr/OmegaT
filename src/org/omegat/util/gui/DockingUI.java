@@ -45,6 +45,7 @@ import javax.swing.plaf.ColorUIResource;
 
 import org.omegat.core.Core;
 import org.omegat.util.OStrings;
+import org.omegat.util.Platform;
 
 import com.vlsolutions.swing.docking.AutoHidePolicy;
 import com.vlsolutions.swing.docking.AutoHidePolicy.ExpandMode;
@@ -158,6 +159,12 @@ public class DockingUI {
         Color borderColor = new Color(0x9B9B9B);
         //UIManager.put("DockView.singleDockableBorder", new MatteBorder(1, 1, 1, 1, Color.GRAY));
         UIManager.put("DockView.singleDockableBorder", new EmptyBorder(5, 5, 5, 5));
+        // This color doesn't seem to be obtainable properly. These values are from visual inspection.
+        if (Platform.isMacOSX()) {
+            UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(0, 5, 5, 5, new Color(0xE6E6E6)));
+        } else {
+            UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(2, 5, 5, 5, Color.WHITE));
+        }
         Font niceFont = new Font("Helvetica Neue", defaultFont.getStyle(), defaultFont.getSize());
         //UIManager.put("DockViewTitleBar.border", new MatteBorder(1, 1, 0, 1, Color.GRAY));
         UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_TOP));
