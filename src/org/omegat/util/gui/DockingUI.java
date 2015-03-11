@@ -214,6 +214,8 @@ public class DockingUI {
         UIManager.put("DockViewTitleBar.attach.pressed", getIcon("appbar.dock.window.pressed.png"));
         
         UIManager.put("DragControler.detachCursor", getIcon("appbar.upload.png").getImage());
+        
+        UIManager.put("DockViewTitleBar.disableCustomPaint", true);
     }
 
     /**
