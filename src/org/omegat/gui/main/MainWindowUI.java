@@ -184,7 +184,7 @@ public class MainWindowUI {
         statusPanel.add(statusPanel2, BorderLayout.EAST);
         statusPanel.setBorder(new EmptyBorder(0, 10, 5, 10));
 
-        Color bgColor = UIManager.getColor("OmegaTMainWindow.backgroundBottom");
+        Color bgColor = UIManager.getColor("AutoHideButtonPanel.background");
         if (bgColor != null) {
             statusPanel.setBackground(bgColor);
             statusPanel2.setBackground(bgColor);

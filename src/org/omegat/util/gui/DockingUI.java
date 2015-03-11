@@ -187,7 +187,7 @@ public class DockingUI {
         UIManager.put("AutoHideButtonPanel.bottomBorder", new CompoundBorder(
                 new MatteBorder(1, 0, 0, 0, borderColor),
                 new EmptyBorder(0, 10, 0, 10)));
-        UIManager.put("OmegaTMainWindow.backgroundBottom", new Color(0xDEDEDE));
+        UIManager.put("AutoHideButtonPanel.background", new Color(0xDEDEDE));
         UIManager.put("AutoHideButtonPanelUI", "org.omegat.util.gui.AutoHideButtonPanelUI");
         UIManager.put("InternalFrame.activeTitleBackground", new Color(0xF6F6F7));
         UIManager.put("InternalFrame.inactiveTitleBackground", UIManager.getColor("Label.background"));
