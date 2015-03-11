@@ -164,22 +164,7 @@ public class DockingUI {
         } else {
             UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(2, 5, 5, 5, Color.WHITE));
         }
-        Font niceFont = new Font("Helvetica Neue", defaultFont.getStyle(), defaultFont.getSize());
         UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_TOP));
-        UIManager.put("DockViewTitleBar.titleFont", niceFont);
-        UIManager.put("JTabbedPaneSmartIcon.font", niceFont);
-        UIManager.put("AutoHideButton.font", niceFont);
-        UIManager.put("Panel.font", niceFont);
-        UIManager.put("Label.font", niceFont);
-        UIManager.put("Button.font", niceFont);
-        UIManager.put("CheckBox.font", niceFont);
-        UIManager.put("CheckBoxMenuItem.font", niceFont);
-        UIManager.put("ColorChooser.font", niceFont);
-        UIManager.put("ComboBox.font", niceFont);
-        UIManager.put("List.font", niceFont);
-        UIManager.put("RadioButton.font", niceFont);
-        UIManager.put("RadioButtonMenuItem.font", niceFont);
-        UIManager.put("Spinner.font", niceFont);
         UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_BOTTOM));
         UIManager.put("OmegaTDockablePanel.border", new MatteBorder(1, 1, 1, 1, borderColor));
         UIManager.put("AutoHideButtonPanel.bottomBorder", new CompoundBorder(
@@ -192,6 +177,23 @@ public class DockingUI {
         UIManager.put("AutoHideButton.background", UIManager.getColor("Label.background"));
         UIManager.put("OmegaTStatusArea.border", new MatteBorder(1, 1, 1, 1, new Color(0x575757)));
         
+        if (Platform.isMacOSX()) {
+            Font niceFont = new Font("Helvetica Neue", defaultFont.getStyle(), defaultFont.getSize());
+            UIManager.put("DockViewTitleBar.titleFont", niceFont);
+            UIManager.put("JTabbedPaneSmartIcon.font", niceFont);
+            UIManager.put("AutoHideButton.font", niceFont);
+            UIManager.put("Panel.font", niceFont);
+            UIManager.put("Label.font", niceFont);
+            UIManager.put("Button.font", niceFont);
+            UIManager.put("CheckBox.font", niceFont);
+            UIManager.put("CheckBoxMenuItem.font", niceFont);
+            UIManager.put("ColorChooser.font", niceFont);
+            UIManager.put("ComboBox.font", niceFont);
+            UIManager.put("List.font", niceFont);
+            UIManager.put("RadioButton.font", niceFont);
+            UIManager.put("RadioButtonMenuItem.font", niceFont);
+            UIManager.put("Spinner.font", niceFont);
+        }
         
         UIManager.put("DockViewTitleBar.maximize", getIcon("appbar.arrow.expand.inactive.png"));
         UIManager.put("DockViewTitleBar.maximize.rollover", getIcon("appbar.arrow.expand.png"));
