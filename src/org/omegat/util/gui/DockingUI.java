@@ -86,9 +86,10 @@ public class DockingUI {
         UIManager.put("DockTabbedPane.floatButtonText", OStrings.getString("DOCKING_HINT_UNDOCK"));
         UIManager.put("DockTabbedPane.closeButtonText", new String());
 
-        Font defaultFont = new JLabel().getFont();
+        Font defaultFont = UIManager.getFont("Label.font");
         UIManager.put("DockViewTitleBar.titleFont", defaultFont);
         UIManager.put("JTabbedPaneSmartIcon.font", defaultFont);
+        UIManager.put("AutoHideButton.font", defaultFont);
 
         UIManager.put("DockViewTitleBar.isCloseButtonDisplayed", Boolean.FALSE);
 
