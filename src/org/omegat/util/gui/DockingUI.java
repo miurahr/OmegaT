@@ -157,7 +157,12 @@ public class DockingUI {
         }
         
         // AMK test
-        Color borderColor = new Color(0x9B9B9B);
+        Color standardBgColor = UIManager.getColor("Label.background");
+        Color activeTitleBgColor = new Color(0xF6F6F7); // Lighter than standard background
+        Color borderColor = new Color(0x9B9B9B); // Darker than standard background
+        Color statusAreaColor = new Color(0x575757); // Darker than regular border
+        Color bottomAreaBgColor = new Color(0xDEDEDE); // Darkest
+        // Main window main area
         UIManager.put("DockView.singleDockableBorder", new EmptyBorder(5, 5, 5, 5));
         // This color doesn't seem to be obtainable properly. These values are from visual inspection.
         if (Platform.isMacOSX()) {
@@ -165,18 +170,25 @@ public class DockingUI {
         } else {
             UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(2, 5, 5, 5, Color.WHITE));
         }
-        UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_TOP));
-        UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_BOTTOM));
         UIManager.put("OmegaTDockablePanel.border", new MatteBorder(1, 1, 1, 1, borderColor));
+        // Panel title bars
+        UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_TOP));
+        UIManager.put("InternalFrame.activeTitleBackground", activeTitleBgColor);
+        UIManager.put("InternalFrame.inactiveTitleBackground", standardBgColor);
+        UIManager.put("DockViewTitleBar.disableCustomPaint", true); // Disable gradient on pane title bars
+        // Main window bottom area
         UIManager.put("AutoHideButtonPanel.bottomBorder", new CompoundBorder(
                 new MatteBorder(1, 0, 0, 0, borderColor),
                 new EmptyBorder(0, 10, 0, 10)));
-        UIManager.put("AutoHideButtonPanel.background", new Color(0xDEDEDE));
-        UIManager.put("AutoHideButtonPanelUI", "org.omegat.util.gui.AutoHideButtonPanelUI");
-        UIManager.put("InternalFrame.activeTitleBackground", new Color(0xF6F6F7));
-        UIManager.put("InternalFrame.inactiveTitleBackground", UIManager.getColor("Label.background"));
-        UIManager.put("AutoHideButton.background", UIManager.getColor("Label.background"));
-        UIManager.put("OmegaTStatusArea.border", new MatteBorder(1, 1, 1, 1, new Color(0x575757)));
+        UIManager.put("AutoHideButtonPanel.background", bottomAreaBgColor);
+        UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_BOTTOM));
+        UIManager.put("AutoHideButton.background", standardBgColor);
+        UIManager.put("OmegaTStatusArea.border", new MatteBorder(1, 1, 1, 1, statusAreaColor));
+        // Floating panel border
+        UIManager.put("activeCaption", Color.WHITE);
+        UIManager.put("activeCaptionBorder", borderColor);
+        UIManager.put("inactiveCaption", standardBgColor);
+        UIManager.put("inactiveCaptionBorder", borderColor);
         
         if (Platform.isMacOSX()) {
             Font niceFont = new Font("Helvetica Neue", defaultFont.getStyle(), defaultFont.getSize());
@@ -216,8 +228,6 @@ public class DockingUI {
         UIManager.put("DockViewTitleBar.attach.pressed", getIcon("appbar.dock.window.pressed.png"));
         
         UIManager.put("DragControler.detachCursor", getIcon("appbar.upload.png").getImage());
-        
-        UIManager.put("DockViewTitleBar.disableCustomPaint", true);
     }
 
     /**
