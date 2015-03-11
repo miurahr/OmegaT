@@ -148,8 +148,8 @@ public class MainWindow extends JFrame implements IMainWindow {
         MainWindowUI.createMainComponents(this, m_font);
 
         getContentPane().add(MainWindowUI.initDocking(this), BorderLayout.CENTER);
-        getContentPane().add(MainWindowUI.createStatusBar(this), BorderLayout.SOUTH);
         pack();
+        getContentPane().add(MainWindowUI.createStatusBar(this), BorderLayout.SOUTH);
         
         OmegaTIcons.setIconImages(this);
 
