@@ -157,7 +157,6 @@ public class DockingUI {
         
         // AMK test
         Color borderColor = new Color(0x9B9B9B);
-        //UIManager.put("DockView.singleDockableBorder", new MatteBorder(1, 1, 1, 1, Color.GRAY));
         UIManager.put("DockView.singleDockableBorder", new EmptyBorder(5, 5, 5, 5));
         // This color doesn't seem to be obtainable properly. These values are from visual inspection.
         if (Platform.isMacOSX()) {
@@ -166,9 +165,7 @@ public class DockingUI {
             UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(2, 5, 5, 5, Color.WHITE));
         }
         Font niceFont = new Font("Helvetica Neue", defaultFont.getStyle(), defaultFont.getSize());
-        //UIManager.put("DockViewTitleBar.border", new MatteBorder(1, 1, 0, 1, Color.GRAY));
         UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_TOP));
-        //UIManager.put("DockView.tabbedDockableBorder", new EmptyBorder(0, 0, 0, 0));
         UIManager.put("DockViewTitleBar.titleFont", niceFont);
         UIManager.put("JTabbedPaneSmartIcon.font", niceFont);
         UIManager.put("AutoHideButton.font", niceFont);
@@ -183,14 +180,8 @@ public class DockingUI {
         UIManager.put("RadioButton.font", niceFont);
         UIManager.put("RadioButtonMenuItem.font", niceFont);
         UIManager.put("Spinner.font", niceFont);
-        //UIManager.put("AutoHideButton.expandBorderTop", new EmptyBorder(0, 0, 0, 0));
-        //UIManager.put("AutoHideButton.expandBorderLeft", new EmptyBorder(0, 0, 0, 0));
         UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_BOTTOM));
-        //UIManager.put("AutoHideButton.expandBorderRight", new EmptyBorder(0, 0, 0, 0));
         UIManager.put("OmegaTDockablePanel.border", new MatteBorder(1, 1, 1, 1, borderColor));
-        //UIManager.put("OmegaTBorder.color", borderColor);
-        //UIManager.put("Panel.background", new Color(0xEFEFF4));
-        //UIManager.put("AutoHideButtonPanel.bottomBorder", new EmptyBorder(0, 10, 0, 10));
         UIManager.put("AutoHideButtonPanel.bottomBorder", new CompoundBorder(
                 new MatteBorder(1, 0, 0, 0, borderColor),
                 new EmptyBorder(0, 10, 0, 10)));
