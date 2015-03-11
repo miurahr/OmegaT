@@ -9,6 +9,7 @@
                2008 Andrzej Sawula, Alex Buloichik
                2009-2010 Alex Buloichik
                2014 Yu Tang
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -34,7 +35,6 @@ import java.awt.Color;
 import java.awt.Window;
 
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.UIManager;
@@ -64,7 +64,7 @@ import java.awt.Font;
  * @author Andrzej Sawula
  * @author Alex Buloichik
  * @author Yu Tang
- * 
+ * @author Aaron Madlon-Kay
  */
 public class DockingUI {
 

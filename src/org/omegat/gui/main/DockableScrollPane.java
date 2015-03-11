@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -41,6 +42,7 @@ import com.vlsolutions.swing.docking.DockingConstants;
  * Dockable ScrollPane for a docking library.
  * 
  * @author Maxym Mykhalchuk
+ * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
 public class DockableScrollPane extends JScrollPane implements Dockable {

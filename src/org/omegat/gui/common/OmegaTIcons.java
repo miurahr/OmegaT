@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2014 Briac Pilpre (briacp@gmail.com)
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -32,6 +33,10 @@ import javax.swing.JFrame;
 
 import org.omegat.util.gui.ResourcesUtil;
 
+/**
+ * @author Briac Pilpre
+ * @author Aaron Madlon-Kay
+ */
 public class OmegaTIcons {
 
     final public static List<Image> ICONS = new ArrayList<Image>();
