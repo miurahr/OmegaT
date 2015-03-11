@@ -190,24 +190,6 @@ public class DockingUI {
         UIManager.put("inactiveCaption", standardBgColor);
         UIManager.put("inactiveCaptionBorder", borderColor);
         
-        if (Platform.isMacOSX()) {
-            Font niceFont = new Font("Helvetica Neue", defaultFont.getStyle(), defaultFont.getSize());
-            UIManager.put("DockViewTitleBar.titleFont", niceFont);
-            UIManager.put("JTabbedPaneSmartIcon.font", niceFont);
-            UIManager.put("AutoHideButton.font", niceFont);
-            UIManager.put("Panel.font", niceFont);
-            UIManager.put("Label.font", niceFont);
-            UIManager.put("Button.font", niceFont);
-            UIManager.put("CheckBox.font", niceFont);
-            UIManager.put("CheckBoxMenuItem.font", niceFont);
-            UIManager.put("ColorChooser.font", niceFont);
-            UIManager.put("ComboBox.font", niceFont);
-            UIManager.put("List.font", niceFont);
-            UIManager.put("RadioButton.font", niceFont);
-            UIManager.put("RadioButtonMenuItem.font", niceFont);
-            UIManager.put("Spinner.font", niceFont);
-        }
-        
         UIManager.put("DockViewTitleBar.maximize", getIcon("appbar.arrow.expand.inactive.png"));
         UIManager.put("DockViewTitleBar.maximize.rollover", getIcon("appbar.arrow.expand.png"));
         UIManager.put("DockViewTitleBar.maximize.pressed", getIcon("appbar.arrow.expand.pressed.png"));
