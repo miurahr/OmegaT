@@ -74,6 +74,7 @@ public class DockableScrollPane extends JScrollPane implements Dockable {
         }
         dockKey = new DockKey(key, name, null, null, DockingConstants.HIDE_BOTTOM);
         dockKey.setFloatEnabled(detouchable);
+        dockKey.setCloseEnabled(false);
     }
 
     @Override

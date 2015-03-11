@@ -45,6 +45,7 @@ public class DockablePanel extends JPanel implements Dockable {
     public DockablePanel(String key, String name, boolean detouchable) {
         dockKey = new DockKey(key, name, null, null, DockingConstants.HIDE_BOTTOM);
         dockKey.setFloatEnabled(detouchable);
+        dockKey.setCloseEnabled(false);
     }
 
     @Override
