@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Area;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
@@ -15,88 +16,78 @@ import javax.swing.border.AbstractBorder;
 
 @SuppressWarnings("serial")
 class RoundedCornerBorder extends AbstractBorder {
+    
+    public static final int SIDE_TOP = 0;
+    public static final int SIDE_LEFT = 1;
+    public static final int SIDE_BOTTOM = 2;
+    public static final int SIDE_RIGHT = 3;
+    public static final int SIDE_ALL = 4;
+    
     private final int radius;
     private final Color color;
-    private final boolean upperLeft;
-    private final boolean upperRight;
-    private final boolean lowerLeft;
-    private final boolean lowerRight;
+    private final int side;
     
     public RoundedCornerBorder() {
-        this(-1, Color.GRAY, true, true, true, true);
+        this(-1, Color.GRAY, SIDE_ALL);
     }
     
-    public RoundedCornerBorder(int radius, Color color, boolean upperLeft, boolean upperRight,
-            boolean lowerLeft, boolean lowerRight) {
+    public RoundedCornerBorder(int radius, Color color, int side) {
         this.radius = radius;
         this.color = color;
-        this.upperLeft = upperLeft;
-        this.upperRight = upperRight;
-        this.lowerLeft = lowerLeft;
-        this.lowerRight = lowerRight;
+        this.side = side;
     }
     
     @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width,
-            int height) {
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
         int r = radius == -1 ? height - 1 : radius;
-        RoundRectangle2D round = new RoundRectangle2D.Float(x, y, width - 1,
-                height - 1, r, r);
-        Rectangle2D rect = new Rectangle2D.Float(x, y, width - 1, height - 1);
+        RoundRectangle2D round = new RoundRectangle2D.Float(x, y, width - 1, height - 1, r, r);
         Area corners = new Area(new Rectangle2D.Float(x, y, width, height));
         corners.subtract(new Area(round));
         Color background = c.getParent() == null ? null : c.getParent().getBackground();
         
-        // Upper left
-        Area clip = new Area(new Rectangle2D.Float(x, y, width / 2, height / 2));
-        if (!upperLeft && !upperRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(x + 1, y, width, 2)));
+        if (side == SIDE_ALL) {
+            drawCorners(g2, background, corners, round);
+            g2.dispose();
+            return;
         }
-        if (!upperLeft && !lowerLeft) {
-            clip.subtract(new Area(new Rectangle2D.Float(x, y + 1, 2, height)));
+        
+        Rectangle2D rect = new Rectangle2D.Float(x, y, width, height);
+        Area clip;
+        Shape line1;
+        Shape line2;
+        if (side == SIDE_TOP) {
+            clip = new Area(new Rectangle2D.Float(x, y, width, height / 2));
+            line1 = new Line2D.Float(x, y, x, y + height);
+            line2 = new Line2D.Float(x + width - 1, y, x + width - 1, y + height);
+        } else if (side == SIDE_LEFT) {
+            clip = new Area(new Rectangle2D.Float(x, y, width / 2 + 1, height));
+            line1 = new Line2D.Float(x, y, x + width, y);
+            line2 = new Line2D.Float(x, y + height - 1, x + width, y + height - 1);
+        } else if (side == SIDE_BOTTOM) {
+            clip = new Area(new Rectangle2D.Float(x, y + height / 2, width, height / 2 + 1));
+            line1 = new Line2D.Float(x, y, x, y + height);
+            line2 = new Line2D.Float(x + width - 1, y, x + width - 1, y + height);
+        } else if (side == SIDE_RIGHT) {
+            clip = new Area(new Rectangle2D.Float(x + width / 2, y, width / 2 + 1, height));
+            line1 = new Line2D.Float(x, y, x + width, y);
+            line2 = new Line2D.Float(x, y + height - 1, x + width, y + height - 1);
+        } else {
+            throw new IllegalArgumentException();
         }
         g2.setClip(clip);
-        drawCorner(g2, upperLeft ? background : null, corners, upperLeft ? round : rect);
-        
-        // Upper right
-        clip = new Area(new Rectangle2D.Float(x + width / 2, y, width, height / 2));
-        if (!upperLeft && !upperRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(x, y, width - 1, 2)));
-        }
-        if (!upperRight && !lowerRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(width - 2, y + 1, 2, height)));
-        }
-        g2.setClip(clip);
-        drawCorner(g2, upperRight ? background : null, corners, upperRight ? round : rect);
-        
-        // Lower left
-        clip = new Area(new Rectangle2D.Float(x, y + height / 2, width / 2, height));
-        if (!lowerLeft && !lowerRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(x + 1, height - 2, width, 2)));
-        }
-        if (!upperLeft && !lowerLeft) {
-            clip.subtract(new Area(new Rectangle2D.Float(x, y, 2, height - 1)));
-        }
-        g2.setClip(clip);
-        drawCorner(g2, lowerLeft ? background : null, corners, lowerLeft ? round : rect);
-        
-        // Lower right
-        clip = new Area(new Rectangle2D.Float(x + width / 2, y + height / 2, width, height));
-        if (!lowerLeft && !lowerRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(x, height - 2, width - 1, 2)));
-        }
-        if (!upperRight && !lowerRight) {
-            clip.subtract(new Area(new Rectangle2D.Float(width - 2, y, 2, height - 2)));
-        }
-        g2.setClip(clip);
-        drawCorner(g2, lowerRight ? background : null, corners, lowerRight ? round : rect);
-        
+        drawCorners(g2, background, corners, round);
+        Area inverseClip = new Area(rect);
+        inverseClip.subtract(clip);
+        g2.setClip(inverseClip);
+        g2.draw(line1);
+        g2.draw(line2);
         g2.dispose();
     }
     
-    private void drawCorner(Graphics2D g2, Color background, Area corners, Shape shape) {
+    private void drawCorners(Graphics2D g2, Color background, Area corners, Shape shape) {
         if (background != null) {
             g2.setColor(background);
             g2.fill(corners);

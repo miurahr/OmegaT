@@ -160,7 +160,7 @@ public class DockingUI {
         UIManager.put("DockView.singleDockableBorder", new EmptyBorder(5, 5, 5, 5));
         Font niceFont = new Font("Helvetica Neue", defaultFont.getStyle(), defaultFont.getSize());
         //UIManager.put("DockViewTitleBar.border", new MatteBorder(1, 1, 0, 1, Color.GRAY));
-        UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, borderColor, true, true, false, false));
+        UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_TOP));
         //UIManager.put("DockView.tabbedDockableBorder", new EmptyBorder(0, 0, 0, 0));
         UIManager.put("DockViewTitleBar.titleFont", niceFont);
         UIManager.put("JTabbedPaneSmartIcon.font", niceFont);
@@ -178,7 +178,7 @@ public class DockingUI {
         UIManager.put("Spinner.font", niceFont);
         //UIManager.put("AutoHideButton.expandBorderTop", new EmptyBorder(0, 0, 0, 0));
         //UIManager.put("AutoHideButton.expandBorderLeft", new EmptyBorder(0, 0, 0, 0));
-        UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, borderColor, false, false, true, true));
+        UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_BOTTOM));
         //UIManager.put("AutoHideButton.expandBorderRight", new EmptyBorder(0, 0, 0, 0));
         UIManager.put("OmegaTDockablePanel.border", new MatteBorder(1, 1, 1, 1, borderColor));
         //UIManager.put("OmegaTBorder.color", borderColor);
