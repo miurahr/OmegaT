@@ -190,37 +190,37 @@ public class DockingUI {
         UIManager.put("inactiveCaption", standardBgColor);
         UIManager.put("inactiveCaptionBorder", borderColor);
         
-        UIManager.put("DockViewTitleBar.maximize", getIcon("appbar.arrow.expand.inactive.png"));
-        UIManager.put("DockViewTitleBar.maximize.rollover", getIcon("appbar.arrow.expand.png"));
-        UIManager.put("DockViewTitleBar.maximize.pressed", getIcon("appbar.arrow.expand.pressed.png"));
-        UIManager.put("DockViewTitleBar.restore", getIcon("appbar.arrow.collapsed.inactive.png"));
-        UIManager.put("DockViewTitleBar.restore.rollover", getIcon("appbar.arrow.collapsed.png"));
-        UIManager.put("DockViewTitleBar.restore.pressed", getIcon("appbar.arrow.collapsed.pressed.png"));
-        UIManager.put("DockViewTitleBar.hide", getIcon("appbar.download.inactive.png"));
-        UIManager.put("DockViewTitleBar.hide.rollover", getIcon("appbar.download.png"));
-        UIManager.put("DockViewTitleBar.hide.pressed", getIcon("appbar.download.pressed.png"));
-        UIManager.put("DockViewTitleBar.float", getIcon("appbar.new.window.inactive.png"));
-        UIManager.put("DockViewTitleBar.float.rollover", getIcon("appbar.new.window.png"));
-        UIManager.put("DockViewTitleBar.float.pressed", getIcon("appbar.new.window.pressed.png"));
-        UIManager.put("DockViewTitleBar.dock", getIcon("appbar.upload.inactive.png"));
-        UIManager.put("DockViewTitleBar.dock.rollover", getIcon("appbar.upload.png"));
-        UIManager.put("DockViewTitleBar.dock.pressed", getIcon("appbar.upload.pressed.png"));
+        UIManager.put("DockViewTitleBar.maximize", getIcon("appbar.app.tall.inactive.png"));
+        UIManager.put("DockViewTitleBar.maximize.rollover", getIcon("appbar.app.tall.png"));
+        UIManager.put("DockViewTitleBar.maximize.pressed", getIcon("appbar.app.tall.pressed.png"));
+        UIManager.put("DockViewTitleBar.restore", getIcon("appbar.window.restore.inactive.png"));
+        UIManager.put("DockViewTitleBar.restore.rollover", getIcon("appbar.window.restore.png"));
+        UIManager.put("DockViewTitleBar.restore.pressed", getIcon("appbar.window.restore.pressed.png"));
+        UIManager.put("DockViewTitleBar.hide", getIcon("appbar.hide.inactive.png"));
+        UIManager.put("DockViewTitleBar.hide.rollover", getIcon("appbar.hide.png"));
+        UIManager.put("DockViewTitleBar.hide.pressed", getIcon("appbar.hide.pressed.png"));
+        UIManager.put("DockViewTitleBar.float", getIcon("appbar.fullscreen.inactive.png"));
+        UIManager.put("DockViewTitleBar.float.rollover", getIcon("appbar.fullscreen.png"));
+        UIManager.put("DockViewTitleBar.float.pressed", getIcon("appbar.fullscreen.pressed.png"));
+        UIManager.put("DockViewTitleBar.dock", getIcon("appbar.window.restore.inactive.png"));
+        UIManager.put("DockViewTitleBar.dock.rollover", getIcon("appbar.window.restore.png"));
+        UIManager.put("DockViewTitleBar.dock.pressed", getIcon("appbar.window.restore.pressed.png"));
         UIManager.put("DockViewTitleBar.attach", getIcon("appbar.dock.window.inactive.png"));
         UIManager.put("DockViewTitleBar.attach.rollover", getIcon("appbar.dock.window.png"));
         UIManager.put("DockViewTitleBar.attach.pressed", getIcon("appbar.dock.window.pressed.png"));
         
-        UIManager.put("DockViewTitleBar.menu.hide", getIcon("appbar.download.png"));
-        UIManager.put("DockViewTitleBar.menu.maximize", getIcon("appbar.arrow.expand.png"));
-        UIManager.put("DockViewTitleBar.menu.restore", getIcon("appbar.arrow.collapsed.png"));
-        UIManager.put("DockViewTitleBar.menu.dock", getIcon("appbar.upload.png"));
-        UIManager.put("DockViewTitleBar.menu.float", getIcon("appbar.new.window.png"));
+        UIManager.put("DockViewTitleBar.menu.hide", getIcon("appbar.hide.png"));
+        UIManager.put("DockViewTitleBar.menu.maximize", getIcon("appbar.app.tall.png"));
+        UIManager.put("DockViewTitleBar.menu.restore", getIcon("appbar.window.restore.png"));
+        UIManager.put("DockViewTitleBar.menu.dock", getIcon("appbar.window.restore.png"));
+        UIManager.put("DockViewTitleBar.menu.float", getIcon("appbar.fullscreen.png"));
         UIManager.put("DockViewTitleBar.menu.attach", getIcon("appbar.dock.window.png"));
 
-        UIManager.put("DockTabbedPane.menu.hide", getIcon("appbar.download.png"));
-        UIManager.put("DockTabbedPane.menu.maximize", getIcon("appbar.arrow.expand.png"));
-        UIManager.put("DockTabbedPane.menu.float", getIcon("appbar.new.window.png"));
+        UIManager.put("DockTabbedPane.menu.hide", getIcon("appbar.hide.png"));
+        UIManager.put("DockTabbedPane.menu.maximize", getIcon("appbar.app.tall.png"));
+        UIManager.put("DockTabbedPane.menu.float", getIcon("appbar.fullscreen.png"));
         
-        UIManager.put("DragControler.detachCursor", getIcon("appbar.upload.png").getImage());
+        UIManager.put("DragControler.detachCursor", getIcon("appbar.fullscreen.png").getImage());
     }
 
     /**
