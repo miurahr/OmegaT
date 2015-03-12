@@ -221,6 +221,25 @@ public class DockingUI {
         UIManager.put("DockTabbedPane.menu.float", getIcon("appbar.fullscreen.png"));
         
         UIManager.put("DragControler.detachCursor", getIcon("appbar.fullscreen.png").getImage());
+        
+        if (Platform.isMacOSX()) {
+            UIManager.put("DockViewTitleBar.maximize", getIcon("appbar.fullscreen.corners.inactive.png"));
+            UIManager.put("DockViewTitleBar.maximize.rollover", getIcon("appbar.fullscreen.corners.png"));
+            UIManager.put("DockViewTitleBar.maximize.pressed", getIcon("appbar.fullscreen.corners.pressed.png"));
+            UIManager.put("DockViewTitleBar.restore", getIcon("appbar.restore.corners.inactive.png"));
+            UIManager.put("DockViewTitleBar.restore.rollover", getIcon("appbar.restore.corners.png"));
+            UIManager.put("DockViewTitleBar.restore.pressed", getIcon("appbar.restore.corners.pressed.png"));
+            UIManager.put("DockViewTitleBar.hide", getIcon("appbar.minus.inactive.png"));
+            UIManager.put("DockViewTitleBar.hide.rollover", getIcon("appbar.minus.png"));
+            UIManager.put("DockViewTitleBar.hide.pressed", getIcon("appbar.minus.pressed.png"));
+            
+            UIManager.put("DockViewTitleBar.menu.hide", getIcon("appbar.minus.png"));
+            UIManager.put("DockViewTitleBar.menu.maximize", getIcon("appbar.fullscreen.corners.png"));
+            UIManager.put("DockViewTitleBar.menu.restore", getIcon("appbar.restore.corners.png"));
+            
+            UIManager.put("DockTabbedPane.menu.hide", getIcon("appbar.minus.png"));
+            UIManager.put("DockTabbedPane.menu.maximize", getIcon("appbar.fullscreen.corners.png"));
+        }
     }
 
     /**
