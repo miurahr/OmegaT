@@ -175,6 +175,7 @@ public class DockingUI {
         UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_TOP));
         UIManager.put("InternalFrame.activeTitleBackground", activeTitleBgColor);
         UIManager.put("InternalFrame.inactiveTitleBackground", standardBgColor);
+        UIManager.put("InternalFrame.inactiveTitleForeground", UIManager.getColor("Label.disabledForeground"));
         UIManager.put("DockViewTitleBar.disableCustomPaint", true); // Disable gradient on pane title bars
         // Main window bottom area
         UIManager.put("AutoHideButtonPanel.bottomBorder", new CompoundBorder(
