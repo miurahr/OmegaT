@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1024"
+   height="1024"
+   viewBox="0 0 1024 1024"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="OmegaT.svg"
+   inkscape:export-filename="/Users/amake/Code/omegat/images/OmegaT.iconset/icon_512x512@2x.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="268.08358"
+     inkscape:cy="833.13709"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer3"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1449"
+     inkscape:window-height="883"
+     inkscape:window-x="769"
+     inkscape:window-y="217"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="1024x1024"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-28.362114)"
+     style="display:none">
+    <g
+       id="g4155" />
+    <g
+       id="g4142">
+      <path
+         style="fill:#828282;fill-opacity:1;stroke:none;stroke-width:0.01;stroke-miterlimit:4;stroke-dasharray:none"
+         d="m 162.22388,115.36211 699.55224,0 c 41.67403,0 75.22388,33.54985 75.22388,75.22387 l 0,699.55225 c 0,41.67403 -33.54985,91.22388 -75.22388,91.22388 l -699.55224,0 C 120.54985,981.36211 87,931.81226 87,890.13823 l 0,-699.55225 c 0,-41.67402 33.54985,-75.22387 75.22388,-75.22387 z"
+         id="rect4152"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="sssssssss" />
+      <rect
+         style="fill:#c7c7c7;fill-opacity:1;stroke:#828282;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect4140"
+         width="850"
+         height="850"
+         x="87"
+         y="115.36211"
+         ry="75.223877" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4136"
+         y="779.98615"
+         x="259.0459"
+         style="font-style:normal;font-weight:normal;font-size:650px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:650px;font-family:Century;-inkscape-font-specification:Century"
+           y="779.98615"
+           x="259.0459"
+           id="tspan4138"
+           sodipodi:role="line">Ω</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text4142"
+         y="354.36212"
+         x="678"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:200px;line-height:125%;font-family:Menlo;-inkscape-font-specification:'Menlo Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="354.36212"
+           x="678"
+           id="tspan4144"
+           sodipodi:role="line">t</tspan></text>
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="256x256"
+     style="display:none">
+    <g
+       transform="matrix(0.25,0,0,0.25,0,-10.590527)"
+       id="g4151">
+      <path
+         sodipodi:nodetypes="sssssssss"
+         inkscape:connector-curvature="0"
+         id="path4153"
+         d="m 162.22388,115.36211 699.55224,0 c 41.67403,0 75.22388,33.54985 75.22388,75.22387 l 0,699.55225 c 0,41.67403 -33.54985,107.22388 -75.22388,107.22388 l -699.55224,0 C 120.54985,997.36211 87,931.81226 87,890.13823 l 0,-699.55225 c 0,-41.67402 33.54985,-75.22387 75.22388,-75.22387 z"
+         style="fill:#828282;fill-opacity:1;stroke:none;stroke-width:0.01;stroke-miterlimit:4;stroke-dasharray:none" />
+      <rect
+         ry="75.223877"
+         y="115.36211"
+         x="87"
+         height="850"
+         width="850"
+         id="rect4155"
+         style="fill:#c7c7c7;fill-opacity:1;stroke:#828282;stroke-width:8;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:650px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="259.0459"
+         y="779.98615"
+         id="text4157"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan4159"
+           x="259.0459"
+           y="779.98615"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:650px;font-family:Century;-inkscape-font-specification:Century">Ω</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:200px;line-height:125%;font-family:Menlo;-inkscape-font-specification:'Menlo Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="678"
+         y="354.36212"
+         id="text4161"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan4163"
+           x="678"
+           y="354.36212">t</tspan></text>
+    </g>
+    <rect
+       style="fill:none;fill-opacity:1;stroke:none;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4172"
+       width="256"
+       height="256"
+       x="0"
+       y="0"
+       ry="0"
+       inkscape:export-filename="/Users/amake/Code/omegat/images/OmegaT.iconset/icon_128x128.png"
+       inkscape:export-xdpi="45"
+       inkscape:export-ydpi="45" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="64x64">
+    <g
+       id="g4175"
+       transform="matrix(0.06177156,0,0,0.06177156,0.37296128,-2.1173553)"
+       inkscape:export-filename="/Users/amake/Code/omegat/images/OmegaT.iconset/icon_32x32.png"
+       inkscape:export-xdpi="45"
+       inkscape:export-ydpi="45">
+      <path
+         style="fill:#828282;fill-opacity:1;stroke:none;stroke-width:0.01;stroke-miterlimit:4;stroke-dasharray:none"
+         d="m 162.22388,115.36211 699.55224,0 c 41.67403,0 74.76498,33.55238 75.22388,75.22387 l 7.70375,699.55845 c 0.4589,41.67149 -41.2536,107.21768 -82.92763,107.21768 l -699.55224,0 c -41.67403,0 -83.532369,-65.54627 -83.065272,-107.21768 L 87,190.58598 c 0.467097,-41.6714 33.54985,-75.22387 75.22388,-75.22387 z"
+         id="path4177"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="sssssssss" />
+      <rect
+         style="fill:#c7c7c7;fill-opacity:1;stroke:#828282;stroke-width:16.18868065;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect4179"
+         width="850"
+         height="850"
+         x="87"
+         y="115.36211"
+         ry="75.223877" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4181"
+         y="779.98615"
+         x="259.0459"
+         style="font-style:normal;font-weight:normal;font-size:650px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:650px;font-family:Century;-inkscape-font-specification:Century"
+           y="779.98615"
+           x="259.0459"
+           id="tspan4183"
+           sodipodi:role="line">Ω</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text4185"
+         y="354.36212"
+         x="678"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:200px;line-height:125%;font-family:Menlo;-inkscape-font-specification:'Menlo Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="354.36212"
+           x="678"
+           id="tspan4187"
+           sodipodi:role="line">t</tspan></text>
+    </g>
+    <rect
+       inkscape:export-ydpi="45"
+       inkscape:export-xdpi="45"
+       inkscape:export-filename="/Users/amake/Code/omegat/images/OmegaT.iconset/icon_32x32.png"
+       ry="0"
+       y="0"
+       x="0"
+       height="64"
+       width="64"
+       id="rect4189"
+       style="fill:none;fill-opacity:1;stroke:none;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  </g>
+</svg>
