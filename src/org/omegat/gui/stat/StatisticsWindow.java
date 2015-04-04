@@ -98,13 +98,7 @@ public class StatisticsWindow extends javax.swing.JDialog {
 
         displayPanel.add(output);
 
-        StaticUIUtils.setEscapeAction(this, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                thread.fin();
-                dispose();
-            }
-        });
+        StaticUIUtils.setEscapeClosable(this);
 
         addWindowListener(new WindowAdapter() {
             @Override
