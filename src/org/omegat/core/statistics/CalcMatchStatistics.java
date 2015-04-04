@@ -42,7 +42,7 @@ import org.omegat.core.matching.ISimilarityCalculator;
 import org.omegat.core.matching.LevenshteinDistance;
 import org.omegat.core.matching.NearString;
 import org.omegat.core.threads.LongProcessThread;
-import org.omegat.gui.stat.StatisticsWindow;
+import org.omegat.gui.stat.PlainTextPanel;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.StaticUtils;
@@ -84,7 +84,7 @@ public class CalcMatchStatistics extends LongProcessThread {
             OStrings.getString("CT_STATSMATCH_RowNoMatch"), OStrings.getString("CT_STATSMATCH_Total") };
     private final boolean[] align = new boolean[] { false, true, true, true, true };
 
-    private final StatisticsWindow callback;
+    private final PlainTextPanel callback;
     private final boolean perFile;
     private int entriesToProcess;
 
@@ -96,7 +96,7 @@ public class CalcMatchStatistics extends LongProcessThread {
     private FindMatches finder;
     private final StringBuilder textForLog = new StringBuilder();
 
-    public CalcMatchStatistics(StatisticsWindow callback, boolean perFile) {
+    public CalcMatchStatistics(PlainTextPanel callback, boolean perFile) {
         this.callback = callback;
         this.perFile = perFile;
     }

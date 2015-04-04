@@ -5,6 +5,7 @@
 
  Copyright (C) 2009 Alex Buloichik
                2012 Thomas Cordonnier
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -27,19 +28,16 @@
 package org.omegat.gui.stat;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 import org.omegat.core.Core;
 import org.omegat.core.statistics.CalcMatchStatistics;
@@ -48,12 +46,14 @@ import org.omegat.core.threads.LongProcessThread;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.StaticUIUtils;
+import org.omegat.util.gui.UIThreadsUtil;
 
 /**
  * Display match statistics window and save data to file.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Thomas Cordonnier
+ * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
 public class StatisticsWindow extends JDialog {
@@ -63,27 +63,33 @@ public class StatisticsWindow extends JDialog {
     };
 
     private JProgressBar progressBar;
-    private JTextArea output;
+    private JComponent output;
     private LongProcessThread thread;
 
     public StatisticsWindow(STAT_TYPE statType) {
         super(Core.getMainWindow().getApplicationFrame(), true);
 
         progressBar = new JProgressBar();
-        output = new JTextArea();
+        output = null;
 
         switch (statType) {
         case STANDARD:
             setTitle(OStrings.getString("CT_STATSSTANDARD_WindowHeader"));
-            thread = new CalcStandardStatistics(this);
+            StatisticsPanel panel = new StatisticsPanel(this);
+            thread = new CalcStandardStatistics(panel);
+            output = panel;
             break;
         case MATCHES:
             setTitle(OStrings.getString("CT_STATSMATCH_WindowHeader"));
-            thread = new CalcMatchStatistics(this, false);
+            PlainTextPanel panel1 = new PlainTextPanel(this);
+            thread = new CalcMatchStatistics(panel1, false);
+            output = panel1;
             break;
         case MATCHES_PER_FILE:
             setTitle(OStrings.getString("CT_STATSMATCH_PER_FILE_WindowHeader"));
-            thread = new CalcMatchStatistics(this, true);
+            PlainTextPanel panel2 = new PlainTextPanel(this);
+            thread = new CalcMatchStatistics(panel2, true);
+            output = panel2;
             break;
         }
 
@@ -94,15 +100,13 @@ public class StatisticsWindow extends JDialog {
         // Prepare UI
         setLayout(new BorderLayout());
         JPanel p = new JPanel(new BorderLayout());
-        p.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        p.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(p);
 
         progressBar.setStringPainted(true);
         p.add(progressBar, BorderLayout.SOUTH);
 
-        output.setEditable(false);
-        output.setFont(new Font("Monospaced", Font.PLAIN, Core.getMainWindow().getApplicationFont().getSize()));
-        p.add(new JScrollPane(output), BorderLayout.CENTER);
+        p.add(output, BorderLayout.CENTER);
 
         StaticUIUtils.setEscapeAction(this, new AbstractAction() {
             @Override
@@ -124,42 +128,15 @@ public class StatisticsWindow extends JDialog {
     }
 
     public void showProgress(final int percent) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setValue(percent);
-                progressBar.setString(percent + "%");
-            }
-        });
-    }
-
-    public void displayData(final String result) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                output.setText(result);
-            }
-        });
-    }
-
-    public void appendData(final String result) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                output.append(result);
-            }
-        });
+        UIThreadsUtil.mustBeSwingThread();
+        progressBar.setValue(percent);
+        progressBar.setString(percent + "%");
     }
 
     public void finishData() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setValue(100);
-                progressBar.setString("");
-                progressBar.setVisible(false);
-                output.setCaretPosition(0);
-            }
-        });
+        UIThreadsUtil.mustBeSwingThread();
+        progressBar.setValue(100);
+        progressBar.setString("");
+        progressBar.setVisible(false);
     }
 }
