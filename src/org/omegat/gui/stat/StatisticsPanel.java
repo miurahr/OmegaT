@@ -26,8 +26,6 @@
 package org.omegat.gui.stat;
 
 import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
@@ -75,8 +73,6 @@ public class StatisticsPanel extends BaseStatisticsPanel {
         filesLabel = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         filesTable = new javax.swing.JTable();
-        jPanel3 = new javax.swing.JPanel();
-        copyDataButton = new javax.swing.JButton();
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
@@ -94,7 +90,6 @@ public class StatisticsPanel extends BaseStatisticsPanel {
 
         jPanel4.add(jPanel2, java.awt.BorderLayout.NORTH);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 10, 0));
         jPanel1.setLayout(new java.awt.BorderLayout(0, 5));
 
         filesLabel.setText(OStrings.getString("CT_STATS_FILE_Statistics")); // NOI18N
@@ -108,27 +103,7 @@ public class StatisticsPanel extends BaseStatisticsPanel {
         jPanel4.add(jPanel1, java.awt.BorderLayout.CENTER);
 
         add(jPanel4);
-
-        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.LINE_AXIS));
-
-        copyDataButton.setText(OStrings.getString("CT_STATS_CopyToClipboard")); // NOI18N
-        copyDataButton.setEnabled(false);
-        copyDataButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyDataButtonActionPerformed(evt);
-            }
-        });
-        jPanel3.add(copyDataButton);
-
-        add(jPanel3);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void copyDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyDataButtonActionPerformed
-        if (textData != null) {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
-                    new StringSelection(textData), null);
-        }
-    }//GEN-LAST:event_copyDataButtonActionPerformed
 
     public void setProjectTableData(final String[] headers, final String[][] projectData) {
         if (headers == null || headers.length == 0) {
@@ -159,16 +134,6 @@ public class StatisticsPanel extends BaseStatisticsPanel {
             public void run() {
                 filesTable.setModel(new StringArrayTableModel(filesData));
                 setTableHeaders(filesTable, headers);
-            }
-        });
-    }
-    
-    public void setTextData(final String textData) {
-        this.textData = textData;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                copyDataButton.setEnabled(textData != null && !textData.isEmpty());
             }
         });
     }
@@ -207,12 +172,10 @@ public class StatisticsPanel extends BaseStatisticsPanel {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton copyDataButton;
     private javax.swing.JLabel filesLabel;
     private javax.swing.JTable filesTable;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

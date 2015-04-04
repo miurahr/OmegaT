@@ -57,4 +57,13 @@ public class BaseStatisticsPanel extends JPanel {
             }
         });
     }
+    
+    public void setTextData(final String data) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                window.setTextData(data);
+            }
+        });
+    }
 }

@@ -71,6 +71,7 @@ public class PlainTextPanel extends BaseStatisticsPanel {
                 output.setText(result);
             }
         });
+        setTextData(result);
     }
     
     public void appendData(final String result) {
@@ -78,6 +79,7 @@ public class PlainTextPanel extends BaseStatisticsPanel {
             @Override
             public void run() {
                 output.append(result);
+                setTextData(output.getText());
             }
         });
     }
