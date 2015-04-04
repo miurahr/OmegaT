@@ -131,6 +131,12 @@ public class StatisticsPanel extends AbstractStatisticsPanel {
     }//GEN-LAST:event_copyDataButtonActionPerformed
 
     public void setProjectTableData(final String[] headers, final String[][] projectData) {
+        if (headers == null || headers.length == 0) {
+            return;
+        }
+        if (projectData == null || projectData.length == 0) {
+            return;
+        }
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -142,6 +148,12 @@ public class StatisticsPanel extends AbstractStatisticsPanel {
     }
 
     public void setFilesTableData(final String[] headers, final String[][] filesData) {
+        if (headers == null || headers.length == 0) {
+            return;
+        }
+        if (filesData == null || filesData.length == 0) {
+            return;
+        }
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -178,12 +190,13 @@ public class StatisticsPanel extends AbstractStatisticsPanel {
         
         @Override
         public int getRowCount() {
-            return data.length;
+            return data == null ? 0 : data.length;
         }
 
         @Override
         public int getColumnCount() {
-            return data[0].length;
+            return data == null || data.length == 0 ? 0
+                    : data[0] == null ? 0 : data[0].length;
         }
 
         @Override
