@@ -218,14 +218,16 @@ public class CalcStandardStatistics extends LongProcessThread {
 
         StringBuilder result = new StringBuilder();
 
-        result.append(OStrings.getString("CT_STATS_Project_Statistics") + "\n\n");
+        result.append(OStrings.getString("CT_STATS_Project_Statistics"));
+        result.append("\n\n");
 
         String[][] headerTable = calcHeaderTable(new StatCount[] { total, remaining, unique, remainingUnique });
         result.append(TextUtil.showTextTable(htHeaders, headerTable, htAlign));
         result.append("\n\n");
 
         // STATISTICS BY FILE
-        result.append(OStrings.getString("CT_STATS_FILE_Statistics") + "\n\n");
+        result.append(OStrings.getString("CT_STATS_FILE_Statistics"));
+        result.append("\n\n");
         String[][] filesTable = calcFilesTable(project.getProjectProperties(), counts);
         result.append(TextUtil.showTextTable(ftHeaders, filesTable, ftAlign));
 
