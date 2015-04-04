@@ -26,7 +26,6 @@
 package org.omegat.gui.stat;
 
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import javax.swing.JTable;
@@ -67,6 +66,7 @@ public class StatisticsPanel extends AbstractStatisticsPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         projectLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -80,18 +80,19 @@ public class StatisticsPanel extends AbstractStatisticsPanel {
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
+        jPanel4.setLayout(new java.awt.BorderLayout());
+
         jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 10, 0));
         jPanel2.setLayout(new java.awt.BorderLayout(0, 5));
 
         projectLabel.setText(OStrings.getString("CT_STATS_Project_Statistics")); // NOI18N
         jPanel2.add(projectLabel, java.awt.BorderLayout.NORTH);
 
-        projectTable.setFillsViewportHeight(true);
         jScrollPane1.setViewportView(projectTable);
 
         jPanel2.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        add(jPanel2);
+        jPanel4.add(jPanel2, java.awt.BorderLayout.NORTH);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 10, 0));
         jPanel1.setLayout(new java.awt.BorderLayout(0, 5));
@@ -104,7 +105,9 @@ public class StatisticsPanel extends AbstractStatisticsPanel {
 
         jPanel1.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
-        add(jPanel1);
+        jPanel4.add(jPanel1, java.awt.BorderLayout.CENTER);
+
+        add(jPanel4);
 
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -133,6 +136,7 @@ public class StatisticsPanel extends AbstractStatisticsPanel {
             public void run() {
                 projectTable.setModel(new StringArrayTableModel(projectData));
                 setTableHeaders(projectTable, headers);
+                projectTable.setPreferredScrollableViewportSize(projectTable.getPreferredSize());
             }
         });
     }
@@ -196,6 +200,7 @@ public class StatisticsPanel extends AbstractStatisticsPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel projectLabel;
