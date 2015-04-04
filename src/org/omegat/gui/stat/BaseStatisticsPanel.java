@@ -32,11 +32,11 @@ import javax.swing.SwingUtilities;
  *
  * @author Aaron Madlon-Kay
  */
-public class AbstractStatisticsPanel extends JPanel {
+public class BaseStatisticsPanel extends JPanel {
 
     private final StatisticsWindow window;
     
-    public AbstractStatisticsPanel(StatisticsWindow window) {
+    public BaseStatisticsPanel(StatisticsWindow window) {
         this.window = window;
     }
     

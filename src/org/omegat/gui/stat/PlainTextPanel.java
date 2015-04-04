@@ -33,7 +33,7 @@ import org.omegat.core.Core;
  *
  * @author Aaron Madlon-Kay
  */
-public class PlainTextPanel extends AbstractStatisticsPanel {
+public class PlainTextPanel extends BaseStatisticsPanel {
 
     /**
      * Creates new form PlainTextPanel

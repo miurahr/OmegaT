@@ -39,7 +39,7 @@ import org.omegat.util.OStrings;
  *
  * @author Aaron Madlon-Kay
  */
-public class StatisticsPanel extends AbstractStatisticsPanel {
+public class StatisticsPanel extends BaseStatisticsPanel {
     
     private String textData;
     
