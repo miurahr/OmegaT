@@ -66,35 +66,35 @@ import org.omegat.util.gui.TextUtil;
  * @author Thomas Cordonnier
  */
 public class CalcMatchStatistics extends LongProcessThread {
-    private String[] header = new String[] { "", OStrings.getString("CT_STATS_Segments"),
+    private final String[] header = new String[] { "", OStrings.getString("CT_STATS_Segments"),
             OStrings.getString("CT_STATS_Words"), OStrings.getString("CT_STATS_Characters_NOSP"),
             OStrings.getString("CT_STATS_Characters") };
 
-    private String[] rowsTotal = new String[] { OStrings.getString("CT_STATSMATCH_RowRepetitions"),
+    private final String[] rowsTotal = new String[] { OStrings.getString("CT_STATSMATCH_RowRepetitions"),
             OStrings.getString("CT_STATSMATCH_RowExactMatch"),
             OStrings.getString("CT_STATSMATCH_RowMatch95"), OStrings.getString("CT_STATSMATCH_RowMatch85"),
             OStrings.getString("CT_STATSMATCH_RowMatch75"), OStrings.getString("CT_STATSMATCH_RowMatch50"),
             OStrings.getString("CT_STATSMATCH_RowNoMatch"), OStrings.getString("CT_STATSMATCH_Total") };
-    private String[] rowsPerFile = new String[] {
+    private final String[] rowsPerFile = new String[] {
             OStrings.getString("CT_STATSMATCH_RowRepetitionsWithinThisFile"),
             OStrings.getString("CT_STATSMATCH_RowRepetitionsFromOtherFiles"),
             OStrings.getString("CT_STATSMATCH_RowExactMatch"),
             OStrings.getString("CT_STATSMATCH_RowMatch95"), OStrings.getString("CT_STATSMATCH_RowMatch85"),
             OStrings.getString("CT_STATSMATCH_RowMatch75"), OStrings.getString("CT_STATSMATCH_RowMatch50"),
             OStrings.getString("CT_STATSMATCH_RowNoMatch"), OStrings.getString("CT_STATSMATCH_Total") };
-    private boolean[] align = new boolean[] { false, true, true, true, true };
+    private final boolean[] align = new boolean[] { false, true, true, true, true };
 
     private final StatisticsWindow callback;
     private final boolean perFile;
     private int entriesToProcess;
 
     /** Already processed segments. Used for repetitions detect. */
-    private Set<String> alreadyProcessedInFile = new HashSet<String>();
-    private Set<String> alreadyProcessedInProject = new HashSet<String>();
+    private final Set<String> alreadyProcessedInFile = new HashSet<String>();
+    private final Set<String> alreadyProcessedInProject = new HashSet<String>();
 
     private ISimilarityCalculator distanceCalculator;
     private FindMatches finder;
-    private StringBuilder textForLog = new StringBuilder();
+    private final StringBuilder textForLog = new StringBuilder();
 
     public CalcMatchStatistics(StatisticsWindow callback, boolean perFile) {
         this.callback = callback;
