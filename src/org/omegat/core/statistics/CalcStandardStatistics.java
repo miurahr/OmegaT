@@ -100,6 +100,7 @@ public class CalcStandardStatistics extends LongProcessThread {
         this.callback = callback;
     }
 
+    @Override
     public void run() {
         IProject p = Core.getProject();
         String result = buildProjectStats(p, null);

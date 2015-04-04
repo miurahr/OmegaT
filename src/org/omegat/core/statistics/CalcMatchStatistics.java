@@ -101,6 +101,7 @@ public class CalcMatchStatistics extends LongProcessThread {
         this.perFile = perFile;
     }
 
+    @Override
     public void run() {
             finder = new FindMatches(Core.getProject().getSourceTokenizer(), OConsts.MAX_NEAR_STRINGS, true,
                     false);
@@ -261,6 +262,7 @@ public class CalcMatchStatistics extends LongProcessThread {
             List<NearString> nears;
             try {
                 nears = finder.search(Core.getProject(), srcNoXmlTags, true, false, new IStopped() {
+                    @Override
                     public boolean isStopped() {
                         return isInterrupted();
                     }
