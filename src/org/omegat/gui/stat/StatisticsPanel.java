@@ -26,6 +26,7 @@
 package org.omegat.gui.stat;
 
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import javax.swing.JTable;
@@ -49,12 +50,12 @@ public class StatisticsPanel extends AbstractStatisticsPanel {
     public StatisticsPanel(StatisticsWindow window) {
         super(window);
         initComponents();
-        int fontSize = Core.getMainWindow().getApplicationFont().getSize();
-        Font font = projectTable.getFont().deriveFont((float) fontSize);
+        Font font = projectTable.getFont().deriveFont((float) Core.getMainWindow().getApplicationFont().getSize());
+        int rowHeight =  Math.round(getFontMetrics(font).getHeight() * 1.2f);
         projectTable.setFont(font);
-        projectTable.setRowHeight(fontSize);
+        projectTable.setRowHeight(rowHeight);
         filesTable.setFont(font);
-        filesTable.setRowHeight(fontSize);
+        filesTable.setRowHeight(rowHeight);
     }
 
     /**
