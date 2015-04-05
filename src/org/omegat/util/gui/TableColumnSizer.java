@@ -46,11 +46,17 @@ public class TableColumnSizer {
     private int[] optimalColWidths;
     private int cutoverWidth = -1;
     private boolean didManuallyAdjustCols;
-
-    private final JTable table;
+    private int remainderColumn = -1;
     
+    private final JTable table;
+
     public TableColumnSizer(JTable table) {
+        this(table, -1);
+    }
+    
+    public TableColumnSizer(JTable table, int remainderColumn) {
         this.table = table;
+        this.remainderColumn = remainderColumn;
         table.getColumnModel().addColumnModelListener(colListener);
         table.addPropertyChangeListener("columnModel", new PropertyChangeListener() {
             @Override
@@ -165,36 +171,46 @@ public class TableColumnSizer {
         calculateOptimalColWidths();
         
         int otherCols = 0;
-        for (int i = 1; i < optimalColWidths.length; i++) {
+        for (int i = 0; i < optimalColWidths.length; i++) {
+            if (i == remainderColumn) {
+                continue;
+            }
             otherCols += optimalColWidths[i];
         }
         
-        int remainderFirstColWidth = table.getParent().getWidth() - otherCols;
+        int remainderColWidth = table.getParent().getWidth() - otherCols;
                         
-        if (shouldAutoSize(remainderFirstColWidth)) {
+        if (shouldAutoSize(remainderColWidth)) {
             if (cutoverWidth == -1) {
                 cutoverWidth = table.getParent().getWidth();
             }
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            table.getColumnModel().getColumn(0).setPreferredWidth(remainderFirstColWidth);
-            for (int i = 1; i < optimalColWidths.length; i++) {
-                table.getColumnModel().getColumn(i).setPreferredWidth(optimalColWidths[i]);
+            table.getColumnModel().getColumn(0).setPreferredWidth(remainderColWidth);
+            for (int width, i = 0; i < optimalColWidths.length; i++) {
+                width = optimalColWidths[i];
+                if (i == remainderColumn) {
+                    width = remainderColWidth;
+                }
+                table.getColumnModel().getColumn(i).setPreferredWidth(width);
             }
         } else {
             table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
         }
     }
     
-    private boolean shouldAutoSize(int proposedFirstColWidth) {
+    private boolean shouldAutoSize(int proposedRemainderWidth) {
         if (didManuallyAdjustCols) {
             return false;
         }
-        if (proposedFirstColWidth > optimalColWidths[0]) {
+        if (remainderColumn == -1) {
+            return true;
+        }
+        if (proposedRemainderWidth > optimalColWidths[remainderColumn]) {
             return true;
         }
         if (cutoverWidth != -1) {
             return table.getParent().getWidth() >= cutoverWidth;
         }
-        return proposedFirstColWidth > table.getColumnModel().getColumn(0).getWidth();
+        return proposedRemainderWidth > table.getColumnModel().getColumn(remainderColumn).getWidth();
     }
 }

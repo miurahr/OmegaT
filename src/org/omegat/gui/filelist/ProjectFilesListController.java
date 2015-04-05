@@ -153,7 +153,7 @@ public class ProjectFilesListController {
         createTableFiles();
         createTableTotal();
         
-        colSizer = new TableColumnSizer(list.tableFiles);
+        colSizer = new TableColumnSizer(list.tableFiles, 0);
         
         defaultFont = list.tableFiles.getFont();
         if (Preferences.isPreference(Preferences.PROJECT_FILES_USE_FONT)) {

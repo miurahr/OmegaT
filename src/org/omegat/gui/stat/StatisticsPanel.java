@@ -32,6 +32,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import org.omegat.core.Core;
 import org.omegat.util.OStrings;
+import org.omegat.util.gui.TableColumnSizer;
 
 /**
  *
@@ -117,6 +118,7 @@ public class StatisticsPanel extends BaseStatisticsPanel {
             public void run() {
                 projectTable.setModel(new StringArrayTableModel(projectData));
                 setTableHeaders(projectTable, headers);
+                new TableColumnSizer(projectTable).adjustTableColumns();
                 projectTable.setPreferredScrollableViewportSize(projectTable.getPreferredSize());
             }
         });
@@ -134,6 +136,7 @@ public class StatisticsPanel extends BaseStatisticsPanel {
             public void run() {
                 filesTable.setModel(new StringArrayTableModel(filesData));
                 setTableHeaders(filesTable, headers);
+                new TableColumnSizer(filesTable).adjustTableColumns();
             }
         });
     }
