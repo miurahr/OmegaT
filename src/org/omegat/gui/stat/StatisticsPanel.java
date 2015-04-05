@@ -26,6 +26,8 @@
 package org.omegat.gui.stat;
 
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
@@ -120,6 +122,12 @@ public class StatisticsPanel extends BaseStatisticsPanel {
                 projectTable.setModel(new StringArrayTableModel(projectData));
                 setTableHeaders(projectTable, headers);
                 TableColumnSizer colSizer = TableColumnSizer.autoSize(projectTable, 0, false);
+                colSizer.addColumnAdjustmentListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        projectTable.setPreferredScrollableViewportSize(projectTable.getPreferredSize());
+                    }
+                });
                 projectTable.setPreferredScrollableViewportSize(projectTable.getPreferredSize());
             }
         });
