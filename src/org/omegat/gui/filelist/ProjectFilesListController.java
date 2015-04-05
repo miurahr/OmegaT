@@ -39,8 +39,6 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -143,8 +141,6 @@ public class ProjectFilesListController {
 
     private Font defaultFont;
     
-    private TableColumnSizer colSizer;
-
     public ProjectFilesListController(MainWindow parent) {
         m_parent = parent;
 
@@ -153,7 +149,13 @@ public class ProjectFilesListController {
         createTableFiles();
         createTableTotal();
         
-        colSizer = new TableColumnSizer(list.tableFiles, 0);
+        TableColumnSizer colSizer = TableColumnSizer.autoSize(list.tableFiles, 0, true);
+        colSizer.addColumnAdjustmentListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                propagateTableColumns();
+            }
+        });
         
         defaultFont = list.tableFiles.getFont();
         if (Preferences.isPreference(Preferences.PROJECT_FILES_USE_FONT)) {
@@ -173,15 +175,6 @@ public class ProjectFilesListController {
             list.scrollFiles.setBackground(COLOR_STANDARD_BG);
             list.tableFiles.getTableHeader().setBackground(COLOR_STANDARD_BG);
         }
-        list.scrollFiles.getViewport().addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                if (modelFiles == null) {
-                    return;
-                }
-                adjustTableColumns();
-            }
-        });
         
         // set the position and size
         initWindowLayout();
@@ -208,10 +201,6 @@ public class ProjectFilesListController {
             @Override
             public void windowClosed(WindowEvent e) {
                 doCancel();
-            }
-            @Override
-            public void windowActivated(WindowEvent e) {
-                adjustTableColumns();
             }
         });
 
@@ -251,7 +240,6 @@ public class ProjectFilesListController {
         CoreEvents.registerEntryEventListener(new IEntryEventListener() {
             @Override
             public void onNewFile(String activeFileName) {
-                colSizer.reset();
                 list.tableFiles.repaint();
                 list.tableTotal.repaint();
                 modelTotal.fireTableDataChanged();
@@ -274,9 +262,6 @@ public class ProjectFilesListController {
                     newFont = defaultFont;
                 }
                 setFont(newFont);
-                if (Core.getProject().isProjectLoaded()) {
-                    adjustTableColumns();
-                }
             }
         });
 
@@ -574,9 +559,6 @@ public class ProjectFilesListController {
         list.setTitle(StaticUtils.format(OStrings.getString("PF_WINDOW_TITLE"), files.size()));
 
         setTableFilesModel(files);
-        
-        colSizer.reset();
-        adjustTableColumns();
     }
 
     private void createTableFiles() {
@@ -584,13 +566,11 @@ public class ProjectFilesListController {
         list.tableFiles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     }
     
-    private void adjustTableColumns() {
+    private void propagateTableColumns() {
         // Set last column of tableTotal to match size of scrollbar.
         JScrollBar scrollbar = list.scrollFiles.getVerticalScrollBar();
         int sbWidth = scrollbar == null || !scrollbar.isVisible() ? 0 : scrollbar.getWidth();
         list.tableTotal.getColumnModel().getColumn(list.tableTotal.getColumnCount() - 1).setPreferredWidth(sbWidth);
-        
-        colSizer.adjustTableColumns();
         
         // Propagate column sizes to totals table
         for (int i = 0; i < list.tableFiles.getColumnCount(); i++) {
@@ -687,17 +667,11 @@ public class ProjectFilesListController {
 
             @Override
             public void columnMarginChanged(ChangeEvent e) {
-                TableColumn col = list.tableFiles.getTableHeader().getResizingColumn();
-                if (col != null) {
-                    // User has manually resized a column.
-                    adjustTableColumns();
-                }
             }
 
             @Override
             public void columnMoved(TableColumnModelEvent e) {
                 list.tableTotal.getColumnModel().moveColumn(e.getFromIndex(), e.getToIndex());
-                adjustTableColumns();
             }
 
             @Override
@@ -908,7 +882,6 @@ public class ProjectFilesListController {
         list.tableFiles.setRowHeight(font.getSize() + LINE_SPACING);
         list.tableTotal.setRowHeight(font.getSize() + LINE_SPACING);
         list.statLabel.setFont(font);
-        colSizer.reset();
     }
 
     class Sorter extends RowSorter<IProject.FileInfo> {

@@ -85,6 +85,7 @@ public class StatisticsPanel extends BaseStatisticsPanel {
         projectLabel.setText(OStrings.getString("CT_STATS_Project_Statistics")); // NOI18N
         jPanel2.add(projectLabel, java.awt.BorderLayout.NORTH);
 
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
         jScrollPane1.setViewportView(projectTable);
 
         jPanel2.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -118,7 +119,7 @@ public class StatisticsPanel extends BaseStatisticsPanel {
             public void run() {
                 projectTable.setModel(new StringArrayTableModel(projectData));
                 setTableHeaders(projectTable, headers);
-                new TableColumnSizer(projectTable).adjustTableColumns();
+                TableColumnSizer colSizer = TableColumnSizer.autoSize(projectTable, 0, false);
                 projectTable.setPreferredScrollableViewportSize(projectTable.getPreferredSize());
             }
         });
@@ -136,7 +137,7 @@ public class StatisticsPanel extends BaseStatisticsPanel {
             public void run() {
                 filesTable.setModel(new StringArrayTableModel(filesData));
                 setTableHeaders(filesTable, headers);
-                new TableColumnSizer(filesTable).adjustTableColumns();
+                TableColumnSizer.autoSize(filesTable, 0, false);
             }
         });
     }
