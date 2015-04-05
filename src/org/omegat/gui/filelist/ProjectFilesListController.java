@@ -82,7 +82,6 @@ import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.BadLocationException;
@@ -104,6 +103,7 @@ import org.omegat.util.Platform;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.gui.StaticUIUtils;
+import org.omegat.util.gui.TableColumnSizer;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
@@ -143,9 +143,7 @@ public class ProjectFilesListController {
 
     private Font defaultFont;
     
-    private int[] optimalColWidths;
-    private int cutoverWidth = -1;
-    private boolean didManuallyAdjustCols;
+    private TableColumnSizer colSizer;
 
     public ProjectFilesListController(MainWindow parent) {
         m_parent = parent;
@@ -154,6 +152,8 @@ public class ProjectFilesListController {
 
         createTableFiles();
         createTableTotal();
+        
+        colSizer = new TableColumnSizer(list.tableFiles);
         
         defaultFont = list.tableFiles.getFont();
         if (Preferences.isPreference(Preferences.PROJECT_FILES_USE_FONT)) {
@@ -251,7 +251,7 @@ public class ProjectFilesListController {
         CoreEvents.registerEntryEventListener(new IEntryEventListener() {
             @Override
             public void onNewFile(String activeFileName) {
-                resetColWidthData();
+                colSizer.reset();
                 list.tableFiles.repaint();
                 list.tableTotal.repaint();
                 modelTotal.fireTableDataChanged();
@@ -575,7 +575,7 @@ public class ProjectFilesListController {
 
         setTableFilesModel(files);
         
-        resetColWidthData();
+        colSizer.reset();
         adjustTableColumns();
     }
 
@@ -583,125 +583,21 @@ public class ProjectFilesListController {
         applyColors(list.tableFiles);
         list.tableFiles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     }
-
-    /**
-     * Calculate each column's ideal width, based on header and cells.
-     * Results are cached.
-     */
-    private void calculateOptimalColWidths() {
-        if (optimalColWidths != null) {
-            return;
-        }
-        optimalColWidths = new int[list.tableFiles.getColumnCount()];
-        
-        // See: https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
-        for (int column = 0; column < list.tableFiles.getColumnCount(); column++) {
-            TableColumn col = list.tableFiles.getColumnModel().getColumn(column);
-            int preferredWidth = col.getMinWidth();
-            int maxWidth = col.getMaxWidth();
-
-            for (int row = -1; row < list.tableFiles.getRowCount(); row++) {
-                TableCellRenderer cellRenderer;
-                Component c;
-                int margin = 5;
-                if (row == -1) {
-                    cellRenderer = col.getHeaderRenderer();
-                    if (cellRenderer == null) {
-                        cellRenderer = col.getCellRenderer();
-                    }
-                    if (cellRenderer == null) {
-                        cellRenderer = list.tableFiles.getDefaultRenderer(modelFiles.getColumnClass(column));
-                    }
-                    c = cellRenderer.getTableCellRendererComponent(list.tableFiles, col.getHeaderValue(), false, false, 0, column);
-                    // Add somewhat arbitrary margin to header because it gets truncated at a smaller width
-                    // than a regular cell does (Windows LAF more than OS X LAF).
-                    margin = 10;
-                } else {
-                    cellRenderer = list.tableFiles.getCellRenderer(row, column);
-                    c = list.tableFiles.prepareRenderer(cellRenderer, row, column);
-                }
-                
-                c.setBounds(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
-                int width = c.getPreferredSize().width + list.tableFiles.getIntercellSpacing().width + margin;
-                preferredWidth = Math.max(preferredWidth, width);
-
-                //  We've exceeded the maximum width, no need to check other rows
-                if (preferredWidth >= maxWidth) {
-                    preferredWidth = maxWidth;
-                    break;
-                }
-            }
-            optimalColWidths[column] = preferredWidth;
-        }
-    }
     
-    private void resetColWidthData() {
-        optimalColWidths = null;
-        cutoverWidth = -1;
-    }
-    
-    /**
-     * Adjust the columns of the tables, propagating widths from tableFiles to
-     * tableTotal.
-     * 
-     * If possible, this optimally sizes the columns such that columns greater
-     * than 0 are only as big as necessary, and the rest of the space goes to
-     * column 0.
-     * 
-     * This auto-sizing only happens if it represents an improvement over the
-     * default sizing (gives more space to column 0), and only if the user has
-     * not manually adjusted column widths.
-     * 
-     * Once auto-sizing is invoked, the width at which it was first invoked is
-     * recorded as a boundary below which default sizing is used again.
-     */
     private void adjustTableColumns() {
         // Set last column of tableTotal to match size of scrollbar.
         JScrollBar scrollbar = list.scrollFiles.getVerticalScrollBar();
         int sbWidth = scrollbar == null || !scrollbar.isVisible() ? 0 : scrollbar.getWidth();
         list.tableTotal.getColumnModel().getColumn(list.tableTotal.getColumnCount() - 1).setPreferredWidth(sbWidth);
         
-        calculateOptimalColWidths();
+        colSizer.adjustTableColumns();
         
-        int otherCols = 0;
-        for (int i = 1; i < optimalColWidths.length; i++) {
-            otherCols += optimalColWidths[i];
+        // Propagate column sizes to totals table
+        for (int i = 0; i < list.tableFiles.getColumnCount(); i++) {
+            TableColumn srcCol = list.tableFiles.getColumnModel().getColumn(i);
+            TableColumn trgCol = list.tableTotal.getColumnModel().getColumn(i);
+            trgCol.setPreferredWidth(srcCol.getWidth());
         }
-        
-        int remainderFirstColWidth = list.scrollFiles.getViewport().getWidth() - otherCols;
-                
-        if (shouldAutoSize(remainderFirstColWidth)) {
-            if (cutoverWidth == -1) {
-                cutoverWidth = list.scrollFiles.getViewport().getWidth();
-            }
-            list.tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            list.tableFiles.getColumnModel().getColumn(0).setPreferredWidth(remainderFirstColWidth);
-            list.tableTotal.getColumnModel().getColumn(0).setPreferredWidth(remainderFirstColWidth);
-            for (int i = 1; i < optimalColWidths.length; i++) {
-                list.tableFiles.getColumnModel().getColumn(i).setPreferredWidth(optimalColWidths[i]);
-                list.tableTotal.getColumnModel().getColumn(i).setPreferredWidth(optimalColWidths[i]);
-            }
-        } else {
-            list.tableFiles.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-            for (int i = 0; i < list.tableFiles.getColumnCount(); i++) {
-                TableColumn srcCol = list.tableFiles.getColumnModel().getColumn(i);
-                TableColumn trgCol = list.tableTotal.getColumnModel().getColumn(i);
-                trgCol.setPreferredWidth(srcCol.getWidth());
-            }
-        }
-    }
-    
-    private boolean shouldAutoSize(int proposedFirstColWidth) {
-        if (didManuallyAdjustCols) {
-            return false;
-        }
-        if (proposedFirstColWidth > optimalColWidths[0]) {
-            return true;
-        }
-        if (cutoverWidth != -1) {
-            return list.scrollFiles.getViewport().getWidth() >= cutoverWidth;
-        }
-        return proposedFirstColWidth > list.tableFiles.getColumnModel().getColumn(0).getWidth();
     }
 
     private void setTableFilesModel(final List<IProject.FileInfo> files) {
@@ -793,8 +689,7 @@ public class ProjectFilesListController {
             public void columnMarginChanged(ChangeEvent e) {
                 TableColumn col = list.tableFiles.getTableHeader().getResizingColumn();
                 if (col != null) {
-                    // User has manually resized a column. Don't try auto-sizing.
-                    didManuallyAdjustCols = true;
+                    // User has manually resized a column.
                     adjustTableColumns();
                 }
             }
@@ -1013,7 +908,7 @@ public class ProjectFilesListController {
         list.tableFiles.setRowHeight(font.getSize() + LINE_SPACING);
         list.tableTotal.setRowHeight(font.getSize() + LINE_SPACING);
         list.statLabel.setFont(font);
-        resetColWidthData();
+        colSizer.reset();
     }
 
     class Sorter extends RowSorter<IProject.FileInfo> {
