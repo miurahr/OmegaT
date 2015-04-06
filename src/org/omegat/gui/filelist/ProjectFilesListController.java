@@ -31,8 +31,6 @@
 package org.omegat.gui.filelist;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -50,7 +48,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,16 +57,13 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.swing.AbstractAction;
-import javax.swing.JComponent;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
@@ -78,7 +72,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -97,11 +90,11 @@ import org.omegat.core.statistics.StatisticsInfo;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
-import org.omegat.util.Platform;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.TableColumnSizer;
+import org.omegat.util.gui.DataTableStyling;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
@@ -120,16 +113,6 @@ import org.omegat.util.gui.UIThreadsUtil;
  */
 @SuppressWarnings("serial")
 public class ProjectFilesListController {
-    private static final Color COLOR_STANDARD_FG = Color.BLACK;
-    private static final Color COLOR_STANDARD_BG = Color.WHITE;
-    private static final Color COLOR_CURRENT_FG = Color.BLACK;
-    private static final Color COLOR_CURRENT_BG = new Color(0xC8DDF2);
-    private static final Color COLOR_SELECTION_FG = Color.WHITE;
-    private static final Color COLOR_SELECTION_BG = new Color(0x2F77DA);
-    private static final Color COLOR_ALTERNATING_HILITE = new Color(245, 245, 245);
-    private static final Border TABLE_FOCUS_BORDER = new MatteBorder(1, 1, 1, 1, new Color(0x76AFE8));
-
-    private static final int LINE_SPACING = 6;
 
     private ProjectFilesList list;
     private AbstractTableModel modelFiles, modelTotal;
@@ -167,14 +150,6 @@ public class ProjectFilesListController {
         }
 
         list.tablesInnerPanel.setBorder(new JScrollPane().getBorder());
-        
-        if (!Platform.isMacOSX()) {
-            // Windows needs some extra colors set for consistency, but these
-            // ruin native LAF on OS X.
-            list.scrollFiles.getViewport().setBackground(COLOR_STANDARD_BG);
-            list.scrollFiles.setBackground(COLOR_STANDARD_BG);
-            list.tableFiles.getTableHeader().setBackground(COLOR_STANDARD_BG);
-        }
         
         // set the position and size
         initWindowLayout();
@@ -562,7 +537,7 @@ public class ProjectFilesListController {
     }
 
     private void createTableFiles() {
-        applyColors(list.tableFiles);
+        DataTableStyling.applyColors(list.tableFiles);
         list.tableFiles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     }
     
@@ -689,8 +664,8 @@ public class ProjectFilesListController {
     }
 
     private void createTableTotal() {
-        applyColors(list.tableTotal);
-        list.tableTotal.setBorder(new MatteBorder(1, 0, 0, 0, COLOR_ALTERNATING_HILITE));
+        DataTableStyling.applyColors(list.tableTotal);
+        list.tableTotal.setBorder(new MatteBorder(1, 0, 0, 0, DataTableStyling.COLOR_ALTERNATING_HILITE));
 
         modelTotal = new AbstractTableModel() {
             @Override
@@ -760,14 +735,6 @@ public class ProjectFilesListController {
         list.tableTotal.setColumnModel(columns);
     }
 
-    void applyColors(JTable table) {
-        table.setForeground(COLOR_STANDARD_FG);
-        table.setBackground(COLOR_STANDARD_BG);
-        table.setSelectionForeground(COLOR_SELECTION_FG);
-        table.setSelectionBackground(COLOR_SELECTION_BG);
-        table.setGridColor(COLOR_STANDARD_BG);
-    }
-
     /**
      * Imports the file/files/folder into project's source files.
      * 
@@ -809,10 +776,8 @@ public class ProjectFilesListController {
     /**
      * Render for table cells.
      */
-    private class CustomRenderer extends DefaultTableCellRenderer {
-        protected DecimalFormat pattern;
+    private class CustomRenderer extends DataTableStyling.AlternatingHighlightRenderer {
         private final List<IProject.FileInfo> files;
-        private final boolean doHighlight;
 
         public CustomRenderer(List<IProject.FileInfo> files, final int alignment, final String decimalPattern) {
             this(files, alignment, decimalPattern, true);
@@ -820,48 +785,12 @@ public class ProjectFilesListController {
         
         public CustomRenderer(List<IProject.FileInfo> files, final int alignment, final String decimalPattern,
                 boolean doHighlight) {
+            super(alignment, decimalPattern, doHighlight);
             this.files = files;
-            setHorizontalAlignment(alignment);
-            if (decimalPattern != null) {
-                pattern = new DecimalFormat(decimalPattern);
-            }
-            this.doHighlight = doHighlight;
         }
 
         @Override
-        protected void setValue(Object value) {
-            if (pattern != null && value instanceof Number) {
-                super.setValue(pattern.format((Number) value));
-            } else {
-                super.setValue(value);
-            }
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int row, int column) {
-            Component result = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
-                    column);
-            if (isSelected) {
-                result.setForeground(table.getSelectionForeground());
-                result.setBackground(table.getSelectionBackground());
-            } else if (isCurrentFile(row)) {
-                result.setForeground(COLOR_CURRENT_FG);
-                result.setBackground(COLOR_CURRENT_BG);
-            } else if (row % 2 == 1 && doHighlight) {
-                result.setForeground(table.getForeground());
-                result.setBackground(COLOR_ALTERNATING_HILITE);
-            } else {
-                result.setForeground(table.getForeground());
-                result.setBackground(table.getBackground());
-            }
-            if (hasFocus && result instanceof JComponent) {
-                ((JComponent) result).setBorder(TABLE_FOCUS_BORDER);
-            }
-            return result;
-        }
-        
-        private boolean isCurrentFile(int row) {
+        protected boolean isSpecialHighlightRow(int row) {
             if (files == null) {
                 return false;
             }
@@ -877,10 +806,8 @@ public class ProjectFilesListController {
     }
 
     private void setFont(Font font) {
-        list.tableFiles.setFont(font);
-        list.tableTotal.setFont(new Font(font.getName(), Font.BOLD, font.getSize()));
-        list.tableFiles.setRowHeight(font.getSize() + LINE_SPACING);
-        list.tableTotal.setRowHeight(font.getSize() + LINE_SPACING);
+        DataTableStyling.applyFont(list.tableFiles, font);
+        DataTableStyling.applyFont(list.tableTotal, font.deriveFont(Font.BOLD));
         list.statLabel.setFont(font);
     }
 
