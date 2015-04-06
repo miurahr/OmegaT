@@ -85,6 +85,7 @@ public class StatisticsPanel extends BaseStatisticsPanel {
         projectLabel.setText(OStrings.getString("CT_STATS_Project_Statistics")); // NOI18N
         jPanel2.add(projectLabel, java.awt.BorderLayout.NORTH);
 
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
         jScrollPane1.setViewportView(projectTable);
 
