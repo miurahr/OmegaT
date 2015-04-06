@@ -34,6 +34,7 @@ import javax.swing.table.TableColumn;
 
 import org.omegat.core.Core;
 import org.omegat.util.OStrings;
+import org.omegat.util.Preferences;
 import org.omegat.util.gui.TableColumnSizer;
 
 /**
@@ -49,12 +50,14 @@ public class StatisticsPanel extends BaseStatisticsPanel {
     public StatisticsPanel(StatisticsWindow window) {
         super(window);
         initComponents();
-        Font font = projectTable.getFont().deriveFont((float) Core.getMainWindow().getApplicationFont().getSize());
-        int rowHeight =  Math.round(getFontMetrics(font).getHeight() * 1.2f);
-        projectTable.setFont(font);
-        projectTable.setRowHeight(rowHeight);
-        filesTable.setFont(font);
-        filesTable.setRowHeight(rowHeight);
+        if (Preferences.isPreference(Preferences.PROJECT_FILES_USE_FONT)) {
+            Font font = projectTable.getFont().deriveFont((float) Core.getMainWindow().getApplicationFont().getSize());
+            int rowHeight =  Math.round(getFontMetrics(font).getHeight() * 1.2f);
+            projectTable.setFont(font);
+            projectTable.setRowHeight(rowHeight);
+            filesTable.setFont(font);
+            filesTable.setRowHeight(rowHeight);
+        }
     }
 
     /**
