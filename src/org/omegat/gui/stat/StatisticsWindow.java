@@ -29,10 +29,8 @@ package org.omegat.gui.stat;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import org.omegat.core.Core;
 import org.omegat.core.statistics.CalcMatchStatistics;
