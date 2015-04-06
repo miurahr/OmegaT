@@ -140,7 +140,7 @@ public class StatisticsWindow extends javax.swing.JDialog {
         progressBar.setStringPainted(true);
         jPanel2.add(progressBar);
 
-        copyDataButton.setText(OStrings.getString("CT_STATS_CopyToClipboard")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(copyDataButton, OStrings.getString("CT_STATS_CopyToClipboard")); // NOI18N
         copyDataButton.setEnabled(false);
         copyDataButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -149,7 +149,7 @@ public class StatisticsWindow extends javax.swing.JDialog {
         });
         jPanel2.add(copyDataButton);
 
-        closeButton.setText(OStrings.getString("BUTTON_CLOSE")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(closeButton, OStrings.getString("BUTTON_CLOSE")); // NOI18N
         closeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 closeButtonActionPerformed(evt);
