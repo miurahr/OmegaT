@@ -35,6 +35,7 @@ import javax.swing.table.TableColumn;
 import org.omegat.core.Core;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
+import org.omegat.util.gui.DataTableStyling;
 import org.omegat.util.gui.TableColumnSizer;
 
 /**
@@ -50,14 +51,16 @@ public class StatisticsPanel extends BaseStatisticsPanel {
     public StatisticsPanel(StatisticsWindow window) {
         super(window);
         initComponents();
+        DataTableStyling.applyColors(projectTable);
+        DataTableStyling.applyColors(filesTable);
+        projectTable.setDefaultRenderer(Object.class, DataTableStyling.getNumberCellRenderer());
+        filesTable.setDefaultRenderer(Object.class, DataTableStyling.getNumberCellRenderer());
+        Font font = projectTable.getFont();
         if (Preferences.isPreference(Preferences.PROJECT_FILES_USE_FONT)) {
-            Font font = projectTable.getFont().deriveFont((float) Core.getMainWindow().getApplicationFont().getSize());
-            int rowHeight =  Math.round(getFontMetrics(font).getHeight() * 1.2f);
-            projectTable.setFont(font);
-            projectTable.setRowHeight(rowHeight);
-            filesTable.setFont(font);
-            filesTable.setRowHeight(rowHeight);
+            font = Core.getMainWindow().getApplicationFont();
         }
+        DataTableStyling.applyFont(projectTable, font);
+        DataTableStyling.applyFont(filesTable, font);
     }
 
     /**
@@ -123,6 +126,8 @@ public class StatisticsPanel extends BaseStatisticsPanel {
             public void run() {
                 projectTable.setModel(new StringArrayTableModel(projectData));
                 setTableHeaders(projectTable, headers);
+                projectTable.getColumnModel().getColumn(0).setCellRenderer(
+                        DataTableStyling.getHeaderTextCellRenderer());
                 TableColumnSizer.autoSize(projectTable, 0, false);
                 projectTable.setPreferredScrollableViewportSize(projectTable.getPreferredSize());
             }
@@ -141,6 +146,8 @@ public class StatisticsPanel extends BaseStatisticsPanel {
             public void run() {
                 filesTable.setModel(new StringArrayTableModel(filesData));
                 setTableHeaders(filesTable, headers);
+                filesTable.getColumnModel().getColumn(0).setCellRenderer(
+                        DataTableStyling.getTextCellRenderer());
                 TableColumnSizer.autoSize(filesTable, 0, false);
             }
         });

@@ -29,13 +29,16 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import org.omegat.util.Platform;
 
 /**
@@ -52,7 +55,11 @@ public class DataTableStyling {
     public static final Color COLOR_SELECTION_BG = new Color(0x2F77DA);
     public static final Color COLOR_ALTERNATING_HILITE = new Color(245, 245, 245);
     public static final Border TABLE_FOCUS_BORDER = new MatteBorder(1, 1, 1, 1, new Color(0x76AFE8));
+    
+    public static final DecimalFormat NUMBER_FORMAT = new DecimalFormat(",##0");
 
+    public static final int FONT_NO_CHANGE = -1;
+    
     public static final int LINE_SPACING = 6;
     
     public static void applyColors(JTable table) {
@@ -81,29 +88,47 @@ public class DataTableStyling {
         table.setRowHeight(font.getSize() + DataTableStyling.LINE_SPACING);
     }
     
+    public static TableCellRenderer getNumberCellRenderer() {
+        return new AlternatingHighlightRenderer(SwingConstants.RIGHT, NUMBER_FORMAT, true, FONT_NO_CHANGE);
+    }
+    
+    public static TableCellRenderer getTextCellRenderer() {
+        return new AlternatingHighlightRenderer(SwingConstants.LEFT, null, true, FONT_NO_CHANGE);
+    }
+    
+    public static TableCellRenderer getHeaderTextCellRenderer() {
+        return new AlternatingHighlightRenderer(SwingConstants.LEFT, null, true, Font.BOLD);
+    }
+    
     public static class AlternatingHighlightRenderer extends DefaultTableCellRenderer {
-        protected DecimalFormat pattern;
+        private final NumberFormat numberFormat;        
         private final boolean doHighlight;
-
-        public AlternatingHighlightRenderer(final int alignment, final String decimalPattern) {
-            this(alignment, decimalPattern, true);
-        }
+        private final int fontStyle;
         
-        public AlternatingHighlightRenderer(final int alignment, final String decimalPattern, boolean doHighlight) {
+        public AlternatingHighlightRenderer(int alignment, NumberFormat numberFormat, boolean doHighlight, int fontStyle) {
             setHorizontalAlignment(alignment);
-            if (decimalPattern != null) {
-                pattern = new DecimalFormat(decimalPattern);
-            }
+            this.numberFormat = numberFormat;
             this.doHighlight = doHighlight;
+            this.fontStyle = fontStyle;
         }
 
         @Override
         protected void setValue(Object value) {
-            if (pattern != null && value instanceof Number) {
-                super.setValue(pattern.format((Number) value));
-            } else {
-                super.setValue(value);
+            if (numberFormat != null) {
+                if (value instanceof Number) {
+                    super.setValue(numberFormat.format((Number) value));
+                    return;
+                }
+                if (value instanceof String) {
+                    try {
+                        long lVal = Long.parseLong((String) value);
+                        super.setValue(numberFormat.format(lVal));
+                        return;
+                    } catch (NumberFormatException ignore) {
+                    }
+                }
             }
+            super.setValue(value);
         }
 
         @Override
@@ -111,6 +136,9 @@ public class DataTableStyling {
                 boolean hasFocus, int row, int column) {
             Component result = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
                     column);
+            if (fontStyle != FONT_NO_CHANGE) {
+                result.setFont(table.getFont().deriveFont(fontStyle));
+            }
             if (isSelected) {
                 result.setForeground(table.getSelectionForeground());
                 result.setBackground(table.getSelectionBackground());

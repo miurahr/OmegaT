@@ -49,6 +49,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -73,6 +74,7 @@ import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.BadLocationException;
@@ -617,19 +619,19 @@ public class ProjectFilesListController {
         TableColumnModel columns = new DefaultTableColumnModel();
         TableColumn cFile = new TableColumn(0, 150);
         cFile.setHeaderValue(OStrings.getString("PF_FILENAME"));
-        cFile.setCellRenderer(new CustomRenderer(files, SwingConstants.LEFT, null));
+        cFile.setCellRenderer(getTextCellRenderer(files));
         TableColumn cFilter = new TableColumn(1, 100);
         cFilter.setHeaderValue(OStrings.getString("PF_FILTERNAME"));
-        cFilter.setCellRenderer(new CustomRenderer(files, SwingConstants.LEFT, null));
+        cFilter.setCellRenderer(getTextCellRenderer(files));
         TableColumn cEncoding = new TableColumn(2, 50);
         cEncoding.setHeaderValue(OStrings.getString("PF_ENCODING"));
-        cEncoding.setCellRenderer(new CustomRenderer(files, SwingConstants.LEFT, null));
+        cEncoding.setCellRenderer(getTextCellRenderer(files));
         TableColumn cCount = new TableColumn(3, 50);
         cCount.setHeaderValue(OStrings.getString("PF_NUM_SEGMENTS"));
-        cCount.setCellRenderer(new CustomRenderer(files, SwingConstants.RIGHT, ",##0"));
+        cCount.setCellRenderer(getNumberCellRenderer(files));
         TableColumn cUnique = new TableColumn(4, 50);
         cUnique.setHeaderValue(OStrings.getString("PF_NUM_UNIQUE_SEGMENTS"));
-        cUnique.setCellRenderer(new CustomRenderer(files, SwingConstants.RIGHT, ",##0"));
+        cUnique.setCellRenderer(getNumberCellRenderer(files));
         columns.addColumn(cFile);
         columns.addColumn(cFilter);
         columns.addColumn(cEncoding);
@@ -715,15 +717,15 @@ public class ProjectFilesListController {
 
         TableColumnModel columns = new DefaultTableColumnModel();
         TableColumn cFile = new TableColumn(0, 150);
-        cFile.setCellRenderer(new CustomRenderer(null, SwingConstants.LEFT, null));
+        cFile.setCellRenderer(getTextCellRenderer(null));
         TableColumn cFilter = new TableColumn(1, 100);
-        cFilter.setCellRenderer(new CustomRenderer(null, SwingConstants.LEFT, null));
+        cFilter.setCellRenderer(getTextCellRenderer(null));
         TableColumn cEncoding = new TableColumn(2, 50);
-        cEncoding.setCellRenderer(new CustomRenderer(null, SwingConstants.LEFT, null));
+        cEncoding.setCellRenderer(getTextCellRenderer(null));
         TableColumn cCount = new TableColumn(3, 50);
-        cCount.setCellRenderer(new CustomRenderer(null, SwingConstants.RIGHT, ",##0"));
+        cCount.setCellRenderer(getNumberCellRenderer(null));
         TableColumn cUnique = new TableColumn(4, 50);
-        cUnique.setCellRenderer(new CustomRenderer(null, SwingConstants.RIGHT, ",##0"));
+        cUnique.setCellRenderer(getNumberCellRenderer(null));
         TableColumn cScrollbarMargin = new TableColumn(5, 0);
         cScrollbarMargin.setCellRenderer(new CustomRenderer(null, SwingConstants.LEFT, null, false));
         columns.addColumn(cFile);
@@ -773,19 +775,23 @@ public class ProjectFilesListController {
         list.setCursor(oldCursor);
     }
 
+    private TableCellRenderer getNumberCellRenderer(List<IProject.FileInfo> files) {
+        return new CustomRenderer(files, SwingConstants.RIGHT, DataTableStyling.NUMBER_FORMAT, true);
+    }
+    
+    private TableCellRenderer getTextCellRenderer(List<IProject.FileInfo> files) {
+        return new CustomRenderer(files, SwingConstants.LEFT, DataTableStyling.NUMBER_FORMAT, true);
+    }
+    
     /**
      * Render for table cells.
      */
     private class CustomRenderer extends DataTableStyling.AlternatingHighlightRenderer {
         private final List<IProject.FileInfo> files;
-
-        public CustomRenderer(List<IProject.FileInfo> files, final int alignment, final String decimalPattern) {
-            this(files, alignment, decimalPattern, true);
-        }
         
-        public CustomRenderer(List<IProject.FileInfo> files, final int alignment, final String decimalPattern,
+        public CustomRenderer(List<IProject.FileInfo> files, int alignment, NumberFormat numberFormat,
                 boolean doHighlight) {
-            super(alignment, decimalPattern, doHighlight);
+            super(alignment, numberFormat, doHighlight, DataTableStyling.FONT_NO_CHANGE);
             this.files = files;
         }
 
