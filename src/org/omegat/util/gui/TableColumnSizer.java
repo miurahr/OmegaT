@@ -193,7 +193,6 @@ public class TableColumnSizer {
             return;
         }
         table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-        table.doLayout();
         remainderColReferenceWidth = table.getColumnModel().getColumn(remainderColumn).getWidth();
     }
     
@@ -301,7 +300,7 @@ public class TableColumnSizer {
         int proposedRemainderWidth = calculateProposedRemainderColWidth();
                         
         if (shouldAutoSize(proposedRemainderWidth)) {
-            table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+            ensureTableResizeMode(JTable.AUTO_RESIZE_OFF);
             for (int width, i = 0; i < optimalColWidths.length; i++) {
                 width = optimalColWidths[i];
                 if (i == remainderColumn) {
@@ -311,10 +310,20 @@ public class TableColumnSizer {
                 table.getColumnModel().getColumn(i).setPreferredWidth(width);
             }
         } else if (fitTableToWidth) {
-            table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+            ensureTableResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
         }
         
         notifyListeners();
+    }
+    
+    /**
+     * Set table mode if it isn't already in the desired mode.
+     */
+    private void ensureTableResizeMode(int mode) {
+        if (table.getAutoResizeMode() == mode) {
+            return;
+        }
+        table.setAutoResizeMode(mode);
     }
     
     /**
