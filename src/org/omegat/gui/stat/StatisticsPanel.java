@@ -121,13 +121,7 @@ public class StatisticsPanel extends BaseStatisticsPanel {
             public void run() {
                 projectTable.setModel(new StringArrayTableModel(projectData));
                 setTableHeaders(projectTable, headers);
-                TableColumnSizer colSizer = TableColumnSizer.autoSize(projectTable, 0, false);
-                colSizer.addColumnAdjustmentListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        projectTable.setPreferredScrollableViewportSize(projectTable.getPreferredSize());
-                    }
-                });
+                TableColumnSizer.autoSize(projectTable, 0, false);
                 projectTable.setPreferredScrollableViewportSize(projectTable.getPreferredSize());
             }
         });
