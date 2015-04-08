@@ -34,7 +34,6 @@ package org.omegat.core.data;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.omegat.core.Core;
 import org.omegat.core.data.IProject.FileInfo;
 import org.omegat.core.segmentation.Rule;
@@ -76,7 +75,7 @@ public abstract class ParseEntry implements IParseCallback {
          */
         for (ParseEntryQueueItem item : parseQueue) {
             addSegment(item.id, item.segmentIndex, item.segmentSource, item.protectedParts, item.segmentTranslation,
-                    item.segmentTranslationFuzzy, item.comment, item.prevSegment, item.nextSegment, item.path);
+                    item.segmentTranslationFuzzy, item.props, item.prevSegment, item.nextSegment, item.path);
         }
 
         /**
@@ -132,8 +131,8 @@ public abstract class ParseEntry implements IParseCallback {
      *            protected parts  
      */
     @Override
-    public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment, String path,
-            IFilter filter, List<ProtectedPart> protectedParts) {
+    public void addEntry(String id, String source, String translation, boolean isFuzzy, String[] props,
+            String path, IFilter filter, List<ProtectedPart> protectedParts) {
         if (StringUtil.isEmpty(source)) {
             // empty string - not need to save
             return;
@@ -166,22 +165,29 @@ public abstract class ParseEntry implements IParseCallback {
             Language sourceLang = m_config.getSourceLanguage();
             List<String> segments = Segmenter.segment(sourceLang, source, spaces, brules);
             if (segments.size() == 1) {
-                internalAddSegment(id, (short) 0, segments.get(0), translation, isFuzzy, comment, path,
+                internalAddSegment(id, (short) 0, segments.get(0), translation, isFuzzy, props, path,
                         protectedParts);
             } else {
                 for (short i = 0; i < segments.size(); i++) {
                     String onesrc = segments.get(i);
                     List<ProtectedPart> segmentProtectedParts = ProtectedPart.extractFor(protectedParts,
                             onesrc);
-                    internalAddSegment(id, i, onesrc, null, false, comment, path, segmentProtectedParts);
+                    internalAddSegment(id, i, onesrc, null, false, props, path, segmentProtectedParts);
                 }
             }
         } else {
-            internalAddSegment(id, (short) 0, source, translation, isFuzzy, comment, path, protectedParts);
+            internalAddSegment(id, (short) 0, source, translation, isFuzzy, props, path, protectedParts);
         }
     }
 
-     /**
+    @Override
+    public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
+            String path, IFilter filter, List<ProtectedPart> protectedParts) {
+        String[] props = comment == null ? null : new String[] { "comment", comment };
+        addEntry(id, source, translation, isFuzzy, props, null, filter, null);
+    }
+    
+    /**
      * This method is called by filters to add new entry in OmegaT after read it
      * from source file.
      * Old call without path, for compatibility
@@ -211,7 +217,7 @@ public abstract class ParseEntry implements IParseCallback {
      * Add segment to queue because we possible need to link prev/next segments.
      */
     private void internalAddSegment(String id, short segmentIndex, String segmentSource, String segmentTranslation,
-            boolean segmentTranslationFuzzy, String comment, String path, List<ProtectedPart> protectedParts) {
+            boolean segmentTranslationFuzzy, String[] props, String path, List<ProtectedPart> protectedParts) {
         if (segmentSource.length() == 0 || segmentSource.trim().length() == 0) {
             // skip empty segments
             return;
@@ -223,7 +229,7 @@ public abstract class ParseEntry implements IParseCallback {
         item.protectedParts = protectedParts;
         item.segmentTranslation = segmentTranslation;
         item.segmentTranslationFuzzy = segmentTranslationFuzzy;
-        item.comment = comment;
+        item.props = props;
         item.path = path;
         parseQueue.add(item);
     }
@@ -256,7 +262,7 @@ public abstract class ParseEntry implements IParseCallback {
      */
     protected abstract void addSegment(String id, short segmentIndex, String segmentSource,
             List<ProtectedPart> protectedParts, String segmentTranslation, boolean segmentTranslationFuzzy,
-            String comment, String prevSegment, String nextSegment, String path);
+            String[] props, String prevSegment, String nextSegment, String path);
 
     /**
      * Strip some chars for represent string in UI.
@@ -341,7 +347,7 @@ public abstract class ParseEntry implements IParseCallback {
         List<ProtectedPart> protectedParts;
         String segmentTranslation;
         boolean segmentTranslationFuzzy;
-        String comment;
+        String[] props;
         String prevSegment;
         String nextSegment;
         String path;

@@ -60,7 +60,7 @@ public class XLIFFFilter extends XMLFilter {
     private boolean ignored;
     private ArrayList<String> groupResname = new ArrayList<String>();
     private int groupLevel;
-    private ArrayList<String> notes = new ArrayList<String>();
+    private ArrayList<String> props = new ArrayList<String>();
     private StringBuilder text = new StringBuilder();
     private ArrayList<String> entryText = new ArrayList<String>();
     private ArrayList<List<ProtectedPart>> protectedParts = new ArrayList<List<ProtectedPart>>();
@@ -214,6 +214,12 @@ public class XLIFFFilter extends XMLFilter {
         if ("/xliff/file/header".equals(path)) {
             ignored = true;
         }
+        // TODO: Generalize this into a preference
+        for (String extract : new String[] { "referenceImage", "boundingBox" }) {
+            if (path.endsWith(extract)) {
+                addProperty(extract, dumpAttributes(atts));
+            }
+        }
         text.setLength(0);
     }
 
@@ -221,39 +227,36 @@ public class XLIFFFilter extends XMLFilter {
     public void tagEnd(String path) {
         if (path.endsWith("trans-unit/note")) {
             // <trans-unit> <note>'s only 
-            notes.add(text.toString());
+            addProperty("note", text.toString());
         } else if (path.endsWith("trans-unit")) {
             if (entryParseCallback != null) {
+                
                 StringBuffer buf = new StringBuffer();
                 for (int i = 0; i < groupLevel; i++) {
                     String temp = groupResname.get(i);
                     if (temp != null) {
                         buf.append(temp);
-                        // group1/group2/..:resname
-                        buf.append(i == (groupLevel - 1) ? " : " : " / ");
+                        // group1/group2/..
+                        buf.append(i == (groupLevel - 1) ? "" : "/");
                     }
+                }
+                if (buf.length() > 0) {
+                    addProperty("group", buf.toString());
                 }
 
                 if (resname != null) {
-                    buf.append(resname);
-                    buf.append('\n');
+                    addProperty("resname", resname);
                 }
-
-                for (String note : notes) {
-                    buf.append(note);
-                    buf.append('\n');
-                }
-                
-                String comment = buf.length() == 0 ? null : buf.substring(0, buf.length() - 1);
-                
+                                
                 for (int i = 0; i < entryText.size(); i++) {
-                    entryParseCallback.addEntry(getSegID(), entryText.get(i), null, false, comment, null, this, protectedParts.get(i));
+                    entryParseCallback.addEntry(getSegID(), entryText.get(i), null, false,
+                            finalizeProperties(), null, this, protectedParts.get(i));
                 }
             }
 
             id = null;
             resname = null;
-            notes.clear();
+            props.clear();
             entryText.clear();
             protectedParts.clear();
         } else if (path.endsWith("/group")) {
@@ -264,6 +267,29 @@ public class XLIFFFilter extends XMLFilter {
         if ("/xliff/file/header".equals(path)) {
             ignored = false;
         }
+    }
+    
+    private String dumpAttributes(Attributes atts) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < atts.getLength(); i++) {
+            sb.append(atts.getLocalName(i));
+            sb.append("=");
+            sb.append(atts.getValue(i));
+            sb.append(";");
+        }
+        return sb.toString();
+    }
+    
+    private void addProperty(String key, String value) {
+        props.add(key);
+        props.add(value);
+    }
+    
+    private String[] finalizeProperties() {
+        if (props.isEmpty()) {
+            return null;
+        }
+        return props.toArray(new String[0]);
     }
     
     private String getSegID() {

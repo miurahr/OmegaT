@@ -4,6 +4,7 @@
           glossaries, and translation leveraging into updated projects.
 
  Copyright (C) 2008 Alex Buloichik
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -34,6 +35,7 @@ import org.omegat.core.data.ProtectedPart;
  * Callback for parse files.
  * 
  * @author Alex Buloichik <alex73mail@gmail.com>
+ * @author Aaron Madlon-Kay
  */
 public interface IParseCallback {
     /**
@@ -55,6 +57,12 @@ public interface IParseCallback {
      *            filter which produces entry
      * @param protectedParts
      *            protected parts
+     */
+    void addEntry(String id, String source, String translation, boolean isFuzzy, String[] props,
+            String path, IFilter filter, List<ProtectedPart> protectedParts);
+    
+    /**
+     * Old call without props, for compatibility 
      */
     void addEntry(String id, String source, String translation, boolean isFuzzy, String comment, String path,
             IFilter filter, List<ProtectedPart> protectedParts);

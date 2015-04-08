@@ -88,6 +88,16 @@ public class WorkflowOptionsDialog extends JDialog {
         allowTagEditing.setSelected(Preferences.isPreference(Preferences.ALLOW_TAG_EDITING));
         tagValidateOnLeave.setSelected(Preferences.isPreference(Preferences.TAG_VALIDATE_ON_LEAVE));
         cbSaveAutoStatus.setSelected(Preferences.isPreference(Preferences.SAVE_AUTO_STATUS));
+        
+        doNotifyCheckbox.setSelected(Preferences.isPreference(Preferences.SEGPROPS_DO_NOTIFY));
+        doNotifyCheckboxActionPerformed(null);
+        if (!Preferences.existsPreference(Preferences.SEGPROPS_NOTIFY_PROPS)) {
+            notifyPropsField.setText(Preferences.SEGPROPS_NOTIFY_DEFAULT_PROPS);
+        } else {
+            notifyPropsField.setText(Preferences.getPreferenceDefaultAllowEmptyString(
+                    Preferences.SEGPROPS_NOTIFY_PROPS));
+        }
+        
         DockingUI.displayCentered(this);
     }
 
@@ -116,6 +126,10 @@ public class WorkflowOptionsDialog extends JDialog {
         similaritySpinner = new javax.swing.JSpinner();
         prefixLabel = new javax.swing.JLabel();
         prefixText = new javax.swing.JTextField();
+        doNotifyCheckbox = new javax.swing.JCheckBox();
+        jPanel4 = new javax.swing.JPanel();
+        notifyPropsField = new javax.swing.JTextField();
+        resetPropsButton = new javax.swing.JButton();
         convertNumbers = new javax.swing.JCheckBox();
         allowTranslationEqualToSource = new javax.swing.JCheckBox();
         exportCurrentSegment = new javax.swing.JCheckBox();
@@ -233,9 +247,42 @@ public class WorkflowOptionsDialog extends JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         jPanel1.add(prefixText, gridBagConstraints);
 
-        org.openide.awt.Mnemonics.setLocalizedText(convertNumbers, OStrings.getString("WF_OPTION_CONVERT_NUMBERS")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(doNotifyCheckbox, OStrings.getString("WF_OPTION_DO_ALERT_PROPS")); // NOI18N
+        doNotifyCheckbox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                doNotifyCheckboxActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 5, 0);
+        jPanel1.add(doNotifyCheckbox, gridBagConstraints);
+
+        jPanel4.setLayout(new java.awt.BorderLayout(5, 0));
+        jPanel4.add(notifyPropsField, java.awt.BorderLayout.CENTER);
+
+        org.openide.awt.Mnemonics.setLocalizedText(resetPropsButton, OStrings.getString("WF_OPTION_RESET_ALERT_PROPS")); // NOI18N
+        resetPropsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetPropsButtonActionPerformed(evt);
+            }
+        });
+        jPanel4.add(resetPropsButton, java.awt.BorderLayout.EAST);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 20, 0, 0);
+        jPanel1.add(jPanel4, gridBagConstraints);
+
+        org.openide.awt.Mnemonics.setLocalizedText(convertNumbers, OStrings.getString("WF_OPTION_CONVERT_NUMBERS")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -244,7 +291,7 @@ public class WorkflowOptionsDialog extends JDialog {
 
         org.openide.awt.Mnemonics.setLocalizedText(allowTranslationEqualToSource, OStrings.getString("WF_OPTION_ALLOW_TRANS_EQ_TO_SRC")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -253,7 +300,7 @@ public class WorkflowOptionsDialog extends JDialog {
 
         org.openide.awt.Mnemonics.setLocalizedText(exportCurrentSegment, OStrings.getString("WF_OPTION_EXPORT__CURRENT_SEGMENT")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -262,7 +309,7 @@ public class WorkflowOptionsDialog extends JDialog {
 
         org.openide.awt.Mnemonics.setLocalizedText(stopOnAlternativeTranslation, OStrings.getString("WF_OPTION_GOTO_NEXT_UNTRANSLATED")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 11;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -271,7 +318,7 @@ public class WorkflowOptionsDialog extends JDialog {
 
         org.openide.awt.Mnemonics.setLocalizedText(allowTagEditing, OStrings.getString("WF_TAG_EDITING")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -280,7 +327,7 @@ public class WorkflowOptionsDialog extends JDialog {
 
         org.openide.awt.Mnemonics.setLocalizedText(tagValidateOnLeave, OStrings.getString("WG_TAG_VALIDATE_ON_LEAVE")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 11;
+        gridBagConstraints.gridy = 13;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -289,7 +336,7 @@ public class WorkflowOptionsDialog extends JDialog {
 
         org.openide.awt.Mnemonics.setLocalizedText(cbSaveAutoStatus, OStrings.getString("WG_SAVE_AUTO_STATUS")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -326,6 +373,15 @@ public class WorkflowOptionsDialog extends JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void resetPropsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetPropsButtonActionPerformed
+        notifyPropsField.setText(Preferences.SEGPROPS_NOTIFY_DEFAULT_PROPS);
+    }//GEN-LAST:event_resetPropsButtonActionPerformed
+
+    private void doNotifyCheckboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doNotifyCheckboxActionPerformed
+        notifyPropsField.setEnabled(doNotifyCheckbox.isSelected());
+        resetPropsButton.setEnabled(doNotifyCheckbox.isSelected());
+    }//GEN-LAST:event_doNotifyCheckboxActionPerformed
+
     private void radiosActionPerformed(java.awt.event.ActionEvent evt)// GEN-FIRST:event_radiosActionPerformed
     {// GEN-HEADEREND:event_radiosActionPerformed
         similarityLabel.setEnabled(insertFuzzyCheckBox.isSelected());
@@ -355,6 +411,9 @@ public class WorkflowOptionsDialog extends JDialog {
         Preferences.setPreference(Preferences.TAG_VALIDATE_ON_LEAVE, tagValidateOnLeave.isSelected());
         Preferences.setPreference(Preferences.SAVE_AUTO_STATUS, cbSaveAutoStatus.isSelected());
 
+        Preferences.setPreference(Preferences.SEGPROPS_DO_NOTIFY, doNotifyCheckbox.isSelected());
+        Preferences.setPreference(Preferences.SEGPROPS_NOTIFY_PROPS, notifyPropsField.getText());
+        
         doClose(RET_OK);
     }// GEN-LAST:event_okButtonActionPerformed
 
@@ -383,16 +442,20 @@ public class WorkflowOptionsDialog extends JDialog {
     private javax.swing.JCheckBox convertNumbers;
     private javax.swing.JRadioButton defaultRadio;
     private javax.swing.JTextArea descriptionTextArea;
+    private javax.swing.JCheckBox doNotifyCheckbox;
     private javax.swing.JCheckBox exportCurrentSegment;
     private javax.swing.JCheckBox insertFuzzyCheckBox;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JRadioButton leaveEmptyRadio;
+    private javax.swing.JTextField notifyPropsField;
     private javax.swing.JButton okButton;
     private javax.swing.ButtonGroup ourButtonGroup;
     private javax.swing.JLabel prefixLabel;
     private javax.swing.JTextField prefixText;
+    private javax.swing.JButton resetPropsButton;
     private javax.swing.JLabel similarityLabel;
     private javax.swing.JSpinner similaritySpinner;
     private javax.swing.JCheckBox stopOnAlternativeTranslation;

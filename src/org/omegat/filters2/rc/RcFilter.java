@@ -136,7 +136,7 @@ public class RcFilter extends AbstractFilter {
                  */
                 loc = loc.replace("\\\"", "\"").replace("\"\"", "\"");
                 if (entryParseCallback != null) {
-                    entryParseCallback.addEntry(blockId + "/" + id, loc, null, false, null, null, this, null);
+                    entryParseCallback.addEntry(blockId + "/" + id, loc, null, false, (String) null, null, this, null);
                 } else if (entryTranslateCallback != null) {
                     // replace translation
                     String trans = entryTranslateCallback.getTranslation(blockId + "/" + id, loc, null);

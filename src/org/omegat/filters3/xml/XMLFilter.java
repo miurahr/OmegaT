@@ -209,7 +209,7 @@ public abstract class XMLFilter extends AbstractFilter implements Translator {
     @Override
     public String translate(String entry, List<ProtectedPart> protectedParts) {
         if (entryParseCallback != null) {
-            entryParseCallback.addEntry(null, entry, null, false, null, null, this, protectedParts);
+            entryParseCallback.addEntry(null, entry, null, false, (String) null, null, this, protectedParts);
             return entry;
         } else if (entryTranslateCallback != null) {
             String translation = entryTranslateCallback.getTranslation(null, entry, null);

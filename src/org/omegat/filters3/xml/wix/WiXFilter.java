@@ -85,7 +85,7 @@ public class WiXFilter extends XMLFilter {
     @Override
     public String translate(String entry, List<ProtectedPart> protectedParts) {
         if (entryParseCallback != null) {
-            entryParseCallback.addEntry(id, entry, null, false, null, null, this, protectedParts);
+            entryParseCallback.addEntry(id, entry, null, false, (String) null, null, this, protectedParts);
             return entry;
         } else {
             String trans = entryTranslateCallback.getTranslation(id, entry, null);

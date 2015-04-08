@@ -28,8 +28,10 @@
 package org.omegat.core.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Source text entry represents an individual segment for translation pulled
@@ -47,8 +49,11 @@ public class SourceTextEntry {
     /** Storage for full entry's identifiers, including source text. */
     private final EntryKey key;
 
-    /** Comment in source file. */
-    private final String comment;
+    /** 
+     * String properties from source file. Contents are alternating 
+     * key (even index), value (odd index) strings. Should be of even length.
+     */
+    private final String[] props;
 
     /** Translation from source files. */
     private final String sourceTranslation;
@@ -100,10 +105,11 @@ public class SourceTextEntry {
      * @param shortcuts
      *            tags shortcuts
      */
-    public SourceTextEntry(EntryKey key, int entryNum, String comment, String sourceTranslation, List<ProtectedPart> protectedParts) {
+    public SourceTextEntry(EntryKey key, int entryNum, String[] props, String sourceTranslation, List<ProtectedPart> protectedParts) {
         this.key = key;
         m_entryNum = entryNum;
-        this.comment = comment;
+        assert props == null || props.length % 2 == 0;
+        this.props = props;
         this.sourceTranslation = sourceTranslation;
         if (protectedParts.isEmpty()) {
             this.protectedParts = EMPTY_PROTECTED_PARTS;
@@ -137,7 +143,30 @@ public class SourceTextEntry {
      * Returns comment of entry if exist in source document.
      */
     public String getComment() {
-        return comment;
+        if (props == null || props.length == 0) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < props.length; i += 2) {
+            sb.append(props[i]);
+            sb.append("\n");
+        }
+        return sb.toString().trim();
+    }
+    
+    public String[] getRawProperties() {
+        if (props != null) {
+            return Arrays.copyOf(props, props.length);
+        }
+        return new String[0];
+    }
+    
+    @SuppressWarnings("unchecked")
+    public Map<String, List<String>> getProperties() {
+        if (props != null) {
+            return new SegmentProperties<String>(props);
+        }
+        return Collections.EMPTY_MAP;
     }
 
     /** Returns the number of this entry in a project. */

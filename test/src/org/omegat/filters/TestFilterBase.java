@@ -96,10 +96,17 @@ public abstract class TestFilterBase extends TestCore {
 
             public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
                     String path, IFilter filter, List<ProtectedPart> protectedParts) {
+                String[] props = comment == null ? null : new String[] { "comment", comment };
+                addEntry(id, source, translation, isFuzzy, props, path, filter, protectedParts);
+            }
+
+            public void addEntry(String id, String source, String translation,
+                    boolean isFuzzy, String[] props, String path,
+                    IFilter filter, List<ProtectedPart> protectedParts) {
                 if (source.length() > 0)
                     result.add(source);
             }
-
+            
             public void linkPrevNextSegments() {
             }
         });
@@ -119,10 +126,17 @@ public abstract class TestFilterBase extends TestCore {
 
             public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
                     String path, IFilter filter, List<ProtectedPart> protectedParts) {
+                String[] props = comment == null ? null : new String[] { "comment", comment };
+                addEntry(id, source, translation, isFuzzy, props, path, filter, protectedParts);
+            }
+
+            public void addEntry(String id, String source, String translation,
+                    boolean isFuzzy, String[] props, String path,
+                    IFilter filter, List<ProtectedPart> protectedParts) {
                 if (source.length() > 0)
                     result.add(source);
             }
-
+            
             public void linkPrevNextSegments() {
             }
         });
@@ -141,6 +155,14 @@ public abstract class TestFilterBase extends TestCore {
 
             public void addEntry(String id, String source, String translation, boolean isFuzzy, String comment,
                     String path, IFilter filter, List<ProtectedPart> protectedParts) {
+                String[] props = comment == null ? null : new String[] { "comment", comment };
+                addEntry(id, source, translation, isFuzzy, props, path, filter, protectedParts);
+            }
+
+            @Override
+            public void addEntry(String id, String source, String translation,
+                    boolean isFuzzy, String[] props, String path,
+                    IFilter filter, List<ProtectedPart> protectedParts) {
                 String segTranslation = isFuzzy ? null : translation;
                 result.put(source, segTranslation);
                 if (translation != null) {
@@ -149,7 +171,7 @@ public abstract class TestFilterBase extends TestCore {
                     addFileTMXEntry(tmxSource, translation);
                 }
             }
-
+            
             public void addFileTMXEntry(String source, String translation) {
                 legacyTMX.put(source, translation);
             }
@@ -170,6 +192,14 @@ public abstract class TestFilterBase extends TestCore {
             }
             public void addEntry(String id, String source, String translation, boolean isFuzzy,
                     String comment, String path, IFilter filter, List<ProtectedPart> protectedParts) {
+                String[] props = comment == null ? null : new String[] { "comment", comment };
+                addEntry(id, source, translation, isFuzzy, props, path, filter, protectedParts);
+            }
+
+            @Override
+            public void addEntry(String id, String source, String translation,
+                    boolean isFuzzy, String[] props, String path,
+                    IFilter filter, List<ProtectedPart> protectedParts) {
                 if (source.length() == 0) {
                     return;
                 }
@@ -178,11 +208,11 @@ public abstract class TestFilterBase extends TestCore {
                 e.source = source;
                 e.translation = translation;
                 e.isFuzzy = isFuzzy;
-                e.comment = comment;
+                e.props = props;
                 e.path = path;
                 result.add(e);
             }
-
+            
             public void linkPrevNextSegments() {
             }
         });
@@ -286,7 +316,7 @@ public abstract class TestFilterBase extends TestCore {
         String source;
         String translation;
         boolean isFuzzy;
-        String comment;
+        String[] props;
         String path;
     }
 

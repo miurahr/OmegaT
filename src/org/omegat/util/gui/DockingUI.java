@@ -182,6 +182,9 @@ public class DockingUI {
                 UIManager.put("InternalFrame.inactiveTitleForeground", res);
             }
         }
+
+        UIManager.put("DockingDesktop.notificationBlinkCount", 2);
+        UIManager.put("DockingDesktop.notificationColor", new Color(0xFFE8E8));
     }
     
     private static void installFlatDesign() {

@@ -630,7 +630,7 @@ public class PoFilter extends AbstractFilter {
             header = unescape(autoFillInPluralStatement(header, fc));
             List<ProtectedPart> protectedParts = StaticUtils.applyCustomProtectedParts(header,
                     PatternConsts.PRINTF_VARS, null);
-            entryParseCallback.addEntry(null, header, null, false, null, path, this, protectedParts);
+            entryParseCallback.addEntry(null, header, null, false, (String) null, path, this, protectedParts);
         }
     }
 
