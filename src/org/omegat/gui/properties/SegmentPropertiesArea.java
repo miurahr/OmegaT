@@ -45,6 +45,8 @@ import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.gui.Styles;
 
+import com.vlsolutions.swing.docking.DockableState.Location;
+
 @SuppressWarnings("serial")
 public class SegmentPropertiesArea extends DockableScrollPane implements IEntryEventListener, IProjectEventListener,
     IFontChangedEventListener, Scrollable {
@@ -248,7 +250,7 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
             return;
         }
         Collections.sort(notify);
-        if (!isDisplayable()) {
+        if (getDockKey().getLocation() == Location.HIDDEN) {
             getDockKey().setNotification(true);
         }
         SwingUtilities.invokeLater(new Runnable() {
