@@ -64,11 +64,6 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
     }
     
     @Override
-    public void uninstall() {
-        parent.getViewport().removeComponentListener(layoutAdjuster);
-    };
-    
-    @Override
     public void update() {
         table.clearSelection();
         table.clearHighlight();

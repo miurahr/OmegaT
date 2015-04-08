@@ -67,11 +67,6 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
         }
         return result;
     }
-    
-    @Override
-    public void uninstall() {
-        // Nothing
-    }
 
     private class PropertiesListModel extends DefaultListModel {
 

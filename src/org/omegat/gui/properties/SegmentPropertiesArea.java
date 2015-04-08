@@ -145,9 +145,6 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
             Logger.getLogger(getClass().getName()).log(Level.FINE, e.getMessage());
             return;
         }
-        if (viewImpl != null) {
-            viewImpl.uninstall();
-        }
         viewImpl = newImpl;
         viewImpl.install(this);
     }

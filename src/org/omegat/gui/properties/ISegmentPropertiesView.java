@@ -20,5 +20,4 @@ public interface ISegmentPropertiesView {
     public JComponent getViewComponent();
     public void notifyUser(List<Integer> notify);
     public void install(SegmentPropertiesArea parent);
-    public void uninstall();
 }
