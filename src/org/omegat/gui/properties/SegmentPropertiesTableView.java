@@ -3,9 +3,8 @@ package org.omegat.gui.properties;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.MissingResourceException;
 
@@ -20,12 +19,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import org.omegat.core.Core;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
+import org.omegat.util.gui.DataTableStyling;
+import org.omegat.util.gui.TableColumnSizer;
+import org.omegat.util.gui.UIThreadsUtil;
 
 @SuppressWarnings("serial")
 public class SegmentPropertiesTableView implements ISegmentPropertiesView {
@@ -34,6 +35,7 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
     private FlashableTable table;
     private PropertiesTableModel model;
     
+    @Override
     public void install(SegmentPropertiesArea parent) {
         UIThreadsUtil.mustBeSwingThread();
         this.parent = parent;
@@ -47,17 +49,15 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
         table.setFillsViewportHeight(true);
         table.setDefaultRenderer(Object.class, new MultilineCellRenderer());
         table.getColumnModel().getColumn(0).setCellRenderer(new SingleLineCellRenderer());
-        table.setFont(Core.getMainWindow().getApplicationFont());
-        parent.getViewport().addComponentListener(layoutAdjuster);
+        DataTableStyling.applyFont(table, Core.getMainWindow().getApplicationFont());
+        TableColumnSizer.autoSize(table, 1, true).addColumnAdjustmentListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                adjustRowHeights();
+            }
+        });
         parent.setViewportView(table);
     }
-    
-    private final ComponentListener layoutAdjuster = new ComponentAdapter() {
-        @Override
-        public void componentResized(ComponentEvent e) {
-            adjustLayout();
-        }
-    };
     
     @Override
     public JComponent getViewComponent() {
@@ -70,60 +70,11 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
         table.clearSelection();
         table.clearHighlight();
         model.fireTableDataChanged();
-        adjustLayout();
+        adjustRowHeights();
     }
     
-    private void adjustLayout() {
-        if (table == null) {
-            return;
-        }
-        if (parent.properties.isEmpty()) {
-            int width = parent.getViewport().getWidth() / table.getColumnCount();
-            for (int c = 0; c < table.getColumnCount(); c++) {
-                table.getColumnModel().getColumn(c).setPreferredWidth(width);
-            }
-            return;
-        }
-        
-        // See: https://tips4java.wordpress.com/2008/11/10/table-column-adjuster/
-        TableColumn column0 = table.getColumnModel().getColumn(0);
-        int preferredWidth = column0.getMinWidth();
-        int maxWidth = column0.getMaxWidth();
-        
-        for (int row = -1; row < table.getRowCount(); row++) {
-            TableCellRenderer cellRenderer;
-            Component c;
-            int margin = 5;
-            if (row == -1) {
-                cellRenderer = column0.getHeaderRenderer();
-                if (cellRenderer == null) {
-                    cellRenderer = column0.getCellRenderer();
-                }
-                if (cellRenderer == null) {
-                    cellRenderer = table.getDefaultRenderer(model.getColumnClass(0));
-                }
-                c = cellRenderer.getTableCellRendererComponent(table, column0.getHeaderValue(), false, false, 0, 0);
-                margin = 10;
-            } else {
-                cellRenderer = table.getCellRenderer(row, 0);
-                c = table.prepareRenderer(cellRenderer, row, 0);
-            }
-            c.setBounds(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
-            int width = c.getPreferredSize().width + table.getIntercellSpacing().width + margin;
-            preferredWidth = Math.max(preferredWidth, width);
-            
-            //  We've exceeded the maximum width, no need to check other rows
-            if (preferredWidth >= maxWidth) {
-                preferredWidth = maxWidth;
-                break;
-            }
-        }
-        column0.setPreferredWidth(preferredWidth);
-
-        TableColumn column1 = table.getColumnModel().getColumn(1);
-        int column1Width = parent.getViewport().getWidth() - preferredWidth;
-        column1.setPreferredWidth(column1Width);
-        
+    private void adjustRowHeights() {
+        int column1Width = table.getColumnModel().getColumn(1).getWidth();
         for (int row = 0; row < table.getRowCount(); row++) {
             TableCellRenderer cellRenderer = table.getCellRenderer(row, 1);
             Component c = table.prepareRenderer(cellRenderer, row, 1);
