@@ -89,8 +89,7 @@ public class OmegaTFileChooser extends JFileChooser {
         if (f == null || f.getName().length() == 0)
             return false;
         File projFile = new File(f.getAbsolutePath() + File.separator + OConsts.FILE_PROJECT);
-        File internal = new File(f.getAbsolutePath() + File.separator + OConsts.DEFAULT_INTERNAL);
-        return projFile.exists() && internal.exists() && internal.isDirectory();
+        return projFile.exists() && projFile.isFile();
     }
 
 }
