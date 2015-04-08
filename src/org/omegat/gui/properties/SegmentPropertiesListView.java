@@ -20,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 import org.omegat.core.Core;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
+import org.omegat.util.gui.UIThreadsUtil;
 
 @SuppressWarnings("serial")
 public class SegmentPropertiesListView implements ISegmentPropertiesView {
@@ -29,6 +30,7 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
     private PropertiesListModel model;
 
     public void install(SegmentPropertiesArea parent) {
+        UIThreadsUtil.mustBeSwingThread();
         this.parent = parent;
         model = new PropertiesListModel();
         list = new FlashableList(model);
@@ -42,6 +44,7 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
     
     @Override
     public void update() {
+        UIThreadsUtil.mustBeSwingThread();
         list.clearSelection();
         list.clearHighlight();
         model.fireModelChanged();
@@ -54,6 +57,7 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
 
     @Override
     public void notifyUser(List<Integer> notify) {
+        UIThreadsUtil.mustBeSwingThread();
         notify = translateIndices(notify);
         list.clearSelection();
         list.scrollRectToVisible(list.getCellBounds(notify.get(0), notify.get(notify.size() - 1)));

@@ -35,6 +35,7 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
     private PropertiesTableModel model;
     
     public void install(SegmentPropertiesArea parent) {
+        UIThreadsUtil.mustBeSwingThread();
         this.parent = parent;
         model = new PropertiesTableModel();
         table = new FlashableTable(model);
@@ -65,6 +66,7 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
     
     @Override
     public void update() {
+        UIThreadsUtil.mustBeSwingThread();
         table.clearSelection();
         table.clearHighlight();
         model.fireTableDataChanged();
@@ -133,6 +135,7 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
     
     @Override
     public void notifyUser(List<Integer> notify) {
+        UIThreadsUtil.mustBeSwingThread();
         table.clearSelection();
         table.scrollRectToVisible(table.getCellRect(notify.get(0), notify.get(notify.size() - 1), true));
         table.flash(notify);

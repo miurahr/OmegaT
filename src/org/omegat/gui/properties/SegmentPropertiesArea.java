@@ -95,7 +95,14 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
             } catch (ClassNotFoundException e1) {
             }   
         }
-        installView(initModeClass);
+        final Class<?> finalClass = initModeClass;
+        
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                installView(finalClass);
+            }
+        });
         
         contextMenu = new JPopupMenu();
         JMenuItem tableModeItem = new JCheckBoxMenuItem(OStrings.getString("SEGPROP_CONTEXTMENU_TABLE_MODE"));
@@ -230,7 +237,7 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
     }
     
     private void doNotify(List<String> keys) {
-        List<Integer> notify = new ArrayList<Integer>();
+        final List<Integer> notify = new ArrayList<Integer>();
         for (int i = 0; i < properties.size(); i += 2) {
             String prop = properties.get(i);
             if (keys.contains(prop)) {
@@ -244,7 +251,12 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
         if (!isDisplayable()) {
             getDockKey().setNotification(true);
         }
-        viewImpl.notifyUser(notify);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                viewImpl.notifyUser(notify);
+            }
+        });
     }
     
     private void setProperty(String key, String value) {
