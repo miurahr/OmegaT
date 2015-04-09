@@ -158,7 +158,9 @@ public class ProjectProperties {
 
     /** Returns The Glossary File Directory */
     public String getWriteableGlossaryDir() {
-        return writableGlossaryFile.getAsFile().getParent();
+        ProjectPath dir = new ProjectPath(true);
+        dir.setRelativeOrAbsolute(writableGlossaryFile.getAsFile().getParent());
+        return dir.getAsString();
     }
 
     /** Sets The Writeable Glossary File Location */
@@ -467,9 +469,6 @@ public class ProjectProperties {
             throw new ProjectException(StaticUtils.format(OStrings.getString("PROJECT_GLOSSARY_FOLDER"), glsDir));
         }
         String wGlsDir = getWriteableGlossaryDir();
-        if (!wGlsDir.endsWith(File.separator)) {
-            wGlsDir += '/';
-        }
         if (!wGlsDir.contains(getGlossaryRoot())) {
             throw new ProjectException(StaticUtils.format(OStrings.getString("PROJECT_W_GLOSSARY"), glsDir));
         }
