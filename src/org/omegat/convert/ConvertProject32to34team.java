@@ -106,8 +106,8 @@ public class ConvertProject32to34team {
 
         // map full project
         RepositoryMapping map = new RepositoryMapping();
-        map.setLocal("/");
-        map.setRepository("/");
+        map.setLocal("");
+        map.setRepository("");
         def.getMapping().add(map);
         props.setRepositories(new ArrayList<RepositoryDefinition>());
         props.getRepositories().add(def);
