@@ -399,6 +399,10 @@ public class ProjectProperties {
         this.removeTags = removeTags;
     }
 
+    public boolean hasRepositories() {
+        return repositories != null && !repositories.isEmpty();
+    }
+
     public List<RepositoryDefinition> getRepositories() {
         return repositories;
     }
@@ -488,6 +492,15 @@ public class ProjectProperties {
                 dict.mkdirs();
             }
         }
+    }
+
+    public void autocreateDirectories() {
+        getProjectInternalDir().mkdirs();
+        sourceDir.getAsFile().mkdirs();
+        targetDir.getAsFile().mkdirs();
+        glossaryDir.getAsFile().mkdirs();
+        tmDir.getAsFile().mkdirs();
+        dictDir.getAsFile().mkdirs();
     }
 
     /**
