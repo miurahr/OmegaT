@@ -4,6 +4,7 @@ package org.omegat.gui.properties;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.IllegalComponentStateException;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -179,7 +180,10 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
         }
         private void doPopup(MouseEvent e) {
             Point p = SwingUtilities.convertPoint((Component) e.getSource(), e.getPoint(), SegmentPropertiesArea.this);
-            contextMenu.show(SegmentPropertiesArea.this, p.x, p.y);
+            try {
+            	contextMenu.show(SegmentPropertiesArea.this, p.x, p.y);
+            } catch (IllegalComponentStateException ignore) {
+            }
         }
     };
     
