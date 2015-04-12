@@ -67,7 +67,7 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
     private List<Integer> translateIndices(List<Integer> indices) {
         List<Integer> result = new ArrayList<Integer>(indices.size());
         for (int i : indices) {
-            result.add(i * 2);
+            result.add(i + 1);
         }
         return result;
     }
@@ -148,7 +148,7 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
             Flasher flasher = ((FlashableList) list).getFlasher();
             if (flasher != null) {
                 flasher.mark();
-                if (flasher.isHighlightedIndex(index - 1) && !isSelected) {
+                if (flasher.isHighlightedIndex(index) && !isSelected) {
                     setBackground(flasher.getColor());
                 }
             }

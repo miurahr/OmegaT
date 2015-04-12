@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingResourceException;
 
@@ -87,9 +88,18 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
     @Override
     public void notifyUser(List<Integer> notify) {
         UIThreadsUtil.mustBeSwingThread();
+        notify = translateIndices(notify);
         table.clearSelection();
         table.scrollRectToVisible(table.getCellRect(notify.get(0), notify.get(notify.size() - 1), true));
         table.flash(notify);
+    }
+    
+    private List<Integer> translateIndices(List<Integer> indices) {
+        List<Integer> result = new ArrayList<Integer>(indices.size());
+        for (int i : indices) {
+            result.add(i / 2);
+        }
+        return result;
     }
     
     private class PropertiesTableModel extends AbstractTableModel {
