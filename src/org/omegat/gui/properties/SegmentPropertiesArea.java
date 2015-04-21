@@ -312,7 +312,7 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
     
     private void setTranslationProperties(TMXEntry entry) {
         if (entry.hasNote()) {
-            setProperty(KEY_HASNOTE, Boolean.TRUE);
+            setProperty(KEY_HASNOTE, true);
         }
         if (!entry.isTranslated()) {
             return;
@@ -328,7 +328,7 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
         }
         setProperty(KEY_CREATOR, entry.creator);
         if (!entry.defaultTranslation) {
-            setProperty(KEY_ISALT, Boolean.TRUE);
+            setProperty(KEY_ISALT, true);
         }
         setProperty(KEY_LINKED, entry.linked);
     }
