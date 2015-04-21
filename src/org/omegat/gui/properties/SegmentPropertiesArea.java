@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.MissingResourceException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -169,8 +170,15 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
         if (key == null) {
             return;
         }
-        String displayKey = Preferences.isPreference(Preferences.SEGPROPS_SHOW_RAW_KEYS) ? key
-                : OStrings.getString(ISegmentPropertiesView.PROPERTY_TRANSLATION_KEY + key.toUpperCase());
+        String displayKey = key;
+        if (!Preferences.isPreference(Preferences.SEGPROPS_SHOW_RAW_KEYS)) {
+            try {
+                displayKey = OStrings.getString(ISegmentPropertiesView.PROPERTY_TRANSLATION_KEY + key.toUpperCase());
+            } catch (MissingResourceException ignore) {
+                // If this is not a known key then we can't translate it,
+                // so use the "raw" key instead.
+            }
+        }
         String label = StaticUtils.format(OStrings.getString("SEGPROP_CONTEXTMENU_NOTIFY_ON_PROP"), displayKey);
         final JMenuItem notifyOnItem = new JCheckBoxMenuItem(label);
         notifyOnItem.setSelected(getKeysToNotify().contains(key));
