@@ -3,6 +3,7 @@ package org.omegat.gui.properties;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -100,6 +101,15 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
             result.add(i / 2);
         }
         return result;
+    }
+    
+    @Override
+    public String getKeyAtPoint(Point p) {
+        int clickedRow = table.rowAtPoint(p);
+        if (clickedRow == -1) {
+            return null;
+        }
+        return (String) model.getValueAt(clickedRow, 0);
     }
     
     private class PropertiesTableModel extends AbstractTableModel {

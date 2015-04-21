@@ -2,6 +2,7 @@ package org.omegat.gui.properties;
 
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingResourceException;
@@ -70,6 +71,16 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
             result.add(i + 1);
         }
         return result;
+    }
+    
+    @Override
+    public String getKeyAtPoint(Point p) {
+        int clickedIndex = list.locationToIndex(p);
+        if (clickedIndex == -1) {
+            return null;
+        }
+        int clickedKeyIndex = clickedIndex % 2 == 0 ? clickedIndex : clickedIndex - 1;
+        return (String) model.getElementAt(clickedKeyIndex);
     }
 
     private class PropertiesListModel extends DefaultListModel {

@@ -1,6 +1,7 @@
 package org.omegat.gui.properties;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -20,4 +21,5 @@ public interface ISegmentPropertiesView {
     public JComponent getViewComponent();
     public void notifyUser(List<Integer> notify);
     public void install(SegmentPropertiesArea parent);
+    public String getKeyAtPoint(Point p);
 }

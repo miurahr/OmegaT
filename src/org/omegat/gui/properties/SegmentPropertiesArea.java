@@ -31,6 +31,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Scrollable;
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.lang.StringUtils;
 import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
 import org.omegat.core.data.EntryKey;
@@ -44,6 +45,7 @@ import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
+import org.omegat.util.StaticUtils;
 import org.omegat.util.gui.Styles;
 
 import com.vlsolutions.swing.docking.DockableState.Location;
@@ -72,8 +74,6 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
     private final static String KEY_CREATOR = "creator";
     private final static String KEY_ISALT = "isAlt";
     private final static String KEY_LINKED = "linked";
-    
-    private final JPopupMenu contextMenu;
     
     final List<String> properties = new ArrayList<String>();
     
@@ -109,39 +109,6 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
             }
         });
         
-        contextMenu = new JPopupMenu();
-        JMenuItem tableModeItem = new JCheckBoxMenuItem(OStrings.getString("SEGPROP_CONTEXTMENU_TABLE_MODE"));
-        tableModeItem.setSelected(initModeClass.equals(SegmentPropertiesTableView.class));
-        tableModeItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                toggleMode(SegmentPropertiesTableView.class);
-            }
-        });
-        JMenuItem listModeItem = new JCheckBoxMenuItem(OStrings.getString("SEGPROP_CONTEXTMENU_LIST_MODE"));
-        listModeItem.setSelected(initModeClass.equals(SegmentPropertiesListView.class));
-        listModeItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                toggleMode(SegmentPropertiesListView.class);
-            }
-        });
-        ButtonGroup group = new ButtonGroup();
-        group.add(tableModeItem);
-        group.add(listModeItem);
-        contextMenu.add(tableModeItem);
-        contextMenu.add(listModeItem);
-        contextMenu.addSeparator();
-        final JMenuItem toggleKeyTranslationItem = new JCheckBoxMenuItem(OStrings.getString("SEGPROP_CONTEXTMENU_RAW_KEYS"));
-        toggleKeyTranslationItem.setSelected(Preferences.isPreference(Preferences.SEGPROPS_SHOW_RAW_KEYS));
-        toggleKeyTranslationItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Preferences.setPreference(Preferences.SEGPROPS_SHOW_RAW_KEYS, toggleKeyTranslationItem.isSelected());
-                viewImpl.update();
-            }
-        });
-        contextMenu.add(toggleKeyTranslationItem);
         addMouseListener(contextMenuListener);
     } 
     
@@ -182,12 +149,75 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
         }
         private void doPopup(MouseEvent e) {
             Point p = SwingUtilities.convertPoint((Component) e.getSource(), e.getPoint(), SegmentPropertiesArea.this);
-            try {
-            	contextMenu.show(SegmentPropertiesArea.this, p.x, p.y);
-            } catch (IllegalComponentStateException ignore) {
-            }
+            showContextMenu(p);
         }
     };
+    
+    private void showContextMenu(Point p) {
+        JPopupMenu menu = new JPopupMenu();
+        populateLocalContextMenuOptions(menu, p);
+        populateGlobalContextMenuOptions(menu);
+        try {
+            menu.show(SegmentPropertiesArea.this, p.x, p.y);
+        } catch (IllegalComponentStateException ignore) {
+            ignore.printStackTrace();
+        }
+    }
+    
+    private void populateLocalContextMenuOptions(JPopupMenu contextMenu, Point p) {
+        final String key = viewImpl.getKeyAtPoint(p);
+        if (key == null) {
+            return;
+        }
+        String displayKey = Preferences.isPreference(Preferences.SEGPROPS_SHOW_RAW_KEYS) ? key
+                : OStrings.getString(ISegmentPropertiesView.PROPERTY_TRANSLATION_KEY + key.toUpperCase());
+        String label = StaticUtils.format(OStrings.getString("SEGPROP_CONTEXTMENU_NOTIFY_ON_PROP"), displayKey);
+        final JMenuItem notifyOnItem = new JCheckBoxMenuItem(label);
+        notifyOnItem.setSelected(getKeysToNotify().contains(key));
+        notifyOnItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setKeyToNotify(key, notifyOnItem.isSelected());
+            }
+        });
+        contextMenu.add(notifyOnItem);
+        contextMenu.addSeparator();
+    }
+    
+    private void populateGlobalContextMenuOptions(JPopupMenu contextMenu) {
+        JMenuItem tableModeItem = new JCheckBoxMenuItem(OStrings.getString("SEGPROP_CONTEXTMENU_TABLE_MODE"));
+        tableModeItem.setSelected(viewImpl.getClass().equals(SegmentPropertiesTableView.class));
+        tableModeItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                toggleMode(SegmentPropertiesTableView.class);
+            }
+        });
+        JMenuItem listModeItem = new JCheckBoxMenuItem(OStrings.getString("SEGPROP_CONTEXTMENU_LIST_MODE"));
+        listModeItem.setSelected(viewImpl.getClass().equals(SegmentPropertiesListView.class));
+        listModeItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                toggleMode(SegmentPropertiesListView.class);
+            }
+        });
+        ButtonGroup group = new ButtonGroup();
+        group.add(tableModeItem);
+        group.add(listModeItem);
+        contextMenu.add(tableModeItem);
+        contextMenu.add(listModeItem);
+        contextMenu.addSeparator();
+        final JMenuItem toggleKeyTranslationItem = new JCheckBoxMenuItem(OStrings.getString("SEGPROP_CONTEXTMENU_RAW_KEYS"));
+        toggleKeyTranslationItem.setSelected(Preferences.isPreference(Preferences.SEGPROPS_SHOW_RAW_KEYS));
+        toggleKeyTranslationItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Preferences.setPreference(Preferences.SEGPROPS_SHOW_RAW_KEYS, toggleKeyTranslationItem.isSelected());
+                viewImpl.update();
+            }
+        });
+        contextMenu.add(toggleKeyTranslationItem);
+    }
     
     @Override
     public Dimension getPreferredScrollableViewportSize() {
@@ -231,12 +261,27 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
         getDockKey().setNotification(false);
         setProperties(newEntry);
         if (Preferences.isPreference(Preferences.SEGPROPS_DO_NOTIFY)) {
-            if (!Preferences.existsPreference(Preferences.SEGPROPS_NOTIFY_PROPS)) {
-                Preferences.setPreference(Preferences.SEGPROPS_NOTIFY_PROPS, Preferences.SEGPROPS_NOTIFY_DEFAULT_PROPS);
-            }
-            String rawProps = Preferences.getPreferenceDefaultAllowEmptyString(Preferences.SEGPROPS_NOTIFY_PROPS);
-            doNotify(Arrays.asList(SPLIT_COMMAS.split(rawProps)));
+            doNotify(getKeysToNotify());
         }
+    }
+    
+    private List<String> getKeysToNotify() {
+        if (!Preferences.existsPreference(Preferences.SEGPROPS_NOTIFY_PROPS)) {
+            Preferences.setPreference(Preferences.SEGPROPS_NOTIFY_PROPS, Preferences.SEGPROPS_NOTIFY_DEFAULT_PROPS);
+        }
+        String rawProps = Preferences.getPreferenceDefaultAllowEmptyString(Preferences.SEGPROPS_NOTIFY_PROPS);
+        return Arrays.asList(SPLIT_COMMAS.split(rawProps));
+    }
+    
+    private void setKeyToNotify(String key, boolean enabled) {
+        List<String> currentKeys = new ArrayList<String>(getKeysToNotify());
+        if (enabled && !currentKeys.contains(key)) {
+            currentKeys.add(key);
+        }
+        if (!enabled && currentKeys.contains(key)) {
+            currentKeys.remove(key);
+        }
+        Preferences.setPreference(Preferences.SEGPROPS_NOTIFY_PROPS, StringUtils.join(currentKeys, ", "));
     }
     
     @Override
