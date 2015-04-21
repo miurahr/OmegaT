@@ -13,6 +13,7 @@ import javax.swing.JList;
 import javax.swing.JTextArea;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -75,7 +76,7 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
     
     @Override
     public String getKeyAtPoint(Point p) {
-        int clickedIndex = list.locationToIndex(p);
+        int clickedIndex = list.locationToIndex(SwingUtilities.convertPoint(parent, p, list));
         if (clickedIndex == -1) {
             return null;
         }

@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -105,7 +106,7 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
     
     @Override
     public String getKeyAtPoint(Point p) {
-        int clickedRow = table.rowAtPoint(p);
+        int clickedRow = table.rowAtPoint(SwingUtilities.convertPoint(parent, p, table));
         if (clickedRow == -1) {
             return null;
         }
