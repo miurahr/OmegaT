@@ -60,6 +60,8 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
     private final static String KEY_ISDUP = "isDup";
     private final static String KEY_FILE = "file";
     private final static String KEY_ID = "id";
+    private final static String KEY_TRANSLATION = "translation";
+    private final static String KEY_TRANSLATIONISFUZZY = "translationIsFuzzy";
     //private final static String KEY_NEXT = "next";
     //private final static String KEY_PREV = "prev";
     private final static String KEY_PATH = "path";
@@ -286,6 +288,12 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
             }
             if (ste.getDuplicate() != DUPLICATE.NONE) {
                 setProperty(KEY_ISDUP, ste.getDuplicate());
+            }
+            if (ste.getSourceTranslation() != null) {
+                setProperty(KEY_TRANSLATION, ste.getSourceTranslation());
+                if (ste.isSourceTranslationFuzzy()) {
+                    setProperty(KEY_TRANSLATIONISFUZZY, true);
+                }
             }
             setKeyProperties(ste.getKey());
             TMXEntry trg = Core.getProject().getTranslationInfo(ste);
