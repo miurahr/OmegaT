@@ -260,9 +260,7 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
     public void onEntryActivated(SourceTextEntry newEntry) {
         getDockKey().setNotification(false);
         setProperties(newEntry);
-        if (Preferences.isPreference(Preferences.SEGPROPS_DO_NOTIFY)) {
-            doNotify(getKeysToNotify());
-        }
+        doNotify(getKeysToNotify());
     }
     
     private List<String> getKeysToNotify() {

@@ -387,7 +387,6 @@ public class Preferences {
     /** Segment Properties Area preferences */
     public static final String SEGPROPS_INITIAL_MODE = "segment_properties_initial_mode";
     public static final String SEGPROPS_SHOW_RAW_KEYS = "segment_properties_show_raw_keys";
-    public static final String SEGPROPS_DO_NOTIFY = "segment_properties_do_notify";
     public static final String SEGPROPS_NOTIFY_PROPS = "segment_properties_notify_props";
     public static final String SEGPROPS_NOTIFY_DEFAULT_PROPS = "comment, note";
     
