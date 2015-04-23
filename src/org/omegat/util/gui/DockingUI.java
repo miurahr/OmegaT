@@ -285,7 +285,7 @@ public class DockingUI {
         
         // Windows only accepts a 32x32 cursor image with no semitransparency, so you basically
         // need a special image just for that.
-        UIManager.put("DragControler.detachCursor", getImage("appbar.fullscreen.cursor32x32.png"));
+        UIManager.put("DragControler.detachCursor", ResourcesUtil.getBundledImage("appbar.fullscreen.cursor32x32.png"));
         
         // Use more native-looking icons on OS X
         if (Platform.isMacOSX()) {
@@ -306,28 +306,33 @@ public class DockingUI {
             UIManager.put("DockTabbedPane.menu.hide", getIcon("appbar.minus.png"));
             UIManager.put("DockTabbedPane.menu.maximize", getIcon("appbar.fullscreen.corners.png"));
             
-            UIManager.put("DragControler.detachCursor", getImage("appbar.fullscreen.png"));
+            UIManager.put("DragControler.detachCursor", ResourcesUtil.getBundledImage("appbar.fullscreen.png"));
         }
     }
 
     /**
-     * Load icon from classpath.
-     * 
-     * @param iconName
-     *            icon file name
-     * @return icon instance
+     * Adjust a color by adding some constant to its RGB values, wrapping around within the range 0-255.
      */
-    private static ImageIcon getIcon(String iconName) {
-        Image image = getImage(iconName);
-        return image == null ? null : new ImageIcon(image);
+    private static Color adjustRGB(Color color, int adjustment) {
+        Color result = new Color((color.getRed() + adjustment + 255) % 255,
+                (color.getGreen() + adjustment + 255) % 255,
+                (color.getBlue() + adjustment + 255) % 255);
+        return result;
     }
     
-    private static Image getImage(String imageName) {
-        try {
-            return ResourcesUtil.getBundledImage(imageName);
-        } catch (FileNotFoundException e) {
-            return null;
-        }
+    // Windows Classic LAF detection from http://stackoverflow.com/a/4386821/448068
+    private static boolean isWindowsLAF() {
+        return UIManager.getLookAndFeel().getID().equals("Windows");
+    }
+
+    private static boolean isWindowsClassicLAF() {
+        return isWindowsLAF() &&
+                !(Boolean) Toolkit.getDefaultToolkit().getDesktopProperty("win.xpstyle.themeActive");
+    }
+    
+    private static ImageIcon getIcon(String iconName) {
+        Image image = ResourcesUtil.getBundledImage(iconName);
+        return image == null ? null : new ImageIcon(image);
     }
 
     /**
