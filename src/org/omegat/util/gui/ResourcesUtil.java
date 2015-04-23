@@ -52,4 +52,8 @@ public class ResourcesUtil {
         }
         return Toolkit.getDefaultToolkit().getImage(resourceURL);
     }
+    
+    public static Image getBundledImage(String imageName) throws FileNotFoundException {
+        return getImage("/org/omegat/gui/resources/" + imageName);
+    }
 }

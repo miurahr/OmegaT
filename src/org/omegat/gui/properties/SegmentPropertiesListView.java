@@ -1,13 +1,21 @@
 package org.omegat.gui.properties;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingResourceException;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JTextArea;
@@ -22,6 +30,7 @@ import javax.swing.border.EmptyBorder;
 import org.omegat.core.Core;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
+import org.omegat.util.gui.ResourcesUtil;
 import org.omegat.util.gui.UIThreadsUtil;
 
 @SuppressWarnings("serial")
@@ -30,10 +39,26 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
     private SegmentPropertiesArea parent;
     private FlashableList list;
     private PropertiesListModel model;
+    private JButton settingsButton;
 
-    public void install(SegmentPropertiesArea parent) {
+    public void install(final SegmentPropertiesArea parent) {
         UIThreadsUtil.mustBeSwingThread();
         this.parent = parent;
+        
+        settingsButton = new JButton();
+        settingsButton.setBorderPainted(false);
+        try {
+            settingsButton.setIcon(new ImageIcon(ResourcesUtil.getBundledImage("appbar.settings.active.png")));
+        } catch (FileNotFoundException ignore) {
+            settingsButton.setText("!");
+        }
+        settingsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parent.showContextMenu(settingsButton.getLocation());
+            }
+        });
+        
         model = new PropertiesListModel();
         list = new FlashableList(model);
         list.setForeground(parent.getForeground());
@@ -41,6 +66,22 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
         list.addMouseListener(parent.contextMenuListener);
         list.setCellRenderer(new MultilineCellRenderer());
         list.setFont(Core.getMainWindow().getApplicationFont());
+        list.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Point point = e.getPoint();
+                int index = list.locationToIndex(point);
+                if (index % 2 == 0) {
+                    parent.showContextMenu(SwingUtilities.convertPoint(list, point, parent));
+                }
+            }
+        });
+        list.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                list.repaint();
+            }
+        });
         parent.setViewportView(list);
     }
     
@@ -130,7 +171,7 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
         }
     }
     
-    private static class MultilineCellRenderer extends JTextArea implements ListCellRenderer {
+    private class MultilineCellRenderer extends JTextArea implements ListCellRenderer {
         
         private final Border noFocusBorder = new EmptyBorder(FOCUS_BORDER.getBorderInsets(this));
         private final Border noFocusCompoundBorder = new CompoundBorder(MARGIN_BORDER, noFocusBorder);
@@ -139,11 +180,15 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
             setLineWrap(true);
             setWrapStyleWord(true);
             setOpaque(true);
+            setLayout(new BorderLayout());
+            add(settingsButton, BorderLayout.EAST);
         }
         
         @Override
         public Component getListCellRendererComponent(JList list, Object value,
                 int index, boolean isSelected, boolean cellHasFocus) {
+            Point point = list.getMousePosition();
+            settingsButton.setVisible(point != null && index % 2 == 0 && index == list.locationToIndex(point));
             boolean isKeyRow = index % 2 == 0;
             if (isSelected) {
                 setBackground(list.getSelectionBackground());

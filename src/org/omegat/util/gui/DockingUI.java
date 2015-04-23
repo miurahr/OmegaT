@@ -324,7 +324,7 @@ public class DockingUI {
     
     private static Image getImage(String imageName) {
         try {
-            return ResourcesUtil.getImage("/org/omegat/gui/resources/" + imageName);
+            return ResourcesUtil.getBundledImage(imageName);
         } catch (FileNotFoundException e) {
             return null;
         }

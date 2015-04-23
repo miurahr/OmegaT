@@ -154,7 +154,7 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
         }
     };
     
-    private void showContextMenu(Point p) {
+    void showContextMenu(Point p) {
         JPopupMenu menu = new JPopupMenu();
         populateLocalContextMenuOptions(menu, p);
         populateGlobalContextMenuOptions(menu);
