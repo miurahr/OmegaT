@@ -6,10 +6,14 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingResourceException;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -39,7 +43,7 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
     private PropertiesTableModel model;
     
     @Override
-    public void install(SegmentPropertiesArea parent) {
+    public void install(final SegmentPropertiesArea parent) {
         UIThreadsUtil.mustBeSwingThread();
         this.parent = parent;
         model = new PropertiesTableModel();
@@ -50,13 +54,29 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setGridColor(Color.WHITE);
         table.setFillsViewportHeight(true);
-        table.setDefaultRenderer(Object.class, new MultilineCellRenderer());
         table.getColumnModel().getColumn(0).setCellRenderer(new SingleLineCellRenderer());
+        table.getColumnModel().getColumn(1).setCellRenderer(new MultilineCellRenderer());
+        table.getColumnModel().getColumn(2).setCellRenderer(new SingleLineCellRenderer());
         DataTableStyling.applyFont(table, Core.getMainWindow().getApplicationFont());
         TableColumnSizer.autoSize(table, 1, true).addColumnAdjustmentListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 adjustRowHeights();
+            }
+        });
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Point point = e.getPoint();
+                if (table.columnAtPoint(point) == 2) {
+                    parent.showContextMenu(SwingUtilities.convertPoint(table, point, parent));
+                }
+            }
+        });
+        table.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                table.repaint();
             }
         });
         parent.setViewportView(table);
@@ -117,7 +137,7 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
 
         @Override
         public int getColumnCount() {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -125,6 +145,7 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
             switch (columnIndex) {
             case 0: return OStrings.getString("SEGPROP_TABLE_HEADER_KEY");
             case 1: return OStrings.getString("SEGPROP_TABLE_HEADER_VALUE");
+            case 2: return "";
             }
             return null;
         }
@@ -136,12 +157,34 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
+            if (rowIndex < 0 || columnIndex < 0) {
+                return null;
+            }
+            if (columnIndex == 2) {
+                Point point = table.getMousePosition();
+                return point != null && rowIndex == table.rowAtPoint(point) && columnIndex == table.columnAtPoint(point)
+                        ? SETTINGS_ICON : SETTINGS_ICON_INACTIVE;
+            }
+            int realIndex = rowIndex * 2 + columnIndex;
+            if (realIndex >= parent.properties.size()) {
+                return null;
+            }
             return parent.properties.get(rowIndex * 2 + columnIndex);
         }
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return false;
+        }
+        
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            switch (columnIndex) {
+            case 0:
+            case 1: return String.class;
+            case 2: return ImageIcon.class;
+            }
+            return null;
         }
     }
     
@@ -188,7 +231,6 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
                 return comp;
             }
             JLabel result = (JLabel) comp;
-            result.setVerticalAlignment(SwingConstants.TOP);
             if (isSelected) {
                 result.setBackground(table.getSelectionBackground());
                 result.setForeground(table.getSelectionForeground());
@@ -211,7 +253,15 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
                 }
             }
             result.setFont(table.getFont());
-            result.setText(getText(value));
+            if (value instanceof String) {
+                result.setVerticalAlignment(SwingConstants.TOP);
+                result.setText(getText(value));
+                result.setIcon(null);
+            } else if (value instanceof Icon) {
+                result.setVerticalAlignment(SwingConstants.CENTER);
+                result.setText(null);
+                result.setIcon((Icon) value);
+            }
             return result;
         }
         

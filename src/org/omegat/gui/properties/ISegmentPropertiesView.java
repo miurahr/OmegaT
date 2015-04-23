@@ -4,13 +4,19 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 
+import org.omegat.util.gui.ResourcesUtil;
+
 public interface ISegmentPropertiesView {
+    static ImageIcon SETTINGS_ICON = new ImageIcon(ResourcesUtil.getBundledImage("appbar.settings.active.png"));
+    static ImageIcon SETTINGS_ICON_INACTIVE = new ImageIcon(ResourcesUtil.getBundledImage("appbar.settings.inactive.png"));
+    
     static final String PROPERTY_TRANSLATION_KEY = "SEGPROP_KEY_";    
     static final Color ROW_HIGHLIGHT_COLOR = new Color(245, 245, 245);
     static final Border FOCUS_BORDER = new MatteBorder(1, 1, 1, 1, new Color(0x76AFE8));
