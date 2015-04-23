@@ -259,7 +259,7 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
             Flasher flasher = ((FlashableTable) table).getFlasher();
             if (flasher != null) {
                 flasher.mark();
-                if (flasher.isHighlightedIndex(row)) {
+                if (flasher.isHighlightedIndex(row) && !isSelected) {
                     setBackground(flasher.getColor());
                 }
             }
