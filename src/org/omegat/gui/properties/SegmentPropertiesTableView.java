@@ -41,6 +41,8 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
     private SegmentPropertiesArea parent;
     private FlashableTable table;
     private PropertiesTableModel model;
+    private int mouseoverRow = -1;
+    private int mouseoverCol = -1;
     
     @Override
     public void install(final SegmentPropertiesArea parent) {
@@ -64,22 +66,38 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
                 adjustRowHeights();
             }
         });
-        table.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Point point = e.getPoint();
-                if (table.columnAtPoint(point) == 2) {
-                    parent.showContextMenu(SwingUtilities.convertPoint(table, point, parent));
-                }
-            }
-        });
-        table.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                table.repaint();
-            }
-        });
+        table.addMouseListener(mouseAdapter);
+        table.addMouseMotionListener(mouseAdapter);
         parent.setViewportView(table);
+    }
+    
+    private final MouseAdapter mouseAdapter = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (mouseoverCol == 2) {
+                parent.showContextMenu(SwingUtilities.convertPoint(table, e.getPoint(), parent));
+            }
+        }
+        @Override
+        public void mouseExited(MouseEvent e) {
+            updateRollover();
+        }
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            updateRollover();
+        }
+    };
+    
+    private void updateRollover() {
+        Point point = table.getMousePosition();
+        int newRow = point == null ? -1 : table.rowAtPoint(point);
+        int newCol = point == null ? -1 : table.columnAtPoint(point);
+        boolean doRepaint = newRow != mouseoverRow || newCol != mouseoverCol;
+        mouseoverRow = newRow;
+        mouseoverCol = newCol;
+        if (doRepaint) {
+            table.repaint();
+        }
     }
     
     @Override
@@ -161,8 +179,7 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
                 return null;
             }
             if (columnIndex == 2) {
-                Point point = table.getMousePosition();
-                return point != null && rowIndex == table.rowAtPoint(point) && columnIndex == table.columnAtPoint(point)
+                return rowIndex == mouseoverRow && columnIndex == mouseoverCol
                         ? SETTINGS_ICON : SETTINGS_ICON_INACTIVE;
             }
             int realIndex = rowIndex * 2 + columnIndex;

@@ -34,6 +34,7 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
     private SegmentPropertiesArea parent;
     private FlashableList list;
     private PropertiesListModel model;
+    private int mouseoverIndex = -1;
 
     public void install(final SegmentPropertiesArea parent) {
         UIThreadsUtil.mustBeSwingThread();
@@ -45,23 +46,36 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
         list.addMouseListener(parent.contextMenuListener);
         list.setCellRenderer(new MultilineCellRenderer());
         list.setFont(Core.getMainWindow().getApplicationFont());
-        list.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Point point = e.getPoint();
-                int index = list.locationToIndex(point);
-                if (index % 2 == 0) {
-                    parent.showContextMenu(SwingUtilities.convertPoint(list, point, parent));
-                }
-            }
-        });
-        list.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                list.repaint();
-            }
-        });
+        list.addMouseListener(mouseAdapter);
+        list.addMouseMotionListener(mouseAdapter);
         parent.setViewportView(list);
+    }
+    
+    private final MouseAdapter mouseAdapter = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (mouseoverIndex % 2 == 0) {
+                parent.showContextMenu(SwingUtilities.convertPoint(list, e.getPoint(), parent));
+            }
+        }
+        @Override
+        public void mouseExited(MouseEvent e) {
+            updateRollover();
+        }
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            updateRollover();
+        }
+    };
+    
+    private void updateRollover() {
+        Point point = list.getMousePosition();
+        int newIndex = point == null ? -1 : list.locationToIndex(point);
+        boolean doRepaint = newIndex != mouseoverIndex;
+        mouseoverIndex = newIndex;
+        if (doRepaint) {
+            list.repaint();
+        }
     }
     
     @Override
@@ -170,9 +184,9 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
                 int index, boolean isSelected, boolean cellHasFocus) {
             boolean isKeyRow = index % 2 == 0;
             button.setVisible(isKeyRow);
-            Point point = list.getMousePosition();
-            button.setIcon(point != null && index == list.locationToIndex(point)
-                    ? SETTINGS_ICON : SETTINGS_ICON_INACTIVE);
+            if (isKeyRow) {
+                button.setIcon(index == mouseoverIndex ? SETTINGS_ICON : SETTINGS_ICON_INACTIVE);
+            }
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
