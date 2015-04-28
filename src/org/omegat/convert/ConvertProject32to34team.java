@@ -161,7 +161,7 @@ public class ConvertProject32to34team {
         infoOp.setDepth(SVNDepth.EMPTY);
         infoOp.setRevision(SVNRevision.WORKING);
         final SvnInfo info = infoOp.run();
-        SVNURL svn = info.getRepositoryRootUrl();
+        SVNURL svn = info.getUrl();
         return svn.toString();
     }
 
