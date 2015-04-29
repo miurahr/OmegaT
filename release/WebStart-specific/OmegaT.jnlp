@@ -9,6 +9,7 @@
 			<desktop />
 			<menu submenu="OmegaT from WebStart" />
 		</shortcut>
+		<icon href="OmegaT.icon.png" width="128" height="128"/>
 		<offline-allowed />
         <association extensions="project" />
 
@@ -31,7 +32,7 @@
 		<j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se">
 			<resources>
 				<jar href="OmegaT.jar" />
-				<jar href="docs.jar" download="lazy" />
+				<jar href="docs.jar" download="lazy" part="docs" />
 				<jar href="htmlparser.jar" />
 				<jar href="jmyspell-core-1.0.0-beta-2.jar" />
 				<jar href="jna.jar" />
@@ -91,6 +92,7 @@
 				<nativelib href="hunspell-win32.jar" />
 			</resources>
 		</j2se>
+		<package name="docs.*" part="docs" recursive="true" />
 		<property name="javaws.cfg.jauthenticator" value="true" />
 	</resources>
 	<application-desc main-class="org.omegat.Main" />
