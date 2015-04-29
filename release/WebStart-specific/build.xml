@@ -18,7 +18,7 @@
 	<taskdef resource="net/sf/antcontrib/antlib.xml" />
 	
 	<!-- Build WebStart pack -->
-	<target name="pack" depends="clean,copy-jars,set-bundled-defaults,make-trusted,sign-no-timestamp,sign-and-timestamp"
+	<target name="pack" depends="clean,copy-jars,copy-icons,set-bundled-defaults,make-trusted,sign-no-timestamp,sign-and-timestamp"
 		description="Build WebStart pack">
 		<mkdir dir="${root}/dist2" />
 		<zip destfile="${root}/dist2/OmegaT-WebStart.zip" basedir="${root}/build/webstart" />
@@ -53,7 +53,11 @@
 		<jar jarfile="${root}/build/webstart/hunspell-win64.jar" basedir="${root}/native" includes="hunspell-win64.dll" />
 		<jar jarfile="${root}/build/webstart/hunspell-win32.jar" basedir="${root}/native" includes="hunspell-win32.dll" />
 	</target>
-	
+
+    <target name="copy-icons">
+        <copy tofile="${root}/build/webstart/OmegaT.icon.png" file="${root}/images/OmegaT.iconset/icon_128x128.png" />
+    </target>
+
 	<target name="set-bundled-defaults" depends="set-layout-defaults">
 		<!-- Place an omegat.prefs (omegat-$BRANDING.prefs if using branding)
         	 in release/WebStart-specific to bundle default preferences for new users. -->
