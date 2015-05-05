@@ -78,6 +78,8 @@ public class TeamSettings {
                 } finally {
                     in.close();
                 }
+            } else {
+                f.getParentFile().mkdirs();
             }
             if (newValue != null) {
                 p.setProperty(key, newValue);
