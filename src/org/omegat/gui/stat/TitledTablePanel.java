@@ -25,6 +25,10 @@
 
 package org.omegat.gui.stat;
 
+import javax.swing.UIManager;
+import javax.swing.text.Caret;
+import javax.swing.text.DefaultCaret;
+
 /**
  *
  * @author Aaron Madlon-Kay
@@ -36,6 +40,16 @@ public class TitledTablePanel extends javax.swing.JPanel {
      */
     public TitledTablePanel() {
         initComponents();
+        
+        // Set the title JTextArea's caret not to update on changes to the text.
+        // When a TitledTablePanel is used in a JScrollPane (like in the 
+        // PerFileMatchStatisticsPanel) the caret updating will cause unwanted
+        // scrolling whenever a new TitledTablePanel is displayed.
+        Caret caret = title.getCaret();
+        if (caret instanceof DefaultCaret) {
+            ((DefaultCaret) caret).setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+        }
+        title.setFont(UIManager.getFont("Label.font"));
     }
 
     /**
@@ -47,25 +61,29 @@ public class TitledTablePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        title = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        title = new javax.swing.JTextArea();
+        scrollPane = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 10, 0));
         setLayout(new java.awt.BorderLayout());
 
+        title.setEditable(false);
+        title.setBackground(javax.swing.UIManager.getDefaults().getColor("Label.background"));
+        title.setLineWrap(true);
         title.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 5, 0));
         add(title, java.awt.BorderLayout.NORTH);
 
-        jScrollPane1.setViewportView(table);
+        scrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollPane.setViewportView(table);
 
-        add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        add(scrollPane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane1;
+    javax.swing.JScrollPane scrollPane;
     javax.swing.JTable table;
-    javax.swing.JLabel title;
+    javax.swing.JTextArea title;
     // End of variables declaration//GEN-END:variables
 }

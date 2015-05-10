@@ -9,6 +9,7 @@
                2012 Martin Fleurke, Didier Briel
                2013 Aaron Madlon-Kay, Zoltan Bartko, Didier Briel, Alex Buloichik
                2014 Aaron Madlon-Kay, Alex Buloichik
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -57,6 +58,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.omegat.core.data.ProtectedPart;
+import org.omegat.core.statistics.StatisticsSettings;
 import org.omegat.util.Platform.OsType;
 
 /**
@@ -93,8 +95,11 @@ public class StaticUtils {
     private final static String SCRIPT_DIR = "script";
 
     /**
-     * Char which should be used instead protected parts. It should be
-     * non-letter char, to be able to have correct words counter.
+     * Char which should be used instead protected parts. It should be non-letter char, to be able to have
+     * correct words counter.
+     * 
+     * This char can be placed around protected text for separate words inside protected text and words
+     * outside if there are no spaces between they.
      */
     public static final char TAG_REPLACEMENT_CHAR = '\b';
     public static final String TAG_REPLACEMENT = "\b";
@@ -452,11 +457,6 @@ public class StaticUtils {
         return graphics.getAvailableFontFamilyNames();
     }
 
-    // List of CVS or SVN folders
-    private static final String CVS_SVN_FOLDERS = "(CVS)|(.svn)|(_svn)";
-
-    private static final Pattern IGNORED_FOLDERS = Pattern.compile(CVS_SVN_FOLDERS);
-
     /**
      * Tests whether a directory has to be used
      *
@@ -464,8 +464,7 @@ public class StaticUtils {
      */
     private static boolean isProperDirectory(File file) {
         if (file.isDirectory()) {
-            Matcher directoryMatch = IGNORED_FOLDERS.matcher(file.getName());
-            return !directoryMatch.matches();
+            return true;
         } else
             return false;
     }
@@ -820,7 +819,11 @@ public class StaticUtils {
             ProtectedPart pp = new ProtectedPart();
             pp.setTextInSourceSegment(placeholderMatcher.group());
             pp.setDetailsFromSourceFile(placeholderMatcher.group());
-            pp.setReplacementWordsCountCalculation(placeholderMatcher.group());
+            if (StatisticsSettings.isCountingCustomTags()) {
+                pp.setReplacementWordsCountCalculation(placeholderMatcher.group());
+            } else {
+                pp.setReplacementWordsCountCalculation(StaticUtils.TAG_REPLACEMENT);
+            }
             pp.setReplacementUniquenessCalculation(placeholderMatcher.group());
             pp.setReplacementMatchCalculation(placeholderMatcher.group());
             result.add(pp);
@@ -849,7 +852,7 @@ public class StaticUtils {
      */
     public static String uuencode(byte[] buf) {
         if (buf.length <= 0)
-            return new String();
+            return "";
 
         StringBuilder res = new StringBuilder();
         res.append(buf[0]);

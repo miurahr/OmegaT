@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.omegat.core.segmentation.SRX;
+import org.omegat.filters2.master.FilterMaster;
 import org.omegat.filters2.master.PluginUtils;
 import org.omegat.util.Language;
 import org.omegat.util.OConsts;
@@ -57,7 +58,7 @@ import org.omegat.util.StringUtil;
  */
 public class ProjectProperties {
 
-    public static final String[] DEFAULT_EXCLUDES = { "**/.svn/**", "**/CSV/**", "**/.cvs/**",
+    public static final String[] DEFAULT_EXCLUDES = { "**/.svn/**", "**/CVS/**", "**/.cvs/**",
             "**/desktop.ini", "**/Thumbs.db" };
 
     /**
@@ -97,6 +98,7 @@ public class ProjectProperties {
         }
 
         projectSRX = SRX.loadSRX(new File(getProjectInternal(), SRX.CONF_SENTSEG));
+        projectFilters = FilterMaster.loadConfig(getProjectInternal());
 
         setSourceTokenizer(PluginUtils.getTokenizerClassForLanguage(getSourceLanguage()));
         setTargetTokenizer(PluginUtils.getTokenizerClassForLanguage(getTargetLanguage()));

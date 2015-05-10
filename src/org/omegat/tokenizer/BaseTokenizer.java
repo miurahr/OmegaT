@@ -4,7 +4,7 @@
           glossaries, and translation leveraging into updated projects.
  
  Copyright (C) 2008 Alex Buloichik (alex73mail@gmail.com)
-               2013 Aaron Madlon-Kay
+               2013, 2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -38,8 +38,11 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.util.Version;
+import org.omegat.core.Core;
 import org.omegat.core.CoreEvents;
+import org.omegat.core.data.SourceTextEntry;
 import org.omegat.core.events.IProjectEventListener;
+import org.omegat.gui.comments.ICommentProvider;
 import org.omegat.util.Token;
 
 /**
@@ -49,11 +52,11 @@ import org.omegat.util.Token;
  * @author Aaron Madlon-Kay
  */
 public abstract class BaseTokenizer implements ITokenizer {
-    private static Map<String, Token[]> tokenCacheNone = new HashMap<String, Token[]>(
+    private static final Map<String, Token[]> tokenCacheNone = new HashMap<String, Token[]>(
             5000);
-    private static Map<String, Token[]> tokenCacheMatching = new HashMap<String, Token[]>(
+    private static final Map<String, Token[]> tokenCacheMatching = new HashMap<String, Token[]>(
             5000);
-    private static Map<String, Token[]> tokenCacheGlossary = new HashMap<String, Token[]>(
+    private static final Map<String, Token[]> tokenCacheGlossary = new HashMap<String, Token[]>(
             5000);
 
     /**
@@ -93,6 +96,7 @@ public abstract class BaseTokenizer implements ITokenizer {
 
     public BaseTokenizer() {
         CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
+            @Override
             public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
                 if (eventType == PROJECT_CHANGE_TYPE.CLOSE) {
                     synchronized (tokenCacheNone) {
@@ -112,6 +116,7 @@ public abstract class BaseTokenizer implements ITokenizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<Version, String> getSupportedBehaviors() {
         return supportedBehaviors;
     }
@@ -119,6 +124,7 @@ public abstract class BaseTokenizer implements ITokenizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Version getBehavior() {
         return currentBehavior == null ? defaultBehavior : currentBehavior;
     }
@@ -126,6 +132,7 @@ public abstract class BaseTokenizer implements ITokenizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setBehavior(Version behavior) {
         currentBehavior = behavior;
     }
@@ -133,6 +140,7 @@ public abstract class BaseTokenizer implements ITokenizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Version getDefaultBehavior() {
         return defaultBehavior;
     }
@@ -140,6 +148,7 @@ public abstract class BaseTokenizer implements ITokenizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Token[] tokenizeWordsForSpelling(String str) {
         return tokenize(str, false, false, true);
     }
@@ -147,9 +156,10 @@ public abstract class BaseTokenizer implements ITokenizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Token[] tokenizeWords(final String strOrig,
             final StemmingMode stemmingMode) {
-        Map<String, Token[]> cache = null;
+        Map<String, Token[]> cache;
         switch (stemmingMode) {
         case NONE:
             cache = tokenCacheNone;
@@ -160,14 +170,16 @@ public abstract class BaseTokenizer implements ITokenizer {
         case MATCHING:
             cache = tokenCacheMatching;
             break;
+        default:
+            throw new RuntimeException("No cache for specified stemming mode");
         }
         Token[] result;
         synchronized (cache) {
             result = cache.get(strOrig);
         }
-        if (result != null)
+        if (result != null) {
             return result;
-
+        }
         result = tokenize(strOrig, stemmingMode == StemmingMode.GLOSSARY
                 || stemmingMode == StemmingMode.MATCHING,
                 stemmingMode == StemmingMode.MATCHING,
@@ -183,6 +195,7 @@ public abstract class BaseTokenizer implements ITokenizer {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Token[] tokenizeAllExactly(final String strOrig) {
 
         if (!shouldDelegateTokenizeExactly) {
@@ -264,11 +277,52 @@ public abstract class BaseTokenizer implements ITokenizer {
     protected abstract TokenStream getTokenStream(final String strOrig,
             final boolean stemsAllowed, final boolean stopWordsAllowed);
 
+    @Override
     public String[] getSupportedLanguages() {
         Tokenizer ann = getClass().getAnnotation(Tokenizer.class);
         return ann == null ? new String[0] : ann.languages();
     }
 
+    protected String test(String... args) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getName()).append('\n');
+        for (String input : args) {
+            sb.append("Input:\n");
+            sb.append(input);
+            sb.append("tokenizeAllExactly:\n");
+            sb.append(printTest(tokenizeAllExactly(input), input));
+            sb.append("tokenize:\n");
+            sb.append(printTest(tokenize(input, false, false, false), input));
+            sb.append("tokenize (stemsAllowed):\n");
+            sb.append(printTest(tokenize(input, true, false, false), input));
+            sb.append("tokenize (stemsAllowed stopWordsAllowed):\n");
+            sb.append(printTest(tokenize(input, true, true, false), input));
+            sb.append("tokenize (stemsAllowed stopWordsAllowed filterDigits) (=tokenizeWords(MATCHING)):\n");
+            sb.append(printTest(tokenize(input, true, true, true), input));
+            sb.append("tokenize (stemsAllowed filterDigits) (=tokenizeWords(GLOSSARY)):\n");
+            sb.append(printTest(tokenize(input, true, false, true), input));
+            sb.append("tokenize (filterDigits) (=tokenizeWords(NONE) tokenizeWordsForSpelling):\n");
+            sb.append(printTest(tokenize(input, false, false, true), input));
+            sb.append("----------------------------------\n");
+        }
+        return sb.toString();
+    }
+    
+    protected String printTest(Token[] tokens, String input) {
+        StringBuilder sb = new StringBuilder();
+        String[] strings = Token.getTextsFromString(tokens, input);
+        sb.append(StringUtils.join(strings, ", ")).append('\n');
+        sb.append("Is verbatim: ").append(StringUtils.join(strings, "").equals(input)).append('\n');
+        return sb.toString();
+    }
+    
+    public static ICommentProvider TOKENIZER_DEBUG_PROVIDER = new ICommentProvider() {
+        @Override
+        public String getComment(SourceTextEntry newEntry) {
+            return ((BaseTokenizer) Core.getProject().getSourceTokenizer()).test(newEntry.getSrcText());
+        }
+    };
+    
     static {
         for (Version v : Version.values()) {
             StringBuilder b = new StringBuilder();
@@ -277,34 +331,5 @@ public abstract class BaseTokenizer implements ITokenizer {
             if (Character.isDigit(b.charAt(b.length() - 1))) b.insert(b.length() - 1, '.');
             supportedBehaviors.put(v, b.toString());
         }
-    }
-    
-    protected void test(String... args) {
-        System.out.println(getClass().getName());
-        for (String input : args) {
-            System.out.println("Input:");
-            System.out.println(input);
-            System.out.println("tokenizeAllExactly:");
-            printTest(tokenizeAllExactly(input), input);
-            System.out.println("tokenize:");
-            printTest(tokenize(input, false, false, false), input);
-            System.out.println("tokenize (stemsAllowed):");
-            printTest(tokenize(input, true, false, false), input);
-            System.out.println("tokenize (stemsAllowed stopWordsAllowed):");
-            printTest(tokenize(input, true, true, false), input);
-            System.out.println("tokenize (stemsAllowed stopWordsAllowed filterDigits) (=tokenizeWords(MATCHING)):");
-            printTest(tokenize(input, true, true, true), input);
-            System.out.println("tokenize (stemsAllowed filterDigits) (=tokenizeWords(GLOSSARY)):");
-            printTest(tokenize(input, true, false, true), input);
-            System.out.println("tokenize (filterDigits) (=tokenizeWords(NONE) tokenizeWordsForSpelling):");
-            printTest(tokenize(input, false, false, true), input);
-            System.out.println("----------------------------------");
-        }
-    }
-    
-    protected void printTest(Token[] tokens, String input) {
-        String[] strings = Token.getTextsFromString(tokens, input);
-        System.out.println(StringUtils.join(strings, ", "));
-        System.out.println("Is verbatim: " + StringUtils.join(strings, "").equals(input));
     }
 }

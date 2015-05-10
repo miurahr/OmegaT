@@ -35,7 +35,6 @@ import gen.core.filters.Filters;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GraphicsEnvironment;
 import java.awt.Label;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -329,8 +328,11 @@ public class ProjectPropertiesDialog extends JDialog {
         bB.add(bSTB);
 
         // Source tokenizer behavior field
-        ITokenizer srcTok = Core.getProject().getSourceTokenizer();
-        if (srcTok == null) {
+        Class<?> srcTokClass = projectProperties.getSourceTokenizer();
+        ITokenizer srcTok;
+        try {
+            srcTok = (ITokenizer) srcTokClass.newInstance();
+        } catch (Exception e) {
             srcTok = new DefaultTokenizer();
         }
         final JComboBox m_sourceTokenizerBehaviorField = new JComboBox(
@@ -397,8 +399,11 @@ public class ProjectPropertiesDialog extends JDialog {
         bB.add(bTTB);
 
         // Target tokenizer behavior field
-        ITokenizer trgTok = Core.getProject().getTargetTokenizer();
-        if (trgTok == null) {
+        Class<?> trgTokClass = projectProperties.getTargetTokenizer();
+        ITokenizer trgTok;
+        try {
+            trgTok = (ITokenizer) trgTokClass.newInstance();
+        } catch (Exception e) {
             trgTok = new DefaultTokenizer();
         }
         final JComboBox m_targetTokenizerBehaviorField = new JComboBox(
@@ -865,10 +870,7 @@ public class ProjectPropertiesDialog extends JDialog {
 
         setSize(9 * getWidth() / 8, getHeight() + 10);
         setResizable(true);
-        Rectangle rect = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-        if (getHeight() > rect.height) {
-            setSize(getWidth(), rect.height);
-        }
+        StaticUIUtils.fitInScreen(this);
         DockingUI.displayCentered(this);
     }
 

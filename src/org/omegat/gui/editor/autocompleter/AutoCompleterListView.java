@@ -27,6 +27,7 @@ package org.omegat.gui.editor.autocompleter;
 
 import java.awt.Component;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -35,7 +36,10 @@ import java.util.List;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JScrollBar;
 import javax.swing.ListModel;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
 
 import org.omegat.gui.editor.EditorTextArea3;
@@ -53,7 +57,6 @@ import org.omegat.util.Token;
 public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
     
     private static JList list;
-    private static CellRenderer renderer;
 
     ListModel listModel = new DefaultListModel();
     
@@ -61,16 +64,14 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
             OStrings.getString("AC_NO_SUGGESTIONS"), null, 0);
     
     public AutoCompleterListView(String name, AutoCompleter completer) {
-        super(name,completer);
+        super(name, completer);
         getList().setFocusable(false);
     }
     
     public JList getList() {
         if (list == null) {
             list = new JList();
-            list.setFixedCellHeight(12);
-            renderer = new CellRenderer(this);
-            list.setCellRenderer(renderer);
+            list.setCellRenderer(new CellRenderer());
             list.addMouseListener(new MouseAdapter() {
             	@Override
             	public void mouseClicked(MouseEvent e) {
@@ -170,9 +171,19 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
     
     @Override
     public int getPreferredHeight() {
-        int height = getModifiedRowCount() * getList().getFont().getSize();
-        return Math.max(height, 50);
+        Rectangle bounds = getList().getCellBounds(0, 0);
+        return (int) (getModifiedRowCount() * (bounds == null ? getList().getFont().getSize() : bounds.getHeight()));
     }
+    
+    @Override
+    public int getPreferredWidth() {
+        int width = getList().getPreferredSize().width;
+        JScrollBar bar = completer.scroll.getVerticalScrollBar();
+        if (bar != null) {
+            width += bar.getPreferredSize().width;
+        }
+        return width;
+    };
     
     @Override
     public void setData(List<AutoCompleterItem> entryList) {
@@ -191,7 +202,6 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
     
     @Override
     public Component getViewContent() {
-        renderer.view = this;
         getList().setVisibleRowCount(getModifiedRowCount());
         return getList();
     }
@@ -248,22 +258,19 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
      */
     public abstract String itemToString(AutoCompleterItem item);
     
+    private static final Border LIST_MARGIN_BORDER = new EmptyBorder(0, 5, 0, 5);
     
     @SuppressWarnings("serial")
-    class CellRenderer extends DefaultListCellRenderer {
-        private AutoCompleterListView view;
-        
-        public CellRenderer(AutoCompleterListView view) {
-            this.view = view;
-        }
+    private class CellRenderer extends DefaultListCellRenderer {
         
         @Override
         public Component getListCellRendererComponent(JList list, Object value,
                 int index, boolean isSelected, boolean cellHasFocus) {
+            setBorder(LIST_MARGIN_BORDER);
             if (value == NO_SUGGESTIONS) {
                 setText(((AutoCompleterItem)value).payload);
             } else {
-                setText(view.itemToString((AutoCompleterItem)value));
+                setText(itemToString((AutoCompleterItem)value));
             }
             if (isSelected) {
                 setBackground(list.getSelectionBackground());

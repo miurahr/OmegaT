@@ -63,6 +63,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -293,8 +294,14 @@ public class EditorController implements IEditor {
         });
 
         scrollPane = new JScrollPane(editor);
-        scrollPane.setBorder(UIManager.getBorder("OmegaTDockablePanel.border"));
-        scrollPane.setViewportBorder(UIManager.getBorder("OmegaTDockablePanelViewport.border"));
+        Border panelBorder = UIManager.getBorder("OmegaTDockablePanel.border");
+        if (panelBorder != null) { 
+            scrollPane.setBorder(panelBorder);
+        }
+        Border viewportBorder = UIManager.getBorder("OmegaTDockablePanelViewport.border");
+        if (viewportBorder != null) {
+            scrollPane.setViewportBorder(viewportBorder);
+        }
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         pane.setLayout(new BorderLayout());
@@ -780,15 +787,17 @@ public class EditorController implements IEditor {
         }
 
         StatisticsInfo stat = project.getStatistics();
-        StringBuilder pMsg = new StringBuilder(1024).append(" ");
+
         final MainWindowUI.STATUS_BAR_MODE progressMode =
                 Preferences.getPreferenceEnumDefault(Preferences.SB_PROGRESS_MODE,
                         MainWindowUI.STATUS_BAR_MODE.DEFAULT);
         
         if (progressMode == MainWindowUI.STATUS_BAR_MODE.DEFAULT) {
+            StringBuilder pMsg = new StringBuilder(1024).append(" ");
             pMsg.append(translatedInFile).append("/").append(fi.entries.size()).append(" (")
                     .append(stat.numberofTranslatedSegments).append("/").append(stat.numberOfUniqueSegments)
                     .append(", ").append(stat.numberOfSegmentsTotal).append(") ");
+            Core.getMainWindow().showProgressMessage(pMsg.toString());
         } else {
             /*
              * Percentage mode based on idea by Yu Tang
@@ -797,25 +806,18 @@ public class EditorController implements IEditor {
             java.text.NumberFormat nfPer = java.text.NumberFormat.getPercentInstance();
             nfPer.setRoundingMode(java.math.RoundingMode.DOWN);
             nfPer.setMaximumFractionDigits(1);
-            if (translatedUniqueInFile == 0) {
-                pMsg.append("0%");
-            } else {
-                pMsg.append(nfPer.format((double)translatedUniqueInFile / uniqueInFile));
-            }
-            pMsg.append(" (").append(uniqueInFile - translatedUniqueInFile)
-                    .append(OStrings.getString("MW_PROGRESS_LEFT_LABEL")).append(") / ");
 
-            if (stat.numberofTranslatedSegments == 0) {
-                pMsg.append("0%");
-            } else {
-                pMsg.append(nfPer.format((double)stat.numberofTranslatedSegments / stat.numberOfUniqueSegments));
-            }
-            pMsg.append(" (").append(stat.numberOfUniqueSegments - stat.numberofTranslatedSegments)
-                    .append(OStrings.getString("MW_PROGRESS_LEFT_LABEL")).append(") ")
-                    .append(", ").append(stat.numberOfSegmentsTotal).append(" ");
+            String message = StaticUtils.format( OStrings.getString("MW_PROGRESS_DEFAULT_PERCENTAGE"),
+                    new Object[] { (translatedUniqueInFile == 0) ? "0%" :
+                            nfPer.format((double)translatedUniqueInFile / uniqueInFile),
+                    uniqueInFile - translatedUniqueInFile,
+                    (stat.numberofTranslatedSegments == 0) ? "0%" :
+                            nfPer.format((double)stat.numberofTranslatedSegments / stat.numberOfUniqueSegments),
+                    stat.numberOfUniqueSegments - stat.numberofTranslatedSegments,
+                    stat.numberOfSegmentsTotal });
+
+            Core.getMainWindow().showProgressMessage(message);
         }
-
-        Core.getMainWindow().showProgressMessage(pMsg.toString());
     }
 
     /**

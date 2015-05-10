@@ -33,13 +33,13 @@ package org.omegat.util.gui;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.Window;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.UIManager;
-import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
@@ -87,12 +87,12 @@ public class DockingUI {
         UIManager.put("DockViewTitleBar.restoreButtonText", OStrings.getString("DOCKING_HINT_RESTORE"));
         UIManager.put("DockViewTitleBar.attachButtonText", OStrings.getString("DOCKING_HINT_DOCK"));
         UIManager.put("DockViewTitleBar.floatButtonText", OStrings.getString("DOCKING_HINT_UNDOCK"));
-        UIManager.put("DockViewTitleBar.closeButtonText", new String());
+        UIManager.put("DockViewTitleBar.closeButtonText", "");
         UIManager.put("DockTabbedPane.minimizeButtonText", OStrings.getString("DOCKING_HINT_MINIMIZE"));
         UIManager.put("DockTabbedPane.maximizeButtonText", OStrings.getString("DOCKING_HINT_MAXIMIZE"));
         UIManager.put("DockTabbedPane.restoreButtonText", OStrings.getString("DOCKING_HINT_RESTORE"));
         UIManager.put("DockTabbedPane.floatButtonText", OStrings.getString("DOCKING_HINT_UNDOCK"));
-        UIManager.put("DockTabbedPane.closeButtonText", new String());
+        UIManager.put("DockTabbedPane.closeButtonText", "");
 
         // Fonts
         Font defaultFont = UIManager.getFont("Label.font");
@@ -106,6 +106,13 @@ public class DockingUI {
         UIManager.put("DockingDesktop.maximizeActionAccelerator", null);
         UIManager.put("DockingDesktop.dockActionAccelerator", null);
         UIManager.put("DockingDesktop.floatActionAccelerator", null);
+        
+        // Disused icons
+        UIManager.put("DockViewTitleBar.menu.close", getIcon("empty.gif"));
+        UIManager.put("DockTabbedPane.close", getIcon("empty.gif"));
+        UIManager.put("DockTabbedPane.close.rollover", getIcon("empty.gif"));
+        UIManager.put("DockTabbedPane.close.pressed", getIcon("empty.gif"));
+        UIManager.put("DockTabbedPane.menu.close", getIcon("empty.gif"));
 
         // Classic design overridden by flat design
         //installClassicDesign();
@@ -149,11 +156,6 @@ public class DockingUI {
         UIManager.put("DockViewTitleBar.menu.float", getIcon("undock.gif"));
         UIManager.put("DockViewTitleBar.menu.attach", getIcon("dock.gif"));
 
-        UIManager.put("DockViewTitleBar.menu.close", getIcon("empty.gif"));
-        UIManager.put("DockTabbedPane.close", getIcon("empty.gif"));
-        UIManager.put("DockTabbedPane.close.rollover", getIcon("empty.gif"));
-        UIManager.put("DockTabbedPane.close.pressed", getIcon("empty.gif"));
-        UIManager.put("DockTabbedPane.menu.close", getIcon("empty.gif"));
         UIManager.put("DockTabbedPane.menu.hide", getIcon("empty.gif"));
         UIManager.put("DockTabbedPane.menu.maximize", getIcon("empty.gif"));
         UIManager.put("DockTabbedPane.menu.float", getIcon("empty.gif"));
@@ -189,24 +191,27 @@ public class DockingUI {
     
     private static void installFlatDesign() {
         // Colors
-        Color standardBgColor = new Color(0xEEEEEE); // Label.background on Metal & OS X LAF
-        Color activeTitleBgColor = new Color(0xF6F6F7); // Lighter than standard background
-        Color bottomAreaBgColor = new Color(0xDEDEDE); // Darkest background
-        Color borderColor = new Color(0x9B9B9B); // Standard border. Darker than standard background.
+        Color standardBgColor = UIManager.getColor("Panel.background"); // #EEEEEE on Metal & OS X LAF
+        Color activeTitleBgColor = adjustRGB(standardBgColor, 0xF6 - 0xEE); // #EEEEEE -> #F6F6F6; Lighter than standard background
+        Color bottomAreaBgColor = adjustRGB(standardBgColor, 0xDE - 0xEE); // #EEEEEE -> #DEDEDE; Darkest background
+        Color borderColor = adjustRGB(standardBgColor, 0x9B - 0xEE); // #EEEEEE -> #9B9B9B; Standard border. Darker than standard background.
         UIManager.put("OmegaTBorder.color", borderColor);
-        Color statusAreaColor = new Color(0x575757); // Darkest border
+        Color statusAreaColor = adjustRGB(standardBgColor, 0x57 - 0xEE); // #EEEEEE -> #575757; Darkest border
         
         // General highlight & shadow used in a lot of places
         UIManager.put("VLDocking.highlight", activeTitleBgColor);
         UIManager.put("VLDocking.shadow", statusAreaColor);
         
         // Main window main area
+        int outside = 5;
+        UIManager.put("DockingDesktop.border", new EmptyBorder(outside, outside, outside, outside));
         
         // Docked, visible panels get two borders if we're not careful:
         // 1. Drawn by VLDocking. Surrounds panel content AND header. Set this to empty margin instead.
-        Border panelMargin = new EmptyBorder(5, 5, 5, 5);
-        UIManager.put("DockView.singleDockableBorder", panelMargin);
-        UIManager.put("DockView.maximizedDockableBorder", panelMargin);
+        int panel = 2;
+        UIManager.put("DockView.singleDockableBorder", new EmptyBorder(panel, panel, panel, panel));
+        int maxPanel = outside + panel;
+        UIManager.put("DockView.maximizedDockableBorder", new EmptyBorder(maxPanel, maxPanel, maxPanel, maxPanel));
         // 2. Drawn by OmegaT-defined Dockables. Make this a 1px line.
         UIManager.put("OmegaTDockablePanel.border", new MatteBorder(1, 1, 1, 1, borderColor));
 
@@ -220,15 +225,20 @@ public class DockingUI {
         // colors don't appear to be available through the API. These values are from visual inspection.
         if (Platform.isMacOSX()) {
             UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(0, 5, 5, 5, new Color(0xE6E6E6)));
-        } else {
+        } else if (isWindowsLAF() && !isWindowsClassicLAF()) {
             UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(2, 5, 5, 5, Color.WHITE));
+        } else {
+            UIManager.put("DockView.tabbedDockableBorder", new MatteBorder(5, 5, 5, 5, standardBgColor));
         }
         
         // Panel title bars
+        Color activeTitleText = UIManager.getColor("Label.foreground");
+        Color inactiveTitleText = adjustRGB(activeTitleText, 0x80); // #000000 -> #808080; GTK+ has Color.WHITE for Label.disabledForeground
         UIManager.put("DockViewTitleBar.border", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_TOP));
+        UIManager.put("InternalFrame.activeTitleForeground", activeTitleText); // Windows 7 "Classic" has Color.WHITE for this
         UIManager.put("InternalFrame.activeTitleBackground", activeTitleBgColor);
+        UIManager.put("InternalFrame.inactiveTitleForeground", inactiveTitleText); 
         UIManager.put("InternalFrame.inactiveTitleBackground", standardBgColor);
-        UIManager.put("InternalFrame.inactiveTitleForeground", new Color(0x808080)); // Label.disabledForeground on OS X LAF
         // Disable gradient on pane title bars
         UIManager.put("DockViewTitleBar.disableCustomPaint", true);
 
@@ -237,14 +247,16 @@ public class DockingUI {
         // AutoHideButtonPanel is where minimized panel tabs go. Use compound border to give left/right margins.
         UIManager.put("AutoHideButtonPanel.bottomBorder", new CompoundBorder(
                 new MatteBorder(1, 0, 0, 0, borderColor),
-                new EmptyBorder(0, 10, 0, 10)));
+                new EmptyBorder(0, 2 * outside, 0, 2 * outside)));
         UIManager.put("AutoHideButtonPanel.background", bottomAreaBgColor);
         UIManager.put("AutoHideButton.expandBorderBottom", new RoundedCornerBorder(8, borderColor, RoundedCornerBorder.SIDE_BOTTOM));
         UIManager.put("AutoHideButton.background", standardBgColor);
         // OmegaT-defined status box in lower right
         UIManager.put("OmegaTStatusArea.border", new MatteBorder(1, 1, 1, 1, statusAreaColor));
         // Lowermost section margins
-        UIManager.put("OmegaTMainWindowBottomMargin.border", new EmptyBorder(0, 10, 5, 10));
+        UIManager.put("OmegaTMainWindowBottomMargin.border", new EmptyBorder(0, 2 * outside, outside, 2 * outside));
+        
+        UIManager.put("OmegaTEditorFilter.border", new MatteBorder(1, 1, 0, 1, borderColor));
         
         // Undocked panel
         UIManager.put("activeCaption", Color.WHITE);
@@ -308,6 +320,26 @@ public class DockingUI {
             
             UIManager.put("DragControler.detachCursor", ResourcesUtil.getBundledImage("appbar.fullscreen.png"));
         }
+    }
+    
+    /**
+     * Adjust a color by adding some constant to its RGB values, wrapping around within the range 0-255.
+     */
+    private static Color adjustRGB(Color color, int adjustment) {
+        Color result = new Color((color.getRed() + adjustment + 255) % 255,
+                (color.getGreen() + adjustment + 255) % 255,
+                (color.getBlue() + adjustment + 255) % 255);
+        return result;
+    }
+    
+    // Windows Classic LAF detection from http://stackoverflow.com/a/4386821/448068
+    private static boolean isWindowsLAF() {
+        return UIManager.getLookAndFeel().getID().equals("Windows");
+    }
+
+    private static boolean isWindowsClassicLAF() {
+        return isWindowsLAF() &&
+                !(Boolean) Toolkit.getDefaultToolkit().getDesktopProperty("win.xpstyle.themeActive");
     }
 
     /**

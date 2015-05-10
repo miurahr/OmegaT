@@ -257,7 +257,7 @@ Andere bijdragen door
 
 OmegaT gebruikt de volgende bibliotheken:
   HTMLParser 1.6 van Somik Raha, Derrick Oswald en anderen (LGPL License)
-  VLDocking Framework 3.0.4 (LGPL License)
+  VLDocking Framework 3.0.5-SNAPSHOT (LGPL License)
   Hunspell van László Németh en anderen (LGPL License)
   JNA van Todd Fast, Timothy Wall en anderen (LGPL License)
   Swing-Layout 1.0.4 (LGPL License)
@@ -286,6 +286,7 @@ OmegaT gebruikt de volgende bibliotheken:
   SuperTMXMerge-for_OmegaT.jar (LGPL License)
   groovy-all-2.2.2.jar (Apache License 2.0)
   slf4j (MIT License)
+  juniversalchardet-1.0.3.jar (GPL v2)
 
 ==============================================================================
  5.  Heeft u problemen met OmegaT ? Heeft u hulp nodig?

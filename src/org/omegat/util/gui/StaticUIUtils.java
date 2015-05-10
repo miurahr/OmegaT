@@ -26,11 +26,18 @@
 
 package org.omegat.util.gui;
 
+import java.awt.Component;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowEvent;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -137,8 +144,12 @@ public class StaticUIUtils {
         if (targetWidth < 1) {
             return text;
         }
-                
-        FontMetrics metrics = comp.getGraphics().getFontMetrics();
+        
+        Graphics graphics = comp.getGraphics();
+        if (graphics == null) {
+            return text;
+        }
+        FontMetrics metrics = graphics.getFontMetrics();
         final int fullWidth = metrics.stringWidth(text);
         // Early out if string + margin already fits
         if (fullWidth + margin < targetWidth) {
@@ -172,5 +183,20 @@ public class StaticUIUtils {
             text = text.substring(0, chompStart) + TRUNCATE_CHAR + text.substring(chompEnd, text.length());
         }
         return text;
+    }
+    
+    public static void forwardMouseWheelEvent(Component target, MouseWheelEvent evt) {
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
+                new MouseWheelEvent(target, evt.getID(), evt.getWhen(),
+                        evt.getModifiers(), evt.getX(), evt.getY(),
+                        evt.getClickCount(), evt.isPopupTrigger(),
+                        evt.getScrollType(), evt.getScrollAmount(), evt.getWheelRotation()));
+    }
+
+    public static void fitInScreen(Component comp) {
+        Rectangle rect = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        if (comp.getHeight() > rect.height) {
+            comp.setSize(comp.getWidth(), rect.height);
+        }
     }
 }
