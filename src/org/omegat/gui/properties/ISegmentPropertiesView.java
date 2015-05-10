@@ -1,9 +1,12 @@
 package org.omegat.gui.properties;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.util.List;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.border.Border;
@@ -14,8 +17,21 @@ import javax.swing.border.MatteBorder;
 import org.omegat.util.gui.ResourcesUtil;
 
 public interface ISegmentPropertiesView {
-    static ImageIcon SETTINGS_ICON = new ImageIcon(ResourcesUtil.getBundledImage("appbar.settings.active.png"));
-    static ImageIcon SETTINGS_ICON_INACTIVE = new ImageIcon(ResourcesUtil.getBundledImage("appbar.settings.inactive.png"));
+    static Icon SETTINGS_ICON = new ImageIcon(ResourcesUtil.getBundledImage("appbar.settings.active.png"));
+    static Icon SETTINGS_ICON_INACTIVE = new ImageIcon(ResourcesUtil.getBundledImage("appbar.settings.inactive.png"));
+    static Icon SETTINGS_ICON_INVISIBLE = new Icon() {
+		@Override
+		public void paintIcon(Component c, Graphics g, int x, int y) {
+		}
+		@Override
+		public int getIconWidth() {
+			return SETTINGS_ICON.getIconWidth();
+		}
+		@Override
+		public int getIconHeight() {
+			return SETTINGS_ICON.getIconHeight();
+		}
+	};
     
     static final String PROPERTY_TRANSLATION_KEY = "SEGPROP_KEY_";    
     static final Color ROW_HIGHLIGHT_COLOR = new Color(245, 245, 245);

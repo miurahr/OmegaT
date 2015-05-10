@@ -183,7 +183,7 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
         public Component getListCellRendererComponent(JList list, Object value,
                 int index, boolean isSelected, boolean cellHasFocus) {
             boolean isKeyRow = index % 2 == 0;
-            button.setVisible(isKeyRow);
+            button.setVisible(isKeyRow && (index == mouseoverIndex || index + 1 == mouseoverIndex));
             if (isKeyRow) {
                 button.setIcon(index == mouseoverIndex ? SETTINGS_ICON : SETTINGS_ICON_INACTIVE);
             }

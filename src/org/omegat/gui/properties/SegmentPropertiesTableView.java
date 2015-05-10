@@ -179,8 +179,8 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
                 return null;
             }
             if (columnIndex == 2) {
-                return rowIndex == mouseoverRow && columnIndex == mouseoverCol
-                        ? SETTINGS_ICON : SETTINGS_ICON_INACTIVE;
+                return rowIndex == mouseoverRow && columnIndex == mouseoverCol ? SETTINGS_ICON
+                		: rowIndex == mouseoverRow ? SETTINGS_ICON_INACTIVE : SETTINGS_ICON_INVISIBLE;
             }
             int realIndex = rowIndex * 2 + columnIndex;
             if (realIndex >= parent.properties.size()) {
@@ -199,7 +199,7 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
             switch (columnIndex) {
             case 0:
             case 1: return String.class;
-            case 2: return ImageIcon.class;
+            case 2: return Icon.class;
             }
             return null;
         }
