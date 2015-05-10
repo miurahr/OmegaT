@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.MissingResourceException;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
