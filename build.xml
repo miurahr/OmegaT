@@ -8,6 +8,7 @@
                2012 Didier Briel
                2013 Didier Briel, Aaron Madlon-Kay
                2014 Didier Briel
+               2015 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -114,7 +115,8 @@
                     scripts/properties/spellcheck.properties
                     scripts/properties/svn_cleanup_selected.properties
                     scripts/properties/search_replace.properties
-                    script/properties/replace_strip_tags.properties" />
+                    script/properties/replace_strip_tags.properties
+                    release/mac-specific/OmegaT.app/Contents/Resources/en.lproj/Localizable.strings" />
         </copy>
         <copy file="release/readme.txt"
               tofile="${l10n.min.dir}/source/readme.utf8"
@@ -142,7 +144,8 @@
                     scripts/properties/spellcheck.properties
                     scripts/properties/svn_cleanup_selected.properties
                     scripts/properties/search_replace.properties
-                    script/properties/replace_strip_tags.properties"
+                    script/properties/replace_strip_tags.properties
+                    release/mac-specific/OmegaT.app/Contents/Resources/en.lproj/Localizable.strings"
                     excludes="doc_src/en/index.xml
                     doc_src/en/html/**
                     doc_src/en/pdf/**" />
@@ -287,7 +290,7 @@ Custom strings from release\win32-specific must be added manually to the languag
     </target>
 
     <!-- Builds a Mac distribution -->    
-    <target name="mac" description="Build Mac distro. PRE: A MacOS JRE must be present in ../jre-mac/" depends="jar,release,check-jre-mac">
+    <target name="mac" description="Build Mac distro. PRE: A MacOS JRE must be present in ../jre-mac-root/ and JavaAppLauncher must be in ../ (obtain from AppBundler JAR)" depends="jar,release,check-mac-reqs">
         <!-- Build directories -->
         <mkdir dir="dist2"/>
 
@@ -295,15 +298,47 @@ Custom strings from release\win32-specific must be added manually to the languag
         <copy todir="build/" file="release/mac-specific/OmegaT.app/Contents/Info.plist" filtering="on"/>
 
         <zip destfile="dist2/OmegaT_${distversion}${beta}_Mac.zip">
-            <zipfileset dir="dist" excludes="OmegaT OmegaT-JRE linux-install.sh omegat.kaptn OmegaT.exe OmegaT.bat OmegaT.iss OmegaT-JRE.iss OmegaT.l4J.ini l10n-project" prefix="OmegaT.app/Contents/MacOS/Java"/>
-            <zipfileset dir="release/mac-specific/" excludes="OmegaT.app/Contents/Info.plist,OmegaT.app/Contents/MacOS/OmegaT.sh"/>
+            <zipfileset dir="dist" excludes="OmegaT OmegaT-JRE linux-install.sh omegat.kaptn OmegaT.exe OmegaT.bat OmegaT.iss OmegaT-JRE.iss OmegaT.l4J.ini l10n-project" prefix="OmegaT.app/Contents/Java"/>
+            <zipfileset dir="release/mac-specific/" excludes="OmegaT.app/Contents/Info.plist"/>
             <zipfileset dir="build/" includes="Info.plist" prefix="OmegaT.app/Contents/"/>
-            <zipfileset dir="release/mac-specific/" includes="OmegaT.app/Contents/MacOS/OmegaT.sh" filemode="755"/>
-            <zipfileset dir="../jre-mac/" excludes="bin/" prefix="OmegaT.app/Contents/MacOS/jre/"/>
-            <zipfileset dir="../jre-mac/" includes="bin/" prefix="OmegaT.app/Contents/MacOS/jre/" filemode="755"/>
+            <zipfileset dir="../" includes="JavaAppLauncher" filemode="755" prefix="OmegaT.app/Contents/MacOS/"/>
+            <zipfileset dir="../jre-mac-root/" excludes="bin/" prefix="OmegaT.app/Contents/Plugins/jre/"/>
         </zip>
     </target>
 
+    <!-- Requires AppBundler to be available to Ant (e.g. in ~/.ant/lib):
+         https://bitbucket.org/infinitekind/appbundler
+         AppBundler requires Java 1.7 -->
+    <target name="gen-mac" description="Generate Mac .app bundle.">
+        <taskdef name="bundleapp"
+                 classname="com.oracle.appbundler.AppBundlerTask"/>
+        <bundleapp
+            outputdirectory="release/mac-specific"
+            name="OmegaT"
+            displayname="OmegaT"
+            identifier="org.omegat.OmegaT"
+            icon="images/OmegaT.icns"
+            version="@VERSION_NUMBER_SUBST@"
+            shortversion="@VERSION_NUMBER_SUBST@"
+            mainclassname="org.omegat.Main">
+            <option value="-Xdock:name=OmegaT"/>
+            <option value="-Xmx1024M"/>
+            <argument value="--config-file=$APP_ROOT/Contents/Resources/Configuration.properties"/>
+        	<!--<option value="-Xdebug" />
+        	<option value="-Xrunjdwp:transport=dt_socket,address=8998,server=y"/>-->
+        	<bundledocument
+        		extensions="project"
+        		name="OmegaT Project"
+        		role="editor"
+        		icon="images/OmegaT.icns"/>
+        	<bundledocument
+        		extensions="*"
+        		name="All Files"
+        		role="none"/>
+            <plistentry key="JVMRuntime" value="jre"/>
+        </bundleapp>
+    </target>
+    
     <target name="check-win" depends="init">
         <condition property="os.windows">
             <and>
@@ -326,11 +361,13 @@ Custom strings from release\win32-specific must be added manually to the languag
     </target>
 
 
-    <target name="check-jre-mac">
-        <available file="../jre-mac/bin/java" type="file" property="mac-java-stub.exists1" />
-        <fail message="There is no Java for MacOS in the ../jre-mac/bin/java" unless="mac-java-stub.exists1" />
-        <available file="../jre-mac/lib/rt.jar" type="file" property="mac-java-stub.exists2" />
-        <fail message="There is no Java for MacOS in the ../jre-mac/lib/rt.jar" unless="mac-java-stub.exists2" />
+    <target name="check-mac-reqs">
+        <available file="../JavaAppLauncher" type="file" property="mac-java-stub.exists" />
+        <fail message="There is no Java for MacOS in the ../JavaAppLauncher" unless="mac-java-stub.exists" />
+        <available file="../jre-mac-root/Contents/Home/bin/java" type="file" property="mac-java-stub.exists1" />
+        <fail message="There is no Java for MacOS in the ../jre-mac-root/Contents/Home/bin/java" unless="mac-java-stub.exists1" />
+        <available file="../jre-mac-root/Contents/Home/lib/rt.jar" type="file" property="mac-java-stub.exists2" />
+        <fail message="There is no Java for MacOS in the ../jre-mac-root/Contents/Home/lib/rt.jar" unless="mac-java-stub.exists2" />
     </target>   
 
     <target name="win" description="Build Win32 distro if on Windows. PRE: Inno Setup (http://www.jrsoftware.org/isinfo.php) with all optional language packs must be installed and available on the path, and for the JRE-version a JRE must be present in ..\\jre\\ "

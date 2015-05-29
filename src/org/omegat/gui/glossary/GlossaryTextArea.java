@@ -9,7 +9,7 @@
                2010 Alex Buloichik
                2012 Jean-Christophe Helary
                2013 Aaron Madlon-Kay, Alex Buloichik
-               2015 Yu Tang
+               2015 Yu Tang, Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -44,7 +44,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JMenuItem;
@@ -61,11 +61,15 @@ import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.dialogs.CreateGlossaryEntry;
 import org.omegat.gui.editor.EditorUtils;
 import org.omegat.gui.main.DockableScrollPane;
+import org.omegat.gui.main.MainWindow;
 import org.omegat.util.Log;
+import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.AlwaysVisibleCaret;
+import org.omegat.util.gui.DragTargetOverlay;
+import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
 import org.omegat.util.gui.Styles;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -107,11 +111,12 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     private CreateGlossaryEntry createGlossaryEntryDialog;
 
     /** Creates new form MatchGlossaryPane */
-    public GlossaryTextArea() {
+    public GlossaryTextArea(final MainWindow mw) {
         super(true);
 
         String title = OStrings.getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Glossary");
-        Core.getMainWindow().addDockable(new DockableScrollPane("GLOSSARY", title, this, true));
+        final DockableScrollPane scrollPane = new DockableScrollPane("GLOSSARY", title, this, true);
+        Core.getMainWindow().addDockable(scrollPane);
 
         setEditable(false);
         AlwaysVisibleCaret.apply(this);
@@ -132,6 +137,32 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         addMouseListener(mouseListener);
 
         Core.getEditor().registerPopupMenuConstructors(300, new TransTipsPopup());
+        
+        DragTargetOverlay.apply(this, new FileDropInfo(mw, false) {
+            @Override
+            public boolean canAcceptDrop() {
+                return Core.getProject().isProjectLoaded();
+            }
+            @Override
+            public String getOverlayMessage() {
+                return OStrings.getString("DND_ADD_GLOSSARY_FILE");
+            }
+            @Override
+            public String getImportDestination() {
+                return Core.getProject().getProjectProperties().getGlossaryRoot();
+            }
+            @Override
+            public boolean acceptFile(File pathname) {
+                String name = pathname.getName().toLowerCase();
+                return name.endsWith(OConsts.EXT_CSV_UTF8) || name.endsWith(OConsts.EXT_TBX)
+                        || name.endsWith(OConsts.EXT_TSV_DEF) || name.endsWith(OConsts.EXT_TSV_TXT)
+                        || name.endsWith(OConsts.EXT_TSV_UTF8);
+            }
+            @Override
+            public Component getComponentToOverlay() {
+                return scrollPane;
+            }
+        });
     }
 
     @Override
@@ -177,8 +208,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
         UIThreadsUtil.mustBeSwingThread();
 
         if (entries == null) {
-            nowEntries = new ArrayList<GlossaryEntry>();
-            setText("");
+            clear();
             return;
         }
 
@@ -208,6 +238,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
 
     /** Clears up the pane. */
     public void clear() {
+        nowEntries = Collections.EMPTY_LIST;
         setText("");
     }
 

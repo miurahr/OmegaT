@@ -64,9 +64,11 @@ import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.events.IProjectEventListener;
 import org.omegat.core.matching.NearString;
 import org.omegat.gui.common.OmegaTIcons;
+import org.omegat.gui.dialogs.FileCollisionDialog;
 import org.omegat.gui.filelist.ProjectFilesListController;
 import org.omegat.gui.matches.IMatcher;
 import org.omegat.gui.search.SearchWindowController;
+import org.omegat.util.FileUtil;
 import org.omegat.util.LFileCopy;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -74,6 +76,7 @@ import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.WikiGet;
+import org.omegat.util.FileUtil.ICollisionCallback;
 import org.omegat.util.gui.DockingUI;
 import org.omegat.util.gui.OmegaTFileChooser;
 import org.omegat.util.gui.UIThreadsUtil;
@@ -314,7 +317,7 @@ public class MainWindow extends JFrame implements IMainWindow {
      * @author Kim Bruning
      * @author Maxym Mykhalchuk
      */
-    public void doImportSourceFiles() {
+    public void doPromptImportSourceFiles() {
         OmegaTFileChooser chooser = new OmegaTFileChooser();
         chooser.setMultiSelectionEnabled(true);
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -322,33 +325,56 @@ public class MainWindow extends JFrame implements IMainWindow {
 
         int result = chooser.showOpenDialog(this);
         if (result == OmegaTFileChooser.APPROVE_OPTION) {
-            String projectsource = Core.getProject().getProjectProperties().getSourceRoot();
-            File sourcedir = new File(projectsource);
             File[] selFiles = chooser.getSelectedFiles();
-            try {
-                for (int i = 0; i < selFiles.length; i++) {
-                    File selSrc = selFiles[i];
-                    if (selSrc.isDirectory()) {
-                        List<String> files = new ArrayList<String>();
-                        StaticUtils.buildFileList(files, selSrc, true);
-                        String selSourceParent = selSrc.getParent();
-                        for (String filename : files) {
-                            String midName = filename.substring(selSourceParent.length());
-                            File src = new File(filename);
-                            File dest = new File(sourcedir, midName);
-                            LFileCopy.copy(src, dest);
-                        }
-                    } else {
-                        File dest = new File(sourcedir, selFiles[i].getName());
-                        LFileCopy.copy(selSrc, dest);
-                    }
-                }
-                ProjectUICommands.projectReload();
-            } catch (IOException ioe) {
-                displayErrorRB(ioe, "MAIN_ERROR_File_Import_Failed");
-            }
+            importFiles(Core.getProject().getProjectProperties().getSourceRoot(), selFiles);
         }
     }
+    
+    public void importFiles(String destination, File[] toImport) {
+        importFiles(destination, toImport, true);
+    }
+    
+    public void importFiles(String destination, File[] toImport, boolean doReload) {
+        try {
+            FileUtil.copyFilesTo(new File(destination), toImport, new CollisionCallback());
+            if (doReload) {
+                ProjectUICommands.projectReload();
+            }
+        } catch (IOException ioe) {
+            displayErrorRB(ioe, "MAIN_ERROR_File_Import_Failed");
+        }
+    }
+    
+    private class CollisionCallback implements ICollisionCallback {
+        private boolean isCanceled = false;
+        private boolean yesToAll = false;
+        
+        @Override
+        public boolean shouldReplace(File file, int index, int total) {
+            if (isCanceled) {
+                return false;
+            }
+            if (yesToAll) {
+                return true;
+            }
+            FileCollisionDialog dialog = new FileCollisionDialog(MainWindow.this);
+            dialog.setFilename(file.getName());
+            dialog.enableApplyToAll(total - index > 1);
+            dialog.pack();
+            dialog.setVisible(true);
+            isCanceled = dialog.userDidCancel();
+            if (isCanceled) {
+                return false;
+            }
+            yesToAll = dialog.isApplyToAll() && dialog.shouldReplace();
+            return yesToAll || dialog.shouldReplace();
+        }
+        
+        @Override
+        public boolean isCanceled() {
+            return isCanceled;
+        }
+    };
 
     /**
      * Does wikiread

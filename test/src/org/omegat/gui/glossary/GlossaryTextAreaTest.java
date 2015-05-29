@@ -38,6 +38,7 @@ import org.omegat.gui.editor.EditorSettings;
 import org.omegat.gui.editor.IEditor;
 import org.omegat.gui.editor.IEditorFilter;
 import org.omegat.gui.editor.IPopupMenuConstructor;
+import org.omegat.gui.editor.autocompleter.IAutoCompleter;
 import org.omegat.gui.editor.mark.Mark;
 import org.omegat.util.Preferences;
 
@@ -55,7 +56,7 @@ public class GlossaryTextAreaTest extends TestCore {
         final List<GlossaryEntry> entries = new ArrayList<GlossaryEntry>();
         entries.add(new GlossaryEntry("source1", "translation1", "", false));
         entries.add(new GlossaryEntry("source2", "translation2", "comment2", false));
-        final GlossaryTextArea gta = new GlossaryTextArea();
+        final GlossaryTextArea gta = new GlossaryTextArea(null);
         SwingUtilities.invokeAndWait(new Runnable() {
             public void run() {
                 gta.setFoundResult(null, entries);
@@ -76,7 +77,7 @@ public class GlossaryTextAreaTest extends TestCore {
         final List<GlossaryEntry> entries = new ArrayList<GlossaryEntry>();
         entries.add(new GlossaryEntry("source1", "translation1", "", false));
         entries.add(new GlossaryEntry("source2", "translation2", "comment2", false));
-        final GlossaryTextArea gta = new GlossaryTextArea();
+        final GlossaryTextArea gta = new GlossaryTextArea(null);
         SwingUtilities.invokeAndWait(new Runnable() {
             public void run() {
                 gta.setFoundResult(null, entries);
@@ -228,6 +229,11 @@ public class GlossaryTextAreaTest extends TestCore {
             
             @Override
             public void waitForCommit(int timeoutSeconds) {   
+            }
+
+            @Override
+            public IAutoCompleter getAutoCompleter() {
+                return null;
             }
         });
     }
