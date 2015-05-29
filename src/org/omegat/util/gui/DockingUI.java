@@ -186,7 +186,7 @@ public class DockingUI {
         }
 
         UIManager.put("DockingDesktop.notificationBlinkCount", 2);
-        UIManager.put("DockingDesktop.notificationColor", new Color(0xFFE8E8));
+        UIManager.put("DockingDesktop.notificationColor", Styles.EditorColor.COLOR_NOTIFICATION_MAX.getColor());
     }
     
     private static void installFlatDesign() {
@@ -320,26 +320,6 @@ public class DockingUI {
             
             UIManager.put("DragControler.detachCursor", ResourcesUtil.getBundledImage("appbar.fullscreen.png"));
         }
-    }
-    
-    /**
-     * Adjust a color by adding some constant to its RGB values, wrapping around within the range 0-255.
-     */
-    private static Color adjustRGB(Color color, int adjustment) {
-        Color result = new Color((color.getRed() + adjustment + 255) % 255,
-                (color.getGreen() + adjustment + 255) % 255,
-                (color.getBlue() + adjustment + 255) % 255);
-        return result;
-    }
-    
-    // Windows Classic LAF detection from http://stackoverflow.com/a/4386821/448068
-    private static boolean isWindowsLAF() {
-        return UIManager.getLookAndFeel().getID().equals("Windows");
-    }
-
-    private static boolean isWindowsClassicLAF() {
-        return isWindowsLAF() &&
-                !(Boolean) Toolkit.getDefaultToolkit().getDesktopProperty("win.xpstyle.themeActive");
     }
 
     /**
