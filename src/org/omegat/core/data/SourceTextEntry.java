@@ -149,9 +149,11 @@ public class SourceTextEntry {
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i < props.length; i += 2) {
             sb.append(props[i]);
-            sb.append("\n");
+            if (i + 1 < props.length) {
+                sb.append("\n");
+            }
         }
-        return sb.toString().trim();
+        return sb.toString();
     }
     
     public String[] getRawProperties() {
