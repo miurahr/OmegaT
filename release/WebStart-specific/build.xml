@@ -78,7 +78,7 @@
 		description="Mark each included JAR as Trusted-Library: true">
 		<foreach target="make-trusted-jar" param="trusted.jar">
 			<path>
-				<fileset dir="${root}/build/webstart/" includes="*.jar" />
+				<fileset dir="${root}/build/webstart/" includes="*.jar" excludes="org.eclipse.jgit-*.jar" />
 			</path>
 		</foreach>
 	</target>
@@ -94,14 +94,14 @@
 	<target name="sign-no-timestamp" unless="signkey.tsaurl">
 		<signjar keystore="${signkey.keystore}" alias="${signkey.alias}" storepass="${signkey.storepass}"
 			keypass="${signkey.keypass}">
-			<fileset dir="${root}/build/webstart/" includes="*.jar" />
+			<fileset dir="${root}/build/webstart/" includes="*.jar" excludes="org.eclipse.jgit-*.jar" />
 		</signjar>
 	</target>
 	
 	<target name="sign-and-timestamp" if="signkey.tsaurl">
 		<signjar keystore="${signkey.keystore}" alias="${signkey.alias}" storepass="${signkey.storepass}"
 			keypass="${signkey.keypass}" tsaurl="${signkey.tsaurl}">
-			<fileset dir="${root}/build/webstart/" includes="*.jar" />
+			<fileset dir="${root}/build/webstart/" includes="*.jar" excludes="org.eclipse.jgit-*.jar" />
 		</signjar>
 	</target>
 		
