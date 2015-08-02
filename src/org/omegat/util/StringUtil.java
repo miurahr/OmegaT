@@ -329,6 +329,7 @@ public class StringUtil {
      * Apply Unicode NFC normalization to a string.
      */
     public static String normalizeUnicode(CharSequence text) {
-        return Normalizer.normalize(text, Normalizer.Form.NFC);
+        return Normalizer.isNormalized(text, Normalizer.Form.NFC) ? text.toString() :
+            Normalizer.normalize(text, Normalizer.Form.NFC);
     }
 }
