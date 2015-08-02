@@ -41,8 +41,7 @@ import org.omegat.util.StringUtil;
  */
 public class GlossaryEntry {
     public GlossaryEntry(String src, String[] loc, String[] com, boolean[] fromPriorityGlossary) {
-        m_src = src;
-        normalize(m_src);
+        m_src = StringUtil.normalizeUnicode(src);
         m_loc = loc;
         normalize(m_loc);
         m_com = com;
@@ -219,7 +218,7 @@ public class GlossaryEntry {
         }
     }
     
-    private void normalize(String... strs) {
+    private void normalize(String[] strs) {
         for (int i = 0; i < strs.length; i++) {
             strs[i] = StringUtil.normalizeUnicode(strs[i]);
         }
