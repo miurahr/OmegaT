@@ -42,6 +42,7 @@ import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.AlwaysVisibleCaret;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -139,10 +140,14 @@ public class MachineTranslateTextArea extends EntryInfoThreadPane<MachineTransla
                 return null;
             }
 
-            MachineTranslationInfo result = new MachineTranslationInfo();
-            result.translatorName = translator.getName();
-            result.result = translator.getTranslation(source, target, src);
-            return result.result != null ? result : null;
+            String translation = translator.getTranslation(source, target, src);
+            if (StringUtil.isEmpty(translation)) {
+                return null;
+            }
+            MachineTranslationInfo info = new MachineTranslationInfo();
+            info.translatorName = translator.getName();
+            info.result = StringUtil.normalizeUnicode(translation);
+            return info;
         }
     }
 }
