@@ -128,7 +128,7 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
             return;
         }
         
-        if (Preferences.isPreference(Preferences.NOTIFY_MULTIPLE_TRANSLATIONS)) {
+        if (!data.isEmpty() && Preferences.isPreference(Preferences.NOTIFY_MULTIPLE_TRANSLATIONS)) {
             scrollPane.notify(true);
         }
         
