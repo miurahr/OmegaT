@@ -54,7 +54,6 @@ import com.vlsolutions.swing.docking.AutoHidePolicy.ExpandMode;
 import com.vlsolutions.swing.docking.ui.DockingUISettings;
 
 import java.awt.Font;
-import java.io.FileNotFoundException;
 
 /**
  * Docking UI support.
