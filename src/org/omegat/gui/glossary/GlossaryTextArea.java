@@ -47,6 +47,7 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.AttributeSet;
@@ -69,6 +70,7 @@ import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.AlwaysVisibleCaret;
 import org.omegat.util.gui.DragTargetOverlay;
+import org.omegat.util.gui.ISettingsMenuCallback;
 import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
 import org.omegat.util.gui.Styles;
 import org.omegat.util.gui.UIThreadsUtil;
@@ -85,7 +87,7 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
+public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> implements ISettingsMenuCallback {
 
     private static final String EXPLANATION = OStrings.getString("GUI_GLOSSARYWINDOW_explanation");
 
@@ -109,13 +111,15 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
     protected JPopupMenu popup;
 
     private CreateGlossaryEntry createGlossaryEntryDialog;
+    
+    private final DockableScrollPane scrollPane;
 
     /** Creates new form MatchGlossaryPane */
     public GlossaryTextArea(final MainWindow mw) {
         super(true);
 
         String title = OStrings.getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Glossary");
-        final DockableScrollPane scrollPane = new DockableScrollPane("GLOSSARY", title, this, true);
+        scrollPane = new DockableScrollPane("GLOSSARY", title, this, true);
         Core.getMainWindow().addDockable(scrollPane);
 
         setEditable(false);
@@ -195,6 +199,7 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
 
     @Override
     public void onEntryActivated(SourceTextEntry newEntry) {
+        scrollPane.stopNotifying();
         setText("");
         super.onEntryActivated(newEntry);
     }
@@ -212,6 +217,10 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
             return;
         }
 
+        if (!entries.isEmpty() && Preferences.isPreference(Preferences.NOTIFY_GLOSSARY_HITS)) {
+            scrollPane.notify(true);
+        }
+        
         nowEntries = entries;
 
         // If the TransTips is enabled then underline all the matched glossary
@@ -355,5 +364,18 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> {
             }
         });
         createGlossaryEntryDialog = dialog;
+    }
+
+    @Override
+    public void populateSettingsMenu(JPopupMenu menu) {
+        final JMenuItem notify = new JCheckBoxMenuItem(OStrings.getString("GUI_GLOSSARYWINDOW_SETTINGS_NOTIFICATIONS"));
+        notify.setSelected(Preferences.isPreference(Preferences.NOTIFY_GLOSSARY_HITS));
+        notify.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Preferences.setPreference(Preferences.NOTIFY_GLOSSARY_HITS, notify.isSelected());
+            }
+        });
+        menu.add(notify); 
     }
 }

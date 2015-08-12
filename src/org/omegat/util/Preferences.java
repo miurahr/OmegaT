@@ -397,6 +397,12 @@ public class Preferences {
     public static final String SEGPROPS_NOTIFY_PROPS = "segment_properties_notify_props";
     public static final String SEGPROPS_NOTIFY_DEFAULT_PROPS = "comment, note";
     
+    /** Notification preferences */
+    public static final String NOTIFY_FUZZY_MATCHES = "notify_fuzzy_matches";
+    public static final String NOTIFY_GLOSSARY_HITS = "notify_glossary_hits";
+    public static final String NOTIFY_COMMENTS = "notify_comments";
+    public static final String NOTIFY_DICTIONARY_HITS = "notify_dictionary_hits";
+    
     /** Private constructor, because this file is singleton */
     static {
         m_loaded = false;

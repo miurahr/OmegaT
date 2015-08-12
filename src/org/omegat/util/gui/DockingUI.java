@@ -51,6 +51,7 @@ import org.omegat.util.Platform;
 
 import com.vlsolutions.swing.docking.AutoHidePolicy;
 import com.vlsolutions.swing.docking.AutoHidePolicy.ExpandMode;
+import com.vlsolutions.swing.docking.DockableContainerFactory;
 import com.vlsolutions.swing.docking.ui.DockingUISettings;
 
 import java.awt.Font;
@@ -76,6 +77,7 @@ public class DockingUI {
     public static void initialize() {
         // Install VLDocking defaults
         DockingUISettings.getInstance().installUI();
+        DockableContainerFactory.setFactory(new CustomContainerFactory());
         
         // Enable animated popup when mousing over minimized tab
         AutoHidePolicy.getPolicy().setExpandMode(ExpandMode.EXPAND_ON_ROLLOVER);

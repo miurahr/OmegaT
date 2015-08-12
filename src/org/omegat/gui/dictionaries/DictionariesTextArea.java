@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.BadLocationException;
@@ -62,9 +63,11 @@ import org.omegat.gui.common.EntryInfoThreadPane;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.tokenizer.ITokenizer;
 import org.omegat.util.OStrings;
+import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.Token;
 import org.omegat.util.gui.AlwaysVisibleCaret;
+import org.omegat.util.gui.ISettingsMenuCallback;
 import org.omegat.util.gui.Styles.EditorColor;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -75,7 +78,7 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Jean-Christophe Helary 
  */
 @SuppressWarnings("serial")
-public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEntry>> {
+public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEntry>> implements ISettingsMenuCallback {
 
 	private static final String EXPLANATION = OStrings.getString("GUI_DICTIONARYWINDOW_explanation");
 
@@ -84,6 +87,8 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
     protected final List<String> displayedWords = new ArrayList<String>();
 
     protected ITokenizer tokenizer;
+    
+    private final DockableScrollPane scrollPane;
 
     public DictionariesTextArea() {
         super(true);
@@ -93,7 +98,8 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
 
         // setEditable(false);
         String title = OStrings.getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Dictionary");
-        Core.getMainWindow().addDockable(new DockableScrollPane("DICTIONARY", title, this, true));
+        scrollPane = new DockableScrollPane("DICTIONARY", title, this, true);
+        Core.getMainWindow().addDockable(scrollPane);
 
         addMouseListener(mouseCallback);
 
@@ -184,6 +190,12 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             }
         }
     }
+    
+    @Override
+    public void onEntryActivated(SourceTextEntry newEntry) {
+        scrollPane.stopNotifying();
+        super.onEntryActivated(newEntry);
+    }
 
     @Override
     protected void startSearchThread(SourceTextEntry newEntry) {
@@ -211,6 +223,10 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             return;
         }
 
+        if (!data.isEmpty() && Preferences.isPreference(Preferences.NOTIFY_DICTIONARY_HITS)) {
+            scrollPane.notify(true);
+        }
+        
         StringBuilder txt = new StringBuilder();
         boolean wasPrev = false;
         int i = 0;
@@ -297,5 +313,18 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             });
             return result;
         }
+    }
+
+    @Override
+    public void populateSettingsMenu(JPopupMenu menu) {
+        final JMenuItem notify = new JCheckBoxMenuItem(OStrings.getString("GUI_DICTIONARYWINDOW_SETTINGS_NOTIFICATIONS"));
+        notify.setSelected(Preferences.isPreference(Preferences.NOTIFY_DICTIONARY_HITS));
+        notify.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Preferences.setPreference(Preferences.NOTIFY_DICTIONARY_HITS, notify.isSelected());
+            }
+        });
+        menu.add(notify);
     }
 }

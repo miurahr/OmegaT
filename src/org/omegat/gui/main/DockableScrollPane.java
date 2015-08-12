@@ -34,9 +34,12 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.JTextComponent;
 
+import org.omegat.util.gui.ISettingsMenuCallback;
+
 import com.vlsolutions.swing.docking.DockKey;
 import com.vlsolutions.swing.docking.Dockable;
 import com.vlsolutions.swing.docking.DockingConstants;
+import com.vlsolutions.swing.docking.DockableState.Location;
 
 /**
  * Dockable ScrollPane for a docking library.
@@ -79,6 +82,10 @@ public class DockableScrollPane extends JScrollPane implements Dockable {
         dockKey = new DockKey(key, name, null, null, DockingConstants.HIDE_BOTTOM);
         dockKey.setFloatEnabled(detouchable);
         dockKey.setCloseEnabled(false);
+        
+        if (view instanceof ISettingsMenuCallback) {
+            dockKey.putProperty(ISettingsMenuCallback.PROPERTY_SETTINGS_MENU_CALLBACK, view);
+        }
     }
 
     @Override
@@ -91,4 +98,14 @@ public class DockableScrollPane extends JScrollPane implements Dockable {
         return this;
     }
 
+    public void notify(boolean onlyIfMinimized) {
+        if (onlyIfMinimized && dockKey.getLocation() != Location.HIDDEN) {
+            return;
+        }
+        dockKey.setNotification(true);
+    }
+    
+    public void stopNotifying() {
+        dockKey.setNotification(false);
+    }
 }

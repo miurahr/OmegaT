@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -71,6 +72,7 @@ import org.omegat.util.Token;
 import org.omegat.util.gui.AlwaysVisibleCaret;
 import org.omegat.util.gui.DragTargetOverlay;
 import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
+import org.omegat.util.gui.ISettingsMenuCallback;
 import org.omegat.util.gui.Styles;
 import org.omegat.util.gui.UIThreadsUtil;
 
@@ -88,7 +90,7 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Yu Tang
  */
 @SuppressWarnings("serial")
-public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> implements IMatcher {
+public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> implements IMatcher, ISettingsMenuCallback {
 
     private static final String EXPLANATION = OStrings.getString("GUI_MATCHWINDOW_explanation");
 
@@ -101,6 +103,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
     private static final AttributeSet ATTRIBUTES_INSERTED_ACTIVE = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_INS_ACTIVE.getColor(), null, true, null, null, true);
     private static final AttributeSet ATTRIBUTES_INSERTED_INACTIVE = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_INS_INACTIVE.getColor(), null, null, null, null, true);
     
+    private final DockableScrollPane scrollPane;
     private final List<NearString> matches = new ArrayList<NearString>();
 
     private final List<Integer> delimiters = new ArrayList<Integer>();
@@ -116,7 +119,7 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
         this.mw = mw;
 
         String title = OStrings.getString("GUI_MATCHWINDOW_SUBWINDOWTITLE_Fuzzy_Matches");
-        final DockableScrollPane scrollPane = new DockableScrollPane("MATCHES", title, this, true);
+        scrollPane = new DockableScrollPane("MATCHES", title, this, true);
         Core.getMainWindow().addDockable(scrollPane);
 
         setEditable(false);
@@ -149,6 +152,12 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
             }
         });
     }
+    
+    @Override
+    public void onEntryActivated(SourceTextEntry newEntry) {
+        scrollPane.stopNotifying();
+        super.onEntryActivated(newEntry);
+    }
 
     @Override
     protected void startSearchThread(SourceTextEntry newEntry) {
@@ -166,6 +175,10 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
         if (newMatches == null) {
             setText("");
             return;
+        }
+        
+        if (!newMatches.isEmpty() && Preferences.isPreference(Preferences.NOTIFY_FUZZY_MATCHES)) {
+            scrollPane.notify(true);
         }
         
         Collections.sort(newMatches, Collections.reverseOrder(new NearString.NearStringComparator()));
@@ -593,5 +606,18 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
         if (activeMatch > 0) {
             setActiveMatch(activeMatch-1);
         }
+    }
+
+    @Override
+    public void populateSettingsMenu(JPopupMenu menu) {
+        final JMenuItem notify = new JCheckBoxMenuItem(OStrings.getString("GUI_MATCHWINDOW_SETTINGS_NOTIFICATIONS"));
+        notify.setSelected(Preferences.isPreference(Preferences.NOTIFY_FUZZY_MATCHES));
+        notify.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Preferences.setPreference(Preferences.NOTIFY_FUZZY_MATCHES, notify.isSelected());
+            }
+        });
+        menu.add(notify); 
     }
 }
