@@ -121,43 +121,44 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
         UIThreadsUtil.mustBeSwingThread();
 
         entries.clear();
-        String o = "";
         
         // Check case if current segment has default translation and there are no alternative translations.
         if (data.size() == 1 && data.get(0).key == null) {
-            setText(o);
+            setText("");
             return;
         }
         
-        if (!o.isEmpty() && Preferences.isPreference(Preferences.NOTIFY_MULTIPLE_TRANSLATIONS)) {
+        if (Preferences.isPreference(Preferences.NOTIFY_MULTIPLE_TRANSLATIONS)) {
             scrollPane.notify(true);
         }
         
+        StringBuilder sb = new StringBuilder();
         for (MultipleTransFoundEntry e : data) {
             DisplayedEntry de = new DisplayedEntry();
             de.entry = e;
-            de.start = o.length();
+            de.start = sb.length();
             if (e.entry.translation == null) continue;
             if (e.key != null) {
-                o += e.entry.translation + '\n';
-                o += "<" + e.key.file;
+                sb.append(e.entry.translation).append('\n');
+                sb.append("<").append(e.key.file);
                 if (e.key.id != null) {
-                    o += "/" + e.key.id;
+                    sb.append("/").append(e.key.id);
                 }
-                o += ">\n";
+                sb.append(">\n");
                 if (e.key.prev != null && e.key.next != null) {
-                    o += "(" + StringUtil.firstN(e.key.prev, 10) + " <...> "
-                            + StringUtil.firstN(e.key.next, 10) + ")\n";
+                    sb.append("(").append(StringUtil.firstN(e.key.prev, 10));
+                    sb.append(" <...> ").append(StringUtil.firstN(e.key.next, 10));
+                    sb.append(")\n");
                 }
             } else {
-                o += e.entry.translation + '\n';
+                sb.append(e.entry.translation).append('\n');
             }
-            de.end = o.length();
+            de.end = sb.length();
             entries.add(de);
-            o += "\n";
+            sb.append("\n");
         }
 
-        setText(o);
+        setText(sb.toString());
     }
     
     @Override
