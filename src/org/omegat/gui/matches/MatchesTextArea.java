@@ -93,10 +93,8 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
     private static final String EXPLANATION = OStrings.getString("GUI_MATCHWINDOW_explanation");
 
     private static final AttributeSet ATTRIBUTES_EMPTY = Styles.createAttributeSet(null, null, null, null);
-    private static final AttributeSet ATTRIBUTES_CHANGED = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_CHANGED.getColor(), null, null,
-            null);
-    private static final AttributeSet ATTRIBUTES_UNCHANGED = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_UNCHANGED.getColor(), null, null,
-            null);
+    private static final AttributeSet ATTRIBUTES_CHANGED = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_CHANGED.getColor(), null, null, null);
+    private static final AttributeSet ATTRIBUTES_UNCHANGED = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_UNCHANGED.getColor(), null, null, null);
     private static final AttributeSet ATTRIBUTES_SELECTED = Styles.createAttributeSet(null, null, true, null);
     private static final AttributeSet ATTRIBUTES_DELETED_ACTIVE = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_DEL_ACTIVE.getColor(), null, true, null, true, null);
     private static final AttributeSet ATTRIBUTES_DELETED_INACTIVE = Styles.createAttributeSet(Styles.EditorColor.COLOR_MATCHES_DEL_INACTIVE.getColor(), null, null, null, true, null);
@@ -508,10 +506,6 @@ public class MatchesTextArea extends EntryInfoThreadPane<List<NearString>> imple
                 setActiveMatch(clickedItem);
         }
     };
-
-    private void mouseOneClick(final int clickedItem, final Point clickedPoint) {
-        // show colored source segment
-    }
 
     private void mouseRightClick(final int clickedItem, final Point clickedPoint) {
         // create the menu
