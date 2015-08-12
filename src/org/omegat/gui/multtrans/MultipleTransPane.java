@@ -36,6 +36,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.text.JTextComponent;
@@ -47,8 +48,10 @@ import org.omegat.gui.editor.IPopupMenuConstructor;
 import org.omegat.gui.editor.SegmentBuilder;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.util.OStrings;
+import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
 import org.omegat.util.gui.AlwaysVisibleCaret;
+import org.omegat.util.gui.ISettingsMenuCallback;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
@@ -59,17 +62,20 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Aaron Madlon-Kay
  */
 @SuppressWarnings("serial")
-public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFoundEntry>> {
+public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFoundEntry>> implements ISettingsMenuCallback {
 
     private static final String EXPLANATION = OStrings.getString("GUI_MULTIPLETRANSLATIONSWINDOW_explanation");
 
     private List<DisplayedEntry> entries = new ArrayList<DisplayedEntry>();
+    
+    private final DockableScrollPane scrollPane;
 
     public MultipleTransPane() {
         super(true);
 
         String title = OStrings.getString("MULT_TITLE");
-        Core.getMainWindow().addDockable(new DockableScrollPane("MULTIPLE_TRANS", title, this, true));
+        scrollPane = new DockableScrollPane("MULTIPLE_TRANS", title, this, true);
+        Core.getMainWindow().addDockable(scrollPane);
 
         setEditable(false);
         AlwaysVisibleCaret.apply(this);
@@ -105,6 +111,12 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
     }
 
     @Override
+    public void onEntryActivated(SourceTextEntry newEntry) {
+        scrollPane.stopNotifying();
+        super.onEntryActivated(newEntry);
+    }
+    
+    @Override
     protected void setFoundResult(SourceTextEntry processedEntry, List<MultipleTransFoundEntry> data) {
         UIThreadsUtil.mustBeSwingThread();
 
@@ -115,6 +127,10 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
         if (data.size() == 1 && data.get(0).key == null) {
             setText(o);
             return;
+        }
+        
+        if (!o.isEmpty() && Preferences.isPreference(Preferences.NOTIFY_MULTIPLE_TRANSLATIONS)) {
+            scrollPane.notify(true);
         }
         
         for (MultipleTransFoundEntry e : data) {
@@ -224,5 +240,18 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
     protected static class DisplayedEntry {
         int start, end;
         MultipleTransFoundEntry entry;
+    }
+
+    @Override
+    public void populateSettingsMenu(JPopupMenu menu) {
+        final JMenuItem notify = new JCheckBoxMenuItem(OStrings.getString("MULT_SETTINGS_NOTIFY"));
+        notify.setSelected(Preferences.isPreference(Preferences.NOTIFY_MULTIPLE_TRANSLATIONS));
+        notify.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Preferences.setPreference(Preferences.NOTIFY_MULTIPLE_TRANSLATIONS, notify.isSelected());
+            }
+        });
+        menu.add(notify);
     }
 }

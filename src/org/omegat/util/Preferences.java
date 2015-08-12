@@ -402,6 +402,7 @@ public class Preferences {
     public static final String NOTIFY_GLOSSARY_HITS = "notify_glossary_hits";
     public static final String NOTIFY_COMMENTS = "notify_comments";
     public static final String NOTIFY_DICTIONARY_HITS = "notify_dictionary_hits";
+    public static final String NOTIFY_MULTIPLE_TRANSLATIONS = "notify_multiple_translations";
     
     /** Private constructor, because this file is singleton */
     static {

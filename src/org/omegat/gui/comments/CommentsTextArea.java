@@ -204,6 +204,6 @@ public class CommentsTextArea extends EntryInfoPane<SourceTextEntry> implements 
                 Preferences.setPreference(Preferences.NOTIFY_COMMENTS, notify.isSelected());
             }
         });
-        menu.add(notify); 
+        menu.add(notify);
     }
 }
