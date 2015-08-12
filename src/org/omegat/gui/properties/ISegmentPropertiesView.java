@@ -19,6 +19,7 @@ import org.omegat.util.gui.ResourcesUtil;
 public interface ISegmentPropertiesView {
     static Icon SETTINGS_ICON = new ImageIcon(ResourcesUtil.getBundledImage("appbar.settings.active.png"));
     static Icon SETTINGS_ICON_INACTIVE = new ImageIcon(ResourcesUtil.getBundledImage("appbar.settings.inactive.png"));
+    static Icon SETTINGS_ICON_PRESSED = new ImageIcon(ResourcesUtil.getBundledImage("appbar.settings.pressed.png"));
     static Icon SETTINGS_ICON_INVISIBLE = new Icon() {
 		@Override
 		public void paintIcon(Component c, Graphics g, int x, int y) {

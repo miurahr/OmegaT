@@ -2,6 +2,7 @@ package org.omegat.gui.properties;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.border.EmptyBorder;
 import javax.swing.text.Caret;
 import javax.swing.text.DefaultCaret;
 import org.omegat.util.gui.Styles;
@@ -29,6 +30,9 @@ public class SegmentPropertiesListCell extends javax.swing.JPanel {
         value.setBorder(ISegmentPropertiesView.MARGIN_BORDER);
         settingsButton.setBackground(ISegmentPropertiesView.ROW_HIGHLIGHT_COLOR);
         settingsButton.setIcon(ISegmentPropertiesView.SETTINGS_ICON_INVISIBLE);
+        settingsButton.setRolloverIcon(ISegmentPropertiesView.SETTINGS_ICON);
+        settingsButton.setPressedIcon(ISegmentPropertiesView.SETTINGS_ICON_PRESSED);
+        settingsButton.setBorder(new EmptyBorder(0, 0, 0, 0));
         MouseAdapter revealSettingsIcon = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -41,16 +45,6 @@ public class SegmentPropertiesListCell extends javax.swing.JPanel {
         };
         label.addMouseListener(revealSettingsIcon);
         value.addMouseListener(revealSettingsIcon);
-        settingsButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                settingsButton.setIcon(ISegmentPropertiesView.SETTINGS_ICON);
-            }
-            @Override
-            public void mouseExited(MouseEvent e) {
-                settingsButton.setIcon(ISegmentPropertiesView.SETTINGS_ICON_INACTIVE);
-            }
-        });
         // Prevent list from scrolling down as new cells are added
         Caret caret = label.getCaret();
         if (caret instanceof DefaultCaret) {
@@ -73,7 +67,7 @@ public class SegmentPropertiesListCell extends javax.swing.JPanel {
 
         labelPanel = new javax.swing.JPanel();
         label = new javax.swing.JTextArea();
-        settingsButton = new javax.swing.JLabel();
+        settingsButton = new javax.swing.JButton();
         value = new org.omegat.gui.properties.FlashableTextArea();
 
         setLayout(new java.awt.BorderLayout());
@@ -84,7 +78,10 @@ public class SegmentPropertiesListCell extends javax.swing.JPanel {
         label.setLineWrap(true);
         labelPanel.add(label, java.awt.BorderLayout.CENTER);
 
-        settingsButton.setOpaque(true);
+        settingsButton.setBorderPainted(false);
+        settingsButton.setContentAreaFilled(false);
+        settingsButton.setFocusable(false);
+        settingsButton.setRolloverEnabled(true);
         labelPanel.add(settingsButton, java.awt.BorderLayout.EAST);
 
         add(labelPanel, java.awt.BorderLayout.NORTH);
@@ -98,7 +95,7 @@ public class SegmentPropertiesListCell extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JTextArea label;
     private javax.swing.JPanel labelPanel;
-    javax.swing.JLabel settingsButton;
+    javax.swing.JButton settingsButton;
     org.omegat.gui.properties.FlashableTextArea value;
     // End of variables declaration//GEN-END:variables
 }

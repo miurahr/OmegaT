@@ -3,8 +3,8 @@ package org.omegat.gui.properties;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.MissingResourceException;
 import javax.swing.BoxLayout;
@@ -44,10 +44,10 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
             cell.label.setText(getDisplayKey(key));
             cell.value.setText(parent.properties.get(i + 1));
             cell.value.setFont(panel.getFont());
-            cell.settingsButton.addMouseListener(new MouseAdapter() {
+            cell.settingsButton.addActionListener(new ActionListener() {
                 @Override
-                public void mouseClicked(MouseEvent e) {
-                    parent.showContextMenu(SwingUtilities.convertPoint(cell.settingsButton, e.getPoint(), parent));
+                public void actionPerformed(ActionEvent e) {
+                    parent.showContextMenu(SwingUtilities.convertPoint(cell, cell.settingsButton.getLocation(), parent));
                 }
             });
             panel.add(cell);
