@@ -1,28 +1,18 @@
 package org.omegat.gui.properties;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Graphics;
+import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingResourceException;
+import javax.swing.BoxLayout;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JTextArea;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
+import javax.swing.JPanel;
+import javax.swing.Scrollable;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-
 import org.omegat.core.Core;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
@@ -32,198 +22,96 @@ import org.omegat.util.gui.UIThreadsUtil;
 public class SegmentPropertiesListView implements ISegmentPropertiesView {
 
     private SegmentPropertiesArea parent;
-    private FlashableList list;
-    private PropertiesListModel model;
-    private int mouseoverIndex = -1;
+    private JPanel panel;
 
     public void install(final SegmentPropertiesArea parent) {
         UIThreadsUtil.mustBeSwingThread();
         this.parent = parent;
-        model = new PropertiesListModel();
-        list = new FlashableList(model);
-        list.setForeground(parent.getForeground());
-        list.setBackground(parent.getBackground());
-        list.addMouseListener(parent.contextMenuListener);
-        list.setCellRenderer(new MultilineCellRenderer());
-        list.setFont(Core.getMainWindow().getApplicationFont());
-        list.addMouseListener(mouseAdapter);
-        list.addMouseMotionListener(mouseAdapter);
-        parent.setViewportView(list);
-    }
-    
-    private final MouseAdapter mouseAdapter = new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (mouseoverIndex % 2 == 0) {
-                parent.showContextMenu(SwingUtilities.convertPoint(list, e.getPoint(), parent));
-            }
-        }
-        @Override
-        public void mouseExited(MouseEvent e) {
-            updateRollover();
-        }
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            updateRollover();
-        }
-    };
-    
-    private void updateRollover() {
-        Point point = list.getMousePosition();
-        int newIndex = point == null ? -1 : list.locationToIndex(point);
-        boolean doRepaint = newIndex != mouseoverIndex;
-        mouseoverIndex = newIndex;
-        if (doRepaint) {
-            list.repaint();
-        }
+        panel = new ReasonablySizedPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setFont(Core.getMainWindow().getApplicationFont());
+        parent.setViewportView(panel);
     }
     
     @Override
     public void update() {
         UIThreadsUtil.mustBeSwingThread();
-        list.clearSelection();
-        list.clearHighlight();
-        model.fireModelChanged();
+        panel.removeAll();
+        for (int i = 0; i < parent.properties.size(); i += 2) {
+            final SegmentPropertiesListCell cell = new SegmentPropertiesListCell();
+            String key = parent.properties.get(i);
+            cell.key = key;
+            cell.label.setText(getDisplayKey(key));
+            cell.value.setText(parent.properties.get(i + 1));
+            cell.value.setFont(panel.getFont());
+            cell.settingsButton.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    parent.showContextMenu(SwingUtilities.convertPoint(cell.settingsButton, e.getPoint(), parent));
+                }
+            });
+            panel.add(cell);
+        }
+        panel.validate();
+        panel.repaint();
+    }
+    
+    private String getDisplayKey(String key) {
+        if (Preferences.isPreference(Preferences.SEGPROPS_SHOW_RAW_KEYS)) {
+            return key;
+        }
+        try {
+            return OStrings.getString(PROPERTY_TRANSLATION_KEY + key.toUpperCase());
+        } catch (MissingResourceException ex) {
+            return key;
+        }
     }
 
     @Override
     public JComponent getViewComponent() {
-        return list;
+        return panel;
     }
 
     @Override
     public void notifyUser(List<Integer> notify) {
         UIThreadsUtil.mustBeSwingThread();
-        notify = translateIndices(notify);
-        list.clearSelection();
-        list.scrollRectToVisible(list.getCellBounds(notify.get(0), notify.get(notify.size() - 1)));
-        list.flash(notify);
-    }
-
-    private List<Integer> translateIndices(List<Integer> indices) {
-        List<Integer> result = new ArrayList<Integer>(indices.size());
-        for (int i : indices) {
-            result.add(i + 1);
+        for (int i : notify) {
+            ((SegmentPropertiesListCell)panel.getComponent(i)).value.flash();
         }
-        return result;
     }
     
     @Override
     public String getKeyAtPoint(Point p) {
-        int clickedIndex = list.locationToIndex(SwingUtilities.convertPoint(parent, p, list));
-        if (clickedIndex == -1) {
-            return null;
-        }
-        int clickedKeyIndex = clickedIndex % 2 == 0 ? clickedIndex : clickedIndex - 1;
-        return (String) model.getElementAt(clickedKeyIndex);
-    }
-
-    private class PropertiesListModel extends DefaultListModel {
-
-        @Override
-        public Object getElementAt(int i) {
-            return parent.properties.get(i);
-        }
-
-        @Override
-        public int getSize() {
-            return parent.properties.size();
-        }
-        
-        public void fireModelChanged() {
-            fireContentsChanged(parent, 0, getSize() - 1);
-        }
+        SegmentPropertiesListCell cell = ((SegmentPropertiesListCell)panel.getComponentAt(p));
+        return cell == null ? null : cell.key;
     }
     
-    private class FlashableList extends JList {
-        private Flasher flasher;
-        
-        public FlashableList(ListModel model) {
-            super(model);
+    private static class ReasonablySizedPanel extends JPanel implements Scrollable {
+
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
         }
-        
-        public void flash(List<Integer> rows) {
-            flasher = new Flasher(rows);
-            repaint();
+
+        @Override
+        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return getFont().getSize();
         }
-        
-        public void clearHighlight() {
-            flasher = null;
+
+        @Override
+        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return getFont().getSize();
         }
-        
-        public Flasher getFlasher() {
-            return flasher;
+
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
         }
         
         @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (flasher != null && flasher.isFlashing()) {
-                repaint();
-            }
-        }
-    }
-    
-    private class MultilineCellRenderer extends JTextArea implements ListCellRenderer {
-        
-        private final Border noFocusBorder = new EmptyBorder(FOCUS_BORDER.getBorderInsets(this));
-        private final Border noFocusCompoundBorder = new CompoundBorder(MARGIN_BORDER, noFocusBorder);
-        private final JLabel button;
-        
-        public MultilineCellRenderer() {
-            setLineWrap(true);
-            setWrapStyleWord(true);
-            setOpaque(true);
-            setLayout(new BorderLayout());
-            button = new JLabel();
-            add(button, BorderLayout.EAST);
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
         }
         
-        @Override
-        public Component getListCellRendererComponent(JList list, Object value,
-                int index, boolean isSelected, boolean cellHasFocus) {
-            boolean isKeyRow = index % 2 == 0;
-            button.setVisible(isKeyRow && (index == mouseoverIndex || index + 1 == mouseoverIndex));
-            if (isKeyRow) {
-                button.setIcon(index == mouseoverIndex ? SETTINGS_ICON : SETTINGS_ICON_INACTIVE);
-            }
-            if (isSelected) {
-                setBackground(list.getSelectionBackground());
-                setForeground(list.getSelectionForeground());
-            } else {
-                setBackground(isKeyRow ? ROW_HIGHLIGHT_COLOR : list.getBackground());
-                setForeground(list.getForeground());
-            }
-            if (cellHasFocus) {
-                setBorder(FOCUS_COMPOUND_BORDER);
-            } else {
-                setBorder(noFocusCompoundBorder);
-            }
-            Flasher flasher = ((FlashableList) list).getFlasher();
-            if (flasher != null) {
-                flasher.mark();
-                if (flasher.isHighlightedIndex(index) && !isSelected) {
-                    setBackground(flasher.getColor());
-                }
-            }
-            setFont(isKeyRow ? UIManager.getFont("Label.font") : list.getFont());
-            setText(getText(value, isKeyRow));
-            int width = list.getParent().getWidth();
-            if (width > 0) {
-                setSize(width, Short.MAX_VALUE);
-            }
-            return this;
-        }
-        
-        private String getText(Object value, boolean isKeyRow) {
-            if (!isKeyRow || Preferences.isPreference(Preferences.SEGPROPS_SHOW_RAW_KEYS)) {
-                return value.toString();
-            }
-            try {
-                return OStrings.getString(PROPERTY_TRANSLATION_KEY + value.toString().toUpperCase());
-            } catch (MissingResourceException ex) {
-                return value.toString();
-            }
-        }
     }
 }

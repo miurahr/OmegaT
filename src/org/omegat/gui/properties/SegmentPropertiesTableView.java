@@ -206,14 +206,20 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
     
     private class FlashableTable extends JTable {
         private Flasher flasher;
+        private List<Integer> rows;
         
         public FlashableTable(TableModel model) {
             super(model);
         }
         
         public void flash(List<Integer> rows) {
-            flasher = new Flasher(rows);
+            this.rows = rows;
+            flasher = new Flasher();
             repaint();
+        }
+        
+        public boolean isHighlightedRow(int index) {
+           return rows != null && rows.contains(index);
         }
         
         public void clearHighlight() {
@@ -261,10 +267,11 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
             } else {
                 result.setBorder(new CompoundBorder(marginBorder, noFocusBorder));
             }
-            Flasher flasher = ((FlashableTable) table).getFlasher();
+            FlashableTable fTable = (FlashableTable) table;
+            Flasher flasher = fTable.getFlasher();
             if (flasher != null) {
                 flasher.mark();
-                if (flasher.isHighlightedIndex(row) && !isSelected) {
+                if (fTable.isHighlightedRow(row) && !isSelected) {
                     setBackground(flasher.getColor());
                 }
             }
@@ -322,10 +329,11 @@ public class SegmentPropertiesTableView implements ISegmentPropertiesView {
             } else {
                 setBorder(new CompoundBorder(marginBorder, noFocusBorder));
             }
-            Flasher flasher = ((FlashableTable) table).getFlasher();
+            FlashableTable fTable = (FlashableTable) table;
+            Flasher flasher = fTable.getFlasher();
             if (flasher != null) {
                 flasher.mark();
-                if (flasher.isHighlightedIndex(row) && !isSelected) {
+                if (fTable.isHighlightedRow(row) && !isSelected) {
                     setBackground(flasher.getColor());
                 }
             }

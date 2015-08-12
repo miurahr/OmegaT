@@ -9,25 +9,19 @@ public class Flasher {
     private static final double FLASH_DURATION = 300.0;
     
     private final long startTime;
-    private final List<Integer> indices;
     volatile private long mark;
     
     private final Color colorMin;
     private final Color colorMax;
 
-    public Flasher(List<Integer> indices) {
+    public Flasher() {
         startTime = System.currentTimeMillis();
-        this.indices = indices;
         this.colorMin = Styles.EditorColor.COLOR_NOTIFICATION_MIN.getColor();
         this.colorMax = Styles.EditorColor.COLOR_NOTIFICATION_MAX.getColor();
     }
     
     public void mark() {
         mark = System.currentTimeMillis();
-    }
-        
-    public boolean isHighlightedIndex(int index) {
-        return indices.contains(index);
     }
     
     public boolean isFlashing() {
