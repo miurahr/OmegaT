@@ -80,6 +80,10 @@ public abstract class TestCore extends XMLTestCase {
 			public JMenuItem getProjectRecentMenuItem() {
 				return menu;
 			}
+
+            @Override
+            public void invokeAction(String action, int modifiers) {
+            }
         };
 
         Core.setMainWindow(new IMainWindow() {

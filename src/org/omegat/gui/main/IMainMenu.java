@@ -47,4 +47,6 @@ public interface IMainMenu {
     JMenu getProjectMenu();
     
     JMenuItem getProjectRecentMenuItem();
+    
+    void invokeAction(String action, int modifiers);
 }

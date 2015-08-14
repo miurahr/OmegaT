@@ -465,6 +465,10 @@ public class TestTeamIntegrationChild {
             public JMenu getGlossaryMenu() {
                 return null;
             }
+
+            @Override
+            public void invokeAction(String action, int modifiers) {
+            }
         };
 
         public IMainMenu getMainMenu() {
