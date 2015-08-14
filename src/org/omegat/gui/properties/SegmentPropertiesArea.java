@@ -47,13 +47,13 @@ import org.omegat.gui.main.MainWindow;
 import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
+import org.omegat.util.gui.ISettingsMenuCallback;
 import org.omegat.util.gui.Styles;
 
 import com.vlsolutions.swing.docking.DockableState.Location;
 
 @SuppressWarnings("serial")
-public class SegmentPropertiesArea extends DockableScrollPane implements IEntryEventListener, IProjectEventListener,
-    IFontChangedEventListener, Scrollable {
+public class SegmentPropertiesArea extends DockableScrollPane implements Scrollable, ISettingsMenuCallback {
 
     private final static DateFormat DATE_FORMAT = DateFormat.getDateInstance();
     private final static DateFormat TIME_FORMAT = DateFormat.getTimeInstance();
@@ -84,11 +84,34 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
         super("SEGMENTPROPERTIES", OStrings.getString("SEGPROP_PANE_TITLE"), null, true);
         mw.addDockable(this);
         
+        getDockKey().putProperty(ISettingsMenuCallback.PROPERTY_SETTINGS_MENU_CALLBACK, this);
+        
         setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         
-        CoreEvents.registerEntryEventListener(this);
-        CoreEvents.registerProjectChangeListener(this);
-        CoreEvents.registerFontChangedEventListener(this);
+        CoreEvents.registerEntryEventListener(new IEntryEventListener() {
+            @Override
+            public void onNewFile(String activeFileName) {}
+            @Override
+            public void onEntryActivated(SourceTextEntry newEntry) {
+                getDockKey().setNotification(false);
+                setProperties(newEntry);
+                doNotify(getKeysToNotify());
+            }
+        });
+        CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
+            @Override
+            public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
+                if (eventType == PROJECT_CHANGE_TYPE.CLOSE) {
+                    setProperties(null);            
+                }
+            }
+        });
+        CoreEvents.registerFontChangedEventListener(new IFontChangedEventListener() {
+            @Override
+            public void onFontChanged(Font newFont) {
+                viewImpl.getViewComponent().setFont(newFont);
+            }
+        });
         
         setForeground(Styles.EditorColor.COLOR_FOREGROUND.getColor());
         setBackground(Styles.EditorColor.COLOR_BACKGROUND.getColor());
@@ -157,7 +180,7 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
     void showContextMenu(Point p) {
         JPopupMenu menu = new JPopupMenu();
         populateLocalContextMenuOptions(menu, p);
-        populateGlobalContextMenuOptions(menu);
+        //populateGlobalContextMenuOptions(menu);
         try {
             menu.show(SegmentPropertiesArea.this, p.x, p.y);
         } catch (IllegalComponentStateException ignore) {
@@ -189,10 +212,10 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
             }
         });
         contextMenu.add(notifyOnItem);
-        contextMenu.addSeparator();
     }
     
-    private void populateGlobalContextMenuOptions(JPopupMenu contextMenu) {
+    @Override
+    public void populateSettingsMenu(JPopupMenu contextMenu) {
         JMenuItem tableModeItem = new JCheckBoxMenuItem(OStrings.getString("SEGPROP_CONTEXTMENU_TABLE_MODE"));
         tableModeItem.setSelected(viewImpl.getClass().equals(SegmentPropertiesTableView.class));
         tableModeItem.addActionListener(new ActionListener() {
@@ -253,23 +276,6 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
             int orientation, int direction) {
         return getFont().getSize();
     }
-
-    @Override
-    public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
-        if (eventType == PROJECT_CHANGE_TYPE.CLOSE) {
-            setProperties(null);            
-        }
-    }
-
-    @Override
-    public void onNewFile(String activeFileName) {}
-
-    @Override
-    public void onEntryActivated(SourceTextEntry newEntry) {
-        getDockKey().setNotification(false);
-        setProperties(newEntry);
-        doNotify(getKeysToNotify());
-    }
     
     private List<String> getKeysToNotify() {
         if (!Preferences.existsPreference(Preferences.SEGPROPS_NOTIFY_PROPS)) {
@@ -288,11 +294,6 @@ public class SegmentPropertiesArea extends DockableScrollPane implements IEntryE
             currentKeys.remove(key);
         }
         Preferences.setPreference(Preferences.SEGPROPS_NOTIFY_PROPS, StringUtils.join(currentKeys, ", "));
-    }
-    
-    @Override
-    public void onFontChanged(Font newFont) {
-        viewImpl.getViewComponent().setFont(newFont);
     }
     
     private void doNotify(List<String> keys) {
