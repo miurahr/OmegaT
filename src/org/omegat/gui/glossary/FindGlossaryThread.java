@@ -7,7 +7,7 @@
                2008 Alex Buloichik
                2009 Wildrich Fourie, Didier Briel, Alex Buloichik
                2013 Aaron Madlon-Kay, Alex Buloichik
-               2015 Didier Briel
+               2015 Didier Briel, Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -41,7 +41,9 @@ import org.omegat.core.data.SourceTextEntry;
 import org.omegat.gui.common.EntryInfoSearchThread;
 import org.omegat.tokenizer.DefaultTokenizer;
 import org.omegat.tokenizer.ITokenizer;
+import org.omegat.tokenizer.ITokenizer.StemmingMode;
 import org.omegat.util.Preferences;
+import org.omegat.util.StringUtil;
 import org.omegat.util.Token;
 
 /**
@@ -89,11 +91,10 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
         }
 
         // Compute source entry tokens
-        Token[] strTokens = tok.tokenizeWords(src, ITokenizer.StemmingMode.GLOSSARY);
-        if (!Preferences.isPreferenceDefault(Preferences.GLOSSARY_STEMMING, true)) {
-            strTokens = tok.tokenizeWords(src, ITokenizer.StemmingMode.NONE);
-        }
-        
+        StemmingMode mode = Preferences.isPreferenceDefault(Preferences.GLOSSARY_STEMMING, true)
+                ? StemmingMode.GLOSSARY
+                : StemmingMode.NONE;
+        Token[] strTokens = tok.tokenizeWords(src, mode);
 
         List<GlossaryEntry> entries = manager.getGlossaryEntries(src);
         if (entries != null) {
@@ -102,18 +103,24 @@ public class FindGlossaryThread extends EntryInfoSearchThread<List<GlossaryEntry
 
                 // Computer glossary entry tokens
                 String glosStr = glosEntry.getSrcText();
-                Token[] glosTokens = tok.tokenizeWords(glosStr, ITokenizer.StemmingMode.GLOSSARY);
-                if (!Preferences.isPreferenceDefault(Preferences.GLOSSARY_STEMMING, true)) {
-                    glosTokens = tok.tokenizeWords(glosStr, ITokenizer.StemmingMode.NONE);        
-                 }
+                Token[] glosTokens = tok.tokenizeWords(glosStr, mode);
                 int glosTokensN = glosTokens.length;
-                if (glosTokensN == 0)
+                if (glosTokensN == 0) {
                     continue;
+                }
 
                 if (DefaultTokenizer.isContainsAll(strTokens, glosTokens, 
                         Preferences.isPreferenceDefault(Preferences.GLOSSARY_NOT_EXACT_MATCH, true))) {
                     result.add(glosEntry);
-                }                    
+                    continue;
+                }
+                
+                if (!Core.getProject().getProjectProperties().getSourceLanguage().isSpaceDelimited()
+                        && StringUtil.isCJK(glosEntry.getSrcText()) && src.contains(glosEntry.getSrcText())) {
+                    // This is a CJK word and our source language is not space-delimited, so include if
+                    // word appears anywhere in source string.
+                    result.add(glosEntry);
+                }
             }
         }
 

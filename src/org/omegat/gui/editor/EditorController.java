@@ -586,6 +586,15 @@ public class EditorController implements IEditor {
         }
     }
 
+    @Override
+    public String getCurrentTargetFile() {
+        String currentSource = getCurrentFile();
+        if (currentSource == null) {
+            return null;
+        }
+        return Core.getProject().getTargetPathForSourceFile(currentSource);
+    }
+
     /**
      * Displays all segments in current document.
      * <p>
@@ -741,7 +750,7 @@ public class EditorController implements IEditor {
             CoreEvents.fireEntryNewFile(Core.getProject().getProjectFiles().get(displayedFileIndex).filePath);
         }
 
-        editor.autoCompleter.hidePopup();
+        editor.autoCompleter.setVisible(false);
         editor.repaint();
 
         // fire event about new segment activated
@@ -786,7 +795,7 @@ public class EditorController implements IEditor {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     markerController.reprocessImmediately(m_docSegList[displayedEntryIndex]);
-                    editor.autoCompleter.updatePopup();
+                    editor.autoCompleter.textDidChange();
                 }
             });
         }
@@ -1627,6 +1636,7 @@ public class EditorController implements IEditor {
      * @param toWhat
      *            : lower, title, upper or cycle
      */
+    @Override
     public void changeCase(CHANGE_CASE_TO toWhat) {
         UIThreadsUtil.mustBeSwingThread();
 
@@ -1639,15 +1649,18 @@ public class EditorController implements IEditor {
         int translationEnd = editor.getOmDocument().getTranslationEnd();
 
         // both should be within the limits
-        if (end < translationStart || start > translationEnd)
+        if (end < translationStart || start > translationEnd) {
             return; // forget it, not worth the effort
+        }
 
         // adjust the bound which exceeds the limits
-        if (start < translationStart && end <= translationEnd)
+        if (start < translationStart && end <= translationEnd) {
             start = translationStart;
+        }
 
-        if (end > translationEnd && start >= translationStart)
+        if (end > translationEnd && start >= translationStart) {
             end = translationEnd;
+        }
 
         try {
             // no selection? make it the current word
@@ -1656,77 +1669,27 @@ public class EditorController implements IEditor {
                 end = EditorUtils.getWordEnd(editor, end);
 
                 // adjust the bound again
-                if (start < translationStart && end <= translationEnd)
+                if (start < translationStart && end <= translationEnd) {
                     start = translationStart;
+                }
 
-                if (end > translationEnd && start >= translationStart)
+                if (end > translationEnd && start >= translationStart) {
                     end = translationEnd;
+                }
             }
 
             editor.setSelectionStart(start);
             editor.setSelectionEnd(end);
 
             String selectionText = editor.getText(start, end - start);
-            // tokenize the selection
-            Token[] tokenList = Core.getProject().getTargetTokenizer()
-                    .tokenizeWordsForSpelling(selectionText);
-
-            StringBuffer buffer = new StringBuffer(selectionText);
-
-            if (toWhat == CHANGE_CASE_TO.CYCLE) {
-                int lower = 0;
-                int upper = 0;
-                int title = 0;
-                int other = 0;
-
-                for (Token token : tokenList) {
-                    String word = token.getTextFromString(selectionText);
-                    if (StringUtil.isLowerCase(word)) {
-                        lower++;
-                        continue;
-                    }
-                    if (StringUtil.isTitleCase(word)) {
-                        title++;
-                        continue;
-                    }
-                    if (StringUtil.isUpperCase(word)) {
-                        upper++;
-                        continue;
-                    }
-                    other++;
-                }
-
-                if (lower == 0 && title == 0 && upper == 0 && other == 0)
-                    return; // nothing to do here
-
-                if (lower != 0 && title == 0 && upper == 0)
-                    toWhat = CHANGE_CASE_TO.TITLE;
-
-                if (lower == 0 && title != 0 && upper == 0)
-                    toWhat = CHANGE_CASE_TO.UPPER;
-
-                if (lower == 0 && title == 0 && upper != 0)
-                    toWhat = CHANGE_CASE_TO.LOWER;
-
-                if (other != 0)
-                    toWhat = CHANGE_CASE_TO.UPPER;
-            }
-
-            int lengthIncrement = 0;
-
-            for (Token token : tokenList) {
-                // find out the case and change to the selected
-                String result = doChangeCase(token.getTextFromString(selectionText), toWhat);
-
-                // replace this token
-                buffer.replace(token.getOffset() + lengthIncrement, token.getLength() + token.getOffset()
-                        + lengthIncrement, result);
-
-                lengthIncrement += result.length() - token.getLength();
+            String result = EditorUtils.doChangeCase(selectionText, toWhat);
+            if (selectionText.equals(result)) {
+                // Nothing changed
+                return;
             }
 
             // ok, write it back to the editor document
-            editor.replaceSelection(buffer.toString());
+            editor.replaceSelection(result);
 
             editor.setCaretPosition(caretPosition);
 
@@ -1737,31 +1700,6 @@ public class EditorController implements IEditor {
             Log.log("bad location exception when changing case");
             Log.log(ble);
         }
-    }
-
-    /**
-     * perform the case change. Lowercase becomes titlecase, titlecase becomes uppercase, uppercase becomes
-     * lowercase. if the text matches none of these categories, it is uppercased.
-     * 
-     * @param input
-     *            : the string to work on
-     * @param toWhat
-     *            : one of the CASE_* values - except for case CASE_CYCLE.
-     */
-    private String doChangeCase(String input, CHANGE_CASE_TO toWhat) {
-        Locale locale = Core.getProject().getProjectProperties().getTargetLanguage().getLocale();
-
-        switch (toWhat) {
-        case LOWER:
-            return input.toLowerCase(locale);
-        case UPPER:
-            return input.toUpperCase(locale);
-        case TITLE:
-            // TODO: find out how to get a locale-aware title case
-            return Character.toTitleCase(input.charAt(0)) + input.substring(1).toLowerCase(locale);
-        }
-        // if everything fails
-        return input.toUpperCase(locale);
     }
 
     /**
@@ -2165,7 +2103,7 @@ public class EditorController implements IEditor {
 
     @Override
     public void windowDeactivated() {
-        editor.autoCompleter.hidePopup();
+        editor.autoCompleter.setVisible(false);
     }
 
     /**

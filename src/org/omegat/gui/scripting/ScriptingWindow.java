@@ -6,7 +6,7 @@
  Copyright (C) 2011 Briac Pilpre (briacp@gmail.com)
                2013 Alex Buloichik
                2014 Briac Pilpre (briacp@gmail.com), Yu Tang
-               2015 Yu Tang
+               2015 Yu Tang, Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -86,6 +86,7 @@ import org.omegat.util.OStrings;
 import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
+import org.omegat.util.gui.OSXIntegration;
 import org.omegat.util.gui.StaticUIUtils;
 import org.openide.awt.Mnemonics;
 
@@ -95,6 +96,7 @@ import org.openide.awt.Mnemonics;
  * @author Briac Pilpre
  * @author Alex Buloichik
  * @author Yu Tang
+ * @author Aaron Madlon-Kay
  */
 public class ScriptingWindow extends JFrame {
 
@@ -142,13 +144,16 @@ public class ScriptingWindow extends JFrame {
 
         StaticUIUtils.setEscapeClosable(this);
 
+        setScriptsDirectory(Preferences.getPreferenceDefault(Preferences.SCRIPTS_DIRECTORY, DEFAULT_SCRIPTS_DIR));
         addScriptCommandToOmegaT();
         addRunShortcutToOmegaT();
 
         initWindowLayout();
 
         monitor = new ScriptsMonitor(this, m_scriptList, getAvailableScriptExtensions());
-        monitor.start(m_scriptsDirectory);
+        if (m_scriptsDirectory != null) {
+            monitor.start(m_scriptsDirectory);
+        }
 
         logResult(listScriptEngine().toString());
 
@@ -205,7 +210,6 @@ public class ScriptingWindow extends JFrame {
 
         toolsMenu.add(scriptMenu);
 
-        File scriptDir = new File(getScriptsDir());
         for (int i = 0; i < NUMBERS_OF_QUICK_SCRIPTS; i++) {
             JMenuItem menuItem = new JMenuItem();
             m_quickMenus[i] = menuItem;
@@ -213,7 +217,7 @@ public class ScriptingWindow extends JFrame {
             String scriptName = Preferences.getPreferenceDefault("scripts_quick_" + scriptKey(i), null);
 
             if (scriptName != null || "".equals(scriptName)) {
-                setQuickScriptMenu(new ScriptItem(new File(scriptDir, scriptName)), i);
+                setQuickScriptMenu(new ScriptItem(new File(m_scriptsDirectory, scriptName)), i);
             } else {
                 unsetQuickScriptMenu(i);
             }
@@ -321,8 +325,6 @@ public class ScriptingWindow extends JFrame {
 
         setupDirectorySelection(panelNorth);
 
-        m_scriptsDirectory = new File(m_txtScriptsDir.getText());
-
         m_scriptList = new JList();
         JScrollPane scrollPaneList = new JScrollPane(m_scriptList);
 
@@ -396,8 +398,9 @@ public class ScriptingWindow extends JFrame {
 
         m_txtScriptsDir = new JTextField();
         panel.add(m_txtScriptsDir);
-
-        m_txtScriptsDir.setText(getScriptsDir());
+        if (m_scriptsDirectory != null) {
+            m_txtScriptsDir.setText(m_scriptsDirectory.getPath());
+        }
 
         m_txtScriptsDir.setColumns(40);
         m_txtScriptsDir.addActionListener(new ActionListener() {
@@ -417,11 +420,6 @@ public class ScriptingWindow extends JFrame {
         });
 
         panel.add(btnBrowse);
-    }
-
-    private String getScriptsDir() {
-        return Preferences.getPreferenceDefault(Preferences.SCRIPTS_DIRECTORY,
-                new File(DEFAULT_SCRIPTS_DIR).getAbsolutePath());
     }
 
     private void setupRunButtons(JPanel panel) {
@@ -648,7 +646,7 @@ public class ScriptingWindow extends JFrame {
     }
 
     private void directoryTextFieldActionPerformed(java.awt.event.ActionEvent evt) {
-        updateScriptsDirectory();
+        setScriptsDirectory(m_txtScriptsDir.getText());
     }
 
     private void directoryChooserButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -658,20 +656,38 @@ public class ScriptingWindow extends JFrame {
         int result = m_fileChooser.showOpenDialog(ScriptingWindow.this);
         if (result == JFileChooser.APPROVE_OPTION) {
             // we should write the result into the directory text field
-            File file = m_fileChooser.getSelectedFile();
-            m_txtScriptsDir.setText(file.getAbsolutePath());
+            File file = m_fileChooser.getSelectedFile();            
+            setScriptsDirectory(file);
         }
-        updateScriptsDirectory();
     }
 
-    private void updateScriptsDirectory() {
-        String scriptsDir = m_txtScriptsDir.getText();
+    private void setScriptsDirectory(String scriptsDir) {
+        File dir;
+        try {
+            dir = new File(scriptsDir).getCanonicalFile();
+        } catch (IOException ex) {
+            dir = new File(scriptsDir).getAbsoluteFile();
+        }
+        setScriptsDirectory(dir);
+    }
+    
+    private void setScriptsDirectory(File scriptsDir) {
+        
+        if (!scriptsDir.isDirectory()) {
+            return;
+        }
+        m_scriptsDirectory = scriptsDir;
+        Preferences.setPreference(Preferences.SCRIPTS_DIRECTORY, scriptsDir.getPath());
+        OSXIntegration.setProxyIcon(getRootPane(), m_scriptsDirectory);
 
-        m_scriptsDirectory = new File(scriptsDir);
-        Preferences.setPreference(Preferences.SCRIPTS_DIRECTORY, scriptsDir);
-
-        monitor.stop();
-        monitor.start(m_scriptsDirectory);
+        if (m_txtScriptsDir != null) {
+            m_txtScriptsDir.setText(scriptsDir.getPath());
+        }
+        
+        if (monitor != null) {
+            monitor.stop();
+            monitor.start(m_scriptsDirectory);
+        }
     }
 
     /**

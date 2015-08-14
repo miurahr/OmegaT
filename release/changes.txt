@@ -1,7 +1,96 @@
 ----------------------------------------------------------------------
- OmegaT 3.5
+ OmegaT 3.5.1 
 ----------------------------------------------------------------------
-  15 Enhancements
+   8 Enhancements
+   4 Bug fixes
+   2 Localisation updates
+----------------------------------------------------------------------
+3.5.1 vs 3.5 update 1
+
+  Implemented requests:
+
+  - Glossary adding term dialog - set focus on any GUI element 
+  https://sourceforge.net/p/omegat/feature-requests/1014/
+
+  - Allow bundling of Hunspell spelling dictionaries in OmegaT.jar
+  https://sourceforge.net/p/omegat/feature-requests/1101/
+
+  - Allow per-project main window layouts
+  https://sourceforge.net/p/omegat/feature-requests/1102/
+
+  - Access Project Contents
+  https://sourceforge.net/p/omegat/feature-requests/1110/
+
+  Other changes:
+
+  - Team projects: Git library updated to 3.7.1
+
+  - Use full text search for glossary hits when language is not space-delimited
+
+  - In the Option menu, Access Configuration Folder allows accessing
+directly the configuration folder
+
+  - The encoding of glossaries is now determined automatically. That means
+you can now have a .tab or .csv glossary in UTF-16 LE and a .txt glossary in 
+Windows 1252. Of course, the encoding must be compatible with both the 
+languages contained, so Unicode is recommanded.
+
+  Bug fixes:
+
+  - Shift + F3 doesn't cycle case for single characters 
+  https://sourceforge.net/p/omegat/bugs/750/
+
+  - The Japanese tokenizer was not removing tags
+
+  - When the auto-completer was changing the first letter of a phrase
+from lower-case to upper-case, it was turning the phrase to title-case
+
+  - The Mac package contained two folders with the same name except the 
+case. Depending on the zip application, it was difficult to unpack it 
+correctly.
+
+  Localisation updates:
+
+  - Norwegian localisation created (UI, Instant Start, scripts, readme)
+  - Japanese localisation updated to 3.5.1 (UI)
+
+----------------------------------------------------------------------
+ OmegaT 3.5 update 1 (2015-06-11)
+----------------------------------------------------------------------
+   3 Enhancements
+   2 Bug fixes
+   3 Localisation updates
+----------------------------------------------------------------------
+3.5 update 1 vs 3.5
+
+  Implemented requests:
+
+  - Drag and drop within the segment 
+  https://sourceforge.net/p/omegat/feature-requests/401/
+
+  - Auto-completion option: Show relevant suggestions automatically
+  https://sourceforge.net/p/omegat/feature-requests/1097/
+
+  - Glossary view auto-completion improvements 
+  https://sourceforge.net/p/omegat/feature-requests/1098/
+
+  Bug fixes:
+
+  - The writeable glossary was not working propertly if it was not
+at the root of the glossary folder
+
+  - It was not possible to have two glossaries with the same name 
+in different sub-folders
+
+  Localisation updates:
+  - Dutch localisation updated to 3.5 (UI, documentation, scripts, readme)
+  - Interlingua localisation updated to 3.5 (UI, scripts, readme)
+  - Italian localisation updated to 3.5 (UI, scripts)
+
+----------------------------------------------------------------------
+ OmegaT 3.5 (2015-06-05)
+----------------------------------------------------------------------
+  18 Enhancements
    4 Bug fixes
    5 Localisation updates
 ----------------------------------------------------------------------
@@ -80,7 +169,7 @@ to the segment being current before the Search window was opened.
 
   - Dutch localisation updated to 3.4 update 1 (UI, documentation, readme)
   - Russian localisation updated to 3.4 update 1 (UI, readme, scripts)
-  - Belarusian localisation updated to 3.4 update 1 (UI)
+  - Belarusian localisation updated to 3.5 (UI, readme, scripts)
   - Japanese localisation updated to 3.5 (UI, documentation, scripts)
   - Italian localisation updated to 3.4 update 1 (UI)
 
@@ -155,7 +244,41 @@ of "foo\.\scripts"
   - Japanese localisation updated to 3.4 (UI, readme)
 
 ----------------------------------------------------------------------
- OmegaT 3.1.9 update 2
+ OmegaT 3.1.9 update 4 
+----------------------------------------------------------------------
+   0 Enhancement
+   1 Bug fix
+   0 Localisation update
+----------------------------------------------------------------------
+3.1.9 update 4 vs. 3.1.9 update 3
+
+  Bug fixes:
+
+  Mac: With the included JRE, it was not possible to launch scripts
+opening files or folders
+
+----------------------------------------------------------------------
+ OmegaT 3.1.9 update 3 (2015-07-10)
+----------------------------------------------------------------------
+   0 Enhancement
+   1 Bug fix
+   1 Localisation update
+----------------------------------------------------------------------
+3.1.9 update 3 vs. 3.1.9 update 2
+
+  Bug fixes:
+
+  - When a segment contained only protected text, and that the
+translation contained text, an error occurred when trying to create
+the translated document, resulting in the translated document being 
+empty
+
+  Localisation updates:
+
+  - New Norwegian localisation (UI, Instant start, scripts, readme)
+
+----------------------------------------------------------------------
+ OmegaT 3.1.9 update 2 (2015-06-03)
 ----------------------------------------------------------------------
    2 Enhancements
    2 Bug fixes

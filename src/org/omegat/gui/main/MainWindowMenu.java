@@ -13,7 +13,7 @@
                2012 Wildrich Fourie, Guido Leenders, Martin Fleurke, Didier Briel
                2013 Zoltan Bartko, Didier Briel, Yu Tang
                2014 Aaron Madlon-Kay
-               2015 Didier Briel
+               2015 Didier Briel, Yu Tang
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -38,6 +38,7 @@ package org.omegat.gui.main;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -65,6 +66,7 @@ import org.omegat.util.Log;
 import org.omegat.util.OStrings;
 import org.omegat.util.Platform;
 import org.omegat.util.Preferences;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.OSXIntegration;
 import org.omegat.util.gui.Styles;
 import org.openide.awt.Mnemonics;
@@ -180,14 +182,19 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         Method method = null;
         try {
             method = mainWindowMenuHandler.getClass().getMethod(methodName);
-        } catch (NoSuchMethodException ex) {
-            throw new IncompatibleClassChangeError(
-                    "Error invoke method handler for main menu: there is no method " + methodName);
+        } catch (NoSuchMethodException ignore) {
+            try {
+                method = mainWindowMenuHandler.getClass().getMethod(methodName, Integer.TYPE);
+            } catch (NoSuchMethodException ex) {
+                throw new IncompatibleClassChangeError(
+                        "Error invoke method handler for main menu: there is no method " + methodName);
+            }
         }
 
         // Call ...MenuItemActionPerformed method.
+        Object[] args = method.getParameterTypes().length == 0 ? null : new Object[] { evt.getModifiers() };
         try {
-            method.invoke(mainWindowMenuHandler);
+            method.invoke(mainWindowMenuHandler, args);
         } catch (IllegalAccessException ex) {
             throw new IncompatibleClassChangeError("Error invoke method handler for main menu");
         } catch (InvocationTargetException ex) {
@@ -269,6 +276,38 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         projectMenu.add(new JSeparator());
         projectMenu.add(projectEditMenuItem = createMenuItem("MW_PROJECTMENU_EDIT"));
         projectMenu.add(viewFileListMenuItem = createMenuItem("TF_MENU_FILE_PROJWIN"));
+        projectMenu.add(projectAccessProjectFilesMenu = createMenu("TF_MENU_FILE_ACCESS_PROJECT_FILES")); 
+        projectAccessProjectFilesMenu.add(projectAccessRootMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_ROOT"));
+        projectAccessProjectFilesMenu.add(projectAccessDictionaryMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_DICTIONARY"));
+        projectAccessProjectFilesMenu.add(projectAccessGlossaryMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_GLOSSARY"));
+        projectAccessProjectFilesMenu.add(projectAccessSourceMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_SOURCE"));
+        projectAccessProjectFilesMenu.add(projectAccessTargetMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_TARGET"));
+        projectAccessProjectFilesMenu.add(projectAccessTMMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_TM"));
+        projectAccessProjectFilesMenu.add(new JSeparator());
+        projectAccessProjectFilesMenu.add(projectAccessCurrentSourceDocumentMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_CURRENT_SOURCE_DOCUMENT"));
+        projectAccessProjectFilesMenu.add(projectAccessCurrentTargetDocumentMenuItem = createMenuItem("TF_MENU_FILE_ACCESS_CURRENT_TARGET_DOCUMENT"));
+        projectAccessProjectFilesMenu.add(projectAccessWriteableGlossaryMenuItem = 
+                createMenuItem("TF_MENU_FILE_ACCESS_WRITEABLE_GLOSSARY"));       
+        projectAccessProjectFilesMenu.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                String sourcePath = Core.getEditor().getCurrentFile();
+                projectAccessCurrentSourceDocumentMenuItem.setEnabled(!StringUtil.isEmpty(sourcePath)
+                        && new File(Core.getProject().getProjectProperties().getSourceRoot(), sourcePath).isFile());
+                String targetPath = Core.getEditor().getCurrentTargetFile();
+                projectAccessCurrentTargetDocumentMenuItem.setEnabled(!StringUtil.isEmpty(targetPath)
+                        && new File(Core.getProject().getProjectProperties().getTargetRoot(), targetPath).isFile());
+                String glossaryPath = Core.getProject().getProjectProperties().getWriteableGlossary();
+                projectAccessWriteableGlossaryMenuItem.setEnabled(!StringUtil.isEmpty(glossaryPath)
+                        && new File(glossaryPath).isFile());
+            }
+            @Override
+            public void menuDeselected(MenuEvent e) {
+            }
+            @Override
+            public void menuCanceled(MenuEvent e) {
+            }
+        });
         projectExitMenuItem = createMenuItem("TF_MENU_FILE_QUIT");
 
         // all except MacOSX
@@ -345,14 +384,11 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         viewMenu.add(viewMarkAutoPopulatedCheckBoxMenuItem = createCheckboxMenuItem("MW_VIEW_MENU_MARK_AUTOPOPULATED"));
         viewMenu.add(viewModificationInfoMenu = createMenu("MW_VIEW_MENU_MODIFICATION_INFO"));
         ButtonGroup viewModificationInfoMenuBG = new ButtonGroup();
-        viewModificationInfoMenu
-                .add(viewDisplayModificationInfoNoneRadioButtonMenuItem = createRadioButtonMenuItem(
+        viewModificationInfoMenu.add(viewDisplayModificationInfoNoneRadioButtonMenuItem = createRadioButtonMenuItem(
                         "MW_VIEW_MENU_MODIFICATION_INFO_NONE", viewModificationInfoMenuBG));
-        viewModificationInfoMenu
-                .add(viewDisplayModificationInfoSelectedRadioButtonMenuItem = createRadioButtonMenuItem(
+        viewModificationInfoMenu.add(viewDisplayModificationInfoSelectedRadioButtonMenuItem = createRadioButtonMenuItem(
                         "MW_VIEW_MENU_MODIFICATION_INFO_SELECTED", viewModificationInfoMenuBG));
-        viewModificationInfoMenu
-                .add(viewDisplayModificationInfoAllRadioButtonMenuItem = createRadioButtonMenuItem(
+        viewModificationInfoMenu.add(viewDisplayModificationInfoAllRadioButtonMenuItem = createRadioButtonMenuItem(
                         "MW_VIEW_MENU_MODIFICATION_INFO_ALL", viewModificationInfoMenuBG));
         
         viewMarkTranslatedSegmentsCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_TRANSLATED.getColor()));
@@ -364,44 +400,32 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         viewMarkWhitespaceCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_WHITESPACE.getColor()));
         viewMarkBidiCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_BIDIMARKERS.getColor()));
         viewModificationInfoMenu.setIcon(getViewMenuMarkBGIcon(null));
-        viewMarkAutoPopulatedCheckBoxMenuItem
-                .setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_MARK_COMES_FROM_TM_XAUTO.getColor()));
+        viewMarkAutoPopulatedCheckBoxMenuItem.setIcon(getViewMenuMarkBGIcon(Styles.EditorColor.COLOR_MARK_COMES_FROM_TM_XAUTO.getColor()));
 
         toolsMenu.add(toolsValidateTagsMenuItem = createMenuItem("TF_MENU_TOOLS_VALIDATE"));
         toolsMenu.add(toolsSingleValidateTagsMenuItem = createMenuItem("TF_MENU_TOOLS_SINGLE_VALIDATE"));
-        toolsMenu
-                .add(toolsShowStatisticsStandardMenuItem = createMenuItem("TF_MENU_TOOLS_STATISTICS_STANDARD"));
-        toolsMenu
-                .add(toolsShowStatisticsMatchesMenuItem = createMenuItem("TF_MENU_TOOLS_STATISTICS_MATCHES"));
-        toolsMenu
-                .add(toolsShowStatisticsMatchesPerFileMenuItem = createMenuItem("TF_MENU_TOOLS_STATISTICS_MATCHES_PER_FILE"));
+        toolsMenu.add(toolsShowStatisticsStandardMenuItem = createMenuItem("TF_MENU_TOOLS_STATISTICS_STANDARD"));
+        toolsMenu.add(toolsShowStatisticsMatchesMenuItem = createMenuItem("TF_MENU_TOOLS_STATISTICS_MATCHES"));
+        toolsMenu.add(toolsShowStatisticsMatchesPerFileMenuItem = createMenuItem("TF_MENU_TOOLS_STATISTICS_MATCHES_PER_FILE"));
 
-        optionsMenu
-                .add(optionsTabAdvanceCheckBoxMenuItem = createCheckboxMenuItem("TF_MENU_DISPLAY_ADVANCE"));
-        optionsMenu
-                .add(optionsAlwaysConfirmQuitCheckBoxMenuItem = createCheckboxMenuItem("MW_OPTIONSMENU_ALWAYS_CONFIRM_QUIT"));
+        optionsMenu.add(optionsTabAdvanceCheckBoxMenuItem = createCheckboxMenuItem("TF_MENU_DISPLAY_ADVANCE"));
+        optionsMenu.add(optionsAlwaysConfirmQuitCheckBoxMenuItem = createCheckboxMenuItem("MW_OPTIONSMENU_ALWAYS_CONFIRM_QUIT"));
         optionsMenu.add(optionsMachineTranslateMenu = createMenu("TF_OPTIONSMENU_MACHINETRANSLATE"));
         optionsMenu.add(optionsGlossaryMenu = createMenu("TF_OPTIONSMENU_GLOSSARY"));
 
-        optionsGlossaryMenu
-                .add(optionsGlossaryTBXDisplayContextCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_TBX_DISPLAY_CONTEXT"));
-        optionsGlossaryMenu
-                .add(optionsGlossaryExactMatchCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_EXACT_MATCH"));
-        optionsGlossaryMenu
-                .add(optionsGlossaryStemmingCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_STEMMING"));
+        optionsGlossaryMenu.add(optionsGlossaryTBXDisplayContextCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_TBX_DISPLAY_CONTEXT"));
+        optionsGlossaryMenu.add(optionsGlossaryExactMatchCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_EXACT_MATCH"));
+        optionsGlossaryMenu.add(optionsGlossaryStemmingCheckBoxMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_GLOSSARY_STEMMING"));
 
         optionsMenu.add(optionsTransTipsMenu = createMenu("TF_OPTIONSMENU_TRANSTIPS"));
-        optionsTransTipsMenu
-                .add(optionsTransTipsEnableMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_TRANSTIPS_ENABLE"));
-        optionsTransTipsMenu
-                .add(optionsTransTipsExactMatchMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_TRANSTIPS_EXACTMATCH"));
-
+        optionsTransTipsMenu.add(optionsTransTipsEnableMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_TRANSTIPS_ENABLE"));
+        optionsTransTipsMenu.add(optionsTransTipsExactMatchMenuItem = createCheckboxMenuItem("TF_OPTIONSMENU_TRANSTIPS_EXACTMATCH"));
         optionsMenu.add(optionsAutoCompleteMenu = createMenu("MW_OPTIONSMENU_AUTOCOMPLETE"));
         // add any autocomplete view configuration menu items below
+        optionsAutoCompleteMenu.add(optionsAutoCompleteShowAutomaticallyItem = createCheckboxMenuItem("MW_OPTIONSMENU_AUTOCOMPLETE_SHOW_AUTOMATICALLY"));
         optionsAutoCompleteMenu.add(optionsAutoCompleteGlossaryMenuItem = createMenuItem("MW_OPTIONSMENU_AUTOCOMPLETE_GLOSSARY"));
         optionsAutoCompleteMenu.add(optionsAutoCompleteAutoTextMenuItem = createMenuItem("MW_OPTIONSMENU_AUTOCOMPLETE_AUTOTEXT"));
         optionsAutoCompleteMenu.add(optionsAutoCompleteCharTableMenuItem = createMenuItem("MW_OPTIONSMENU_AUTOCOMPLETE_CHARTABLE"));
-
         optionsMenu.add(new JSeparator());
         optionsMenu.add(optionsFontSelectionMenuItem = createMenuItem("TF_MENU_DISPLAY_FONT"));
         optionsMenu.add(optionsColorsSelectionMenuItem = createMenuItem("TF_MENU_COLORS"));
@@ -415,8 +439,9 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsMenu.add(optionsViewOptionsMenuItem = createMenuItem("MW_OPTIONSMENU_VIEW"));
         optionsMenu.add(optionsSaveOptionsMenuItem = createMenuItem("MW_OPTIONSMENU_SAVE"));
         optionsMenu.add(optionsViewOptionsMenuLoginItem = createMenuItem("MW_OPTIONSMENU_LOGIN"));
+        optionsMenu.add(new JSeparator());
         optionsMenu.add(optionsRestoreGUIMenuItem = createMenuItem("MW_OPTIONSMENU_RESTORE_GUI"));
-
+        optionsMenu.add(optionsAccessConfigDirMenuItem = createMenuItem("MW_OPTIONSMENU_ACCESS_CONFIG_DIR"));
         optionsMenu.add(new JSeparator());
 
         helpMenu.add(helpContentsMenuItem = createMenuItem("TF_MENU_HELP_CONTENTS"));
@@ -443,11 +468,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
         CoreEvents.registerProjectChangeListener(new IProjectEventListener() {
             public void onProjectChanged(PROJECT_CHANGE_TYPE eventType) {
-                if (Core.getProject().isProjectLoaded()) {
-                    onProjectStatusChanged(true);
-                } else {
-                    onProjectStatusChanged(false);
-                }
+                onProjectStatusChanged(Core.getProject().isProjectLoaded());
             }
         });
 
@@ -493,6 +514,8 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
                 .setSelected(EditorSettings.DISPLAY_MODIFICATION_INFO_ALL.equals(Core.getEditor()
                         .getSettings().getDisplayModificationInfo()));
 
+        optionsAutoCompleteShowAutomaticallyItem.setSelected(Preferences.isPreferenceDefault(
+                Preferences.AC_SHOW_SUGGESTIONS_AUTOMATICALLY, true));
         optionsGlossaryTBXDisplayContextCheckBoxMenuItem.setSelected(Preferences.isPreferenceDefault(
                 Preferences.GLOSSARY_TBX_DISPLAY_CONTEXT, true));
         optionsGlossaryExactMatchCheckBoxMenuItem.setSelected(Preferences.isPreferenceDefault(
@@ -607,7 +630,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
 
         JMenuItem[] itemsToSwitchOn = new JMenuItem[] { projectImportMenuItem, projectWikiImportMenuItem,
                 projectReloadMenuItem, projectCloseMenuItem, projectSaveMenuItem, projectEditMenuItem,
-                projectCompileMenuItem, projectSingleCompileMenuItem,
+                projectCompileMenuItem, projectSingleCompileMenuItem, projectAccessProjectFilesMenu,
 
                 editMenu, editFindInProjectMenuItem, editReplaceInProjectMenuItem, editInsertSourceMenuItem,
                 editInsertTranslationMenuItem, editTagPainterMenuItem, editOverwriteSourceMenuItem,
@@ -633,6 +656,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         if (Core.getParams().containsKey("no-team")) {
         	projectTeamNewMenuItem.setEnabled(false);
         }
+        
     }
 
     public JMenu getMachineTranslationMenu() {
@@ -711,6 +735,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsColorsSelectionMenuItem;
     JMenu optionsMenu;
     JMenuItem optionsRestoreGUIMenuItem;
+    JMenuItem optionsAccessConfigDirMenuItem;
     JMenuItem optionsSentsegMenuItem;
     JMenuItem optionsSetupFileFiltersMenuItem;
     JMenuItem optionsSpellCheckMenuItem;
@@ -724,6 +749,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JCheckBoxMenuItem optionsTransTipsEnableMenuItem;
     JCheckBoxMenuItem optionsTransTipsExactMatchMenuItem;
     JMenu optionsAutoCompleteMenu;
+    JMenuItem optionsAutoCompleteShowAutomaticallyItem;
     JMenuItem optionsAutoCompleteGlossaryMenuItem;
     JMenuItem optionsAutoCompleteAutoTextMenuItem;
     JMenuItem optionsAutoCompleteCharTableMenuItem;
@@ -748,6 +774,16 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem projectReloadMenuItem;
     JMenuItem projectSaveMenuItem;
     JMenuItem projectWikiImportMenuItem;
+    JMenu projectAccessProjectFilesMenu;
+    JMenuItem projectAccessRootMenuItem;    
+    JMenuItem projectAccessDictionaryMenuItem;
+    JMenuItem projectAccessGlossaryMenuItem;
+    JMenuItem projectAccessSourceMenuItem;
+    JMenuItem projectAccessTargetMenuItem;
+    JMenuItem projectAccessTMMenuItem;
+    JMenuItem projectAccessCurrentSourceDocumentMenuItem;
+    JMenuItem projectAccessCurrentTargetDocumentMenuItem;
+    JMenuItem projectAccessWriteableGlossaryMenuItem;
     JMenu switchCaseSubMenu;
     JMenuItem titleCaseMenuItem;
     JMenu toolsMenu;

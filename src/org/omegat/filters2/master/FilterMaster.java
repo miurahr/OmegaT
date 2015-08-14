@@ -184,10 +184,10 @@ public class FilterMaster {
             throws IOException, TranslationException {
         IFilter filterObject = null;
         try {
-            LookupInformation lookup = lookupFilter(filename, fc);
-            if (lookup == null)
+            LookupInformation lookup = lookupFilter(new File(filename), fc);
+            if (lookup == null) {
                 return null;
-
+            }
             File inFile = new File(filename);
             fc.setInEncoding(lookup.outFilesInfo.getSourceEncoding());
             fc.setOutEncoding(lookup.outFilesInfo.getTargetEncoding());
@@ -223,27 +223,16 @@ public class FilterMaster {
      */
     public void translateFile(String sourcedir, String filename, String targetdir, FilterContext fc,
             ITranslateCallback translateCallback) throws IOException, TranslationException {
-        LookupInformation lookup = lookupFilter(sourcedir + File.separator + filename, fc);
+        LookupInformation lookup = lookupFilter(new File(sourcedir, filename), fc);
         if (lookup == null) {
             // The file is not supported by any of the filters.
             // Copying it
-            LFileCopy.copy(sourcedir + File.separator + filename, targetdir + File.separator + filename);
+            LFileCopy.copy(new File(sourcedir, filename), new File(targetdir, filename));
             return;
         }
 
-        File inFile = new File(sourcedir + File.separator + filename);
-
-        String name = inFile.getName();
-        String path = filename.substring(0, filename.length() - name.length());
-
-        File outFile = new File(targetdir
-                + File.separator
-                + path
-                + File.separator
-                + constructTargetFilename(lookup.outFilesInfo.getSourceFilenameMask(), name,
-                        lookup.outFilesInfo.getTargetFilenamePattern(), fc.getTargetLang(),
-                        lookup.outFilesInfo.getSourceEncoding(), lookup.outFilesInfo.getTargetEncoding(),
-                        lookup.filterObject.getFileFormatName()));
+        File inFile = new File(sourcedir, filename);
+        File outFile = new File(targetdir, getTargetForSource(filename, lookup, fc.getTargetLang()));
 
         fc.setInEncoding(lookup.outFilesInfo.getSourceEncoding());
         fc.setOutEncoding(lookup.outFilesInfo.getTargetEncoding());
@@ -259,26 +248,15 @@ public class FilterMaster {
     public void alignFile(String sourceDir, String fileName, String targetdir, FilterContext fc,
             IAlignCallback alignCallback) throws Exception {
 
-        LookupInformation lookup = lookupFilter(sourceDir + File.separator + fileName, fc);
+        LookupInformation lookup = lookupFilter(new File(sourceDir, fileName), fc);
         if (lookup == null) {
             // The file is not supported by any of the filters.
             // Skip it
             return;
         }
 
-        File inFile = new File(sourceDir + File.separator + fileName);
-
-        String name = inFile.getName();
-        String path = fileName.substring(0, fileName.length() - name.length());
-
-        File outFile = new File(targetdir
-                + File.separator
-                + path
-                + File.separator
-                + constructTargetFilename(lookup.outFilesInfo.getSourceFilenameMask(), name,
-                        lookup.outFilesInfo.getTargetFilenamePattern(), fc.getTargetLang(),
-                        lookup.outFilesInfo.getSourceEncoding(), lookup.outFilesInfo.getTargetEncoding(),
-                        lookup.filterObject.getFileFormatName()));
+        File inFile = new File(sourceDir, fileName);
+        File outFile = new File(targetdir, getTargetForSource(fileName, lookup, fc.getTargetLang()));
 
         if (!outFile.exists()) {
             // out file not exist - skip
@@ -318,43 +296,32 @@ public class FilterMaster {
      * <li>Creates a reader (use <code>OneFilter.getReader()</code> to get it)
      * <li>Checks whether the filter supports the file.
      * </ul>
-     * It <b>does not</b> check whether the filter supports the inFile, i.e. it doesn't call
-     * <code>isFileSupported</code>
      * 
-     * 
-     * @param filename
-     *            The source filename.
-     * @return The filter to handle the inFile.
+     * @param inFile The full path to the source file
+     * @return The corresponding LookupInformation
      */
-    private LookupInformation lookupFilter(String filename, FilterContext fc) throws TranslationException,
+    private LookupInformation lookupFilter(File inFile, FilterContext fc) throws TranslationException,
             IOException {
-        File inFile = new File(filename);
-        String name = inFile.getName();
-        String path = inFile.getParent();
-        if (path == null)
-            path = "";
-
         for (Filter f : config.getFilters()) {
             if (!f.isEnabled()) {
                 continue;
             }
             for (Files ff : f.getFiles()) {
-                if (matchesMask(name, ff.getSourceFilenameMask())) {
-                    IFilter filterObject;
-                    filterObject = getFilterInstance(f.getClassName());
-
-                    if (filterObject != null) {
-                        fc.setInEncoding(ff.getSourceEncoding());
-                        fc.setOutEncoding(ff.getTargetEncoding());
-                        // only for exist filters
-                        Map<String, String> config = forFilter(f.getOption());
-                        if (!filterObject.isFileSupported(inFile, config, fc)) {
-                            break;
-                        }
-
-                        return new LookupInformation(filterObject, ff, config);
-                    }
+                if (!matchesMask(inFile.getName(), ff.getSourceFilenameMask())) {
+                    continue;
                 }
+                IFilter filterObject = getFilterInstance(f.getClassName());
+                if (filterObject == null) {
+                    continue;
+                }
+                fc.setInEncoding(ff.getSourceEncoding());
+                fc.setOutEncoding(ff.getTargetEncoding());
+                // only for exist filters
+                Map<String, String> config = forFilter(f.getOption());
+                if (!filterObject.isFileSupported(inFile, config, fc)) {
+                    break;
+                }
+                return new LookupInformation(filterObject, ff, config);
             }
         }
         return null;
@@ -401,7 +368,7 @@ public class FilterMaster {
      * <code>setupDefaultFilters</code>.
      */
     public static Filters loadConfig(String configDir) {
-        File configFile = new File(configDir + FILE_FILTERS);
+        File configFile = new File(configDir, FILE_FILTERS);
         if (!configFile.exists()) {
             return null;
         }
@@ -426,7 +393,7 @@ public class FilterMaster {
      * Saves information about the filters to an XML file.
      */
     public static void saveConfig(Filters config, String configDir) {
-        File configFile = new File(configDir + FILE_FILTERS);
+        File configFile = new File(configDir, FILE_FILTERS);
         if (config == null) {
             configFile.delete();
             return;
@@ -477,6 +444,33 @@ public class FilterMaster {
     }
 
     /**
+     * Calculate the target path corresponding to the given source file.
+     * @param sourceDir Path to the project's <code>source</code> dir
+     * @param srcRelPath Relative path under <code>sourceDir</code> of the source file
+     * @param fc Filter context
+     * @return The relative path under <code>target</code> of the corresponding target file
+     * @throws IOException
+     * @throws TranslationException
+     */
+    public String getTargetForSource(String sourceDir, String srcRelPath, FilterContext fc) throws IOException, TranslationException {
+        File srcFile = new File(sourceDir, srcRelPath);
+        if (!srcFile.isFile()) {
+            throw new IllegalArgumentException("The sourceDir and srcRelPath arguments must together point to an existing file.");
+        }
+        LookupInformation lookup = lookupFilter(srcFile, fc);
+        return getTargetForSource(srcRelPath, lookup, fc.getTargetLang());
+    }
+    
+    private static String getTargetForSource(String srcRelPath, LookupInformation lookup, Language targetLang) {
+        File srcRelFile = new File(srcRelPath);
+        return new File(srcRelFile.getParent(),
+                constructTargetFilename(lookup.outFilesInfo.getSourceFilenameMask(), srcRelFile.getName(),
+                        lookup.outFilesInfo.getTargetFilenamePattern(), targetLang,
+                        lookup.outFilesInfo.getSourceEncoding(), lookup.outFilesInfo.getTargetEncoding(),
+                        lookup.filterObject.getFileFormatName())).getPath();
+    }
+    
+    /**
      * Construct a target filename according to pattern from a file's name. Filename should be "name.ext",
      * without path.
      * <p>
@@ -520,7 +514,7 @@ public class FilterMaster {
      *            Pattern, according to which we change the filename
      * @return The changed filename
      */
-    private String constructTargetFilename(String sourceMask, String filename, String pattern,
+    private static String constructTargetFilename(String sourceMask, String filename, String pattern,
             Language targetLang, String sourceEncoding, String targetEncoding, String filterFormatName) {
         int lastStarPos = sourceMask.lastIndexOf('*');
         int dot = 0;

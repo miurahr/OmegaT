@@ -566,7 +566,7 @@ public class RealProject implements IProject {
             // shorten filename to that which is relative to src root
             Matcher fileMatch = FILE_PATTERN.matcher(midName);
             if (fileMatch.matches()) {
-                File fn = new File(locRoot+midName);
+                File fn = new File(locRoot, midName);
                 if (!fn.getParentFile().exists()) {
                     // target directory doesn't exist - create it
                     if (!fn.getParentFile().mkdirs()) {
@@ -609,7 +609,7 @@ public class RealProject implements IProject {
      */
     private void doExternalCommand(String command) {
         
-        if (command == null || command.length() == 0) {
+        if (StringUtil.isEmpty(command)) {
             return;
         }
         
@@ -1578,6 +1578,20 @@ public class RealProject implements IProject {
         return Collections.unmodifiableList(projectFilesList);
     }
 
+    @Override
+    public String getTargetPathForSourceFile(String currentSource) {
+        if (StringUtil.isEmpty(currentSource)) {
+            return null;
+        }
+        try {
+            return Core.getFilterMaster().getTargetForSource(m_config.getSourceRoot(),
+                    currentSource, new FilterContext(m_config));
+        } catch (Exception e) {
+            Log.log(e);
+        }
+        return null;
+    }
+    
     @Override
     public List<String> getSourceFilesOrder() {
         final String file = m_config.getProjectInternal() + OConsts.FILES_ORDER_FILENAME;

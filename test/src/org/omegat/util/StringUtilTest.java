@@ -25,6 +25,8 @@
 
 package org.omegat.util;
 
+import java.util.Locale;
+
 import junit.framework.TestCase;
 
 /**
@@ -41,11 +43,143 @@ public class StringUtilTest extends TestCase {
         assertTrue(StringUtil.isSubstringAfter("123456", 1, "23"));
     }
 
+    public void testIsTitleCase() {
+        assertFalse(StringUtil.isTitleCase("foobar"));
+        assertFalse(StringUtil.isTitleCase("fooBar"));
+        assertFalse(StringUtil.isTitleCase("f1obar"));
+        assertFalse(StringUtil.isTitleCase("FooBar"));
+        assertTrue(StringUtil.isTitleCase("Fo1bar"));
+        assertTrue(StringUtil.isTitleCase("Foobar"));
+        // LATIN CAPITAL LETTER L WITH SMALL LETTER J (U+01C8)
+        assertTrue(StringUtil.isTitleCase("\u01C8bcd"));
+        assertFalse(StringUtil.isTitleCase("a\u01C8bcd"));
+        
+        // LATIN CAPITAL LETTER L WITH SMALL LETTER J (U+01C8)
+        assertTrue(StringUtil.isTitleCase("\u01c8"));
+        // LATIN CAPITAL LETTER LJ (U+01C7)
+        assertFalse(StringUtil.isTitleCase("\u01c7"));
+        // LATIN SMALL LETTER LJ (U+01C9)
+        assertFalse(StringUtil.isTitleCase("\u01c9"));
+    }
+    
     public void testIsSubstringBefore() {
         assertFalse(StringUtil.isSubstringBefore("123456", 1, "01"));
         assertTrue(StringUtil.isSubstringBefore("123456", 1, "1"));
         assertTrue(StringUtil.isSubstringBefore("123456", 2, "12"));
         assertTrue(StringUtil.isSubstringBefore("123456", 6, "56"));
         assertTrue(StringUtil.isSubstringBefore("123456", 5, "45"));
+    }
+    
+    public void testUnicodeNonBMP() {
+        // MATHEMATICAL BOLD CAPITAL A (U+1D400)
+        String test = "\uD835\uDC00";
+        assertTrue(StringUtil.isUpperCase(test));
+        assertFalse(StringUtil.isLowerCase(test));
+        assertTrue(StringUtil.isTitleCase(test));
+        
+        // MATHEMATICAL BOLD CAPITAL A (U+1D400) x2
+        test = "\uD835\uDC00\uD835\uDC00";
+        assertTrue(StringUtil.isUpperCase(test));
+        assertFalse(StringUtil.isLowerCase(test));
+        assertFalse(StringUtil.isTitleCase(test));
+        
+        // MATHEMATICAL BOLD SMALL A (U+1D41A)
+        test = "\uD835\uDC1A";
+        assertFalse(StringUtil.isUpperCase(test));
+        assertTrue(StringUtil.isLowerCase(test));
+        assertFalse(StringUtil.isTitleCase(test));
+        
+        // MATHEMATICAL BOLD CAPITAL A + MATHEMATICAL BOLD SMALL A
+        test = "\uD835\uDC00\uD835\uDC1A";
+        assertFalse(StringUtil.isUpperCase(test));
+        assertFalse(StringUtil.isLowerCase(test));
+        assertTrue(StringUtil.isTitleCase(test));
+        
+        // MATHEMATICAL BOLD SMALL A + MATHEMATICAL BOLD CAPITAL A
+        test = "\uD835\uDC1A\uD835\uDC00";
+        assertFalse(StringUtil.isUpperCase(test));
+        assertFalse(StringUtil.isLowerCase(test));
+        assertFalse(StringUtil.isTitleCase(test));
+    }
+    
+    public void testEmptyStringCase() {
+        String test = null;
+        try {
+            assertFalse(StringUtil.isUpperCase(test));
+            fail("Should throw an NPE");
+        } catch (NullPointerException ex) {
+            // OK
+        }
+        try {
+            assertFalse(StringUtil.isLowerCase(test));
+            fail("Should throw an NPE");
+        } catch (NullPointerException ex) {
+            // OK
+        }
+        try {
+            assertFalse(StringUtil.isTitleCase(test));
+            fail("Should throw an NPE");
+        } catch (NullPointerException ex) {
+            // OK
+        }
+        try {
+            StringUtil.toTitleCase(test, Locale.ENGLISH);
+            fail("Should throw an NPE");
+        } catch (NullPointerException ex) {
+            // OK
+        }
+        
+        test = "";
+        assertFalse(StringUtil.isUpperCase(test));
+        assertFalse(StringUtil.isLowerCase(test));
+        assertFalse(StringUtil.isTitleCase(test));
+        assertEquals("", StringUtil.toTitleCase("", Locale.ENGLISH));
+    }
+    
+    public void testIsWhiteSpace() {
+        try {
+            assertFalse(StringUtil.isWhiteSpace(null));
+            fail("Should throw an NPE");
+        } catch (NullPointerException ex) {
+            // OK
+        }
+        assertFalse(StringUtil.isWhiteSpace(""));
+        assertTrue(StringUtil.isWhiteSpace(" "));
+        assertFalse(StringUtil.isWhiteSpace(" a "));
+        // SPACE (U+0020) + IDEOGRAPHIC SPACE (U+3000)
+        assertTrue(StringUtil.isWhiteSpace(" \u3000"));
+        // We consider whitespace but Character.isWhiteSpace(int) doesn't:
+        // NO-BREAK SPACE (U+00A0) + FIGURE SPACE (U+2007) + NARROW NO-BREAK SPACE (U+202F)
+        assertTrue(StringUtil.isWhiteSpace("\u00a0\u2007\u202f"));
+    }
+    
+    public void testIsMixedCase() {
+        assertTrue(StringUtil.isMixedCase("ABc"));
+        assertTrue(StringUtil.isMixedCase("aBc"));
+        // This is title case, not mixed:
+        assertFalse(StringUtil.isMixedCase("Abc"));
+        // Non-letter characters should not affect the result:
+        assertTrue(StringUtil.isMixedCase(" {ABc"));
+    }
+    
+    public void testNonWordCase() {
+        String test = "{";
+        assertFalse(StringUtil.isLowerCase(test));
+        assertFalse(StringUtil.isUpperCase(test));
+        assertFalse(StringUtil.isTitleCase(test));
+        assertFalse(StringUtil.isMixedCase(test));
+    }
+    
+    public void testToTitleCase() {
+        Locale locale = Locale.ENGLISH;
+        assertEquals("Abc", StringUtil.toTitleCase("abc", locale));
+        assertEquals("Abc", StringUtil.toTitleCase("ABC", locale));
+        assertEquals("Abc", StringUtil.toTitleCase("Abc", locale));
+        assertEquals("Abc", StringUtil.toTitleCase("abc", locale));
+        assertEquals("A", StringUtil.toTitleCase("a", locale));
+        // LATIN SMALL LETTER NJ (U+01CC) -> LATIN CAPITAL LETTER N WITH SMALL LETTER J (U+01CB)
+        assertEquals("\u01CB", StringUtil.toTitleCase("\u01CC", locale));
+        // LATIN SMALL LETTER I (U+0069) -> LATIN CAPITAL LETTER I WITH DOT ABOVE (U+0130) in Turkish
+        assertEquals("\u0130jk", StringUtil.toTitleCase("ijk", new Locale("tr")));
     }
 }

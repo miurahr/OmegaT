@@ -32,7 +32,6 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 
 import javax.swing.JTable;
 
@@ -103,79 +102,59 @@ public abstract class AutoCompleterTableView extends AbstractAutoCompleterView {
     }
     
     @Override
-    public boolean processKeys(KeyEvent e, boolean visible) {
+    public boolean processKeys(KeyEvent e) {
         
         if (StaticUtils.isKey(e, KeyEvent.VK_UP, 0)) {
             // process key UP
-            if (visible) {
-                selectPreviousPossibleValueUp();
-            }
+            selectPreviousPossibleValueUp();
             return true;
         }
 
         if (StaticUtils.isKey(e, KeyEvent.VK_LEFT, 0)) {
             // process key LEFT
-            if (visible) {
-                selectPreviousPossibleValueLeft();
-            }
+            selectPreviousPossibleValueLeft();
             return true;
         }
         
         if (StaticUtils.isKey(e, KeyEvent.VK_DOWN, 0)) {
             // process key DOWN
-            if (visible) {
-                selectNextPossibleValueDown();
-            }
+            selectNextPossibleValueDown();
             return true;
         }
 
         if (StaticUtils.isKey(e, KeyEvent.VK_RIGHT, 0)) {
             // process key RIGHT
-            if (visible) {
-                selectNextPossibleValueRight();
-            }
+            selectNextPossibleValueRight();
             return true;
         }
         
         if (StaticUtils.isKey(e, KeyEvent.VK_PAGE_UP, 0)) {
-            if (visible) {
-                selectPreviousPossibleValueByPage();
-            }
+            selectPreviousPossibleValueByPage();
             return true;
         }
 
         if (StaticUtils.isKey(e, KeyEvent.VK_PAGE_DOWN, 0)) {
-            if (visible) {
-                selectNextPossibleValueByPage();
-            }
+            selectNextPossibleValueByPage();
             return true;
         }
         
         if (StaticUtils.isKey(e, KeyEvent.VK_HOME, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
-            if (visible) {
-                selectFirstPossibleValue();
-            }
+            selectFirstPossibleValue();
             return true;
         }
 
         if (StaticUtils.isKey(e, KeyEvent.VK_END, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())) {
-            if (visible) {
-                selectLastPossibleValue();
-            }
+            selectLastPossibleValue();
             return true;
         }
         
         if (StaticUtils.isKey(e, KeyEvent.VK_HOME, 0)) {
-            if (visible) {
-                selectFirstPossibleValueInLine();
-            }
+            selectFirstPossibleValueInLine();
             return true;
         }
 
         if (StaticUtils.isKey(e, KeyEvent.VK_END, 0)) {
-            if (visible) {
-                selectLastPossibleValueInLine();
-            }
+            selectLastPossibleValueInLine();
             return true;
         }
         
@@ -244,7 +223,7 @@ public abstract class AutoCompleterTableView extends AbstractAutoCompleterView {
         int size = getTable().getModel().getRowCount();
         setSelection(new Point(
                 p.x,
-                Math.min(p.y + AutoCompleter.pageRowCount, size - 1)));
+                Math.min(p.y + AutoCompleter.PAGE_ROW_COUNT, size - 1)));
     }
 
     /** 
@@ -280,7 +259,7 @@ public abstract class AutoCompleterTableView extends AbstractAutoCompleterView {
         
         setSelection(new Point(
                 p.x,
-                Math.max(p.y - AutoCompleter.pageRowCount, 0)));
+                Math.max(p.y - AutoCompleter.PAGE_ROW_COUNT, 0)));
     }
 
     @Override
@@ -306,10 +285,5 @@ public abstract class AutoCompleterTableView extends AbstractAutoCompleterView {
             return new AutoCompleterItem(selection.toString(), null, 0);
         }
         return new AutoCompleterItem((String) selection, null, 0);
-    }
-    
-    @Override
-    public void setData(List<AutoCompleterItem> entryList) {
-        
     }
 }

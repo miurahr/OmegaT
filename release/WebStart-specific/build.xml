@@ -9,9 +9,9 @@
 	</condition>
 	
 	<!-- Ant-contrib is required in order to mark all JARs as "Trusted-Library: true"
-	     so as to suppress a Java Web Start "mixed content" warning on launch.
-	     Install ant-contrib.jar in ANT_HOME/lib or ~/.ant/lib.
-	     http://ant-contrib.sourceforge.net/ -->
+		 so as to suppress a Java Web Start "mixed content" warning on launch.
+		 Install ant-contrib.jar in ANT_HOME/lib or ~/.ant/lib.
+		 http://ant-contrib.sourceforge.net/ -->
 	<condition property="ant-contrib.installed">
 		<available classname="net.sf.antcontrib.logic.ForEach" />
 	</condition>
@@ -44,6 +44,10 @@
 			<fileset dir="${root}/dist" includes="OmegaT.jar" />
 		</copy>
 
+		<!-- Remove signatures from any pre-signed JARs.
+			 TODO: Automate detection and application of this. -->
+		<unsignjar jarFile="${root}/build/webstart/org.eclipse.jgit-3.7.1.201504261725-r.jar" />
+		
 		<jar jarfile="${root}/build/webstart/docs.jar" basedir="${root}" includes="docs/**" />
 
 		<jar jarfile="${root}/build/webstart/hunspell-linux64.jar" basedir="${root}/native" includes="libhunspell-linux64.so" />
@@ -54,9 +58,26 @@
 		<jar jarfile="${root}/build/webstart/hunspell-win32.jar" basedir="${root}/native" includes="hunspell-win32.dll" />
 	</target>
 	
+	<!-- Macro to un-sign a JAR. From:
+		 https://techtavern.wordpress.com/2014/04/01/ant-task-to-remove-signature-from-jar-file/ -->
+	<macrodef name="unsignjar">
+		<attribute name="jarFile" />
+		<sequential>
+			<jar update="yes" jarfile="@{jarFile}.tmp">
+				<zipfileset src="@{jarFile}" casesensitive="false">
+					<include name="**"/>
+					<exclude name="META-INF/*.SF"/>
+					<exclude name="META-INF/*.DSA"/>
+					<exclude name="META-INF/*.RSA"/>
+				</zipfileset>
+			</jar>
+			<move file="@{jarFile}.tmp" tofile="@{jarFile}" overwrite="true" />
+		</sequential>
+	</macrodef>
+	
 	<target name="set-bundled-defaults" depends="set-layout-defaults">
 		<!-- Place an omegat.prefs (omegat-$BRANDING.prefs if using branding)
-        	 in release/WebStart-specific to bundle default preferences for new users. -->
+			 in release/WebStart-specific to bundle default preferences for new users. -->
 		<jar destfile="${root}/build/webstart/OmegaT.jar" update="true">
 			<zipfileset dir="." includes="*.prefs" prefix="org/omegat/util/" />
 		</jar>

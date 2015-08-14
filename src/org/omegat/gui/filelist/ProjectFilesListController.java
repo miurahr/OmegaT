@@ -98,6 +98,7 @@ import org.omegat.util.Preferences;
 import org.omegat.util.StaticUtils;
 import org.omegat.util.gui.DragTargetOverlay;
 import org.omegat.util.gui.DragTargetOverlay.FileDropInfo;
+import org.omegat.util.gui.OSXIntegration;
 import org.omegat.util.gui.StaticUIUtils;
 import org.omegat.util.gui.TableColumnSizer;
 import org.omegat.util.gui.DataTableStyling;
@@ -475,9 +476,14 @@ public class ProjectFilesListController {
     public void setActive(boolean active) {
         if (active) {
             // moved current file selection here so it will be properly set on each activation
-            selectCurrentFile(Core.getProject().getProjectFiles());
             list.setVisible(true);
             list.toFront();
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    selectCurrentFile(Core.getProject().getProjectFiles());
+                }
+            });
         } else {
             list.setVisible(false);
         }
@@ -566,6 +572,8 @@ public class ProjectFilesListController {
 
         uiUpdateImportButtonStatus();
         list.setTitle(StaticUtils.format(OStrings.getString("PF_WINDOW_TITLE"), files.size()));
+
+        OSXIntegration.setProxyIcon(list.getRootPane(), new File(Core.getProject().getProjectProperties().getSourceRoot()));
 
         setTableFilesModel(files);
     }
