@@ -30,6 +30,7 @@ public class SegmentPropertiesListView implements ISegmentPropertiesView {
         panel = new ReasonablySizedPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setFont(Core.getMainWindow().getApplicationFont());
+        panel.setOpaque(true);
         parent.setViewportView(panel);
     }
     

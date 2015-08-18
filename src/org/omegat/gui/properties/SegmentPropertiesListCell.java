@@ -2,6 +2,8 @@ package org.omegat.gui.properties;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.Caret;
 import javax.swing.text.DefaultCaret;
@@ -23,6 +25,7 @@ public class SegmentPropertiesListCell extends javax.swing.JPanel {
         setBackground(Styles.EditorColor.COLOR_BACKGROUND.getColor());
         labelPanel.setBackground(ISegmentPropertiesView.ROW_HIGHLIGHT_COLOR);
         labelPanel.setBorder(ISegmentPropertiesView.MARGIN_BORDER);
+        label.setFont(UIManager.getFont("Label.font"));
         label.setForeground(Styles.EditorColor.COLOR_FOREGROUND.getColor());
         label.setBackground(ISegmentPropertiesView.ROW_HIGHLIGHT_COLOR);
         value.setForeground(Styles.EditorColor.COLOR_FOREGROUND.getColor());

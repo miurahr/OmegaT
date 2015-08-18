@@ -115,6 +115,7 @@ public class SegmentPropertiesArea extends DockableScrollPane implements Scrolla
         
         setForeground(Styles.EditorColor.COLOR_FOREGROUND.getColor());
         setBackground(Styles.EditorColor.COLOR_BACKGROUND.getColor());
+        getViewport().setBackground(Styles.EditorColor.COLOR_BACKGROUND.getColor());
         
         Class<?> initModeClass = SegmentPropertiesTableView.class;
         String initModeClassName = Preferences.getPreferenceDefault(Preferences.SEGPROPS_INITIAL_MODE, null);
