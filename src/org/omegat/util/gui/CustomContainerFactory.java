@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 
 import org.omegat.gui.properties.ISegmentPropertiesView;
+import org.omegat.util.OStrings;
 
 import com.vlsolutions.swing.docking.DefaultDockableContainerFactory;
 import com.vlsolutions.swing.docking.DockViewTitleBar;
@@ -35,6 +36,7 @@ public class CustomContainerFactory extends DefaultDockableContainerFactory {
             settingsButton = new JButton(ISegmentPropertiesView.SETTINGS_ICON_INACTIVE);
             settingsButton.setRolloverIcon(ISegmentPropertiesView.SETTINGS_ICON);
             settingsButton.setPressedIcon(ISegmentPropertiesView.SETTINGS_ICON_PRESSED);
+            settingsButton.setToolTipText(OStrings.getString("DOCKING_HINT_SETTINGS"));
             
             // These values are set to match defaults in DockViewTitleBarUI
             settingsButton.setRolloverEnabled(true);
