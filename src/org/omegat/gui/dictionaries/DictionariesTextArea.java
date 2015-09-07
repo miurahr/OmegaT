@@ -280,13 +280,21 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
             if (tok == null) {
                 return null;
             }
-            Token[] tokenList = tok.tokenizeWords(src, ITokenizer.StemmingMode.NONE);
+            
             Set<String> words = new TreeSet<String>();
-            for (Token tok : tokenList) {
-                checkEntryChanged();
-                String w = src.substring(tok.getOffset(), tok.getOffset() + tok.getLength());
-
-                words.add(w);
+            if (Preferences.isPreferenceDefault(Preferences.DICTIONARY_FUZZY_MATCHING, true)) {
+                String[] tokenList = tok.tokenizeWordsForDictionary(src);
+                for (String tok : tokenList) {
+                    checkEntryChanged();
+                    words.add(tok);
+                }
+            } else {
+                Token[] tokenList = tok.tokenizeWords(src, ITokenizer.StemmingMode.NONE);
+                for (Token tok : tokenList) {
+                    checkEntryChanged();
+                    String w = tok.getTextFromString(src);
+                    words.add(w);
+                }
             }
             List<DictionaryEntry> result = manager.findWords(words);
 
