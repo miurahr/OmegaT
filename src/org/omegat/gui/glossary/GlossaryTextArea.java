@@ -357,16 +357,6 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> i
     public void populateSettingsMenu(JPopupMenu menu) {
         populateContextMenu(menu);
         menu.addSeparator();
-        final JMenuItem notify = new JCheckBoxMenuItem(OStrings.getString("GUI_GLOSSARYWINDOW_SETTINGS_NOTIFICATIONS"));
-        notify.setSelected(Preferences.isPreference(Preferences.NOTIFY_GLOSSARY_HITS));
-        notify.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Preferences.setPreference(Preferences.NOTIFY_GLOSSARY_HITS, notify.isSelected());
-            }
-        });
-        menu.add(notify);
-        menu.addSeparator();
         final JMenuItem openFile = new JMenuItem(OStrings.getString("GUI_GLOSSARYWINDOW_SETTINGS_OPEN_FILE"));
         openFile.addActionListener(new ActionListener() {
             @Override
@@ -380,5 +370,15 @@ public class GlossaryTextArea extends EntryInfoThreadPane<List<GlossaryEntry>> i
             openFile.setEnabled(!StringUtil.isEmpty(glossaryPath) && new File(glossaryPath).isFile());
         }
         menu.add(openFile);
+        menu.addSeparator();
+        final JMenuItem notify = new JCheckBoxMenuItem(OStrings.getString("GUI_GLOSSARYWINDOW_SETTINGS_NOTIFICATIONS"));
+        notify.setSelected(Preferences.isPreference(Preferences.NOTIFY_GLOSSARY_HITS));
+        notify.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Preferences.setPreference(Preferences.NOTIFY_GLOSSARY_HITS, notify.isSelected());
+            }
+        });
+        menu.add(notify);
     }
 }
