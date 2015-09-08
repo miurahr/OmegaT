@@ -181,37 +181,41 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
     protected void startSearchThread(SourceTextEntry newEntry) {
         new MultipleTransFindThread(this, Core.getProject(), newEntry).start();
     }
+    
+    private DisplayedEntry getEntryAtPosition(int pos) {
+        for (DisplayedEntry de : entries) {
+            if (de.start <= pos && de.end >= pos) {
+                return de;
+            }
+        }
+        return null;
+    }
 
     protected MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) { // righ click
                 // is there anything?
-                if (entries.isEmpty())
+                if (entries.isEmpty()) {
                     return;
-
-                // where did we click?
-                int mousepos = MultipleTransPane.this.viewToModel(e.getPoint());
-
-                // find clicked entry
-                for (DisplayedEntry de : entries) {
-                    if (de.start <= mousepos && de.end >= mousepos) {
-                        mouseRightClick(de, e.getPoint());
-                        break;
-                    }
                 }
+
+                JPopupMenu popup = new JPopupMenu();
+                Point p = e.getPoint();
+                populateContextMenu(popup, viewToModel(p));
+                popup.show(MultipleTransPane.this, p.x, p.y);
             }
         }
     };
 
-    private void mouseRightClick(final DisplayedEntry de, final Point clickedPoint) {
-        // create the menu
-        JPopupMenu popup = new JPopupMenu();
-
+    private void populateContextMenu(JPopupMenu popup, int pos) {
+        final DisplayedEntry de = getEntryAtPosition(pos);
+        
         JMenuItem item;
-        if (de.entry.key != null) {
-            // default translation
-            item = popup.add(OStrings.getString("MULT_POPUP_DEFAULT"));
+        // default translation
+        item = popup.add(OStrings.getString("MULT_POPUP_DEFAULT"));
+        item.setEnabled(de != null && de.entry.key != null);
+        if (de != null && de.entry.key != null) {
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     Core.getEditor().replaceEditText(de.entry.entry.translation);
@@ -222,20 +226,24 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
         }
         // non-default translation
         item = popup.add(OStrings.getString("MULT_POPUP_REPLACE"));
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Core.getEditor().replaceEditText(de.entry.entry.translation);
-            }
-        });
+        item.setEnabled(de != null);
+        if (de != null) {
+            item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    Core.getEditor().replaceEditText(de.entry.entry.translation);
+                }
+            });
+        }
 
         item = popup.add(OStrings.getString("MULT_POPUP_GOTO"));
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Core.getEditor().gotoEntry(de.entry.sourceText, de.entry.key);
-            }
-        });
-
-        popup.show(this, clickedPoint.x, clickedPoint.y);
+        item.setEnabled(de != null);
+        if (de != null) {
+            item.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    Core.getEditor().gotoEntry(de.entry.sourceText, de.entry.key);
+                }
+            });
+        }
     }
 
     protected static class DisplayedEntry {
@@ -245,6 +253,8 @@ public class MultipleTransPane extends EntryInfoThreadPane<List<MultipleTransFou
 
     @Override
     public void populateSettingsMenu(JPopupMenu menu) {
+        //populateContextMenu(menu, getCaretPosition());
+        //menu.addSeparator();
         final JMenuItem notify = new JCheckBoxMenuItem(OStrings.getString("MULT_SETTINGS_NOTIFY"));
         notify.setSelected(Preferences.isPreference(Preferences.NOTIFY_MULTIPLE_TRANSLATIONS));
         notify.addActionListener(new ActionListener() {
