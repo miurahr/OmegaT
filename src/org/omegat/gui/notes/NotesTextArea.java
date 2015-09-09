@@ -28,12 +28,20 @@
 package org.omegat.gui.notes;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import org.omegat.core.data.SourceTextEntry;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+
 import org.omegat.gui.common.EntryInfoPane;
 import org.omegat.gui.main.DockableScrollPane;
 import org.omegat.gui.main.MainWindow;
 import org.omegat.util.OStrings;
+import org.omegat.util.Preferences;
+import org.omegat.util.StringUtil;
+import org.omegat.util.gui.ISettingsMenuCallback;
 import org.omegat.util.gui.UIThreadsUtil;
 
 /**
@@ -42,22 +50,23 @@ import org.omegat.util.gui.UIThreadsUtil;
  * @author Martin Fleurke
  */
 @SuppressWarnings("serial")
-public class NotesTextArea extends EntryInfoPane<String> implements INotes {
+public class NotesTextArea extends EntryInfoPane<String> implements INotes, ISettingsMenuCallback {
 
     private static final String EXPLANATION = OStrings.getString("GUI_NOTESWINDOW_explanation");
 
-    SourceTextEntry ste;
+    private DockableScrollPane scrollPane;
 
     /** Creates new Notes Text Area Pane */
     public NotesTextArea(MainWindow mw) {
         super(true);
 
         String title = OStrings.getString("GUI_NOTESWINDOW_SUBWINDOWTITLE_Notes");
-        mw.addDockable(new DockableScrollPane("NOTES", title, this, true));
+        scrollPane = new DockableScrollPane("NOTES", title, this, true);
+        mw.addDockable(scrollPane);
 
-        this.setEditable(false);
-        this.setText(EXPLANATION);
-        this.setMinimumSize(new Dimension(100, 50));
+        setEditable(false);
+        setText(EXPLANATION);
+        setMinimumSize(new Dimension(100, 50));
     }
 
     @Override
@@ -75,21 +84,40 @@ public class NotesTextArea extends EntryInfoPane<String> implements INotes {
     public void clear() {
         UIThreadsUtil.mustBeSwingThread();
 
-        this.setText("");
-        this.setEditable(false);
-        this.ste = null;
+        setText("");
+        setEditable(false);
     }
 
     public void setNoteText(String text) {
         UIThreadsUtil.mustBeSwingThread();
 
-        this.setText(text != null ? text : "");
-        this.setEditable(true);
+        if (Preferences.isPreference(Preferences.NOTIFY_NOTES)) {
+            if (StringUtil.isEmpty(text)) {
+                scrollPane.stopNotifying();
+            } else {
+                scrollPane.notify(true);
+            }
+        }
+        setText(text);
+        setEditable(true);
     }
 
     public String getNoteText() {
         UIThreadsUtil.mustBeSwingThread();
 
-        return this.getText();
+        return getText();
+    }
+
+    @Override
+    public void populateSettingsMenu(JPopupMenu menu) {
+        final JMenuItem notify = new JCheckBoxMenuItem(OStrings.getString("GUI_NOTESWINDOW_NOTIFICATIONS"));
+        notify.setSelected(Preferences.isPreference(Preferences.NOTIFY_NOTES));
+        notify.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Preferences.setPreference(Preferences.NOTIFY_NOTES, notify.isSelected());
+            }
+        });
+        menu.add(notify);
     }
 }
