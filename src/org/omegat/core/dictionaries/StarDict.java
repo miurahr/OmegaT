@@ -44,6 +44,11 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.collections4.trie.PatriciaTrie;
 
+import org.trie4j.MapTrie;
+import org.trie4j.patricia.MapPatriciaTrie;
+import org.trie4j.louds.MapTailLOUDSTrie;
+import org.trie4j.tail.SuffixTrieTailArray;
+
 import org.dict.zip.DictZipHeader;
 import org.dict.zip.DictZipInputStream;
 import org.dict.zip.RandomAccessInputStream;
@@ -85,7 +90,7 @@ public class StarDict implements IDictionary {
     private String dictName;
     private String dataFile;
 
-    protected PatriciaTrie<Object> result;
+    protected MapTrie<Object> result;
 
     /**
      * @param ifoFile
@@ -129,7 +134,7 @@ public class StarDict implements IDictionary {
     }
 
     private void readHeader() throws IOException {
-        result = new PatriciaTrie();
+        result = new MapPatriciaTrie<Object>();
         File file = new File(dictName + ".idx");
         byte[] idxBytes = readFile(file);
 
@@ -169,11 +174,11 @@ public class StarDict implements IDictionary {
      * @param result
      *            result map
      */
-    private void addIndex(final String key, final int start, final int len, final PatriciaTrie<Object> result) {
+    private void addIndex(final String key, final int start, final int len, final MapTrie<Object> result) {
         Object data = result.get(key);
         if (data == null) {
             Entry d = new Entry(start, len);
-            result.put(key, d);
+            result.insert(key, d);
         } else {
             if (data instanceof Entry[]) {
                 Entry[] dobj = (Entry[]) data;
@@ -208,7 +213,13 @@ public class StarDict implements IDictionary {
      * Returns Map<String, Object> that String is word and Object is Entry or Entry[]
      */
     public Map<String, Object> searchPrefixMatch(String key) {
-        return result.prefixMap(key);
+        Map<String, Object> ret = new HashMap<String, Object>();
+        Iterable<String> it = result.predictiveSearch(key);
+        for (String s: it) {
+            result.get(s);
+            ret.put(s, result.get(key));
+        }
+        return ret;
     }
 
     /*

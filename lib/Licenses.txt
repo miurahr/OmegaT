@@ -114,3 +114,4 @@ sources, in lib/sources/
 eb4j-core-1.0.5.jar is distributed under the GNU Lesser General Public License
 version 2.1. Sources are available in OmegaT sources, in the directory lib/sources
 
+trie4j-0.9.1.jar is dictributed under Apache 2.0 License 2.0
