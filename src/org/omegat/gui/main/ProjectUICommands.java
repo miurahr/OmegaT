@@ -30,8 +30,13 @@
 
 package org.omegat.gui.main;
 
+import gen.core.project.RepositoryDefinition;
+import gen.core.project.RepositoryMapping;
+
 import java.awt.Cursor;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JOptionPane;
@@ -46,6 +51,7 @@ import org.omegat.core.KnownException;
 import org.omegat.core.data.ProjectFactory;
 import org.omegat.core.data.ProjectProperties;
 import org.omegat.core.events.IProjectEventListener;
+import org.omegat.core.team2.RemoteRepositoryProvider;
 import org.omegat.gui.dialogs.NewProjectFileChooser;
 import org.omegat.gui.dialogs.NewTeamProject;
 import org.omegat.gui.dialogs.ProjectPropertiesDialog;
@@ -151,20 +157,42 @@ public class ProjectUICommands {
                 Cursor oldCursor = mainWindow.getCursor();
                 mainWindow.setCursor(hourglassCursor);
 
-                String projectFileURL=dialog.txtProjectFileURL.getText();
-                File localDirectory = new File(dialog.txtDirectory.getText());
-                try {
-                    localDirectory.mkdirs();
-                    byte[] projectFile = WikiGet.getURLasByteArray(projectFileURL);
-                    FileUtils.writeByteArrayToFile(new File(localDirectory, OConsts.FILE_PROJECT), projectFile);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    Core.getMainWindow().displayErrorRB(ex, "TEAM_CHECKOUT_ERROR");
-                    mainWindow.setCursor(oldCursor);
-                    return null;
-                }
+                // retrieve omegat.project
+                File projectRoot = new File(dialog.txtDirectory.getText());
+                List<RepositoryDefinition> repos = new ArrayList<RepositoryDefinition>();
+                RepositoryDefinition repo = new RepositoryDefinition();
+                repos.add(repo);
+                repo.setType(dialog.getRepoType());
+                repo.setUrl(dialog.txtRepositoryOrProjectFileURL.getText().trim());
+                RepositoryMapping mapping = new RepositoryMapping();
+                mapping.setLocal("");
+                mapping.setRepository("");
+                repo.getMapping().add(mapping);
 
-                projectOpen(localDirectory);
+                RemoteRepositoryProvider remoteRepositoryProvider = new RemoteRepositoryProvider(projectRoot,
+                        repos);
+                remoteRepositoryProvider.switchAllToLatest();
+                remoteRepositoryProvider.copyFilesFromRepoToProject("omegat.project");
+
+                // update repo into
+                ProjectProperties props = ProjectFileStorage.loadProjectProperties(projectRoot);
+                props.setRepositories(repos);
+                ProjectFileStorage.writeProjectFile(props);
+
+                //String projectFileURL = dialog.txtRepositoryOrProjectFileURL.getText();
+                //File localDirectory = new File(dialog.txtDirectory.getText());
+//                try {
+//                    localDirectory.mkdirs();
+//                    byte[] projectFile = WikiGet.getURLasByteArray(projectFileURL);
+//                    FileUtils.writeByteArrayToFile(new File(localDirectory, OConsts.FILE_PROJECT), projectFile);
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                    Core.getMainWindow().displayErrorRB(ex, "TEAM_CHECKOUT_ERROR");
+//                    mainWindow.setCursor(oldCursor);
+//                    return null;
+//                }
+
+//                projectOpen(localDirectory);
 
                 mainWindow.setCursor(oldCursor);
                 return null;
