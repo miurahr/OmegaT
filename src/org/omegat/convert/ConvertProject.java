@@ -34,6 +34,6 @@ import java.io.File;
  */
 public class ConvertProject {
     public static void convert(File projectRootFolder) throws Exception {
-        ConvertProject32to34team.checkTeam(projectRootFolder);
+        ConvertProject26to36team.checkTeam(projectRootFolder);
     }
 }
