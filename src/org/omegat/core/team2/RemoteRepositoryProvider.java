@@ -39,7 +39,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.lucene.analysis.kr.utils.StringUtil;
-import org.omegat.core.data.ProjectProperties;
 import org.omegat.util.FileUtil;
 import org.omegat.util.StaticUtils;
 
@@ -59,10 +58,10 @@ public class RemoteRepositoryProvider {
     final List<RepositoryDefinition> repositoriesDefinitions;
     final List<IRemoteRepository2> repositories = new ArrayList<IRemoteRepository2>();
 
-    public RemoteRepositoryProvider(ProjectProperties config) throws Exception {
-        projectRoot = config.getProjectRootDir();
+    public RemoteRepositoryProvider(File projectRoot, List<RepositoryDefinition> repositoriesDefinitions) throws Exception {
+        this.projectRoot = projectRoot;
         teamSettings = new TeamSettings(new File(projectRoot, REPO_SUBDIR));
-        repositoriesDefinitions = config.getRepositories();
+        this.repositoriesDefinitions = repositoriesDefinitions;
 
         checkDefinitions();
         initializeRepositories();
