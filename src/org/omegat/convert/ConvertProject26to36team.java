@@ -29,10 +29,8 @@ import gen.core.project.RepositoryDefinition;
 import gen.core.project.RepositoryMapping;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
@@ -44,8 +42,9 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.omegat.core.Core;
 import org.omegat.core.data.ProjectProperties;
+import org.omegat.core.team2.RebaseAndCommit;
 import org.omegat.core.team2.RemoteRepositoryProvider;
-import org.omegat.util.FileUtil;
+import org.omegat.core.team2.TeamSettings;
 import org.omegat.util.OStrings;
 import org.omegat.util.ProjectFileStorage;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -57,29 +56,33 @@ import org.tmatesoft.svn.core.wc2.SvnOperationFactory;
 import org.tmatesoft.svn.core.wc2.SvnTarget;
 
 /**
- * Check if project is 3.1-style team project, i.e. 'inplace' repository working copy exit. Then convert it into 3.2-style team project.
+ * Check if project is 2.6-style team project, i.e. 'inplace' repository working copy exit. Then convert it
+ * into 3.6-style team project.
  * 
  * @author Alex Buloichik (alex73mail@gmail.com)
  */
-public class ConvertProject32to34team {
+public class ConvertProject26to36team {
     public static void checkTeam(File projectRootFolder) throws Exception {
         if (isSVNDirectory(projectRootFolder) || isGITDirectory(projectRootFolder)) {
-            // project is 3.2-style team project
+            // project is 2.6-style team project
             if (isConsoleMode()) {
-                Core.getMainWindow().displayWarningRB("TEAM_32_TO_34_CONSOLE");
+                Core.getMainWindow().displayWarningRB("TEAM_26_TO_36_CONSOLE");
                 return;
             }
 
             // ask for convert
             int res = JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
-                    OStrings.getString("TEAM_32_to_34_CONFIRM_MESSAGE"),
-                    OStrings.getString("TEAM_32_to_34_CONFIRM_TITLE"), JOptionPane.OK_CANCEL_OPTION);
+                    OStrings.getString("TEAM_26_to_36_CONFIRM_MESSAGE"),
+                    OStrings.getString("TEAM_26_to_36_CONFIRM_TITLE"), JOptionPane.OK_CANCEL_OPTION);
             if (res != JOptionPane.OK_OPTION) {
                 return;
             }
 
             // convert
             convert(projectRootFolder);
+            JOptionPane.showMessageDialog(Core.getMainWindow().getApplicationFrame(),
+                    OStrings.getString("TEAM_26_to_36_CONVERTED_MESSAGE"),
+                    OStrings.getString("TEAM_26_to_36_CONFIRM_TITLE"), JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -115,24 +118,17 @@ public class ConvertProject32to34team {
         ProjectFileStorage.writeProjectFile(props);
 
         // all data saved - remove old repository
-        FileUtil.deleteTree(new File(projectRootFolder, ".svn"));
-        FileUtil.deleteTree(new File(projectRootFolder, ".git"));
+        // FileUtil.deleteTree(new File(projectRootFolder, ".svn"));
+        // FileUtil.deleteTree(new File(projectRootFolder, ".git"));
     }
 
     /**
      * Save version of project_save.tmx to .repositories/versions.properties.
      */
     private static void saveVersion(File projectRootFolder, String file, String version) throws IOException {
-        Properties p = new Properties();
-        p.setProperty(file, version);
-        File f = new File(projectRootFolder, RemoteRepositoryProvider.REPO_SUBDIR + "versions.properties");
-        f.getParentFile().mkdirs();
-        FileOutputStream out = new FileOutputStream(f);
-        try {
-            p.store(out, null);
-        } finally {
-            out.close();
-        }
+        TeamSettings TeamSettings = new TeamSettings(new File(projectRootFolder,
+                RemoteRepositoryProvider.REPO_SUBDIR));
+        TeamSettings.set(RebaseAndCommit.VERSION_PREFIX + file, version);
     }
 
     /**
