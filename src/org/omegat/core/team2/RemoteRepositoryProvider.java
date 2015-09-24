@@ -38,9 +38,9 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.lucene.analysis.kr.utils.StringUtil;
 import org.omegat.util.FileUtil;
 import org.omegat.util.StaticUtils;
+import org.omegat.util.StringUtil;
 
 /**
  * Class for process some repository commands.
