@@ -124,7 +124,7 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
         jPanel3 = new javax.swing.JPanel();
         colorStylesLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        colorStylesList = new javax.swing.JList(Styles.EditorColor.values());
+        colorStylesList = new javax.swing.JList<Styles.EditorColor>(Styles.EditorColor.values());
         colorChooser = new javax.swing.JColorChooser();
         jPanel2 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
@@ -328,7 +328,7 @@ public class CustomColorSelectionDialog extends javax.swing.JDialog {
     private javax.swing.JButton cancelButton;
     private javax.swing.JColorChooser colorChooser;
     private javax.swing.JLabel colorStylesLabel;
-    private javax.swing.JList colorStylesList;
+    private javax.swing.JList<Styles.EditorColor> colorStylesList;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

@@ -101,8 +101,8 @@ public class FilterEditor extends JDialog implements ListSelectionListener {
         DockingUI.displayCentered(this);
     }
 
-    private JComboBox encodingComboBox() {
-        return new JComboBox(FilterMaster.getSupportedEncodings().toArray());
+    private JComboBox<String> encodingComboBox() {
+        return new JComboBox<String>((String[])FilterMaster.getSupportedEncodings().toArray());
     }
 
     @Override

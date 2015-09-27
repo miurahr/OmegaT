@@ -96,7 +96,7 @@ public class FontSelectionDialog extends javax.swing.JDialog {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        fontComboBox = new javax.swing.JComboBox(StaticUtils.getFontNames());
+        fontComboBox = new javax.swing.JComboBox<String>(StaticUtils.getFontNames());
         fontLabel = new javax.swing.JLabel();
         sizeSpinner = new javax.swing.JSpinner();
         sizeLabel = new javax.swing.JLabel();
@@ -271,7 +271,7 @@ public class FontSelectionDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox applyToProjectFilesCheckBox;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JComboBox fontComboBox;
+    private javax.swing.JComboBox<String> fontComboBox;
     private javax.swing.JLabel fontLabel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton okButton;

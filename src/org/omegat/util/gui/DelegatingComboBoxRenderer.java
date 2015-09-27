@@ -37,7 +37,7 @@ import javax.swing.ListCellRenderer;
  * 
  * @author Aaron Madlon-Kay
  */
-abstract public class DelegatingComboBoxRenderer<T> implements ListCellRenderer {
+abstract public class DelegatingComboBoxRenderer<T> implements ListCellRenderer<T> {
 
     private final ListCellRenderer original = new JComboBox().getRenderer();
     

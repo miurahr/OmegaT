@@ -65,8 +65,8 @@ public class DictionaryInstallerDialog extends JDialog {
     /**
      * the list model
      */
-    private final DefaultListModel listModel = new DefaultListModel();
-    
+    private final DefaultListModel<String> listModel = new DefaultListModel<String>();
+        
     private SwingWorker<List<String>, Object> loader = null;
     private InstallerWorker installer = null;
 
@@ -139,7 +139,7 @@ public class DictionaryInstallerDialog extends JDialog {
         jPanel1 = new javax.swing.JPanel();
         listLabel = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        dictionaryList = new javax.swing.JList();
+        dictionaryList = new javax.swing.JList<String>();
         jPanel2 = new javax.swing.JPanel();
         installButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
@@ -296,7 +296,7 @@ public class DictionaryInstallerDialog extends JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeButton;
-    private javax.swing.JList dictionaryList;
+    private javax.swing.JList<String> dictionaryList;
     private javax.swing.JTextArea infoTextArea;
     private javax.swing.JButton installButton;
     private javax.swing.JPanel jPanel1;

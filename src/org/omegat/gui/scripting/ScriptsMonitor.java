@@ -50,7 +50,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 	private static final boolean SCRIPTING_EVENTS = true;
 	private static boolean applicationStartupEventScriptsExecuted = false;
 	
-	public ScriptsMonitor(final ScriptingWindow scriptingWindow, final JList list, List<String> extensions) {
+	public ScriptsMonitor(final ScriptingWindow scriptingWindow, final JList<ScriptItem> list, List<String> extensions) {
 		this.m_list = list;
 		this.m_scriptingWindow = scriptingWindow;
 		this.m_extensions = extensions;
@@ -116,8 +116,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
         for (File script : m_scriptDir.listFiles(m_filter)) {
         	scriptsList.add(new ScriptItem(script));
         }
-
-		Collections.sort(scriptsList, new ScriptItem.ScriptItemComparator());
+        Collections.sort(scriptsList, new ScriptItem.ScriptItemComparator());
         m_list.setListData(scriptsList.toArray(new ScriptItem[scriptsList.size()]));
         
 
@@ -280,7 +279,7 @@ public class ScriptsMonitor implements DirectoryMonitor.DirectoryCallback, Direc
 		NEW_FILE
 	}
 
-    private final JList m_list;
+    private final JList<ScriptItem> m_list;
     private final FilenameFilter m_filter;
     private File m_scriptDir;
 	private List<String> m_extensions;

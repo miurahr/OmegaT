@@ -54,7 +54,7 @@ import org.omegat.util.Token;
  */
 public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
     
-    private static JList list;
+    private static JList<AutoCompleterItem> list;
 
     ListModel listModel = new DefaultListModel();
     
@@ -66,9 +66,9 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
         getList().setFocusable(false);
     }
     
-    public JList getList() {
+    public JList<AutoCompleterItem> getList() {
         if (list == null) {
-            list = new JList();
+            list = new JList<AutoCompleterItem>();
             list.setCellRenderer(new CellRenderer());
             list.addMouseListener(mouseAdapter);
         }
@@ -178,7 +178,7 @@ public abstract class AutoCompleterListView extends AbstractAutoCompleterView {
     };
     
     protected void setData(List<AutoCompleterItem> entryList) {
-        getList().setListData(entryList.toArray());
+        getList().setListData((AutoCompleterItem[]) entryList.toArray());
         if (!entryList.isEmpty()) {
             getList().setSelectedIndex(0);
             getList().invalidate();
