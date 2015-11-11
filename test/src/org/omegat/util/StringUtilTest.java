@@ -203,4 +203,7 @@ public class StringUtilTest extends TestCase {
         assertTrue(StringUtil.isValidXMLChar(0x10000));
         assertFalse(StringUtil.isValidXMLChar(0x110000));
     }
+
+    // TODO: Test StringUtil.capitalizeFirst
+    // TODO: Test StringUtil.matchCapitalization
 }

@@ -183,4 +183,6 @@ public class EditorUtilsTest extends TestCase {
         assertEquals(input, EditorUtils.doChangeCase(input, CHANGE_CASE_TO.TITLE));
         assertEquals("a", EditorUtils.doChangeCase(input, CHANGE_CASE_TO.CYCLE));
     }
+
+    // TODO: Test EditorUtils.replaceGlossaryEntries
 }
