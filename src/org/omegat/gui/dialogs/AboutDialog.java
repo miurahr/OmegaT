@@ -55,13 +55,8 @@ public class AboutDialog extends JDialog {
         StaticUIUtils.setEscapeClosable(this);
 
         initComponents();
-        if ((OStrings.UPDATE != null) && !OStrings.UPDATE.equals("0")) {
-            versionLabel.setText(StringUtil.format(OStrings.getString("ABOUTDIALOG_VERSION_UPDATE"),
-                    OStrings.VERSION, OStrings.UPDATE));
-        } else {
-            versionLabel.setText(StringUtil.format(OStrings.getString("ABOUTDIALOG_VERSION"),
-                    OStrings.VERSION));
-        }
+        versionLabel.setText(getVersionString());
+
         Object[] args = { Runtime.getRuntime().totalMemory() / 1024 / 1024,
                 Runtime.getRuntime().freeMemory() / 1024 / 1024,
                 Runtime.getRuntime().maxMemory() / 1024 / 1024 };
@@ -77,6 +72,26 @@ public class AboutDialog extends JDialog {
 
         StaticUIUtils.fitInScreen(this);
         DockingUI.displayCentered(this);
+    }
+
+    private String getVersionString() {
+        boolean hasUpdate = !StringUtil.isEmpty(OStrings.UPDATE) && !OStrings.UPDATE.equals("0");
+        boolean hasRevision = !StringUtil.isEmpty(OStrings.REVISION);
+        if (hasUpdate && hasRevision) {
+            return StringUtil.format(OStrings.getString("ABOUTDIALOG_VERSION_UPDATE_REVISION"),
+                    OStrings.VERSION, OStrings.UPDATE, OStrings.REVISION);
+        } else if (hasUpdate && !hasRevision) {
+            return StringUtil.format(OStrings.getString("ABOUTDIALOG_VERSION_UPDATE"),
+                    OStrings.VERSION, OStrings.UPDATE);
+        } else if (!hasUpdate && hasRevision) {
+            return StringUtil.format(OStrings.getString("ABOUTDIALOG_VERSION_REVISION"),
+                    OStrings.VERSION, OStrings.REVISION);
+        } else if (!hasUpdate && !hasRevision) {
+            return StringUtil.format(OStrings.getString("ABOUTDIALOG_VERSION"),
+                    OStrings.VERSION);
+        } else {
+            throw new RuntimeException("Unknown version");
+        }
     }
 
     /** @return the return status of this dialog - one of RET_OK or RET_CANCEL */

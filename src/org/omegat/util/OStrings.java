@@ -45,17 +45,22 @@ public class OStrings {
 
     private static String __VERSION_KEY = "version";
     private static String __UPDATE_KEY = "update";
+    private static String __REVISION_KEY = "revision";
 
     /** For custom deployments of OmegaT that need to be distinguishable from "stock" OmegaT */
     public static String BRANDING = "";
 
     /** Just a version, e.g. "1.6" */
-    public static final String VERSION = ResourceBundle.getBundle("org/omegat/Version").getString(
-            __VERSION_KEY);
+    public static final String VERSION = ResourceBundle.getBundle("org/omegat/Version")
+            .getString(__VERSION_KEY);
 
     /** Update number, e.g. 2, for 1.6.0_02 */
     public static final String UPDATE = ResourceBundle.getBundle("org/omegat/Version")
             .getString(__UPDATE_KEY);
+
+    /** Subversion revision number, e.g. 7500 */
+    public static final String REVISION = ResourceBundle.getBundle("org/omegat/Version")
+            .getString(__REVISION_KEY);
 
     /** Resource bundle that contains all the strings */
     private static ResourceBundle bundle = ResourceBundle.getBundle("org/omegat/Bundle");
