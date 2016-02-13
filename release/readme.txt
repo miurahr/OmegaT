@@ -353,6 +353,7 @@ Okapi (http://okapi.sourceforge.net) (LGPL license)
   slf4j (MIT License)
   juniversalchardet-1.0.3.jar (GPL v2)
   DictZip from JDictd (GPL v2)
+  trie4j (Apache License 2.0)
 
 ==============================================================================
  5.  Is OmegaT bugging you? Do you need help?

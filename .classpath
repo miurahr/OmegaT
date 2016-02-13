@@ -46,6 +46,7 @@
 	<classpathentry kind="lib" path="lib/org.eclipse.jgit-4.1.1.201511131810-r.jar"/>
 	<classpathentry kind="lib" path="lib/svnkit-1.8.11.jar"/>
 	<classpathentry kind="lib" path="lib/trilead-ssh2-1.0.0-build220.jar"/>
+	<classpathentry kind="lib" path="lib/trie4j-0.9.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
