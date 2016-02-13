@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.omegat.core.dictionaries.IDictionaryFactory;
 import org.omegat.core.data.IProject;
 import org.omegat.core.data.NotLoadedProject;
 import org.omegat.core.segmentation.Segmenter;
@@ -315,6 +316,9 @@ public class Core {
         PluginUtils.getTokenizerClasses().add(clazz);
     }
 
+    public static void registerDictionaryClass(Class<? extends IDictionaryFactory> clazz) {
+        PluginUtils.getDictionaryClasses().add(clazz);
+    }
     /**
      * Get all plugin loading errors.
      */

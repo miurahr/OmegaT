@@ -64,7 +64,7 @@ import org.omegat.util.StringUtil;
 public final class PluginUtils {
 
     enum PLUGIN_TYPE {
-        FILTER, TOKENIZER, MARKER, MACHINETRANSLATOR, BASE, GLOSSARY, UNKNOWN
+        DICTIONARY, FILTER, TOKENIZER, MARKER, MACHINETRANSLATOR, BASE, GLOSSARY, UNKNOWN
     };
 
     protected static URLClassLoader pluginsClassLoader;
@@ -158,6 +158,10 @@ public final class PluginUtils {
         }
     }
 
+    public static List<Class<?>> getDictionaryClasses() {
+        return dictionaryClasses;
+    }
+
     public static List<Class<?>> getFilterClasses() {
         return filterClasses;
     }
@@ -236,6 +240,8 @@ public final class PluginUtils {
     public static List<Class<?>> getGlossaryClasses() {
         return glossaryClasses;
     }
+
+    protected static List<Class<?>> dictionaryClasses = new ArrayList<Class<?>>();
 
     protected static List<Class<?>> filterClasses = new ArrayList<Class<?>>();
 

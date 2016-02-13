@@ -47,6 +47,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.io.IOUtils;
 import org.omegat.core.Core;
+import org.omegat.filters2.master.PluginUtils;
 import org.omegat.gui.dictionaries.IDictionaries;
 import org.omegat.util.DirectoryMonitor;
 import org.omegat.util.FileUtil;
@@ -74,6 +75,15 @@ public class DictionariesManager implements DirectoryMonitor.Callback {
         this.pane = pane;
         factories.add(new LingvoDSL());
         factories.add(new StarDict());
+        for (Class<?> clazz: PluginUtils.getDictionaryClasses()) {
+            try {
+                factories.add((IDictionaryFactory) clazz.newInstance());
+            } catch (InstantiationException ex) {
+                // FIXME
+            } catch (IllegalAccessException ex) {
+                // FIXME
+            }
+        }
     }
 
     public void addDictionaryFactory(IDictionaryFactory dict) {
