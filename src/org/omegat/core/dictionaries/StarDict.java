@@ -53,6 +53,7 @@ import org.trie4j.doublearray.MapDoubleArray;
 
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
+import org.omegat.util.Preferences;
 
 /**
  * Dictionary implementation for StarDict format.
@@ -203,7 +204,6 @@ public class StarDict implements IDictionaryFactory {
                 idx.close();
                 bais.close();
                 MapDoubleArray<Object> result = new MapDoubleArray(loaded);
-                loaded = null;
                 return result;
             } finally {
                 IOUtils.closeQuietly(mem);
@@ -258,19 +258,26 @@ public class StarDict implements IDictionaryFactory {
         @Override
         public List<DictionaryEntry> readArticles(String word) {
             List<DictionaryEntry> result = new ArrayList<DictionaryEntry>();
-            Iterable<String> it = data.predictiveSearch(word);
-            for (String s : it) {
-                Object dictData = data.get(s);
-                if (dictData instanceof Entry) {
-                    result.add(new DictionaryEntry(s, ((Entry) dictData).getArticle()));
-                } else if (dictData instanceof Entry[]) {
-                    for (Entry entry : (Entry[]) dictData) {
-                        result.add(new DictionaryEntry(s, entry.getArticle()));
-                    }
+	    if (Preferences.isPreference(Preferences.DICTIONARY_FUZZY_MATCHING)) {
+		for (String s : data.predictiveSearch(word)) {
+                    addArticle(result, s);
                 }
-            }
+	    } else {
+		addArticle(result, word);
+	    }
             return result;
         }
+
+	private void addArticle(List<DictionaryEntry> result, String s) {
+            Object dictData = data.get(s);
+            if (dictData instanceof Entry) {
+                result.add(new DictionaryEntry(s, ((Entry) dictData).getArticle()));
+            } else if (dictData instanceof Entry[]) {
+                for (Entry entry : (Entry[]) dictData) {
+                    result.add(new DictionaryEntry(s, entry.getArticle()));
+                }
+            }
+	}
 
         /**
          * Read an article from the data file on disk. Convenience method that
