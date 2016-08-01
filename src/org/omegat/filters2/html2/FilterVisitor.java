@@ -1133,7 +1133,72 @@ public class FilterVisitor extends NodeVisitor {
                 res.append("&nbsp;");
                 break;
             case '&':
-                res.append("&amp;");
+                int cp1;
+                // if there's one more symbol, reading it,
+                // otherwise it's a dangling '&'
+                if (str.codePointCount(i, strlen) < 2) {
+                    res.append("&amp;");
+                    break;
+                } else {
+                    cp1 = str.codePointAt(str.offsetByCodePoints(i, 1));
+                }
+                if (cp1 == '#') {
+                    // numeric entity
+                    int cp2 = str.codePointAt(str.offsetByCodePoints(i, 2));
+                    if (cp2 == 'x' || cp2 == 'X') {
+                        // hex numeric entity
+                        int hexStart = str.offsetByCodePoints(i, 3);
+                        int hexEnd = hexStart;
+                        while (hexEnd < strlen) {
+                            int hexCp = str.codePointAt(hexEnd);
+                            if (!isHexDigit(hexCp)) {
+                                break;
+                            }
+                            hexEnd += Character.charCount(hexCp);
+                        }
+                        res.appendCodePoint(cp)
+                           .appendCodePoint(cp1)
+                           .appendCodePoint(cp2)
+                           .append(str.substring(hexStart, hexEnd));
+                        i = hexEnd;
+                        break;
+                    } else {
+                        // decimal entity
+                        int decStart = str.offsetByCodePoints(i, 2);
+                        int decEnd = decStart;
+                        while (decEnd < strlen) {
+                            int decCp = str.codePointAt(decEnd);
+                            if (!isDecimalDigit(decCp)) {
+                                break;
+                            }
+                            decEnd += Character.charCount(decCp);
+                        }
+                        res.appendCodePoint(cp)
+                           .appendCodePoint(cp1)
+                           .append(str.substring(decStart, decEnd));
+                        i = decEnd - 1;
+                        break;
+                    }
+                } else if (isLatinLetter(cp1)) {
+                    // named entity?
+                    int entStart = str.offsetByCodePoints(i, 1);
+                    int entEnd = entStart;
+                    while (entEnd < strlen) {
+                        int entCp = str.codePointAt(entEnd);
+                        // Some entities contain numbers, e.g. frac12
+                        if (!isLatinLetter(entCp) && !isDecimalDigit(entCp)) {
+                            break;
+                        }
+                        entEnd += Character.charCount(entCp);
+                    }
+                    res.appendCodePoint(cp)
+                       .append(str.substring(entStart, entEnd));
+                    i = entEnd - 1;
+                    break;
+                } else {
+                    // dangling '&'
+                    res.append("&amp;");
+                }
                 break;
             case '>':
                 // If it's the end of a processing instruction
