@@ -17,6 +17,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.omegat.core.Core;
 import org.omegat.core.data.NotLoadedProject;
 import org.omegat.gui.preferences.view.AutoCompleterView;
+import org.omegat.gui.preferences.view.CharTableAutoCompleterOptionsView;
 import org.omegat.gui.preferences.view.CustomColorSelectionView;
 import org.omegat.gui.preferences.view.ExternalTMXMatchesView;
 import org.omegat.gui.preferences.view.FontSelectionView;
@@ -104,6 +105,7 @@ public class PreferencesWindowController {
         root.add(appearanceNode);
         DefaultMutableTreeNode acNode = new DefaultMutableTreeNode(new AutoCompleterView());
         acNode.add(new DefaultMutableTreeNode(new GlossaryAutoCompleterOptionsView()));
+        acNode.add(new DefaultMutableTreeNode(new CharTableAutoCompleterOptionsView()));
         root.add(acNode);
         root.add(new DefaultMutableTreeNode(new SpellcheckerConfigurationView()));
         root.add(new DefaultMutableTreeNode(new LanguageToolConfigurationView()));
