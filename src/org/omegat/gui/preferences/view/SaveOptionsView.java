@@ -44,33 +44,31 @@ public class SaveOptionsView implements PreferencesView {
     }
 
     @Override
-    public Runnable getPersistenceLogic() {
-        return () -> {
-            int saveMinutes = 0;
-            int saveSeconds = 0;
+    public void persist() {
+        int saveMinutes = 0;
+        int saveSeconds = 0;
 
-            try {
-                saveMinutes = Integer.parseInt(panel.minutesSpinner.getValue().toString());
-            } catch (NumberFormatException nfe) {
-                // Eat exception silently
-            }
+        try {
+            saveMinutes = Integer.parseInt(panel.minutesSpinner.getValue().toString());
+        } catch (NumberFormatException nfe) {
+            // Eat exception silently
+        }
 
-            try {
-                saveSeconds = Integer.parseInt(panel.secondsSpinner.getValue().toString());
-            } catch (NumberFormatException nfe) {
-                // Eat exception silently
-            }
+        try {
+            saveSeconds = Integer.parseInt(panel.secondsSpinner.getValue().toString());
+        } catch (NumberFormatException nfe) {
+            // Eat exception silently
+        }
 
-            int saveInterval = saveMinutes * 60 + saveSeconds;
+        int saveInterval = saveMinutes * 60 + saveSeconds;
 
-            if (saveInterval < 10) {
-                saveInterval = 10; // 10 seconds minimum
-            }
+        if (saveInterval < 10) {
+            saveInterval = 10; // 10 seconds minimum
+        }
 
-            Preferences.setPreference(Preferences.AUTO_SAVE_INTERVAL, saveInterval);
+        Preferences.setPreference(Preferences.AUTO_SAVE_INTERVAL, saveInterval);
 
-            Preferences.setPreference(Preferences.EXTERNAL_COMMAND, panel.externalCommandTextArea.getText());
-            Preferences.setPreference(Preferences.ALLOW_PROJECT_EXTERN_CMD, panel.allowProjectCmdCheckBox.isSelected());
-        };
+        Preferences.setPreference(Preferences.EXTERNAL_COMMAND, panel.externalCommandTextArea.getText());
+        Preferences.setPreference(Preferences.ALLOW_PROJECT_EXTERN_CMD, panel.allowProjectCmdCheckBox.isSelected());
     }
 }

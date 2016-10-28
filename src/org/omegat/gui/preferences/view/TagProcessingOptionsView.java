@@ -76,21 +76,19 @@ public class TagProcessingOptionsView implements PreferencesView {
     }
 
     @Override
-    public Runnable getPersistenceLogic() {
-        return () -> {
-            Preferences.setPreference(Preferences.DONT_CHECK_PRINTF_TAGS, panel.noCheckRadio.isSelected());
-            Preferences.setPreference(Preferences.CHECK_SIMPLE_PRINTF_TAGS, panel.simpleCheckRadio.isSelected());
-            Preferences.setPreference(Preferences.CHECK_ALL_PRINTF_TAGS, panel.fullCheckRadio.isSelected());
-            Preferences.setPreference(Preferences.CHECK_JAVA_PATTERN_TAGS, panel.javaPatternCheckBox.isSelected());
-            Preferences.setPreference(Preferences.CHECK_CUSTOM_PATTERN, panel.customPatternRegExpTF.getText());
-            Preferences.setPreference(Preferences.CHECK_REMOVE_PATTERN, panel.removePatternRegExpTF.getText());
-            Preferences.setPreference(Preferences.LOOSE_TAG_ORDERING, panel.looseTagOrderCheckBox.isSelected());
-            Preferences.setPreference(Preferences.TAGS_VALID_REQUIRED, panel.cbTagsValidRequired.isSelected());
-            StatisticsSettings.setCountingProtectedText(panel.cbCountingProtectedText.isSelected());
-            StatisticsSettings.setCountingCustomTags(panel.cbCountingProtectedText.isSelected());
-            PatternConsts.updatePlaceholderPattern();
-            PatternConsts.updateRemovePattern();
-            PatternConsts.updateCustomTagPattern();
-        };
+    public void persist() {
+        Preferences.setPreference(Preferences.DONT_CHECK_PRINTF_TAGS, panel.noCheckRadio.isSelected());
+        Preferences.setPreference(Preferences.CHECK_SIMPLE_PRINTF_TAGS, panel.simpleCheckRadio.isSelected());
+        Preferences.setPreference(Preferences.CHECK_ALL_PRINTF_TAGS, panel.fullCheckRadio.isSelected());
+        Preferences.setPreference(Preferences.CHECK_JAVA_PATTERN_TAGS, panel.javaPatternCheckBox.isSelected());
+        Preferences.setPreference(Preferences.CHECK_CUSTOM_PATTERN, panel.customPatternRegExpTF.getText());
+        Preferences.setPreference(Preferences.CHECK_REMOVE_PATTERN, panel.removePatternRegExpTF.getText());
+        Preferences.setPreference(Preferences.LOOSE_TAG_ORDERING, panel.looseTagOrderCheckBox.isSelected());
+        Preferences.setPreference(Preferences.TAGS_VALID_REQUIRED, panel.cbTagsValidRequired.isSelected());
+        StatisticsSettings.setCountingProtectedText(panel.cbCountingProtectedText.isSelected());
+        StatisticsSettings.setCountingCustomTags(panel.cbCountingProtectedText.isSelected());
+        PatternConsts.updatePlaceholderPattern();
+        PatternConsts.updateRemovePattern();
+        PatternConsts.updateCustomTagPattern();
     }
 }

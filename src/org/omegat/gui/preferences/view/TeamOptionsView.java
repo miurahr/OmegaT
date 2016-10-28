@@ -35,9 +35,7 @@ public class TeamOptionsView implements PreferencesView {
     }
 
     @Override
-    public Runnable getPersistenceLogic() {
-        return () -> {
-            Preferences.setPreference(Preferences.TEAM_AUTHOR, panel.authorText.getText());
-        };
+    public void persist() {
+        Preferences.setPreference(Preferences.TEAM_AUTHOR, panel.authorText.getText());
     }
 }

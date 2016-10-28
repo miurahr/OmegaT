@@ -64,29 +64,27 @@ public class WorkflowOptionsView implements PreferencesView {
     }
 
     @Override
-    public Runnable getPersistenceLogic() {
-        return () -> {
-            Preferences.setPreference(Preferences.DONT_INSERT_SOURCE_TEXT, panel.leaveEmptyRadio.isSelected());
+    public void persist() {
+        Preferences.setPreference(Preferences.DONT_INSERT_SOURCE_TEXT, panel.leaveEmptyRadio.isSelected());
 
-            Preferences.setPreference(Preferences.BEST_MATCH_INSERT, panel.insertFuzzyCheckBox.isSelected());
-            if (panel.insertFuzzyCheckBox.isSelected()) {
-                int val = Math.max(0, Math.min(100, (Integer) panel.similaritySpinner.getValue()));
-                Preferences.setPreference(Preferences.BEST_MATCH_MINIMAL_SIMILARITY, val);
-                Preferences.setPreference(Preferences.BEST_MATCH_EXPLANATORY_TEXT, panel.prefixText.getText());
-            }
+        Preferences.setPreference(Preferences.BEST_MATCH_INSERT, panel.insertFuzzyCheckBox.isSelected());
+        if (panel.insertFuzzyCheckBox.isSelected()) {
+            int val = Math.max(0, Math.min(100, (Integer) panel.similaritySpinner.getValue()));
+            Preferences.setPreference(Preferences.BEST_MATCH_MINIMAL_SIMILARITY, val);
+            Preferences.setPreference(Preferences.BEST_MATCH_EXPLANATORY_TEXT, panel.prefixText.getText());
+        }
 
-            Preferences.setPreference(Preferences.ALLOW_TRANS_EQUAL_TO_SRC,
-                    panel.allowTranslationEqualToSource.isSelected());
-            Preferences.setPreference(Preferences.EXPORT_CURRENT_SEGMENT, panel.exportCurrentSegment.isSelected());
-            Preferences.setPreference(Preferences.STOP_ON_ALTERNATIVE_TRANSLATION,
-                    panel.stopOnAlternativeTranslation.isSelected());
-            Preferences.setPreference(Preferences.CONVERT_NUMBERS, panel.convertNumbers.isSelected());
-            Preferences.setPreference(Preferences.ALLOW_TAG_EDITING, panel.allowTagEditing.isSelected());
-            Preferences.setPreference(Preferences.TAG_VALIDATE_ON_LEAVE, panel.tagValidateOnLeave.isSelected());
-            Preferences.setPreference(Preferences.SAVE_AUTO_STATUS, panel.cbSaveAutoStatus.isSelected());
+        Preferences.setPreference(Preferences.ALLOW_TRANS_EQUAL_TO_SRC,
+                panel.allowTranslationEqualToSource.isSelected());
+        Preferences.setPreference(Preferences.EXPORT_CURRENT_SEGMENT, panel.exportCurrentSegment.isSelected());
+        Preferences.setPreference(Preferences.STOP_ON_ALTERNATIVE_TRANSLATION,
+                panel.stopOnAlternativeTranslation.isSelected());
+        Preferences.setPreference(Preferences.CONVERT_NUMBERS, panel.convertNumbers.isSelected());
+        Preferences.setPreference(Preferences.ALLOW_TAG_EDITING, panel.allowTagEditing.isSelected());
+        Preferences.setPreference(Preferences.TAG_VALIDATE_ON_LEAVE, panel.tagValidateOnLeave.isSelected());
+        Preferences.setPreference(Preferences.SAVE_AUTO_STATUS, panel.cbSaveAutoStatus.isSelected());
 
-            int segCount = Math.max(0, (Integer) panel.initialSegCountSpinner.getValue());
-            Preferences.setPreference(Preferences.EDITOR_INITIAL_SEGMENT_LOAD_COUNT, segCount);
-        };
+        int segCount = Math.max(0, (Integer) panel.initialSegCountSpinner.getValue());
+        Preferences.setPreference(Preferences.EDITOR_INITIAL_SEGMENT_LOAD_COUNT, segCount);
     }
 }

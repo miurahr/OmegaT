@@ -58,7 +58,7 @@ public class PreferencesWindowController {
                         return;
                     }
                     if (!persistenceRunnables.containsKey(oldView.getClass().getName())) {
-                        persistenceRunnables.put(oldView.getClass().getName(), oldView.getPersistenceLogic());
+                        persistenceRunnables.put(oldView.getClass().getName(), () -> oldView.persist());
                     }
                 }
                 panel.selectedPrefsScrollPane.setViewportView(newView.getGui());

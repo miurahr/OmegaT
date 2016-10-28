@@ -5,7 +5,7 @@ import javax.swing.JComponent;
 public interface PreferencesView {
     JComponent getGui();
 
-    Runnable getPersistenceLogic();
+    void persist();
 
     void initDefaults();
 

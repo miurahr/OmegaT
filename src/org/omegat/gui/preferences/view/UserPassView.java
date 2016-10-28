@@ -44,12 +44,10 @@ public class UserPassView implements PreferencesView {
     }
 
     @Override
-    public Runnable getPersistenceLogic() {
-        return () -> {
-            String encodedUser = StringUtil.encodeBase64(panel.userText.getText().getBytes());
-            String encodedPassword = StringUtil.encodeBase64(new String(panel.passwordField.getPassword()).getBytes());
-            Preferences.setPreference(Preferences.PROXY_USER_NAME, encodedUser);
-            Preferences.setPreference(Preferences.PROXY_PASSWORD, encodedPassword);
-        };
+    public void persist() {
+        String encodedUser = StringUtil.encodeBase64(panel.userText.getText().getBytes());
+        String encodedPassword = StringUtil.encodeBase64(new String(panel.passwordField.getPassword()).getBytes());
+        Preferences.setPreference(Preferences.PROXY_USER_NAME, encodedUser);
+        Preferences.setPreference(Preferences.PROXY_PASSWORD, encodedPassword);
     }
 }

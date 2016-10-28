@@ -259,12 +259,9 @@ public class SpellcheckerConfigurationView implements PreferencesView {
     }
 
     @Override
-    public Runnable getPersistenceLogic() {
-        return () -> {
-            Preferences.setPreference(Preferences.ALLOW_AUTO_SPELLCHECKING, panel.autoSpellcheckCheckBox.isSelected());
-            Preferences.setPreference(Preferences.SPELLCHECKER_DICTIONARY_DIRECTORY,
-                    panel.directoryTextField.getText());
-            Preferences.setPreference(Preferences.SPELLCHECKER_DICTIONARY_URL, panel.dictionaryUrlTextField.getText());
-        };
+    public void persist() {
+        Preferences.setPreference(Preferences.ALLOW_AUTO_SPELLCHECKING, panel.autoSpellcheckCheckBox.isSelected());
+        Preferences.setPreference(Preferences.SPELLCHECKER_DICTIONARY_DIRECTORY, panel.directoryTextField.getText());
+        Preferences.setPreference(Preferences.SPELLCHECKER_DICTIONARY_URL, panel.dictionaryUrlTextField.getText());
     }
 }

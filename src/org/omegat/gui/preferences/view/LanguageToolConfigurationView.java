@@ -437,19 +437,17 @@ public class LanguageToolConfigurationView implements PreferencesView {
     }
 
     @Override
-    public Runnable getPersistenceLogic() {
-        return () -> {
-            LanguageToolPrefs.setBridgeType(selectedBridgeType);
-            LanguageToolPrefs.setRemoteUrl(panel.urlTextField.getText());
-            LanguageToolPrefs.setLocalServerJarPath(panel.localServerJarPathTextField.getText());
+    public void persist() {
+        LanguageToolPrefs.setBridgeType(selectedBridgeType);
+        LanguageToolPrefs.setRemoteUrl(panel.urlTextField.getText());
+        LanguageToolPrefs.setLocalServerJarPath(panel.localServerJarPathTextField.getText());
 
-            if (targetLanguageCode != null) {
-                LanguageToolPrefs.setDisabledCategories(disabledCategories, targetLanguageCode);
-                LanguageToolPrefs.setDisabledRules(disabledRuleIds, targetLanguageCode);
-                LanguageToolPrefs.setEnabledRules(enabledRuleIds, targetLanguageCode);
-                LanguageToolWrapper.setBridgeFromCurrentProject();
-            }
-        };
+        if (targetLanguageCode != null) {
+            LanguageToolPrefs.setDisabledCategories(disabledCategories, targetLanguageCode);
+            LanguageToolPrefs.setDisabledRules(disabledRuleIds, targetLanguageCode);
+            LanguageToolPrefs.setEnabledRules(enabledRuleIds, targetLanguageCode);
+            LanguageToolWrapper.setBridgeFromCurrentProject();
+        }
     }
 
     /**
