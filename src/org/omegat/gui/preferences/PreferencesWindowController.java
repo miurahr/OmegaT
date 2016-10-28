@@ -16,6 +16,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.NotLoadedProject;
+import org.omegat.gui.preferences.view.SaveOptionsView;
 import org.omegat.gui.preferences.view.SpellcheckerConfigurationView;
 import org.omegat.gui.preferences.view.TagProcessingOptionsView;
 import org.omegat.gui.preferences.view.TeamOptionsView;
@@ -92,6 +93,7 @@ public class PreferencesWindowController {
         root.add(new DefaultMutableTreeNode(new TagProcessingOptionsView()));
         root.add(new DefaultMutableTreeNode(new TeamOptionsView()));
         root.add(new DefaultMutableTreeNode(new ViewOptionsView()));
+        root.add(new DefaultMutableTreeNode(new SaveOptionsView()));
         root.add(new DefaultMutableTreeNode(new UserPassView()));
         return root;
     }
