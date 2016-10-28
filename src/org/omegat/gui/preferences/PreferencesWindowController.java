@@ -22,6 +22,7 @@ import org.omegat.gui.preferences.view.CharTableAutoCompleterOptionsView;
 import org.omegat.gui.preferences.view.CustomColorSelectionView;
 import org.omegat.gui.preferences.view.ExternalTMXMatchesView;
 import org.omegat.gui.preferences.view.FontSelectionView;
+import org.omegat.gui.preferences.view.GeneralOptionsView;
 import org.omegat.gui.preferences.view.GlossaryAutoCompleterOptionsView;
 import org.omegat.gui.preferences.view.HistoryAutoCompleterOptionsView;
 import org.omegat.gui.preferences.view.LanguageToolConfigurationView;
@@ -101,6 +102,7 @@ public class PreferencesWindowController {
 
     public TreeNode getRootNode() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+        root.add(new DefaultMutableTreeNode(new GeneralOptionsView()));
         DefaultMutableTreeNode appearanceNode = new DefaultMutableTreeNode("Appearance");
         appearanceNode.add(new DefaultMutableTreeNode(new FontSelectionView()));
         appearanceNode.add(new DefaultMutableTreeNode(new CustomColorSelectionView()));
