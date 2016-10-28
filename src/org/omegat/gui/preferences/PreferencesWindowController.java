@@ -17,6 +17,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.omegat.core.Core;
 import org.omegat.core.data.NotLoadedProject;
 import org.omegat.gui.preferences.view.AutoCompleterView;
+import org.omegat.gui.preferences.view.ExternalTMXMatchesView;
 import org.omegat.gui.preferences.view.FontSelectionView;
 import org.omegat.gui.preferences.view.GlossaryAutoCompleterOptionsView;
 import org.omegat.gui.preferences.view.LanguageToolConfigurationView;
@@ -101,6 +102,7 @@ public class PreferencesWindowController {
         root.add(new DefaultMutableTreeNode(new WorkflowOptionsView()));
         root.add(new DefaultMutableTreeNode(new TagProcessingOptionsView()));
         root.add(new DefaultMutableTreeNode(new TeamOptionsView()));
+        root.add(new DefaultMutableTreeNode(new ExternalTMXMatchesView()));
         root.add(new DefaultMutableTreeNode(new ViewOptionsView()));
         root.add(new DefaultMutableTreeNode(new SaveOptionsView()));
         root.add(new DefaultMutableTreeNode(new UserPassView()));
