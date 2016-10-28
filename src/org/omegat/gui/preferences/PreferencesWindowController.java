@@ -2,7 +2,6 @@ package org.omegat.gui.preferences;
 
 import java.awt.Dimension;
 import java.awt.Window;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,8 +13,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.omegat.core.Core;
-import org.omegat.core.data.NotLoadedProject;
 import org.omegat.gui.preferences.view.AutoCompleterView;
 import org.omegat.gui.preferences.view.AutotextAutoCompleterOptionsView;
 import org.omegat.gui.preferences.view.CharTableAutoCompleterOptionsView;
@@ -34,7 +31,6 @@ import org.omegat.gui.preferences.view.TeamOptionsView;
 import org.omegat.gui.preferences.view.UserPassView;
 import org.omegat.gui.preferences.view.ViewOptionsView;
 import org.omegat.gui.preferences.view.WorkflowOptionsView;
-import org.omegat.util.TestPreferencesInitializer;
 import org.omegat.util.gui.StaticUIUtils;
 
 public class PreferencesWindowController {
@@ -129,11 +125,5 @@ public class PreferencesWindowController {
 
     private void doSave() {
         persistenceRunnables.values().forEach(Runnable::run);
-    }
-
-    public static void main(String[] args) throws IOException {
-        TestPreferencesInitializer.init();
-        Core.setProject(new NotLoadedProject());
-        new PreferencesWindowController().show(null);
     }
 }
