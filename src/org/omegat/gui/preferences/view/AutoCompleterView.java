@@ -30,18 +30,10 @@ public class AutoCompleterView implements PreferencesView {
     @Override
     public void initDefaults() {
         panel.automaticCheckBox.setSelected(Preferences.isPreference(Preferences.AC_SHOW_SUGGESTIONS_AUTOMATICALLY));
-        panel.historyCompletionCheckBox
-                .setSelected(Preferences.isPreference(Preferences.AC_HISTORY_COMPLETION_ENABLED));
-        panel.historyPredictionCheckBox
-                .setSelected(Preferences.isPreference(Preferences.AC_HISTORY_PREDICTION_ENABLED));
     }
 
     @Override
     public void persist() {
         Preferences.setPreference(Preferences.AC_SHOW_SUGGESTIONS_AUTOMATICALLY, panel.automaticCheckBox.isSelected());
-        Preferences.setPreference(Preferences.AC_HISTORY_COMPLETION_ENABLED,
-                panel.historyCompletionCheckBox.isSelected());
-        Preferences.setPreference(Preferences.AC_HISTORY_PREDICTION_ENABLED,
-                panel.historyPredictionCheckBox.isSelected());
     }
 }

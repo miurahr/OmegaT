@@ -3,9 +3,7 @@
           with fuzzy matching, translation memory, keyword search, 
           glossaries, and translation leveraging into updated projects.
 
- Copyright (C) 2000-2006 Keith Godfrey and Maxym Mykhalchuk
-               2012 Didier Briel, Aaron Madlon-Kay
-               2015 Aaron Madlon-Kay
+ Copyright (C) 2016 Aaron Madlon-Kay
                Home page: http://www.omegat.org/
                Support center: http://groups.yahoo.com/group/OmegaT/
 
@@ -32,13 +30,15 @@ import javax.swing.JPanel;
 import org.omegat.util.OStrings;
 
 /**
- * @author Aaron Madlon-Kay
+ * 
+ * @author Didier Briel
+ * @author Alex Buloichik (alex73mail@gmail.com)
  */
 @SuppressWarnings("serial")
-public class AutoCompleterPanel extends JPanel {
+public class HistoryAutoCompleterOptionsPanel extends JPanel {
 
-    /** Creates new form AutoCompleterPanel */
-    public AutoCompleterPanel() {
+    /** Creates new form WorkflowOptionsDialog */
+    public HistoryAutoCompleterOptionsPanel() {
         initComponents();
     }
 
@@ -50,16 +50,22 @@ public class AutoCompleterPanel extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        automaticCheckBox = new javax.swing.JCheckBox();
+        historyCompletionCheckBox = new javax.swing.JCheckBox();
+        historyPredictionCheckBox = new javax.swing.JCheckBox();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setMinimumSize(new java.awt.Dimension(250, 200));
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
 
-        org.openide.awt.Mnemonics.setLocalizedText(automaticCheckBox, OStrings.getString("MW_OPTIONSMENU_AUTOCOMPLETE_SHOW_AUTOMATICALLY")); // NOI18N
-        add(automaticCheckBox);
+        org.openide.awt.Mnemonics.setLocalizedText(historyCompletionCheckBox, OStrings.getString("MW_OPTIONSMENU_AUTOCOMPLETE_HISTORY_COMPLETION")); // NOI18N
+        add(historyCompletionCheckBox);
+
+        org.openide.awt.Mnemonics.setLocalizedText(historyPredictionCheckBox, OStrings.getString("MW_OPTIONSMENU_AUTOCOMPLETE_HISTORY_PREDICTION")); // NOI18N
+        add(historyPredictionCheckBox);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    javax.swing.JCheckBox automaticCheckBox;
+    javax.swing.JCheckBox historyCompletionCheckBox;
+    javax.swing.JCheckBox historyPredictionCheckBox;
     // End of variables declaration//GEN-END:variables
 }

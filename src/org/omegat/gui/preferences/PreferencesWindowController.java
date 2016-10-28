@@ -22,6 +22,7 @@ import org.omegat.gui.preferences.view.CustomColorSelectionView;
 import org.omegat.gui.preferences.view.ExternalTMXMatchesView;
 import org.omegat.gui.preferences.view.FontSelectionView;
 import org.omegat.gui.preferences.view.GlossaryAutoCompleterOptionsView;
+import org.omegat.gui.preferences.view.HistoryAutoCompleterOptionsView;
 import org.omegat.gui.preferences.view.LanguageToolConfigurationView;
 import org.omegat.gui.preferences.view.SaveOptionsView;
 import org.omegat.gui.preferences.view.SpellcheckerConfigurationView;
@@ -106,6 +107,7 @@ public class PreferencesWindowController {
         DefaultMutableTreeNode acNode = new DefaultMutableTreeNode(new AutoCompleterView());
         acNode.add(new DefaultMutableTreeNode(new GlossaryAutoCompleterOptionsView()));
         acNode.add(new DefaultMutableTreeNode(new CharTableAutoCompleterOptionsView()));
+        acNode.add(new DefaultMutableTreeNode(new HistoryAutoCompleterOptionsView()));
         root.add(acNode);
         root.add(new DefaultMutableTreeNode(new SpellcheckerConfigurationView()));
         root.add(new DefaultMutableTreeNode(new LanguageToolConfigurationView()));
