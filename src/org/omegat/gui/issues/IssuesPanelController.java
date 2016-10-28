@@ -673,7 +673,7 @@ public class IssuesPanelController implements IIssues {
         }
 
         static IssueColumn get(int index) {
-            return IssueColumn.values()[index];
+            return values()[index];
         }
     }
 
