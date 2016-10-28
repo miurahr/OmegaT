@@ -21,7 +21,7 @@ public class GlossaryAutoCompleterOptionsView implements PreferencesView {
 
     @Override
     public String toString() {
-        return "Glossary Suggestions";
+        return "Glossary";
     }
 
     private void initGui() {
