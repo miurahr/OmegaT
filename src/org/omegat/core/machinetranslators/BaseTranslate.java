@@ -26,21 +26,15 @@
 
 package org.omegat.core.machinetranslators;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-import javax.swing.JCheckBoxMenuItem;
-
-import org.omegat.core.Core;
 import org.omegat.gui.exttrans.IMachineTranslation;
 import org.omegat.util.Language;
 import org.omegat.util.PatternConsts;
 import org.omegat.util.Preferences;
-import org.openide.awt.Mnemonics;
 
 /**
  * Base class for machine translation.
@@ -48,8 +42,7 @@ import org.openide.awt.Mnemonics;
  * @author Alex Buloichik (alex73mail@gmail.com)
  * @author Didier Briel
  */
-public abstract class BaseTranslate implements IMachineTranslation, ActionListener {
-    protected final JCheckBoxMenuItem menuItem;
+public abstract class BaseTranslate implements IMachineTranslation {
 
     protected boolean enabled;
 
@@ -60,23 +53,25 @@ public abstract class BaseTranslate implements IMachineTranslation, ActionListen
     private final Map<String, String> cache = Collections.synchronizedMap(new HashMap<String, String>());
 
     public BaseTranslate() {
-        menuItem = new JCheckBoxMenuItem();
-        Mnemonics.setLocalizedText(menuItem, getName());
-        menuItem.addActionListener(this);
         enabled = Preferences.isPreference(getPreferenceName());
-        menuItem.setState(enabled);
-        Core.getMainWindow().getMainMenu().getMachineTranslationMenu().add(menuItem);
+        Preferences.addPropertyChangeListener(getPreferenceName(), e -> {
+            enabled = (Boolean) e.getNewValue();
+        });
+        MachineTranslators.add(this);
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
-    public void actionPerformed(ActionEvent e) {
-        enabled = menuItem.isSelected();
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
         Preferences.setPreference(getPreferenceName(), enabled);
     }
 
+    @Override
     public String getTranslation(Language sLang, Language tLang, String text) throws Exception {
         if (enabled) {
             return translate(sLang, tLang, text);
@@ -84,7 +79,8 @@ public abstract class BaseTranslate implements IMachineTranslation, ActionListen
             return null;
         }
     }
-    
+
+    @Override
     public String getCachedTranslation(Language sLang, Language tLang, String text) {
         if (enabled) {
             return getFromCache(sLang, tLang, text);

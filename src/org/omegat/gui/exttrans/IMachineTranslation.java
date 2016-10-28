@@ -45,6 +45,10 @@ public interface IMachineTranslation {
      */
     boolean isEnabled();
 
+    default void setEnabled(boolean enabled) {
+        // Nothing
+    }
+
     /**
      * Translate.
      * 
