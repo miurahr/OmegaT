@@ -17,6 +17,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.omegat.core.Core;
 import org.omegat.core.data.NotLoadedProject;
 import org.omegat.gui.preferences.view.AutoCompleterView;
+import org.omegat.gui.preferences.view.CustomColorSelectionView;
 import org.omegat.gui.preferences.view.ExternalTMXMatchesView;
 import org.omegat.gui.preferences.view.FontSelectionView;
 import org.omegat.gui.preferences.view.GlossaryAutoCompleterOptionsView;
@@ -52,7 +53,11 @@ public class PreferencesWindowController {
                     .getLastSelectedPathComponent();
             if (node != null) {
                 PreferencesView oldView = currentView;
-                PreferencesView newView = (PreferencesView) node.getUserObject();
+                Object obj = node.getUserObject();
+                if (!(obj instanceof PreferencesView)) {
+                    return;
+                }
+                PreferencesView newView = (PreferencesView) obj;
                 if (oldView == newView || newView.equals(oldView)) {
                     return;
                 }
@@ -93,7 +98,10 @@ public class PreferencesWindowController {
 
     public TreeNode getRootNode() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-        root.add(new DefaultMutableTreeNode(new FontSelectionView()));
+        DefaultMutableTreeNode appearanceNode = new DefaultMutableTreeNode("Appearance");
+        appearanceNode.add(new DefaultMutableTreeNode(new FontSelectionView()));
+        appearanceNode.add(new DefaultMutableTreeNode(new CustomColorSelectionView()));
+        root.add(appearanceNode);
         DefaultMutableTreeNode acNode = new DefaultMutableTreeNode(new AutoCompleterView());
         acNode.add(new DefaultMutableTreeNode(new GlossaryAutoCompleterOptionsView()));
         root.add(acNode);
