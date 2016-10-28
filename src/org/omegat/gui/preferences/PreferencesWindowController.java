@@ -17,6 +17,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.omegat.core.Core;
 import org.omegat.core.data.NotLoadedProject;
 import org.omegat.gui.preferences.view.AutoCompleterView;
+import org.omegat.gui.preferences.view.GlossaryAutoCompleterOptionsView;
 import org.omegat.gui.preferences.view.LanguageToolConfigurationView;
 import org.omegat.gui.preferences.view.SaveOptionsView;
 import org.omegat.gui.preferences.view.SpellcheckerConfigurationView;
@@ -90,7 +91,9 @@ public class PreferencesWindowController {
 
     public TreeNode getRootNode() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-        root.add(new DefaultMutableTreeNode(new AutoCompleterView()));
+        DefaultMutableTreeNode acNode = new DefaultMutableTreeNode(new AutoCompleterView());
+        acNode.add(new DefaultMutableTreeNode(new GlossaryAutoCompleterOptionsView()));
+        root.add(acNode);
         root.add(new DefaultMutableTreeNode(new SpellcheckerConfigurationView()));
         root.add(new DefaultMutableTreeNode(new LanguageToolConfigurationView()));
         root.add(new DefaultMutableTreeNode(new WorkflowOptionsView()));
