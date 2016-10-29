@@ -1,15 +1,16 @@
 package org.omegat.gui.preferences;
 
-import java.io.IOException;
+import javax.swing.SwingUtilities;
+import junit.framework.TestCase;
 
 import org.omegat.core.Core;
 import org.omegat.core.data.NotLoadedProject;
 import org.omegat.util.TestPreferencesInitializer;
 
-public class PreferencesWindowTest {
-    public static void main(String[] args) throws IOException {
+public class PreferencesWindowTest extends TestCase {
+    public void testShowPrefsWindow() throws Exception {
         TestPreferencesInitializer.init();
         Core.setProject(new NotLoadedProject());
-        new PreferencesWindowController().show(null);
+        SwingUtilities.invokeAndWait(() -> new PreferencesWindowController().show(null));
     }
 }
