@@ -42,6 +42,8 @@ public class PreferencesWindowController {
         JDialog dialog = new JDialog();
         dialog.setTitle("Preferences");
         dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        // TODO: Think about whether we really want to be modal here
+        dialog.setModal(true);
         StaticUIUtils.setEscapeClosable(dialog);
         
         PreferencesPanel panel = new PreferencesPanel();
