@@ -2,11 +2,13 @@ package org.omegat.gui.preferences.view;
 
 import java.awt.Font;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 
 import org.omegat.core.CoreEvents;
 import org.omegat.gui.preferences.PreferencesView;
 import org.omegat.util.Preferences;
+import org.omegat.util.StaticUtils;
 
 public class FontSelectionView implements PreferencesView {
 
@@ -29,6 +31,7 @@ public class FontSelectionView implements PreferencesView {
 
     private void initGui() {
         panel = new FontSelectionPanel();
+        panel.fontComboBox.setModel(new DefaultComboBoxModel<>(StaticUtils.getFontNames()));
         panel.fontComboBox.addActionListener(e -> panel.previewTextArea.setFont(getSelectedFont()));
         panel.sizeSpinner.addChangeListener(e -> panel.previewTextArea.setFont(getSelectedFont()));
     }

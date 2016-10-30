@@ -26,10 +26,7 @@
 
 package org.omegat.gui.preferences.view;
 
-import javax.swing.DefaultComboBoxModel;
-
 import org.omegat.util.OStrings;
-import org.omegat.util.StaticUtils;
 
 /**
  * The dialog to change the font of OmegaT windows.
@@ -65,7 +62,6 @@ public class FontSelectionPanel extends javax.swing.JPanel {
         setLayout(new java.awt.GridBagLayout());
 
         fontComboBox.setMaximumRowCount(20);
-        fontComboBox.setModel(new DefaultComboBoxModel<>(StaticUtils.getFontNames()));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
