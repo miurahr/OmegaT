@@ -58,6 +58,8 @@ public class ViewOptionsPanel extends JPanel {
 
         viewSourceAllBold = new javax.swing.JCheckBox();
         markFirstNonUnique = new javax.swing.JCheckBox();
+        simplifyPPTooltips = new javax.swing.JCheckBox();
+        templateActivator = new javax.swing.JCheckBox();
         templateLabel = new javax.swing.JLabel();
         modInfoTemplate = new javax.swing.JTextField();
         variablesLabel = new javax.swing.JLabel();
@@ -68,9 +70,9 @@ public class ViewOptionsPanel extends JPanel {
         variablesLabelND = new javax.swing.JLabel();
         variablesListND = new javax.swing.JComboBox<>();
         insertButtonND = new javax.swing.JButton();
-        simplifyPPTooltips = new javax.swing.JCheckBox();
-        templateActivator = new javax.swing.JCheckBox();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new java.awt.GridBagLayout());
 
         viewSourceAllBold.setSelected(true);
@@ -79,9 +81,7 @@ public class ViewOptionsPanel extends JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.ipadx = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         add(viewSourceAllBold, gridBagConstraints);
 
@@ -90,11 +90,27 @@ public class ViewOptionsPanel extends JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.ipadx = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         add(markFirstNonUnique, gridBagConstraints);
+
+        org.openide.awt.Mnemonics.setLocalizedText(simplifyPPTooltips, OStrings.getString("VIEW_OPTION_PPT_SIMPLIFY")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        add(simplifyPPTooltips, gridBagConstraints);
+
+        org.openide.awt.Mnemonics.setLocalizedText(templateActivator, OStrings.getString("MOD_INFO_TEMPLATE_ACTIVATOR")); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        add(templateActivator, gridBagConstraints);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/omegat/Bundle"); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(templateLabel, bundle.getString("MOD_INFO_TEMPLATE")); // NOI18N
@@ -107,10 +123,10 @@ public class ViewOptionsPanel extends JPanel {
         add(templateLabel, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 6, 4, 4);
         add(modInfoTemplate, gridBagConstraints);
 
@@ -118,24 +134,23 @@ public class ViewOptionsPanel extends JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 10;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 4, 4, 0);
         add(variablesLabel, gridBagConstraints);
-
-        variablesList.setModel(new DefaultComboBoxModel<>(ModificationInfoManager.MOD_INFO_VARIABLES));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 10;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 4);
         add(variablesList, gridBagConstraints);
 
         org.openide.awt.Mnemonics.setLocalizedText(insertButton, bundle.getString("BUTTON_INSERT")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 10;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 0);
         add(insertButton, gridBagConstraints);
 
@@ -149,10 +164,10 @@ public class ViewOptionsPanel extends JPanel {
         add(templateLabelND, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 12;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 6, 4, 4);
         add(modInfoTemplateND, gridBagConstraints);
 
@@ -160,51 +175,34 @@ public class ViewOptionsPanel extends JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 13;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 4, 4, 4);
         add(variablesLabelND, gridBagConstraints);
-
-        variablesListND.setModel(new DefaultComboBoxModel<>(ModificationInfoManager.MOD_INFO_VARIABLES_NO_DATE));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 13;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 4);
         add(variablesListND, gridBagConstraints);
 
         org.openide.awt.Mnemonics.setLocalizedText(insertButtonND, bundle.getString("BUTTON_INSERT")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 13;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 0);
         add(insertButtonND, gridBagConstraints);
-
-        org.openide.awt.Mnemonics.setLocalizedText(simplifyPPTooltips, OStrings.getString("VIEW_OPTION_PPT_SIMPLIFY")); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.ipadx = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        add(simplifyPPTooltips, gridBagConstraints);
-
-        org.openide.awt.Mnemonics.setLocalizedText(templateActivator, OStrings.getString("MOD_INFO_TEMPLATE_ACTIVATOR")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.ipadx = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        add(templateActivator, gridBagConstraints);
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.weighty = 1.0;
+        add(filler1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.Box.Filler filler1;
     javax.swing.JButton insertButton;
     javax.swing.JButton insertButtonND;
     javax.swing.JCheckBox markFirstNonUnique;

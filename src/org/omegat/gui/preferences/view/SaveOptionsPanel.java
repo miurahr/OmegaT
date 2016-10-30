@@ -76,9 +76,10 @@ public class SaveOptionsPanel extends JPanel {
         insertButton = new javax.swing.JButton();
         allowProjectCmdCheckBox = new javax.swing.JCheckBox();
 
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new java.awt.BorderLayout());
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 10, 0));
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         intervalDescriptionTextArea.setEditable(false);
@@ -129,7 +130,6 @@ public class SaveOptionsPanel extends JPanel {
 
         add(jPanel1, java.awt.BorderLayout.NORTH);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 10, 10));
         jPanel2.setLayout(new java.awt.BorderLayout());
 
         externalCommandLabel.setLabelFor(externalCommandTextArea);

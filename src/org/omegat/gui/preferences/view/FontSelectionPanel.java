@@ -56,9 +56,10 @@ public class FontSelectionPanel extends javax.swing.JPanel {
         sizeSpinner = new javax.swing.JSpinner();
         sizeLabel = new javax.swing.JLabel();
         previewTextArea = new javax.swing.JTextArea();
-        jPanel1 = new javax.swing.JPanel();
         applyToProjectFilesCheckBox = new javax.swing.JCheckBox();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new java.awt.GridBagLayout());
 
         fontComboBox.setMaximumRowCount(20);
@@ -107,29 +108,27 @@ public class FontSelectionPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         add(previewTextArea, gridBagConstraints);
 
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
         org.openide.awt.Mnemonics.setLocalizedText(applyToProjectFilesCheckBox, OStrings.getString("TF_APPLY_TO_PROJECT_FILES")); // NOI18N
-        jPanel1.add(applyToProjectFilesCheckBox);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        add(jPanel1, gridBagConstraints);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(applyToProjectFilesCheckBox, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.weighty = 1.0;
+        add(filler1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JCheckBox applyToProjectFilesCheckBox;
+    private javax.swing.Box.Filler filler1;
     javax.swing.JComboBox<String> fontComboBox;
     private javax.swing.JLabel fontLabel;
-    private javax.swing.JPanel jPanel1;
     javax.swing.JTextArea previewTextArea;
     private javax.swing.JLabel sizeLabel;
     javax.swing.JSpinner sizeSpinner;

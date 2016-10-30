@@ -77,14 +77,15 @@ public class SpellcheckerConfigurationPanel extends javax.swing.JPanel {
         jPanel6 = new javax.swing.JPanel();
         installButton = new javax.swing.JButton();
 
-        setLayout(new java.awt.BorderLayout());
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
 
         org.openide.awt.Mnemonics.setLocalizedText(autoSpellcheckCheckBox, OStrings.getString("GUI_SPELLCHECKER_AUTOSPELLCHECKCHECKBOX")); // NOI18N
-        autoSpellcheckCheckBox.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 0, 10));
         autoSpellcheckCheckBox.setMargin(new java.awt.Insets(0, 0, 0, 0));
-        add(autoSpellcheckCheckBox, java.awt.BorderLayout.NORTH);
+        add(autoSpellcheckCheckBox);
 
-        detailPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        detailPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        detailPanel.setAlignmentX(0.0F);
         detailPanel.setLayout(new java.awt.BorderLayout());
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 5, 10));
@@ -92,6 +93,8 @@ public class SpellcheckerConfigurationPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(directoryLabel, OStrings.getString("GUI_SPELLCHECKER_DICTIONARYLABEL")); // NOI18N
         jPanel1.add(directoryLabel, java.awt.BorderLayout.NORTH);
+
+        directoryTextField.setColumns(25);
         jPanel1.add(directoryTextField, java.awt.BorderLayout.CENTER);
 
         jPanel8.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0));
@@ -141,7 +144,7 @@ public class SpellcheckerConfigurationPanel extends javax.swing.JPanel {
 
         detailPanel.add(jPanel5, java.awt.BorderLayout.SOUTH);
 
-        add(detailPanel, java.awt.BorderLayout.CENTER);
+        add(detailPanel);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

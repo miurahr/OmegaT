@@ -1,5 +1,6 @@
 package org.omegat.gui.preferences.view;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 
 import org.omegat.gui.editor.ModificationInfoManager;
@@ -27,6 +28,8 @@ public class ViewOptionsView implements PreferencesView {
     private void initGui() {
         panel = new ViewOptionsPanel();
         panel.templateActivator.addActionListener(e -> templatesSetEnabled(panel.templateActivator.isSelected()));
+        panel.variablesList.setModel(new DefaultComboBoxModel<>(ModificationInfoManager.MOD_INFO_VARIABLES));
+        panel.variablesListND.setModel(new DefaultComboBoxModel<>(ModificationInfoManager.MOD_INFO_VARIABLES_NO_DATE));
         panel.insertButton.addActionListener(
                 e -> panel.modInfoTemplate.replaceSelection(panel.variablesList.getSelectedItem().toString()));
         panel.insertButtonND.addActionListener(

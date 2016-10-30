@@ -46,7 +46,6 @@ public class LanguageToolConfigurationPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        centerPanel = new javax.swing.JPanel();
         externalOptionsPanel = new javax.swing.JPanel();
         nativePanel = new javax.swing.JPanel();
         bridgeNativeRadioButton = new javax.swing.JRadioButton();
@@ -70,11 +69,11 @@ public class LanguageToolConfigurationPanel extends javax.swing.JPanel {
         addRuleButton = new javax.swing.JButton();
         deleteRuleButton = new javax.swing.JButton();
 
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setLayout(new java.awt.BorderLayout());
 
-        centerPanel.setLayout(new java.awt.BorderLayout());
-
-        externalOptionsPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5), javax.swing.BorderFactory.createTitledBorder(OStrings.getString("GUI_LANGUAGETOOL_BRIDGE_TYPE")))); // NOI18N
+        externalOptionsPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 5, 0), javax.swing.BorderFactory.createTitledBorder(OStrings.getString("GUI_LANGUAGETOOL_BRIDGE_TYPE")))); // NOI18N
+        externalOptionsPanel.setAlignmentX(0.0F);
         externalOptionsPanel.setLayout(new javax.swing.BoxLayout(externalOptionsPanel, javax.swing.BoxLayout.PAGE_AXIS));
 
         nativePanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -131,12 +130,13 @@ public class LanguageToolConfigurationPanel extends javax.swing.JPanel {
 
         externalOptionsPanel.add(localPanel);
 
-        centerPanel.add(externalOptionsPanel, java.awt.BorderLayout.NORTH);
+        add(externalOptionsPanel, java.awt.BorderLayout.NORTH);
 
-        rulesPanel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 5, 5), javax.swing.BorderFactory.createTitledBorder(OStrings.getString("GUI_LANGUAGETOOL_RULES")))); // NOI18N
+        rulesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(OStrings.getString("GUI_LANGUAGETOOL_RULES"))); // NOI18N
         rulesPanel.setLayout(new java.awt.BorderLayout());
 
         rulesMessagePanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        rulesMessagePanel.setAlignmentX(0.0F);
         rulesMessagePanel.setLayout(new java.awt.BorderLayout());
 
         rulesMessageLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -144,11 +144,14 @@ public class LanguageToolConfigurationPanel extends javax.swing.JPanel {
 
         rulesPanel.add(rulesMessagePanel, java.awt.BorderLayout.NORTH);
 
+        rulesScrollPane.setAlignmentX(0.0F);
+
         rulesTree.setShowsRootHandles(true);
         rulesScrollPane.setViewportView(rulesTree);
 
         rulesPanel.add(rulesScrollPane, java.awt.BorderLayout.CENTER);
 
+        rulesButtonsPanel.setAlignmentX(0.0F);
         rulesButtonsPanel.setLayout(new javax.swing.BoxLayout(rulesButtonsPanel, javax.swing.BoxLayout.LINE_AXIS));
 
         org.openide.awt.Mnemonics.setLocalizedText(addRuleButton, OStrings.getString("BUTTON_ADD_NODOTS")); // NOI18N
@@ -161,9 +164,7 @@ public class LanguageToolConfigurationPanel extends javax.swing.JPanel {
 
         rulesPanel.add(rulesButtonsPanel, java.awt.BorderLayout.SOUTH);
 
-        centerPanel.add(rulesPanel, java.awt.BorderLayout.CENTER);
-
-        add(centerPanel, java.awt.BorderLayout.CENTER);
+        add(rulesPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -172,7 +173,6 @@ public class LanguageToolConfigurationPanel extends javax.swing.JPanel {
     javax.swing.JRadioButton bridgeNativeRadioButton;
     javax.swing.JRadioButton bridgeRemoteRadioButton;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JPanel centerPanel;
     javax.swing.JButton deleteRuleButton;
     javax.swing.JButton directoryChooseButton;
     private javax.swing.JPanel directoryPanel;
