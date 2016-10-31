@@ -1,11 +1,14 @@
 package org.omegat.gui.preferences;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JDialog;
+import javax.swing.JScrollBar;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -77,10 +80,25 @@ public class PreferencesWindowController {
                         persistenceRunnables.put(oldView.getClass().getName(), () -> oldView.persist());
                     }
                 }
-                panel.selectedPrefsScrollPane.setViewportView(newView.getGui());
+                panel.viewHolder.removeAll();
+                panel.add(newView.getGui(), BorderLayout.CENTER);
+                panel.selectedPrefsScrollPane.setViewportView(panel.viewHolder);
                 currentView = newView;
+                SwingUtilities.invokeLater(() -> {
+                    int preferredWidth = panel.getMinimumSize().width;
+                    JScrollBar scrollBar = panel.selectedPrefsScrollPane.getVerticalScrollBar();
+                    int actualWidth = panel.selectedPrefsScrollPane.getWidth();
+                    if (preferredWidth > actualWidth) {
+                        int newWidth = dialog.getWidth() + (preferredWidth - actualWidth);
+                        if (scrollBar != null) {
+                            newWidth += scrollBar.getWidth();
+                        }
+                        dialog.setSize(newWidth, dialog.getHeight());
+                    }
+                });
             }
         });
+        panel.selectedPrefsScrollPane.getViewport().setBackground(panel.getBackground());
         DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) panel.availablePrefsTree.getCellRenderer();
         renderer.setIcon(null);
         renderer.setLeafIcon(null);
