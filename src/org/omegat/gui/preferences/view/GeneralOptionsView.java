@@ -1,9 +1,13 @@
 package org.omegat.gui.preferences.view;
 
+import java.io.File;
+
 import javax.swing.JComponent;
 
 import org.omegat.gui.preferences.PreferencesView;
 import org.omegat.util.Preferences;
+import org.omegat.util.StaticUtils;
+import org.omegat.util.gui.StaticUIUtils;
 
 public class GeneralOptionsView implements PreferencesView {
 
@@ -25,6 +29,10 @@ public class GeneralOptionsView implements PreferencesView {
 
     private void initGui() {
         panel = new GeneralOptionsPanel();
+        panel.accessConfigDirButton.addActionListener(e -> {
+            File configDir = new File(StaticUtils.getConfigDir());
+            StaticUIUtils.openFileWithDesktop(configDir);
+        });
     }
 
     @Override
