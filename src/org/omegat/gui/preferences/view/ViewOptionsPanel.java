@@ -27,10 +27,8 @@
 
 package org.omegat.gui.preferences.view;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 
-import org.omegat.gui.editor.ModificationInfoManager;
 import org.omegat.util.OStrings;
 
 /**
