@@ -13,6 +13,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.omegat.gui.preferences.view.AppearanceView;
 import org.omegat.gui.preferences.view.AutoCompleterView;
 import org.omegat.gui.preferences.view.AutotextAutoCompleterOptionsView;
 import org.omegat.gui.preferences.view.CharTableAutoCompleterOptionsView;
@@ -103,7 +104,7 @@ public class PreferencesWindowController {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         root.add(new DefaultMutableTreeNode(new GeneralOptionsView()));
         root.add(new DefaultMutableTreeNode(new MachineTranslationView()));
-        DefaultMutableTreeNode appearanceNode = new DefaultMutableTreeNode("Appearance");
+        DefaultMutableTreeNode appearanceNode = new DefaultMutableTreeNode(new AppearanceView());
         appearanceNode.add(new DefaultMutableTreeNode(new FontSelectionView()));
         appearanceNode.add(new DefaultMutableTreeNode(new CustomColorSelectionView()));
         root.add(appearanceNode);
