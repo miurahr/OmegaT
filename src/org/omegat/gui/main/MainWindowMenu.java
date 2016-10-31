@@ -436,6 +436,10 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
         optionsMenu.add(optionsAccessConfigDirMenuItem = createMenuItem("MW_OPTIONSMENU_ACCESS_CONFIG_DIR"));
         optionsMenu.add(optionsRepositoriesCredentialsItem = createMenuItem("TEAM_REPOSITORIES_DIALOG"));
         optionsMenu.add(new JSeparator());
+        optionsPreferencesMenuItem = createMenuItem("MW_OPTIONSMENU_PREFERENCES");
+        if (!Platform.isMacOSX()) {
+            optionsMenu.add(optionsPreferencesMenuItem);
+        }
 
         helpMenu.add(helpContentsMenuItem = createMenuItem("TF_MENU_HELP_CONTENTS"));
         helpMenu.add(helpAboutMenuItem = createMenuItem("TF_MENU_HELP_ABOUT"));
@@ -559,6 +563,9 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
                 public void actionPerformed(ActionEvent e) {
                     mainWindowMenuHandler.helpAboutMenuItemActionPerformed();
                 }
+            });
+            OSXIntegration.setPreferencesHandler(e -> {
+                mainWindowMenuHandler.optionsPreferencesMenuItemActionPerformed();
             });
         } catch (NoClassDefFoundError e) {
             Log.log(e);
@@ -799,6 +806,7 @@ public class MainWindowMenu implements ActionListener, MenuListener, IMainMenu {
     JMenuItem optionsViewOptionsMenuLoginItem;
     JCheckBoxMenuItem optionsMTAutoFetchCheckboxMenuItem;
     JCheckBoxMenuItem optionsMTOnlyUntranslatedCheckboxMenuItem;
+    JMenuItem optionsPreferencesMenuItem;
     JMenuItem projectCloseMenuItem;
     JMenuItem projectCompileMenuItem;
     JMenuItem projectSingleCompileMenuItem;

@@ -86,6 +86,7 @@ import org.omegat.gui.editor.EditorUtils;
 import org.omegat.gui.editor.IEditor;
 import org.omegat.gui.editor.SegmentExportImport;
 import org.omegat.gui.filters2.FiltersCustomizer;
+import org.omegat.gui.preferences.PreferencesWindowController;
 import org.omegat.gui.search.SearchWindowController;
 import org.omegat.gui.segmentation.SegmentationCustomizer;
 import org.omegat.gui.stat.StatisticsWindow;
@@ -596,6 +597,11 @@ public class MainWindowMenuHandler {
 
     public void editRegisterIdenticalMenuItemActionPerformed() {
         Core.getEditor().registerIdenticalTranslation();
+    }
+
+    public void optionsPreferencesMenuItemActionPerformed() {
+        PreferencesWindowController pwc = new PreferencesWindowController();
+        pwc.show(Core.getMainWindow().getApplicationFrame());
     }
 
     public void cycleSwitchCaseMenuItemActionPerformed() {
