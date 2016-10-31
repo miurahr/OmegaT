@@ -35,7 +35,6 @@
 package org.omegat.gui.main;
 
 import java.awt.Component;
-import java.awt.Desktop;
 import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.io.File;
@@ -99,6 +98,7 @@ import org.omegat.util.StaticUtils;
 import org.omegat.util.StringUtil;
 import org.omegat.util.TagUtil;
 import org.omegat.util.TagUtil.Tag;
+import org.omegat.util.gui.StaticUIUtils;
 
 /**
  * Handler for main menu items.
@@ -242,7 +242,7 @@ public class MainWindowMenuHandler {
             return;
         }
         String path = Core.getProject().getProjectProperties().getProjectRoot();
-        openFile(new File(path));
+        StaticUIUtils.openFileWithDesktop(new File(path));
     }
 
     public void projectAccessDictionaryMenuItemActionPerformed() {
@@ -250,7 +250,7 @@ public class MainWindowMenuHandler {
             return;
         }
         String path = Core.getProject().getProjectProperties().getDictRoot();
-        openFile(new File(path));
+        StaticUIUtils.openFileWithDesktop(new File(path));
     }
 
     public void projectAccessGlossaryMenuItemActionPerformed() {
@@ -258,7 +258,7 @@ public class MainWindowMenuHandler {
             return;
         }
         String path = Core.getProject().getProjectProperties().getGlossaryRoot();
-        openFile(new File(path));
+        StaticUIUtils.openFileWithDesktop(new File(path));
     }
 
     public void projectAccessSourceMenuItemActionPerformed() {
@@ -266,7 +266,7 @@ public class MainWindowMenuHandler {
             return;
         }
         String path = Core.getProject().getProjectProperties().getSourceRoot();
-        openFile(new File(path));
+        StaticUIUtils.openFileWithDesktop(new File(path));
     }
 
     public void projectAccessTargetMenuItemActionPerformed() {
@@ -274,7 +274,7 @@ public class MainWindowMenuHandler {
             return;
         }
         String path = Core.getProject().getProjectProperties().getTargetRoot();
-        openFile(new File(path));
+        StaticUIUtils.openFileWithDesktop(new File(path));
     }
 
     public void projectAccessTMMenuItemActionPerformed() {
@@ -282,7 +282,7 @@ public class MainWindowMenuHandler {
             return;
         }
         String path = Core.getProject().getProjectProperties().getTMRoot();
-        openFile(new File(path));
+        StaticUIUtils.openFileWithDesktop(new File(path));
     }
 
     public void projectAccessCurrentSourceDocumentMenuItemActionPerformed(int modifier) {
@@ -298,7 +298,7 @@ public class MainWindowMenuHandler {
         if ((modifier & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
             toOpen = toOpen.getParentFile();
         }
-        openFile(toOpen);
+        StaticUIUtils.openFileWithDesktop(toOpen);
     }
 
     public void projectAccessCurrentTargetDocumentMenuItemActionPerformed(int modifier) {
@@ -314,7 +314,7 @@ public class MainWindowMenuHandler {
         if ((modifier & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
             toOpen = toOpen.getParentFile();
         }
-        openFile(toOpen);
+        StaticUIUtils.openFileWithDesktop(toOpen);
     }
 
     public void projectAccessWriteableGlossaryMenuItemActionPerformed(int modifier) {
@@ -329,25 +329,7 @@ public class MainWindowMenuHandler {
         if ((modifier & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 0) {
             toOpen = toOpen.getParentFile();
         }
-        openFile(toOpen);
-    }
-
-    private void openFile(File path) {
-        try {
-            path = path.getCanonicalFile(); // Normalize file name in case it is displayed
-        } catch (Exception ex) {
-            // Ignore
-        }
-        if (!path.exists()) {
-            Core.getMainWindow().showStatusMessageRB("LFC_ERROR_FILE_DOESNT_EXIST", path);
-            return;
-        }
-        try {
-            Desktop.getDesktop().open(path);
-        } catch (Exception ex) {
-            Log.logErrorRB(ex, "RPF_ERROR");
-            Core.getMainWindow().displayErrorRB(ex, "RPF_ERROR");
-        }
+        StaticUIUtils.openFileWithDesktop(toOpen);
     }
 
     /** Quits OmegaT */
@@ -1114,7 +1096,7 @@ public class MainWindowMenuHandler {
     }
 
     public void optionsAccessConfigDirMenuItemActionPerformed() {
-        openFile(new File(StaticUtils.getConfigDir()));
+        StaticUIUtils.openFileWithDesktop(new File(StaticUtils.getConfigDir()));
     }
 
     public void optionsRepositoriesCredentialsItemActionPerformed() {

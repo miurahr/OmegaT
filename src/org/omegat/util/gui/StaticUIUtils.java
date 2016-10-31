@@ -28,6 +28,7 @@
 package org.omegat.util.gui;
 
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
@@ -43,6 +44,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,6 +63,8 @@ import javax.swing.text.Caret;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 
+import org.omegat.core.Core;
+import org.omegat.util.Log;
 import org.omegat.util.Platform;
 import org.omegat.util.Preferences;
 import org.omegat.util.StringUtil;
@@ -336,5 +340,23 @@ public class StaticUIUtils {
 
     public static void setWindowIcon(Window window) {
         window.setIconImages(Arrays.asList(ResourcesUtil.APP_ICON_16X16, ResourcesUtil.APP_ICON_32X32));
+    }
+
+    public static void openFileWithDesktop(File path) {
+        try {
+            path = path.getCanonicalFile(); // Normalize file name in case it is displayed
+        } catch (Exception ex) {
+            // Ignore
+        }
+        if (!path.exists()) {
+            Core.getMainWindow().showStatusMessageRB("LFC_ERROR_FILE_DOESNT_EXIST", path);
+            return;
+        }
+        try {
+            Desktop.getDesktop().open(path);
+        } catch (Exception ex) {
+            Log.logErrorRB(ex, "RPF_ERROR");
+            Core.getMainWindow().displayErrorRB(ex, "RPF_ERROR");
+        }
     }
 }
