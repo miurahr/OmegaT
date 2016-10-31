@@ -56,6 +56,10 @@ public class GlossaryPanel extends JPanel {
         useSeparateTermsCheckBox = new javax.swing.JCheckBox();
         useStemmingCheckBox = new javax.swing.JCheckBox();
         replaceHitsCheckBox = new javax.swing.JCheckBox();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 10), new java.awt.Dimension(0, 10), new java.awt.Dimension(32767, 10));
+        jPanel1 = new javax.swing.JPanel();
+        enableTransTipsCheckBox = new javax.swing.JCheckBox();
+        transTipsExactMatchCheckBox = new javax.swing.JCheckBox();
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         setMinimumSize(new java.awt.Dimension(250, 200));
@@ -72,11 +76,28 @@ public class GlossaryPanel extends JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(replaceHitsCheckBox, OStrings.getString("TF_OPTIONSMENU_GLOSSARY_REPLACE_ON_INSERT")); // NOI18N
         add(replaceHitsCheckBox);
+        add(filler1);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(OStrings.getString("TF_OPTIONSMENU_TRANSTIPS"))); // NOI18N
+        jPanel1.setAlignmentX(0.0F);
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.PAGE_AXIS));
+
+        org.openide.awt.Mnemonics.setLocalizedText(enableTransTipsCheckBox, OStrings.getString("TF_OPTIONSMENU_TRANSTIPS_ENABLE")); // NOI18N
+        jPanel1.add(enableTransTipsCheckBox);
+
+        org.openide.awt.Mnemonics.setLocalizedText(transTipsExactMatchCheckBox, OStrings.getString("TF_OPTIONSMENU_TRANSTIPS_EXACTMATCH")); // NOI18N
+        jPanel1.add(transTipsExactMatchCheckBox);
+
+        add(jPanel1);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     javax.swing.JCheckBox displayContextCheckBox;
+    javax.swing.JCheckBox enableTransTipsCheckBox;
+    private javax.swing.Box.Filler filler1;
+    private javax.swing.JPanel jPanel1;
     javax.swing.JCheckBox replaceHitsCheckBox;
+    javax.swing.JCheckBox transTipsExactMatchCheckBox;
     javax.swing.JCheckBox useSeparateTermsCheckBox;
     javax.swing.JCheckBox useStemmingCheckBox;
     // End of variables declaration//GEN-END:variables

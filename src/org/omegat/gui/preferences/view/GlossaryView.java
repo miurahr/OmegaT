@@ -33,6 +33,8 @@ public class GlossaryView implements PreferencesView {
         panel.useSeparateTermsCheckBox.setSelected(Preferences.isPreference(Preferences.GLOSSARY_NOT_EXACT_MATCH));
         panel.useStemmingCheckBox.setSelected(Preferences.isPreference(Preferences.GLOSSARY_STEMMING));
         panel.replaceHitsCheckBox.setSelected(Preferences.isPreference(Preferences.GLOSSARY_REPLACE_ON_INSERT));
+        panel.enableTransTipsCheckBox.setSelected(Preferences.isPreference(Preferences.TRANSTIPS));
+        panel.transTipsExactMatchCheckBox.setSelected(Preferences.isPreference(Preferences.TRANSTIPS_EXACT_SEARCH));
     }
 
 
@@ -42,5 +44,7 @@ public class GlossaryView implements PreferencesView {
         Preferences.setPreference(Preferences.GLOSSARY_NOT_EXACT_MATCH, panel.useSeparateTermsCheckBox.isSelected());
         Preferences.setPreference(Preferences.GLOSSARY_STEMMING, panel.useStemmingCheckBox.isSelected());
         Preferences.setPreference(Preferences.GLOSSARY_REPLACE_ON_INSERT, panel.replaceHitsCheckBox.isSelected());
+        Preferences.setPreference(Preferences.TRANSTIPS, panel.enableTransTipsCheckBox.isSelected());
+        Preferences.setPreference(Preferences.TRANSTIPS_EXACT_SEARCH, panel.transTipsExactMatchCheckBox.isSelected());
     }
 }
