@@ -13,6 +13,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.omegat.core.team2.gui.RepositoriesCredentialsView;
 import org.omegat.gui.preferences.view.AppearanceView;
 import org.omegat.gui.preferences.view.AutoCompleterView;
 import org.omegat.gui.preferences.view.AutotextAutoCompleterOptionsView;
@@ -122,7 +123,9 @@ public class PreferencesWindowController {
         root.add(new DefaultMutableTreeNode(new LanguageToolConfigurationView()));
         root.add(new DefaultMutableTreeNode(new WorkflowOptionsView()));
         root.add(new DefaultMutableTreeNode(new TagProcessingOptionsView()));
-        root.add(new DefaultMutableTreeNode(new TeamOptionsView()));
+        DefaultMutableTreeNode teamNode = new DefaultMutableTreeNode(new TeamOptionsView());
+        teamNode.add(new DefaultMutableTreeNode(new RepositoriesCredentialsView()));
+        root.add(teamNode);
         root.add(new DefaultMutableTreeNode(new ExternalTMXMatchesView()));
         root.add(new DefaultMutableTreeNode(new ViewOptionsView()));
         root.add(new DefaultMutableTreeNode(new SaveOptionsView()));
