@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -36,6 +37,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.madlonkay.supertmxmerge.gui.ReasonablySizedPanel;
 import org.omegat.core.team2.gui.RepositoriesCredentialsView;
 import org.omegat.gui.preferences.view.AppearanceView;
 import org.omegat.gui.preferences.view.AutoCompleterView;
@@ -65,6 +67,7 @@ public class PreferencesWindowController {
 
     private JDialog dialog;
     private PreferencesPanel panel;
+    private JPanel viewHolder;
     private PreferencesView currentView;
     private final Map<String, Runnable> persistenceRunnables = new HashMap<>();
 
@@ -78,6 +81,9 @@ public class PreferencesWindowController {
         
         panel = new PreferencesPanel();
         dialog.add(panel);
+
+        viewHolder = new ReasonablySizedPanel();
+        viewHolder.setLayout(new BorderLayout());
 
         panel.searchTextField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -196,15 +202,15 @@ public class PreferencesWindowController {
                 persistenceRunnables.put(oldView.getClass().getName(), oldView::persist);
             }
         }
-        panel.viewHolder.removeAll();
-        panel.viewHolder.add(newView.getGui(), BorderLayout.CENTER);
-        panel.selectedPrefsScrollPane.setViewportView(panel.viewHolder);
+        viewHolder.removeAll();
+        viewHolder.add(newView.getGui(), BorderLayout.CENTER);
+        panel.selectedPrefsScrollPane.setViewportView(viewHolder);
         currentView = newView;
         SwingUtilities.invokeLater(this::adjustWidth);
     }
 
     private void adjustWidth() {
-        int preferredWidth = panel.getMinimumSize().width;
+        int preferredWidth = viewHolder.getMinimumSize().width;
         JScrollBar scrollBar = panel.selectedPrefsScrollPane.getVerticalScrollBar();
         int actualWidth = panel.selectedPrefsScrollPane.getWidth();
         if (preferredWidth > actualWidth) {

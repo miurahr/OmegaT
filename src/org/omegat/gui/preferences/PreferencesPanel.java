@@ -29,7 +29,6 @@ public class PreferencesPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        viewHolder = new javax.swing.JPanel();
         mainSplitPane = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         searchPanel = new javax.swing.JPanel();
@@ -46,8 +45,6 @@ public class PreferencesPanel extends javax.swing.JPanel {
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(20, 0), new java.awt.Dimension(20, 0), new java.awt.Dimension(20, 32767));
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
-
-        viewHolder.setLayout(new java.awt.BorderLayout());
 
         setLayout(new java.awt.BorderLayout());
 
@@ -123,6 +120,5 @@ public class PreferencesPanel extends javax.swing.JPanel {
     javax.swing.JTextField searchTextField;
     javax.swing.JPanel selectedPrefsPlaceholderPanel;
     javax.swing.JScrollPane selectedPrefsScrollPane;
-    javax.swing.JPanel viewHolder;
     // End of variables declaration//GEN-END:variables
 }
