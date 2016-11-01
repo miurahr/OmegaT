@@ -1,20 +1,35 @@
 package org.omegat.gui.preferences;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Window;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.omegat.core.team2.gui.RepositoriesCredentialsView;
@@ -39,6 +54,7 @@ import org.omegat.gui.preferences.view.TeamOptionsView;
 import org.omegat.gui.preferences.view.UserPassView;
 import org.omegat.gui.preferences.view.ViewOptionsView;
 import org.omegat.gui.preferences.view.WorkflowOptionsView;
+import org.omegat.util.StringUtil;
 import org.omegat.util.gui.StaticUIUtils;
 
 public class PreferencesWindowController {
@@ -59,6 +75,31 @@ public class PreferencesWindowController {
         panel = new PreferencesPanel();
         dialog.add(panel);
 
+        panel.searchTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                incrementalSearch();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                incrementalSearch();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                incrementalSearch();
+            }
+        });
+        panel.searchTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE && panel.searchTextField.getDocument().getLength() > 0) {
+                    panel.searchTextField.setText(null);
+                    e.consume();
+                }
+            }
+        });
         panel.availablePrefsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         panel.availablePrefsTree.setModel(new DefaultTreeModel(getRootNode()));
         panel.availablePrefsTree.addTreeSelectionListener(this::handleViewSelection);
@@ -155,6 +196,78 @@ public class PreferencesWindowController {
                 newWidth += scrollBar.getWidth();
             }
             dialog.setSize(newWidth, dialog.getHeight());
+        }
+    }
+
+    private void incrementalSearch() {
+        String query = panel.searchTextField.getText().trim();
+        if (query.isEmpty()) {
+            return;
+        }
+        incrementalSearchImpl(query);
+    }
+
+    private void incrementalSearchImpl(String query) {
+        Pattern pattern = Pattern.compile(".*" + Pattern.quote(query) + ".*",
+                Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) panel.availablePrefsTree.getModel().getRoot();
+        for (GuiSearchResult result : createIndex(root)) {
+            if (pattern.matcher(result.string).matches()) {
+                handleViewSelection(panel.availablePrefsTree.getSelectionPath(), new TreePath(result.node.getPath()));
+                ((JComponent) result.comp).scrollRectToVisible(result.comp.getBounds());
+                return;
+            }
+        }
+    }
+
+    private static List<GuiSearchResult> createIndex(DefaultMutableTreeNode root) {
+        List<GuiSearchResult> result = new ArrayList<>();
+        walkTree(root, node -> {
+            PreferencesView view = (PreferencesView) node.getUserObject();
+            if (view != null) {
+                visitUiStrings(view.getGui(), (str, comp) -> {
+                    result.add(new GuiSearchResult(node, str, comp));
+                });
+            }
+        });
+        return result;
+    }
+
+    static class GuiSearchResult {
+        final public DefaultMutableTreeNode node;
+        final public String string;
+        final public Component comp;
+
+        public GuiSearchResult(DefaultMutableTreeNode node, String string, Component comp) {
+            this.node = node;
+            this.string = string;
+            this.comp = comp;
+        }
+    }
+
+    private static void visitUiStrings(Component comp, BiConsumer<String, Component> consumer) {
+        StaticUIUtils.visitHierarchy(comp, c -> {
+            try {
+                Method getText = c.getClass().getMethod("getText");
+                String str = (String) getText.invoke(c);
+                if (!StringUtil.isEmpty(str)) {
+                    consumer.accept(str, c);
+                }
+            } catch (NoSuchMethodException e) {
+            } catch (SecurityException | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private static void walkTree(DefaultMutableTreeNode node, Consumer<DefaultMutableTreeNode> consumer) {
+        consumer.accept(node);
+        Enumeration<?> e = node.children();
+        while (e.hasMoreElements()) {
+            Object o = e.nextElement();
+            walkTree((DefaultMutableTreeNode) o, consumer);
         }
     }
 

@@ -31,6 +31,10 @@ public class PreferencesPanel extends javax.swing.JPanel {
 
         viewHolder = new javax.swing.JPanel();
         mainSplitPane = new javax.swing.JSplitPane();
+        jPanel1 = new javax.swing.JPanel();
+        searchPanel = new javax.swing.JPanel();
+        searchTextField = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
         availablePrefsScrollPane = new javax.swing.JScrollPane();
         availablePrefsTree = new javax.swing.JTree();
         selectedPrefsScrollPane = new javax.swing.JScrollPane();
@@ -49,11 +53,25 @@ public class PreferencesPanel extends javax.swing.JPanel {
 
         mainSplitPane.setBorder(null);
 
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
+        searchPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(3, 5, 3, 5));
+        searchPanel.setLayout(new java.awt.BorderLayout());
+        searchPanel.add(searchTextField, java.awt.BorderLayout.CENTER);
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/omegat/gui/resources/appbar.magnify.png"))); // NOI18N
+        jLabel2.setLabelFor(searchTextField);
+        searchPanel.add(jLabel2, java.awt.BorderLayout.WEST);
+
+        jPanel1.add(searchPanel, java.awt.BorderLayout.NORTH);
+
         availablePrefsTree.setRootVisible(false);
         availablePrefsTree.setShowsRootHandles(true);
         availablePrefsScrollPane.setViewportView(availablePrefsTree);
 
-        mainSplitPane.setLeftComponent(availablePrefsScrollPane);
+        jPanel1.add(availablePrefsScrollPane, java.awt.BorderLayout.CENTER);
+
+        mainSplitPane.setLeftComponent(jPanel1);
 
         selectedPrefsPlaceholderPanel.setLayout(new java.awt.BorderLayout());
 
@@ -96,9 +114,13 @@ public class PreferencesPanel extends javax.swing.JPanel {
     javax.swing.JButton cancelButton;
     javax.swing.Box.Filler filler1;
     javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
     javax.swing.JSplitPane mainSplitPane;
     javax.swing.JButton okButton;
     javax.swing.JButton resetButton;
+    private javax.swing.JPanel searchPanel;
+    javax.swing.JTextField searchTextField;
     javax.swing.JPanel selectedPrefsPlaceholderPanel;
     javax.swing.JScrollPane selectedPrefsScrollPane;
     javax.swing.JPanel viewHolder;
