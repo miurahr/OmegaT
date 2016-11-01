@@ -10,6 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -42,62 +43,25 @@ import org.omegat.util.gui.StaticUIUtils;
 
 public class PreferencesWindowController {
 
+    private JDialog dialog;
+    private PreferencesPanel panel;
     private PreferencesView currentView;
     private final Map<String, Runnable> persistenceRunnables = new HashMap<>();
 
     public void show(Window parent) {
-        JDialog dialog = new JDialog();
+        dialog = new JDialog();
         dialog.setTitle("Preferences");
         dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         // TODO: Think about whether we really want to be modal here
         dialog.setModal(true);
         StaticUIUtils.setEscapeClosable(dialog);
         
-        PreferencesPanel panel = new PreferencesPanel();
+        panel = new PreferencesPanel();
         dialog.add(panel);
 
         panel.availablePrefsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         panel.availablePrefsTree.setModel(new DefaultTreeModel(getRootNode()));
-        panel.availablePrefsTree.addTreeSelectionListener(e -> {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) panel.availablePrefsTree
-                    .getLastSelectedPathComponent();
-            if (node != null) {
-                PreferencesView oldView = currentView;
-                Object obj = node.getUserObject();
-                if (!(obj instanceof PreferencesView)) {
-                    return;
-                }
-                PreferencesView newView = (PreferencesView) obj;
-                if (oldView == newView || newView.equals(oldView)) {
-                    return;
-                }
-                if (oldView != null) {
-                    if (!oldView.validate()) {
-                        panel.availablePrefsTree.getSelectionModel().setSelectionPath(e.getOldLeadSelectionPath());
-                        return;
-                    }
-                    if (!persistenceRunnables.containsKey(oldView.getClass().getName())) {
-                        persistenceRunnables.put(oldView.getClass().getName(), () -> oldView.persist());
-                    }
-                }
-                panel.viewHolder.removeAll();
-                panel.add(newView.getGui(), BorderLayout.CENTER);
-                panel.selectedPrefsScrollPane.setViewportView(panel.viewHolder);
-                currentView = newView;
-                SwingUtilities.invokeLater(() -> {
-                    int preferredWidth = panel.getMinimumSize().width;
-                    JScrollBar scrollBar = panel.selectedPrefsScrollPane.getVerticalScrollBar();
-                    int actualWidth = panel.selectedPrefsScrollPane.getWidth();
-                    if (preferredWidth > actualWidth) {
-                        int newWidth = dialog.getWidth() + (preferredWidth - actualWidth);
-                        if (scrollBar != null) {
-                            newWidth += scrollBar.getWidth();
-                        }
-                        dialog.setSize(newWidth, dialog.getHeight());
-                    }
-                });
-            }
-        });
+        panel.availablePrefsTree.addTreeSelectionListener(this::handleViewSelection);
         panel.selectedPrefsScrollPane.getViewport().setBackground(panel.getBackground());
         DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) panel.availablePrefsTree.getCellRenderer();
         renderer.setIcon(null);
@@ -121,7 +85,7 @@ public class PreferencesWindowController {
         dialog.setVisible(true);
     }
 
-    public TreeNode getRootNode() {
+    private static TreeNode getRootNode() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
         root.add(new DefaultMutableTreeNode(new GeneralOptionsView()));
         root.add(new DefaultMutableTreeNode(new MachineTranslationView()));
@@ -149,6 +113,49 @@ public class PreferencesWindowController {
         root.add(new DefaultMutableTreeNode(new SaveOptionsView()));
         root.add(new DefaultMutableTreeNode(new UserPassView()));
         return root;
+    }
+
+    private void handleViewSelection(TreeSelectionEvent e) {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getNewLeadSelectionPath().getLastPathComponent();
+        if (node == null) {
+            return;
+        }
+        PreferencesView oldView = currentView;
+        Object obj = node.getUserObject();
+        if (!(obj instanceof PreferencesView)) {
+            return;
+        }
+        PreferencesView newView = (PreferencesView) obj;
+        if (oldView == newView || newView.equals(oldView)) {
+            return;
+        }
+        if (oldView != null) {
+            if (!oldView.validate()) {
+                panel.availablePrefsTree.getSelectionModel().setSelectionPath(e.getOldLeadSelectionPath());
+                return;
+            }
+            if (!persistenceRunnables.containsKey(oldView.getClass().getName())) {
+                persistenceRunnables.put(oldView.getClass().getName(), oldView::persist);
+            }
+        }
+        panel.viewHolder.removeAll();
+        panel.viewHolder.add(newView.getGui(), BorderLayout.CENTER);
+        panel.selectedPrefsScrollPane.setViewportView(panel.viewHolder);
+        currentView = newView;
+        SwingUtilities.invokeLater(this::adjustWidth);
+    }
+
+    private void adjustWidth() {
+        int preferredWidth = panel.getMinimumSize().width;
+        JScrollBar scrollBar = panel.selectedPrefsScrollPane.getVerticalScrollBar();
+        int actualWidth = panel.selectedPrefsScrollPane.getWidth();
+        if (preferredWidth > actualWidth) {
+            int newWidth = dialog.getWidth() + (preferredWidth - actualWidth);
+            if (scrollBar != null) {
+                newWidth += scrollBar.getWidth();
+            }
+            dialog.setSize(newWidth, dialog.getHeight());
+        }
     }
 
     private void doSave() {
