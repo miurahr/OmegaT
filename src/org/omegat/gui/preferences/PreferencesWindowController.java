@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JScrollBar;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -117,6 +120,19 @@ public class PreferencesWindowController {
         });
         panel.cancelButton.addActionListener(e -> StaticUIUtils.closeWindowByEvent(dialog));
         panel.resetButton.addActionListener(e -> currentView.initDefaults());
+        
+        dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        preloadGuis();
+                        return null;
+                    }
+                }.execute();
+            }
+        });
 
         dialog.getRootPane().setDefaultButton(panel.okButton);
 
@@ -269,6 +285,16 @@ public class PreferencesWindowController {
             Object o = e.nextElement();
             walkTree((DefaultMutableTreeNode) o, consumer);
         }
+    }
+    
+    private void preloadGuis() {
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) panel.availablePrefsTree.getModel().getRoot();
+        walkTree(root, node -> {
+            PreferencesView view = (PreferencesView) node.getUserObject();
+            if (view != null) {
+                view.getGui();
+            }
+        });
     }
 
     private void doSave() {
