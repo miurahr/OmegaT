@@ -1,6 +1,7 @@
 package org.omegat.gui.preferences;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Window;
@@ -220,21 +221,23 @@ public class PreferencesWindowController {
         if (query.isEmpty()) {
             return;
         }
-        incrementalSearchImpl(query);
+        Color textColor = incrementalSearchImpl(query) ? Color.BLACK : Color.RED;
+        panel.searchTextField.setForeground(textColor);
     }
 
-    private void incrementalSearchImpl(String query) {
+    private boolean incrementalSearchImpl(String query) {
         Pattern pattern = Pattern.compile(".*" + Pattern.quote(query) + ".*",
                 Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) panel.availablePrefsTree.getModel().getRoot();
         for (GuiSearchResult result : createIndex(root)) {
             if (pattern.matcher(result.string).matches()) {
-                handleViewSelection(panel.availablePrefsTree.getSelectionPath(), new TreePath(result.node.getPath()));
+                panel.availablePrefsTree.setSelectionPath(new TreePath(result.node.getPath()));
                 ((JComponent) result.comp).scrollRectToVisible(result.comp.getBounds());
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     private static List<GuiSearchResult> createIndex(DefaultMutableTreeNode root) {
