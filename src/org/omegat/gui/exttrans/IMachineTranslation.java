@@ -26,6 +26,7 @@
 
 package org.omegat.gui.exttrans;
 
+import javax.swing.JComponent;
 import org.omegat.util.Language;
 
 /**
@@ -48,6 +49,12 @@ public interface IMachineTranslation {
     default void setEnabled(boolean enabled) {
         // Nothing
     }
+
+    default JComponent getUiComponent() {
+	return null;
+    }
+
+    void prefsUpdated();
 
     /**
      * Translate.

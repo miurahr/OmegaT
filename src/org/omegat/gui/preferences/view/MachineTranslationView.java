@@ -47,6 +47,12 @@ public class MachineTranslationView implements PreferencesView {
 
     private void initGui() {
         panel = new MachineTranslationPanel();
+	MachineTranslators.getMachineTranslators().stream().forEach(p -> {
+	    JComponent comp = p.getUiComponent();
+	    if (comp != null) {
+	        panel.mtPrefsTabbedPane.add(p.getName(), comp);
+	    }
+	});
     }
 
     @Override
@@ -63,6 +69,7 @@ public class MachineTranslationView implements PreferencesView {
         Preferences.setPreference(Preferences.MT_AUTO_FETCH, panel.autoFetchCheckBox.isSelected());
         Preferences.setPreference(Preferences.MT_ONLY_UNTRANSLATED, panel.untranslatedOnlyCheckBox.isSelected());
         MachineTranslators.getMachineTranslators().stream().forEach(p -> {
+            p.prefsUpdated();
             Boolean status = providerStatus.get(p.getName());
             if (status != null) {
                 p.setEnabled(status);

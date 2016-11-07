@@ -29,6 +29,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JComponent;
+
+import org.omegat.gui.exttrans.MicrosoftTranslateOptions;
 
 import org.omegat.util.Language;
 import org.omegat.util.Log;
@@ -52,6 +55,8 @@ public class MicrosoftTranslate extends BaseTranslate {
 
     protected String accessToken;
 
+    private MicrosoftTranslateOptions dialog;
+
     @Override
     protected String getPreferenceName() {
         return Preferences.ALLOW_MICROSOFT_TRANSLATE;
@@ -59,6 +64,21 @@ public class MicrosoftTranslate extends BaseTranslate {
 
     public String getName() {
         return OStrings.getString("MT_ENGINE_MICROSOFT");
+    }
+
+    @Override
+    public JComponent getUiComponent() {
+	if (dialog == null) {
+            dialog = new MicrosoftTranslateOptions();
+	}	 
+	return dialog;
+    }
+    
+    @Override
+    public void prefsUpdated() {
+        if (dialog.isModified()) {
+	    dialog.update();
+        }
     }
 
     @Override

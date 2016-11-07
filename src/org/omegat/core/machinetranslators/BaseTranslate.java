@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
+import javax.swing.JComponent;
 
 import org.omegat.gui.exttrans.IMachineTranslation;
 import org.omegat.util.Language;
@@ -69,6 +70,15 @@ public abstract class BaseTranslate implements IMachineTranslation {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         Preferences.setPreference(getPreferenceName(), enabled);
+    }
+
+    @Override
+    public JComponent getUiComponent() {
+        return null;
+    }
+
+    @Override
+    public void prefsUpdated() {
     }
 
     @Override
