@@ -88,15 +88,15 @@ task webstartDocsJar(type: Jar) {
 configurations {
     all {
         // Temporary exclusion; see https://sourceforge.net/p/omegat/bugs/813/
-        exclude group: 'org.apache.lucene', module: 'lucene-core'
+        // exclude group: 'org.apache.lucene', module: 'lucene-core'
     }
     [testRuntime, testCompile]*.exclude group: 'org.languagetool', module: 'language-all'
 }
 
 ext {
     providedLibsDir = file('lib/provided')
-    languageToolVersion = '3.5'
-    luceneVersion = '5.2.1'
+    languageToolVersion = '4.0'
+    luceneVersion = '5.5.5'
 }
 
 dependencies {
@@ -139,14 +139,14 @@ dependencies {
         implementation "org.languagetool:languagetool-core:${languageToolVersion}"
         runtimeOnly("org.languagetool:language-all:${languageToolVersion}") {
             // Temporary exclusion; see https://sourceforge.net/p/omegat/bugs/814/
-            exclude module: 'lucene-gosen-ipadic'
+            // exclude module: 'lucene-gosen-ipadic'
         }
-        runtimeOnly 'org.omegat.lucene:lucene-gosen:5.0.0:ipadic'
+        // runtimeOnly 'org.omegat.lucene:lucene-gosen:6.0.0:ipadic'
         runtimeOnly 'org.languagetool:hunspell-native-libs:2.9'
 
         // Lucene for tokenizers
         // Temporary use of custom lucene-core; see https://sourceforge.net/p/omegat/bugs/813/
-        implementation "org.omegat.lucene:lucene-core:${luceneVersion}-1"
+        //implementation "org.omegat.lucene:lucene-core:${luceneVersion}-1"
         implementation "org.apache.lucene:lucene-analyzers-common:${luceneVersion}"
         implementation "org.apache.lucene:lucene-analyzers-kuromoji:${luceneVersion}"
         implementation "org.apache.lucene:lucene-analyzers-smartcn:${luceneVersion}"
