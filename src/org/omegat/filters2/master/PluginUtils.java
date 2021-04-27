@@ -72,9 +72,30 @@ public final class PluginUtils {
 
     public static final String PLUGINS_LIST_FILE = "Plugins.properties";
 
-    enum PluginType {
-        FILTER, TOKENIZER, MARKER, MACHINETRANSLATOR, BASE, GLOSSARY, UNKNOWN
-    };
+    /**
+￼     * Plugin type definitons.
+￼     */
+    public enum PluginType {
+        FILTER("filter"),
+        TOKENIZER("tokenizer"),
+        MARKER("marker"),
+        MACHINETRANSLATOR("machinetranslator"),
+        BASE("base"),
+        GLOSSARY("glossary"),
+        DICTIONARY("dictionary"),
+        MISCELLANEOUS("miscellaneous"),
+        UNKNOWN("Undefined");
+
+        private final String typeValue;
+
+        PluginType(String type) {
+           typeValue = type;
+        }
+
+        public String getTypeValue() {
+            return typeValue;
+        }
+    }
 
     protected static final List<Class<?>> LOADED_PLUGINS = new ArrayList<Class<?>>();
     private static final Set<PluginInformation> PLUGIN_INFORMATIONS = new HashSet<>();
@@ -269,7 +290,7 @@ public final class PluginUtils {
                     continue;
                 }
                 if (loadClass(clazz, classLoader)) {
-                    PLUGIN_INFORMATIONS.add(new PluginInformation(clazz, m));
+                    PLUGIN_INFORMATIONS.add(new PluginInformation(clazz, m, null, PluginInformation.STATUS.INSTALLED));
                 }
             }
         }
@@ -284,14 +305,16 @@ public final class PluginUtils {
             if (key.equals("plugin")) {
                 for (String clazz : classes) {
                     if (loadClass(clazz, classLoader)) {
-                        PLUGIN_INFORMATIONS.add(new PluginInformation(clazz, props));
+                        PLUGIN_INFORMATIONS.add(new PluginInformation(clazz, props, key, null,
+                                PluginInformation.STATUS.BUNDLED));
                     };
 
                 }
             } else {
                 for (String clazz : classes) {
                     if (loadClassOld(key, clazz, classLoader)) {
-                        PLUGIN_INFORMATIONS.add(new PluginInformation(clazz, props));
+                        PLUGIN_INFORMATIONS.add(new PluginInformation(clazz, props, key, null,
+                                PluginInformation.STATUS.BUNDLED));
                     }
                 }
             }
@@ -352,7 +375,7 @@ public final class PluginUtils {
                 continue;
             }
             if (loadClassOld(sType, key, classLoader)) {
-                PLUGIN_INFORMATIONS.add(new PluginInformation(key, m));
+                PLUGIN_INFORMATIONS.add(new PluginInformation(key, m, null, PluginInformation.STATUS.BUNDLED));
             }
         }
     }
