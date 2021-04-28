@@ -73,8 +73,8 @@ public final class PluginUtils {
     public static final String PLUGINS_LIST_FILE = "Plugins.properties";
 
     /**
-￼     * Plugin type definitons.
-￼     */
+     * Plugin type definitions.
+     */
     public enum PluginType {
         FILTER("filter"),
         TOKENIZER("tokenizer"),
