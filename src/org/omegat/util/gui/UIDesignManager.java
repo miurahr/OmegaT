@@ -37,25 +37,25 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.IOException;
-
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.plaf.ColorUIResource;
 
-import org.omegat.util.OStrings;
-import org.omegat.util.Platform;
-
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.vlsolutions.swing.docking.AutoHidePolicy;
 import com.vlsolutions.swing.docking.AutoHidePolicy.ExpandMode;
 import com.vlsolutions.swing.docking.DockableContainerFactory;
 import com.vlsolutions.swing.docking.DockableState;
 import com.vlsolutions.swing.docking.DockingDesktop;
 import com.vlsolutions.swing.docking.ui.DockingUISettings;
+import org.omegat.util.OStrings;
+import org.omegat.util.Platform;
 
 /**
  * UI Design Manager.
@@ -495,6 +495,17 @@ public final class UIDesignManager {
                 throw new RuntimeException("Invalid color value for key '" + k + "': " + v, ex);
             }
         });
+    }
+
+    /**
+     * Set LookAndFeel default and load application colors
+     */
+    public static void setApplicationLaf() throws UnsupportedLookAndFeelException {
+        UIManager.setLookAndFeel(new FlatDarkLaf());
+        UIManager.put( "Button.arc", 999 );
+        UIManager.put( "Component.arc", 999 );
+        UIManager.put( "ProgressBar.arc", 999 );
+        UIManager.put( "TextComponent.arc", 999 );
     }
 
     /**
