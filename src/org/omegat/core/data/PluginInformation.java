@@ -26,10 +26,8 @@
 
 package org.omegat.core.data;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -53,11 +51,10 @@ public class PluginInformation implements Comparable<PluginInformation> {
     private static final String BUNDLE_NAME = "Bundle-Name";
     private static final String BUILT_BY = "Built-By";
 
-    public enum STATUS {
+    public enum Status {
         INSTALLED,
         BUNDLED,
         UPGRADABLE,
-        UNINSTALLED
     }
 
     private final String className;
@@ -68,10 +65,9 @@ public class PluginInformation implements Comparable<PluginInformation> {
     private final String description;
     private final String category;
     private final String link;
-    private final URL url;
-    private STATUS status;
+    private Status status;
 
-    public PluginInformation(final String className, final Manifest manifest, final URL mu, final STATUS status) {
+    public PluginInformation(final String className, final Manifest manifest, final URL mu, final Status status) {
         this.className = className;
         Attributes mainAttrs = manifest.getMainAttributes();
         Attributes attrs = manifest.getEntries().get(className);
@@ -85,11 +81,10 @@ public class PluginInformation implements Comparable<PluginInformation> {
         description = attrs.getValue(PLUGIN_DESCRIPTION);
         link = attrs.getValue(PLUGIN_LINK);
         category = categoryName(attrs.getValue(PLUGIN_CATEGORY), attrs.getValue(PLUGIN_TYPE));
-        url = mu;
         this.status = status;
     }
 
-    public PluginInformation(String className, Properties props, final String key, final URL mu, final STATUS status) {
+    public PluginInformation(String className, Properties props, final String key, final URL mu, final Status status) {
         this.className = className;
         id = className;
         name = className.substring(className.lastIndexOf(".") + 1);
@@ -98,18 +93,13 @@ public class PluginInformation implements Comparable<PluginInformation> {
         description = null;
         category = categoryName(key, null);
         link = null;
-        url = mu;
         this.status = status;
     }
 
     private String categoryName(final String key1, final String key2) {
         String key = key1 != null ? key1 : key2;
-        Optional<PluginUtils.PluginType> type = Arrays.stream(PluginUtils.PluginType.values()).filter(v ->
-                v.getTypeValue().equals(key)).findFirst();
-        if (type.isPresent()) {
-            return type.get().getTypeValue();
-        }
-        return PluginUtils.PluginType.UNKNOWN.getTypeValue();
+        return Arrays.stream(PluginUtils.PluginType.values()).filter(v ->
+                v.getTypeValue().equals(key)).findFirst().orElse(PluginUtils.PluginType.UNKNOWN).getTypeValue();
     }
 
     private String findId(Attributes attrs) {
@@ -195,33 +185,27 @@ public class PluginInformation implements Comparable<PluginInformation> {
      return link;
     }
 
-    public final File getJarFile() {
-        return new File(url.getPath().substring(5, url.getPath().indexOf("!")));
-    }
-
     public final boolean isBundled() {
-        return status == STATUS.BUNDLED;
+        return status == Status.BUNDLED;
     }
 
     public final boolean isInstalled() {
-        return status == STATUS.INSTALLED || status == STATUS.BUNDLED;
+        return status == Status.INSTALLED || status == Status.BUNDLED;
     }
 
-    public final STATUS getStatus() {
+    public final Status getStatus() {
         return status;
     }
 
-    public final void setStatus(STATUS s) {
+    public final void setStatus(Status s) {
         status = s;
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PluginInformation [className=").append(className).append(", name=").append(name)
-                .append(", version=").append(version).append(", author=").append(author).append(", description=")
-                .append(description).append("]");
-        return builder.toString();
+        return "PluginInformation [className=" + className + ", name=" + name +
+                ", version=" + version + ", author=" + author + ", description=" +
+                description + "]";
     }
 
     @Override
@@ -260,16 +244,13 @@ public class PluginInformation implements Comparable<PluginInformation> {
         } else if (!name.equals(other.name))
             return false;
         if (version == null) {
-            if (other.version != null)
-                return false;
-        } else if (!version.equals(other.version))
-            return false;
-        return true;
+            return other.version == null;
+        } else return version.equals(other.version);
     }
 
     @Override
     public final int compareTo(PluginInformation pluginInformation) {
-       int score;
+        int score;
         if (this == pluginInformation || className.equals(pluginInformation.getClass().getName())) {
             return version.compareTo(pluginInformation.getVersion());
         }
@@ -286,7 +267,7 @@ public class PluginInformation implements Comparable<PluginInformation> {
                     return score;
                 }
             }
-       }
+        }
         if (pluginInformation.getAuthor() != null) {
             if (author == null) {
                 return -1;
@@ -298,7 +279,7 @@ public class PluginInformation implements Comparable<PluginInformation> {
             }
         }
         score = className.compareTo(pluginInformation.getClassName());
-        if (score !=0) {
+        if (score != 0) {
             return score;
         }
         if (pluginInformation.getName() != null) {
