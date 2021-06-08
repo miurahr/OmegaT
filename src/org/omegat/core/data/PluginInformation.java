@@ -35,7 +35,6 @@ import java.util.jar.Manifest;
 import org.omegat.filters2.master.PluginUtils;
 
 public class PluginInformation implements Comparable<PluginInformation> {
-    private static final String PLUGIN_ID = "Plugin-Id";
     private static final String PLUGIN_NAME = "Plugin-Name";
     private static final String PLUGIN_VERSION = "Plugin-Version";
     private static final String PLUGIN_AUTHOR = "Plugin-Author";
@@ -58,7 +57,6 @@ public class PluginInformation implements Comparable<PluginInformation> {
     }
 
     private final String className;
-    private final String id;
     private final String name;
     private final String version;
     private final String author;
@@ -74,7 +72,6 @@ public class PluginInformation implements Comparable<PluginInformation> {
         if (attrs == null) {
               attrs = manifest.getMainAttributes();
         }
-        id = findId(attrs);
         name = findName(attrs);
         version = findVersion(attrs, mainAttrs);
         author = findAuthor(mainAttrs);
@@ -86,7 +83,6 @@ public class PluginInformation implements Comparable<PluginInformation> {
 
     public PluginInformation(String className, Properties props, final String key, final URL mu, final Status status) {
         this.className = className;
-        id = className;
         name = className.substring(className.lastIndexOf(".") + 1);
         version = null;
         author = null;
@@ -100,14 +96,6 @@ public class PluginInformation implements Comparable<PluginInformation> {
         String key = key1 != null ? key1 : key2;
         return Arrays.stream(PluginUtils.PluginType.values()).filter(v ->
                 v.getTypeValue().equals(key)).findFirst().orElse(PluginUtils.PluginType.UNKNOWN).getTypeValue();
-    }
-
-    private String findId(Attributes attrs) {
-        if (attrs.getValue(PLUGIN_ID) != null) {
-            return attrs.getValue(PLUGIN_ID);
-        }
-        // fallback to className
-        return className;
     }
 
     private String findName(Attributes attrs) {
@@ -155,10 +143,6 @@ public class PluginInformation implements Comparable<PluginInformation> {
 
     public String getClassName() {
         return className;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public String getName() {
