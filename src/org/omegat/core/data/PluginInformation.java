@@ -174,7 +174,7 @@ public class PluginInformation implements Comparable<PluginInformation> {
     }
 
     public final boolean isInstalled() {
-        return status == Status.INSTALLED || status == Status.BUNDLED;
+        return status == Status.INSTALLED || status == Status.BUNDLED || status == Status.UPGRADABLE;
     }
 
     public final Status getStatus() {
