@@ -28,8 +28,15 @@ package org.omegat.gui.preferences.view;
 import java.net.URI;
 
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.omegat.Main;
+import org.omegat.core.Core;
+import org.omegat.core.plugins.PluginInstaller;
+import org.omegat.gui.dialogs.ChoosePluginFile;
+import org.omegat.gui.main.MainWindow;
+import org.omegat.gui.main.MainWindowMenuHandler;
 import org.omegat.gui.preferences.BasePreferencesController;
 import org.omegat.util.OStrings;
 import org.omegat.util.gui.DesktopWrapper;
@@ -66,6 +73,29 @@ public class PluginsPreferencesController extends BasePreferencesController {
             } catch (Exception ex) {
                 JOptionPane.showConfirmDialog(panel, ex.getLocalizedMessage(),
                         OStrings.getString("ERROR_TITLE"), JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        panel.restartOmegatButton.setText(OStrings.getString("PREFS_PLUGINS_RESTART"));
+        panel.restartOmegatButton.addActionListener(e -> {
+            String projectDir = Core.getProject().isProjectLoaded()
+                    ? Core.getProject().getProjectProperties().getProjectRoot()
+                    : null;
+            MainWindowMenuHandler.prepareForExit((MainWindow) Core.getMainWindow(), () -> {
+                Main.restartGUI(projectDir);
+            });
+
+        });
+        panel.restartOmegatButton.setEnabled(false);
+
+        panel.installFromDiskButton.setText(OStrings.getString("PREFS_PLUGINS_INSTALL_FROM_DISK"));
+        panel.installFromDiskButton.addActionListener(e -> {
+            ChoosePluginFile choosePluginFile = new ChoosePluginFile();
+            int choosePluginFileResult = choosePluginFile.showOpenDialog(Core.getMainWindow().getApplicationFrame());
+            if (choosePluginFileResult == JFileChooser.APPROVE_OPTION) {
+                Boolean result = PluginInstaller.install(choosePluginFile.getSelectedFile());
+                if (result) {
+                    panel.restartOmegatButton.setEnabled(true);
+                }
             }
         });
     }
