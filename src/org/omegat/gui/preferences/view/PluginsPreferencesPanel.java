@@ -54,7 +54,6 @@ public class PluginsPreferencesPanel extends JPanel {
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 5), new java.awt.Dimension(0, 5), new java.awt.Dimension(32767, 5));
         browsePluginsButton = new javax.swing.JButton();
         installFromDiskButton = new javax.swing.JButton();
-        restartOmegatButton = new javax.swing.JButton();
         panelPluginsInfo = new javax.swing.JPanel();
         labelTableTitle = new javax.swing.JLabel();
         scrollTable = new javax.swing.JScrollPane();
@@ -75,9 +74,6 @@ public class PluginsPreferencesPanel extends JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(installFromDiskButton, "Install Plugin from disk file");
         panelInfo.add(installFromDiskButton);
-
-        org.openide.awt.Mnemonics.setLocalizedText(restartOmegatButton, "Restart OmegaT");
-        panelInfo.add(restartOmegatButton);
 
         add(panelInfo);
 
@@ -116,7 +112,6 @@ public class PluginsPreferencesPanel extends JPanel {
     private javax.swing.JLabel messageLabel;
     private javax.swing.JPanel panelInfo;
     private javax.swing.JPanel panelPluginsInfo;
-    javax.swing.JButton restartOmegatButton;
     private javax.swing.JScrollPane scrollTable;
     javax.swing.JTable tablePluginsInfo;
     // End of variables declaration//GEN-END:variables
