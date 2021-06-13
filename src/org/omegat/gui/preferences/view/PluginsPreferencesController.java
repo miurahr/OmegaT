@@ -31,6 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.omegat.core.Core;
 import org.omegat.core.plugins.PluginInstaller;
 import org.omegat.gui.dialogs.ChoosePluginFile;
 import org.omegat.gui.preferences.BasePreferencesController;
@@ -79,7 +80,7 @@ public class PluginsPreferencesController extends BasePreferencesController {
             if (choosePluginFileResult == JFileChooser.APPROVE_OPTION) {
                 Boolean result = PluginInstaller.install(choosePluginFile.getSelectedFile());
                 if (result) {
-
+                    setRestartRequired(result);
                 }
             }
         });
