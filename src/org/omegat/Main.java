@@ -34,9 +34,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -208,6 +211,30 @@ public final class Main {
         }
     }
 
+    public static void restartGUI(String projectDir) {
+        Log.log("===         Restart OmegaT           ===");
+        String javaBin = String.join(File.separator, System.getProperty("java.home"), "bin", "java");
+        // Build command: java -cp ... org.omegat.Main
+        List<String> command = new ArrayList<>();
+        command.add(javaBin);
+        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+        command.addAll(runtimeMxBean.getInputArguments()); // JVM args
+        command.add("-cp");
+        command.add(runtimeMxBean.getClassPath());
+        command.add(Main.class.getName());
+        command.addAll(CLIParameters.unparseArgs(PARAMS));
+        if (projectDir != null) {
+            command.add(projectDir);
+        }
+        ProcessBuilder builder = new ProcessBuilder(command);
+        try {
+            builder.start();
+            System.exit(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Load System properties from a specified .properties file. In order to
      * allow this to reliably change the display language, it must called before
@@ -255,6 +282,11 @@ public final class Main {
      * Execute standard GUI.
      */
     protected static int runGUI() {
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+        MainClassLoader mainClassLoader = (cl instanceof MainClassLoader) ? (MainClassLoader) cl : new MainClassLoader(cl);
+        PluginUtils.getThemePluginJars().forEach(mainClassLoader::add);
+        UIManager.put("ClassLoader", mainClassLoader);
+
         // macOS-specific - they must be set BEFORE any GUI calls
         if (Platform.isMacOSX()) {
             OSXIntegration.init();
@@ -277,16 +309,9 @@ public final class Main {
             // do nothing
         }
 
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            // do nothing
-        }
-
         System.setProperty("swing.aatext", "true");
-
         try {
-            Core.initializeGUI(PARAMS);
+            Core.initializeGUI(mainClassLoader, PARAMS);
         } catch (Throwable ex) {
             Log.log(ex);
             showError(ex);
