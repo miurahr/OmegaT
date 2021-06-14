@@ -63,6 +63,7 @@ public class PluginInformation implements Comparable<PluginInformation> {
     private final String description;
     private final String category;
     private final String link;
+    private final URL url;
     private Status status;
 
     public PluginInformation(final String className, final Manifest manifest, final URL mu, final Status status) {
@@ -77,6 +78,7 @@ public class PluginInformation implements Comparable<PluginInformation> {
         author = findAuthor(mainAttrs);
         description = attrs.getValue(PLUGIN_DESCRIPTION);
         link = attrs.getValue(PLUGIN_LINK);
+        url = mu;
         category = categoryName(attrs.getValue(PLUGIN_CATEGORY), attrs.getValue(PLUGIN_TYPE));
         this.status = status;
     }
@@ -89,6 +91,7 @@ public class PluginInformation implements Comparable<PluginInformation> {
         description = null;
         category = categoryName(key, null);
         link = null;
+        url = mu;
         this.status = status;
     }
 
@@ -166,7 +169,11 @@ public class PluginInformation implements Comparable<PluginInformation> {
     }
 
     public final String getLink() {
-     return link;
+        return link;
+    }
+
+    public URL getUrl() {
+        return url;
     }
 
     public final boolean isBundled() {

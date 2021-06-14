@@ -56,6 +56,7 @@ public class PluginInformationTest {
          assertEquals("Example Author", pluginInformation.getAuthor());
          assertEquals("filter", pluginInformation.getCategory());
          assertEquals("https://example.com", pluginInformation.getLink());
+         assertEquals(mu, pluginInformation.getUrl());
          assertEquals(pluginInformation.getStatus(), PluginInformation.Status.INSTALLED);
          pluginInformation.setStatus(PluginInformation.Status.UPGRADABLE);
          assertEquals(pluginInformation.getStatus(), PluginInformation.Status.UPGRADABLE);
