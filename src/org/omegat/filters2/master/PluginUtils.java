@@ -146,7 +146,6 @@ public final class PluginUtils {
                             }
                         }
                     }
-                    loadFromManifest(m, pluginsClassLoader);
                 }
             }
             if (!foundMain) {
