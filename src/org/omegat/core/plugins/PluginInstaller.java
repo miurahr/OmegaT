@@ -30,17 +30,27 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Predicate;
+import java.util.jar.Manifest;
 
 import javax.swing.JOptionPane;
 
 import org.apache.commons.io.FileUtils;
 import org.omegat.core.Core;
 import org.omegat.core.data.PluginInformation;
+import org.omegat.filters2.master.PluginUtils;
+import org.omegat.gui.preferences.view.PluginsPreferencesController;
 import org.omegat.util.Log;
 import org.omegat.util.OConsts;
 import org.omegat.util.OStrings;
@@ -67,24 +77,15 @@ public final class PluginInstaller {
         } catch (IOException ex) {
             // wrong file specified
             Log.logErrorRB("PREFS_PLUGINS_INSTALATION_FAILED");
-            JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
-                    OStrings.getString("PREFS_PLUGINS_INSTALLATION_FAILED"),
-                    OStrings.getString("PREFS_PLUGINS_TITLE_CONFIRM_INSTALLATION"),
-                    JOptionPane.YES_OPTION, JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
         // check manifest
-        PluginsManager pluginsManager = new PluginsManager();
-        Set<PluginInformation> pluginInfo = pluginsManager.parsePluginJarFileManifest(pluginJarFile.toFile());
+        Set<PluginInformation> pluginInfo = parsePluginJarFileManifest(pluginJarFile.toFile());
         info = pluginInfo.stream().findFirst().orElse(null);
         if (info == null) {
             // it is not a plugin jar file.
             Log.logErrorRB("PREFS_PLUGINS_INSTALATION_FAILED");
-            JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
-                    OStrings.getString("PREFS_PLUGINS_INSTALLATION_FAILED"),
-                    OStrings.getString("PREFS_PLUGINS_TITLE_CONFIRM_INSTALLATION"),
-                    JOptionPane.YES_OPTION, JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
@@ -92,7 +93,7 @@ public final class PluginInstaller {
         String pluginName = info.getName();
         String version = info.getVersion();
         // detect current installation
-        PluginInformation currentInfo = pluginsManager.getInstalledPluginInformation(info);
+        PluginInformation currentInfo = getInstalledPluginInformation(info);
         String message;
         if (currentInfo != null) {
             message = StringUtil.format(OStrings.getString("PREFS_PLUGINS_CONFIRM_UPGRADE"), pluginName,
@@ -103,11 +104,10 @@ public final class PluginInstaller {
         }
 
         // confirm installation
-        int result = JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
+        if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
                 message,
                 OStrings.getString("PREFS_PLUGINS_TITLE_CONFIRM_INSTALLATION"),
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
-        if (result == JOptionPane.YES_OPTION) {
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE)) {
             try {
                 if (currentInfo != null) {
                     FileUtils.forceDeleteOnExit(currentInfo.getJarFile());
@@ -118,10 +118,6 @@ public final class PluginInstaller {
             } catch (IOException ex) {
                 Log.logErrorRB("PREFS_PLUGINS_INSTALLATION_FAILED");
                 Log.log(ex);
-                JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
-                        OStrings.getString("PREFS_PLUGINS_INSTALLATION_FAILED"),
-                        OStrings.getString("PREFS_PLUGINS_TITLE_CONFIRM_INSTALLATION"),
-                        JOptionPane.YES_OPTION, JOptionPane.ERROR_MESSAGE);
             }
         }
         return false;
@@ -154,6 +150,62 @@ public final class PluginInstaller {
             throw new IOException("Unknown archive type: " + sourceFile.getName());
         }
         return target;
+    }
+
+    /**
+     * Parse Manifest from plugin jar file.
+     * @param pluginJarFile plugin jar file
+     * @return PluginInformation
+     */
+    private static Set<PluginInformation> parsePluginJarFileManifest(File pluginJarFile) {
+        Set<PluginInformation> pluginInfo = new HashSet<>();
+        try {
+            URL[] urls = new URL[1];
+            urls[0] = pluginJarFile.toURI().toURL();
+            URLClassLoader pluginsClassLoader = new URLClassLoader(urls,
+                    PluginsPreferencesController.class.getClassLoader());
+            for (Enumeration<URL> mlist = pluginsClassLoader.getResources("META-INF/MANIFEST.MF"); mlist
+                    .hasMoreElements();) {
+                URL mu = mlist.nextElement();
+                try (InputStream in = mu.openStream()) {
+                    Manifest m = new Manifest(in);
+                    String pluginClasses = m.getMainAttributes().getValue("OmegaT-Plugins");
+                    if (pluginClasses != null) {
+                        for (String clazz : pluginClasses.split("\\s+")) {
+                            if (clazz.trim().isEmpty()) {
+                                continue;
+                            }
+                            pluginInfo.add(new PluginInformation(clazz, m, null));
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Log.log(ex);
+        }
+        return pluginInfo;
+    }
+
+    /**
+     * Return installed plugins.
+     * @return Set of PluginInformation
+     */
+    private static Map<String, PluginInformation> getInstalledPlugins() {
+        Map<String, PluginInformation> installedPlugins = new TreeMap<>();
+        PluginUtils.getPluginInformations().stream()
+                .sorted(Comparator.comparing(PluginInformation::getClassName))
+                .filter(info -> !installedPlugins.containsKey(info.getClassName()))
+                .forEach(info -> installedPlugins.put(info.getClassName(), info));
+        return installedPlugins;
+    }
+
+    /**
+     * Get plugin information installed to system specified by parameter.
+     * @param info PluginInformation to search
+     * @return PluginInformation when found, otherwise return null
+     */
+    private static PluginInformation getInstalledPluginInformation(PluginInformation info) {
+        return getInstalledPlugins().getOrDefault(info.getClassName(), null);
     }
 
 }

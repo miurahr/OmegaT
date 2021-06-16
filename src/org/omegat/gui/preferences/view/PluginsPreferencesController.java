@@ -78,9 +78,13 @@ public class PluginsPreferencesController extends BasePreferencesController {
             ChoosePluginFile choosePluginFile = new ChoosePluginFile();
             int choosePluginFileResult = choosePluginFile.showOpenDialog(Core.getMainWindow().getApplicationFrame());
             if (choosePluginFileResult == JFileChooser.APPROVE_OPTION) {
-                Boolean result = PluginInstaller.install(choosePluginFile.getSelectedFile());
-                if (result) {
-                    setRestartRequired(result);
+                if (PluginInstaller.install(choosePluginFile.getSelectedFile())) {
+                    setRestartRequired(true);
+                } else {
+                    JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
+                            OStrings.getString("PREFS_PLUGINS_INSTALLATION_FAILED"),
+                            OStrings.getString("PREFS_PLUGINS_TITLE_CONFIRM_INSTALLATION"),
+                            JOptionPane.YES_OPTION, JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
