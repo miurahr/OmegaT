@@ -36,6 +36,7 @@ import java.awt.Container;
 import java.awt.Font;
 import java.awt.Image;
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
@@ -270,8 +271,8 @@ public final class UIDesignManager {
         return background_brightness < foreground_brightness;
     }
 
-    private static void loadColors(UIDefaults defaults, final String scheme) throws IOException {
-        ResourcesUtil.getBundleColorProperties(scheme).forEach((k, v) -> {
+    public static void loadColors(UIDefaults uiDefaults, final Properties properties) {
+        properties.forEach((k, v) -> {
             if (v.toString().charAt(0) != '#') {
                 throw new RuntimeException("Invalid color value for key " + k + ": " + v);
             }
@@ -288,7 +289,7 @@ public final class UIDesignManager {
                     int r = (int) (val >> 24 & 0xFF);
                     color = new Color(r, g, b, a); // hasAlpha
                 }
-                defaults.put(k.toString(), color);
+                uiDefaults.put(k.toString(), color);
             } catch (NumberFormatException ex) {
                 throw new RuntimeException("Invalid color value for key '" + k + "': " + v, ex);
             }
@@ -298,10 +299,11 @@ public final class UIDesignManager {
     /**
      * Load application default colors
      */
-    public static void loadDefaultColors(UIDefaults uiDefaults) throws IOException {
+    public static void loadDefaultColors(UIDefaults uiDefaults) {
         Color hilite;
+        String scheme;
         if (isDarkTheme(uiDefaults)) {
-            loadColors(uiDefaults, "dark");
+            scheme = "dark";  // NOI18N
             hilite = uiDefaults.getColor("TextArea.background").brighter();  // NOI18N
             // Hack for JDK GTKLookAndFeel bug.
             // TextPane.background is always white but should be a text_background of GTK.
@@ -310,10 +312,15 @@ public final class UIDesignManager {
                 uiDefaults.put("TextPane.background", uiDefaults.getColor("List.background"));
             }
         } else {
-            loadColors(uiDefaults, "light");
+            scheme = "light";  // NOI18N
             Color bg = uiDefaults.getColor("TextArea.background").darker();  // NOI18N
             hilite = new Color(bg.getRed(), bg.getBlue(), bg.getGreen(), 32);
         }
         uiDefaults.put("OmegaT.alternatingHilite", hilite);
+        try {
+            loadColors(uiDefaults, ResourcesUtil.getBundleColorProperties(scheme));
+        } catch (IOException e) {
+            Log.log(e);
+        }
     }
 }
