@@ -244,8 +244,8 @@ public class DictionariesTextArea extends EntryInfoThreadPane<List<DictionaryEnt
         }
         boolean wasPrev = false;
         StringBuilder txt = new StringBuilder();
-        for (int i = 0, size = data.size(); i < size; i++) {
-            DictionaryEntry de = data.get(i);
+        int i = 0;
+        for (DictionaryEntry de: data) {
             if (wasPrev) {
                 txt.append("<br><hr>");
             } else {
