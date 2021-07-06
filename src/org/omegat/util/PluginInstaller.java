@@ -23,7 +23,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **************************************************************************/
 
-package org.omegat.core.plugins;
+package org.omegat.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,11 +51,6 @@ import org.omegat.core.Core;
 import org.omegat.core.data.PluginInformation;
 import org.omegat.filters2.master.PluginUtils;
 import org.omegat.gui.preferences.view.PluginsPreferencesController;
-import org.omegat.util.Log;
-import org.omegat.util.OConsts;
-import org.omegat.util.OStrings;
-import org.omegat.util.StaticUtils;
-import org.omegat.util.StringUtil;
 
 
 /**
@@ -65,7 +60,10 @@ import org.omegat.util.StringUtil;
  */
 public final class PluginInstaller {
 
-    public static Boolean install(final File pluginFile) {
+    private PluginInstaller() {
+    }
+
+    public static Boolean install(final File pluginFile, final boolean background) {
         Path pluginJarFile;
         PluginInformation info;
         try {
@@ -93,7 +91,7 @@ public final class PluginInstaller {
         String pluginName = info.getName();
         String version = info.getVersion();
         // detect current installation
-        PluginInformation currentInfo = getInstalledPluginInformation(info);
+        PluginInformation currentInfo = getInstalledPlugins().getOrDefault(info.getClassName(), null);
         String message;
         if (currentInfo != null) {
             message = StringUtil.format(OStrings.getString("PREFS_PLUGINS_CONFIRM_UPGRADE"), pluginName,
@@ -104,10 +102,11 @@ public final class PluginInstaller {
         }
 
         // confirm installation
-        if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
-                message,
-                OStrings.getString("PREFS_PLUGINS_TITLE_CONFIRM_INSTALLATION"),
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE)) {
+        if (background ||
+                JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
+                    message,
+                    OStrings.getString("PREFS_PLUGINS_TITLE_CONFIRM_INSTALLATION"),
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE)) {
             try {
                 if (currentInfo != null) {
                     FileUtils.forceDeleteOnExit(currentInfo.getJarFile());
@@ -131,7 +130,7 @@ public final class PluginInstaller {
      * @return installed plugin jar file path.
      * @throws IOException when source file is corrupted.
      */
-    static Path unpackPlugin(File sourceFile, Path targetPath) throws IOException {
+    private static Path unpackPlugin(File sourceFile, Path targetPath) throws IOException {
         Path target;
         if (sourceFile.getName().endsWith(".jar")) {
             target = targetPath.resolve(sourceFile.getName());
@@ -198,14 +197,4 @@ public final class PluginInstaller {
                 .forEach(info -> installedPlugins.put(info.getClassName(), info));
         return installedPlugins;
     }
-
-    /**
-     * Get plugin information installed to system specified by parameter.
-     * @param info PluginInformation to search
-     * @return PluginInformation when found, otherwise return null
-     */
-    private static PluginInformation getInstalledPluginInformation(PluginInformation info) {
-        return getInstalledPlugins().getOrDefault(info.getClassName(), null);
-    }
-
 }

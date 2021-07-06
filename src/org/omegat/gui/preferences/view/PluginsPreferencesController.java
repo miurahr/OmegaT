@@ -32,10 +32,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import org.omegat.core.Core;
-import org.omegat.core.plugins.PluginInstaller;
 import org.omegat.gui.dialogs.ChoosePluginFile;
 import org.omegat.gui.preferences.BasePreferencesController;
 import org.omegat.util.OStrings;
+import org.omegat.util.PluginInstaller;
 import org.omegat.util.gui.DesktopWrapper;
 import org.omegat.util.gui.TableColumnSizer;
 
@@ -78,7 +78,7 @@ public class PluginsPreferencesController extends BasePreferencesController {
             ChoosePluginFile choosePluginFile = new ChoosePluginFile();
             int choosePluginFileResult = choosePluginFile.showOpenDialog(Core.getMainWindow().getApplicationFrame());
             if (choosePluginFileResult == JFileChooser.APPROVE_OPTION) {
-                if (PluginInstaller.install(choosePluginFile.getSelectedFile())) {
+                if (PluginInstaller.install(choosePluginFile.getSelectedFile(), false)) {
                     setRestartRequired(true);
                 } else {
                     JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
