@@ -63,7 +63,7 @@ public final class PluginInstaller {
     private PluginInstaller() {
     }
 
-    public static Boolean install(final File pluginFile, final boolean background) {
+    public static Boolean install(final File pluginFile) {
         Path pluginJarFile;
         PluginInformation info;
         try {
@@ -102,22 +102,32 @@ public final class PluginInstaller {
         }
 
         // confirm installation
-        if (background ||
-                JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
+        if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
                     message,
                     OStrings.getString("PREFS_PLUGINS_TITLE_CONFIRM_INSTALLATION"),
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE)) {
-            try {
-                if (currentInfo != null) {
-                    FileUtils.forceDeleteOnExit(currentInfo.getJarFile());
-                }
-                File homePluginsDir = new File(StaticUtils.getConfigDir(), "plugins");
-                FileUtils.copyFileToDirectory(pluginJarFile.toFile(), homePluginsDir, true);
+            if (doInstall(currentInfo, pluginJarFile.toFile()))  {
                 return true;
-            } catch (IOException ex) {
-                Log.logErrorRB("PREFS_PLUGINS_INSTALLATION_FAILED");
-                Log.log(ex);
             }
+            JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
+                    OStrings.getString("PREFS_PLUGINS_INSTALLATION_FAILED"),
+                    OStrings.getString("PREFS_PLUGINS_TITLE_CONFIRM_INSTALLATION"),
+                    JOptionPane.YES_OPTION, JOptionPane.ERROR_MESSAGE);
+        }
+        return false;
+    }
+
+    private static boolean doInstall(PluginInformation currentInfo, File file) {
+        try {
+            if (currentInfo != null) {
+                FileUtils.forceDeleteOnExit(currentInfo.getJarFile());
+            }
+            File homePluginsDir = new File(StaticUtils.getConfigDir(), "plugins");
+            FileUtils.copyFileToDirectory(file, homePluginsDir, true);
+            return true;
+        } catch (IOException ex) {
+            Log.logErrorRB("PREFS_PLUGINS_INSTALLATION_FAILED");
+            Log.log(ex);
         }
         return false;
     }

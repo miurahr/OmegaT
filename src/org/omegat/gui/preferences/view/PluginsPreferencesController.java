@@ -76,15 +76,10 @@ public class PluginsPreferencesController extends BasePreferencesController {
         panel.installFromDiskButton.setText(OStrings.getString("PREFS_PLUGINS_INSTALL_FROM_DISK"));
         panel.installFromDiskButton.addActionListener(e -> {
             ChoosePluginFile choosePluginFile = new ChoosePluginFile();
-            int choosePluginFileResult = choosePluginFile.showOpenDialog(Core.getMainWindow().getApplicationFrame());
-            if (choosePluginFileResult == JFileChooser.APPROVE_OPTION) {
-                if (PluginInstaller.install(choosePluginFile.getSelectedFile(), false)) {
+            if (JFileChooser.APPROVE_OPTION == choosePluginFile.showOpenDialog(
+                    Core.getMainWindow().getApplicationFrame())) {
+                if (PluginInstaller.install(choosePluginFile.getSelectedFile())) {
                     setRestartRequired(true);
-                } else {
-                    JOptionPane.showConfirmDialog(Core.getMainWindow().getApplicationFrame(),
-                            OStrings.getString("PREFS_PLUGINS_INSTALLATION_FAILED"),
-                            OStrings.getString("PREFS_PLUGINS_TITLE_CONFIRM_INSTALLATION"),
-                            JOptionPane.YES_OPTION, JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
