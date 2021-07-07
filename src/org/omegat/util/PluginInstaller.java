@@ -63,7 +63,7 @@ public final class PluginInstaller {
     private PluginInstaller() {
     }
 
-    public static Boolean install(final File pluginFile) {
+    public static boolean install(final File pluginFile) {
         Path pluginJarFile;
         PluginInformation info;
         try {
